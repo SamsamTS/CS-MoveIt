@@ -27,8 +27,8 @@ namespace MoveIt
         public static readonly SavedInputKey moveYpos = new SavedInputKey("moveYpos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.PageUp, false, false, false), true);
         public static readonly SavedInputKey moveYneg = new SavedInputKey("moveYneg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.PageDown, false, false, false), true);
 
-        public static readonly SavedInputKey turnPos = new SavedInputKey("turnPos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Home, false, false, false), true);
-        public static readonly SavedInputKey turnNeg = new SavedInputKey("turnNeg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.End, false, false, false), true);
+        public static readonly SavedInputKey turnPos = new SavedInputKey("turnPos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, true, false, false), true);
+        public static readonly SavedInputKey turnNeg = new SavedInputKey("turnNeg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, true, false, false), true);
 
         public static readonly SavedInputKey undo = new SavedInputKey("undo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);

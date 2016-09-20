@@ -27,7 +27,7 @@ namespace MoveIt
 
             size = bulldoserButton.size;
 
-            if (savedX.value < 0 && savedY < 0)
+            if (savedX.value == -1000)
             {
                 absolutePosition = new Vector2(bulldoserButton.absolutePosition.x - bulldoserButton.width, bulldoserButton.absolutePosition.y);
             }
