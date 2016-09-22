@@ -2,7 +2,6 @@
 using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace MoveIt
         private string m_EditingBindingCategory;
 
         public static readonly SavedInputKey toggleTool = new SavedInputKey("toggleTool", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.M, false, false, false), true);
-        
+
         public static readonly SavedInputKey moveXpos = new SavedInputKey("moveXpos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, false, false, false), true);
         public static readonly SavedInputKey moveXneg = new SavedInputKey("moveXneg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, false, false, false), true);
 

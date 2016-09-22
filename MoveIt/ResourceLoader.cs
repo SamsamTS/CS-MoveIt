@@ -1,15 +1,9 @@
-﻿using ICities;
-
-using ColossalFramework;
-using ColossalFramework.UI;
-using ColossalFramework.Globalization;
+﻿using ColossalFramework.UI;
 
 using UnityEngine;
 
-using System;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
 
 namespace MoveIt
 {

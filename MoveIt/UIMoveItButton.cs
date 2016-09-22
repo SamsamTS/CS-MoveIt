@@ -1,14 +1,11 @@
-﻿using System;
-using System.Reflection;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 using ColossalFramework;
 using ColossalFramework.UI;
 
 namespace MoveIt
 {
-    public class UIMoveItButton: UIButton
+    public class UIMoveItButton : UIButton
     {
         public static readonly SavedInt savedX = new SavedInt("savedX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt savedY = new SavedInt("savedY", MoveItTool.settingsFileName, -1000, true);

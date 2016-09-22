@@ -1,5 +1,4 @@
 ﻿using ICities;
-using UnityEngine;
 
 using System;
 
@@ -34,7 +33,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "1.0.2";
+        public const string version = "1.0.3";
 
         public void OnSettingsUI(UIHelperBase helper)
         {

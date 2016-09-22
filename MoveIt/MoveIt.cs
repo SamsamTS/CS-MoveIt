@@ -2,9 +2,7 @@
 using UnityEngine;
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Reflection;
 
 using ColossalFramework;
 using ColossalFramework.Math;
@@ -49,6 +47,37 @@ namespace MoveIt
             public InstanceID id;
             private Vector3 position;
             private float angle;
+            private Vector3[] nodeDirections;
+
+            private List<Moveable> subInstances;
+
+            public Vector3 currentPosition
+            {
+                get
+                {
+                    switch (id.Type)
+                    {
+                        case InstanceType.Building:
+                            {
+                                return BuildingManager.instance.m_buildings.m_buffer[(int)id.Building].m_position;
+                            }
+                        case InstanceType.Prop:
+                            {
+                                return PropManager.instance.m_props.m_buffer[(int)id.Prop].Position;
+                            }
+                        case InstanceType.Tree:
+                            {
+                                return TreeManager.instance.m_trees.m_buffer[(int)id.Tree].Position;
+                            }
+                        case InstanceType.NetNode:
+                            {
+                                return NetManager.instance.m_nodes.m_buffer[(int)id.NetNode].m_position;
+                            }
+                    }
+
+                    return Vector3.zero;
+                }
+            }
 
             public Moveable(InstanceID instance)
             {
@@ -58,8 +87,40 @@ namespace MoveIt
                 {
                     case InstanceType.Building:
                         {
-                            position = BuildingManager.instance.m_buildings.m_buffer[(int)id.Building].m_position;
-                            angle = BuildingManager.instance.m_buildings.m_buffer[(int)id.Building].m_angle;
+                            BuildingManager buildingManager = BuildingManager.instance;
+                            NetManager netManager = NetManager.instance;
+
+                            position = buildingManager.m_buildings.m_buffer[(int)id.Building].m_position;
+                            angle = buildingManager.m_buildings.m_buffer[(int)id.Building].m_angle;
+
+                            subInstances = new List<Moveable>();
+
+                            ushort node = buildingManager.m_buildings.m_buffer[id.Building].m_netNode;
+                            while (node != 0)
+                            {
+                                InstanceID nodeID = default(InstanceID);
+                                nodeID.NetNode = node;
+                                subInstances.Add(new Moveable(nodeID));
+
+                                node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
+                            }
+
+                            ushort building = buildingManager.m_buildings.m_buffer[id.Building].m_subBuilding;
+                            while (building != 0)
+                            {
+                                Moveable subBuilding = new Moveable(InstanceID.Empty);
+                                subBuilding.id.Building = building;
+                                subBuilding.position = buildingManager.m_buildings.m_buffer[building].m_position;
+                                subBuilding.angle = buildingManager.m_buildings.m_buffer[building].m_angle;
+                                subInstances.Add(subBuilding);
+
+                                building = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
+                            }
+
+                            if (subInstances.Count == 0)
+                            {
+                                subInstances = null;
+                            }
                             break;
                         }
                     case InstanceType.Prop:
@@ -75,7 +136,20 @@ namespace MoveIt
                         }
                     case InstanceType.NetNode:
                         {
-                            position = NetManager.instance.m_nodes.m_buffer[(int)id.NetNode].m_position;
+                            NetManager netManager = NetManager.instance;
+
+                            position = netManager.m_nodes.m_buffer[id.NetNode].m_position;
+
+                            nodeDirections = new Vector3[8];
+                            for (int i = 0; i < 8; i++)
+                            {
+                                ushort segment = netManager.m_nodes.m_buffer[id.NetNode].GetSegment(i);
+                                if (segment != 0)
+                                {
+                                    nodeDirections[i] = netManager.m_segments.m_buffer[segment].GetDirection(id.NetNode);
+                                }
+                            }
+
                             break;
                         }
                 }
@@ -87,30 +161,14 @@ namespace MoveIt
                 {
                     case InstanceType.Building:
                         {
-                            BuildingManager buildingManager = BuildingManager.instance;
-                            NetManager netManager = NetManager.instance;
-
-                            Vector3 currentPos = buildingManager.m_buildings.m_buffer[id.Building].m_position;
-                            Vector3 newPos = position + delta;
-                            Vector3 moveDelta = newPos - currentPos;
-
                             BuildingManager.instance.m_buildings.m_buffer[id.Building].m_position = position + delta;
 
-                            ushort node = buildingManager.m_buildings.m_buffer[id.Building].m_netNode;
-                            while (node != 0)
+                            if (subInstances != null)
                             {
-                                netManager.MoveNode(node, netManager.m_nodes.m_buffer[node].m_position + moveDelta);
-                                node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
-
-                            }
-
-                            ushort subBuilding = buildingManager.m_buildings.m_buffer[id.Building].m_subBuilding;
-
-                            while (subBuilding != 0)
-                            {
-                                buildingManager.m_buildings.m_buffer[subBuilding].m_position = buildingManager.m_buildings.m_buffer[subBuilding].m_position + moveDelta;
-                                subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
-                                buildingManager.UpdateBuilding(subBuilding);
+                                foreach (Moveable subInstance in subInstances)
+                                {
+                                    subInstance.Move(delta);
+                                }
                             }
 
                             BuildingManager.instance.UpdateBuilding(id.Building);
@@ -134,13 +192,63 @@ namespace MoveIt
                 }
             }
 
+            private void MoveAt(Vector3 location)
+            {
+                switch (id.Type)
+                {
+                    case InstanceType.Building:
+                        {
+                            BuildingManager.instance.m_buildings.m_buffer[id.Building].m_position = location;
+                            BuildingManager.instance.UpdateBuilding(id.Building);
+                            break;
+                        }
+                    case InstanceType.Prop:
+                        {
+                            PropManager.instance.MoveProp(id.Prop, location);
+                            break;
+                        }
+                    case InstanceType.Tree:
+                        {
+                            TreeManager.instance.MoveTree(id.Tree, location);
+                            break;
+                        }
+                    case InstanceType.NetNode:
+                        {
+                            NetManager.instance.MoveNode(id.NetNode, location);
+                            break;
+                        }
+                }
+            }
+
             public void Rotate(ushort delta)
             {
                 switch (id.Type)
                 {
                     case InstanceType.Building:
                         {
-                            BuildingManager.instance.m_buildings.m_buffer[(int)id.Building].m_angle = angle + delta * 9.58738E-05f;
+                            BuildingManager buildingManager = BuildingManager.instance;
+                            NetManager netManager = NetManager.instance;
+
+                            float buildingAngle = delta * 9.58738E-05f;
+                            buildingManager.m_buildings.m_buffer[(int)id.Building].m_angle = angle + buildingAngle;
+
+                            if (subInstances != null)
+                            {
+                                Vector3 buildingPosition = buildingManager.m_buildings.m_buffer[(int)id.Building].m_position;
+
+                                Matrix4x4 matrix4x = default(Matrix4x4);
+                                matrix4x.SetTRS(buildingPosition, Quaternion.AngleAxis(buildingAngle * 57.29578f, Vector3.down), Vector3.one);
+
+                                foreach (Moveable subInstance in subInstances)
+                                {
+                                    Vector3 subPosition = subInstance.position - buildingPosition;
+                                    subPosition = matrix4x.MultiplyPoint(subPosition);
+
+                                    subInstance.Rotate(delta);
+                                    subInstance.MoveAt(subPosition);
+                                }
+                            }
+
                             BuildingManager.instance.UpdateBuilding(id.Building);
                             break;
                         }
@@ -148,6 +256,35 @@ namespace MoveIt
                         {
                             PropManager.instance.m_props.m_buffer[(int)id.Prop].m_angle = (ushort)((ushort)angle + delta);
                             PropManager.instance.UpdateProp(id.Prop);
+                            break;
+                        }
+                    case InstanceType.NetNode:
+                        {
+                            NetManager netManager = NetManager.instance;
+
+                            float netAngle = delta * 9.58738E-05f;
+
+                            Matrix4x4 matrix4x = default(Matrix4x4);
+                            matrix4x.SetTRS(position, Quaternion.AngleAxis(netAngle * 57.29578f, Vector3.down), Vector3.one);
+
+                            for (int i = 0; i < 8; i++)
+                            {
+                                ushort segment = netManager.m_nodes.m_buffer[id.NetNode].GetSegment(i);
+                                if (segment != 0)
+                                {
+                                    Vector3 newDirection = matrix4x.MultiplyVector(nodeDirections[i]);
+
+                                    if (netManager.m_segments.m_buffer[segment].m_startNode == id.NetNode)
+                                    {
+                                        netManager.m_segments.m_buffer[segment].m_startDirection = newDirection;
+                                    }
+                                    else
+                                    {
+                                        netManager.m_segments.m_buffer[segment].m_endDirection = newDirection;
+                                    }
+                                }
+                            }
+                            NetManager.instance.UpdateNode(id.NetNode);
                             break;
                         }
                 }
@@ -178,11 +315,19 @@ namespace MoveIt
             public Vector3 moveDelta;
             public ushort angleDelta;
 
-            public bool hasMove
+            public bool hasMoved
             {
                 get
                 {
-                    return moveDelta != Vector3.zero || angleDelta != 0;
+                    return moveDelta != Vector3.zero;
+                }
+            }
+
+            public bool hasRotated
+            {
+                get
+                {
+                    return angleDelta != 0;
                 }
             }
         }
@@ -194,12 +339,14 @@ namespace MoveIt
 
         private enum Actions
         {
+            None,
             Undo,
             Redo,
             Move,
             Rotate
         }
-        private Queue<Actions> m_actionQueue = new Queue<Actions>();
+
+        private Actions m_nextAction = Actions.None;
 
         private UIMoveItButton m_button;
 
@@ -307,7 +454,7 @@ namespace MoveIt
 
                         if (Event.current.shift)
                         {
-                            if (m_moves[m_moveCurrent].hasMove)
+                            if (m_moves[m_moveCurrent].hasMoved || m_moves[m_moveCurrent].hasRotated)
                             {
                                 int previous = m_moveCurrent;
 
@@ -330,7 +477,7 @@ namespace MoveIt
                         }
                         else
                         {
-                            if (m_moves[m_moveCurrent].hasMove)
+                            if (m_moves[m_moveCurrent].hasMoved || m_moves[m_moveCurrent].hasRotated)
                             {
                                 NextMove();
                             }
@@ -367,32 +514,31 @@ namespace MoveIt
 
             lock (m_moves)
             {
-                if (m_actionQueue.Count > 0)
+                switch (m_nextAction)
                 {
-                    switch (m_actionQueue.Dequeue())
-                    {
-                        case Actions.Undo:
-                            {
-                                Undo();
-                                break;
-                            }
-                        case Actions.Redo:
-                            {
-                                Redo();
-                                break;
-                            }
-                        case Actions.Move:
-                            {
-                                Move();
-                                break;
-                            }
-                        case Actions.Rotate:
-                            {
-                                Rotate();
-                                break;
-                            }
-                    }
+                    case Actions.Undo:
+                        {
+                            Undo();
+                            break;
+                        }
+                    case Actions.Redo:
+                        {
+                            Redo();
+                            break;
+                        }
+                    case Actions.Move:
+                        {
+                            Move();
+                            break;
+                        }
+                    case Actions.Rotate:
+                        {
+                            Rotate();
+                            break;
+                        }
                 }
+
+                m_nextAction = Actions.None;
             }
         }
 
@@ -404,8 +550,8 @@ namespace MoveIt
                 {
                     foreach (Moveable instance in m_moves[m_moveCurrent].instances)
                     {
-                        instance.Move(Vector3.zero);
                         instance.Rotate(0);
+                        instance.Move(Vector3.zero);
                     }
 
                     if (m_moveCurrent == m_moveTail)
@@ -467,15 +613,35 @@ namespace MoveIt
             }
         }
 
+        public void NewMove()
+        {
+            lock (m_moves)
+            {
+                int previous = m_moveCurrent;
+
+                NextMove();
+
+                foreach (Moveable instance in m_moves[previous].instances)
+                {
+                    m_moves[m_moveCurrent].instances.Add(new Moveable(instance.id));
+                }
+            }
+        }
+
         protected override void OnToolGUI(Event e)
         {
+            if (m_nextAction != Actions.None)
+            {
+                return;
+            }
+
             if (OptionsKeymapping.undo.IsPressed(e))
             {
-                m_actionQueue.Enqueue(Actions.Undo);
+                m_nextAction = Actions.Undo;
             }
             else if (OptionsKeymapping.redo.IsPressed(e))
             {
-                m_actionQueue.Enqueue(Actions.Redo);
+                m_nextAction = Actions.Redo;
             }
             else if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
             {
@@ -545,18 +711,34 @@ namespace MoveIt
 
                 if (direction != Vector3.zero)
                 {
-                    direction.x = direction.x * 0.263671875f;
-                    direction.y = direction.y * 0.015625f;
-                    direction.z = direction.z * 0.263671875f;
+                    lock (m_moves)
+                    {
+                        if (m_moves[m_moveCurrent].hasRotated)
+                        {
+                            NewMove();
+                        }
 
-                    m_moves[m_moveCurrent].moveDelta = m_moves[m_moveCurrent].moveDelta + direction;
-                    m_actionQueue.Enqueue(Actions.Move);
+                        direction.x = direction.x * 0.263671875f;
+                        direction.y = direction.y * 0.015625f;
+                        direction.z = direction.z * 0.263671875f;
+
+                        m_moves[m_moveCurrent].moveDelta = m_moves[m_moveCurrent].moveDelta + direction;
+                        m_nextAction = Actions.Move;
+                    }
                 }
 
                 if (angle != 0)
                 {
-                    m_moves[m_moveCurrent].angleDelta = (ushort)(m_moves[m_moveCurrent].angleDelta + angle);
-                    m_actionQueue.Enqueue(Actions.Rotate);
+                    lock (m_moves)
+                    {
+                        if (m_moves[m_moveCurrent].hasMoved)
+                        {
+                            NewMove();
+                        }
+
+                        m_moves[m_moveCurrent].angleDelta = (ushort)(m_moves[m_moveCurrent].angleDelta + angle);
+                        m_nextAction = Actions.Rotate;
+                    }
                 }
             }
         }
