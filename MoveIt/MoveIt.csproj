@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ModInfo.cs" />
     <Compile Include="DebugUtils.cs" />
+    <Compile Include="Moveable.cs" />
     <Compile Include="MoveIt.cs" />
     <Compile Include="OptionsKeymapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

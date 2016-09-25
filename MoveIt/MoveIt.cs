@@ -2,7 +2,7 @@
 using UnityEngine;
 
 using System;
-using System.Threading;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using ColossalFramework;
@@ -36,303 +36,27 @@ namespace MoveIt
 
     public class MoveItTool : ToolBase
     {
+        public const string settingsFileName = "MoveItTool";
+
         public static MoveItTool instance;
+        public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
 
         private static Color m_hoverColor = new Color32(0, 181, 255, 255);
         private static Color m_selectedColor = new Color32(95, 166, 0, 244);
 
-        public const string settingsFileName = "MoveItTool";
-
-        public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
-
-        private class Moveable
-        {
-            public InstanceID id;
-            private Vector3 m_startPosition;
-            private float m_startAngle;
-            private Vector3[] m_startNodeDirections;
-
-            public List<Moveable> subInstances;
-
-            public Vector3 position
-            {
-                get
-                {
-                    switch (id.Type)
-                    {
-                        case InstanceType.Building:
-                            {
-                                return BuildingManager.instance.m_buildings.m_buffer[id.Building].m_position;
-                            }
-                        case InstanceType.Prop:
-                            {
-                                return PropManager.instance.m_props.m_buffer[id.Prop].Position;
-                            }
-                        case InstanceType.Tree:
-                            {
-                                return TreeManager.instance.m_trees.m_buffer[id.Tree].Position;
-                            }
-                        case InstanceType.NetNode:
-                            {
-                                return NetManager.instance.m_nodes.m_buffer[id.NetNode].m_position;
-                            }
-                    }
-
-                    return Vector3.zero;
-                }
-            }
-
-            public Moveable(InstanceID instance)
-            {
-                id = instance;
-
-                switch (id.Type)
-                {
-                    case InstanceType.Building:
-                        {
-                            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-                            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-
-                            m_startPosition = buildingBuffer[id.Building].m_position;
-                            m_startAngle = buildingBuffer[id.Building].m_angle;
-
-                            subInstances = new List<Moveable>();
-
-                            ushort node = buildingBuffer[id.Building].m_netNode;
-                            while (node != 0)
-                            {
-                                if ((nodeBuffer[node].m_flags & NetNode.Flags.Fixed) == NetNode.Flags.None)
-                                {
-                                    InstanceID nodeID = default(InstanceID);
-                                    nodeID.NetNode = node;
-                                    subInstances.Add(new Moveable(nodeID));
-                                }
-
-                                node = nodeBuffer[node].m_nextBuildingNode;
-                            }
-
-                            ushort building = buildingBuffer[id.Building].m_subBuilding;
-                            while (building != 0)
-                            {
-                                Moveable subBuilding = new Moveable(InstanceID.Empty);
-                                subBuilding.id.Building = building;
-                                subBuilding.m_startPosition = buildingBuffer[building].m_position;
-                                subBuilding.m_startAngle = buildingBuffer[building].m_angle;
-                                subInstances.Add(subBuilding);
-
-                                building = buildingBuffer[building].m_subBuilding;
-                            }
-
-                            if (subInstances.Count == 0)
-                            {
-                                subInstances = null;
-                            }
-                            break;
-                        }
-                    case InstanceType.Prop:
-                        {
-                            m_startPosition = PropManager.instance.m_props.m_buffer[id.Prop].Position;
-                            m_startAngle = PropManager.instance.m_props.m_buffer[id.Prop].m_angle;
-                            break;
-                        }
-                    case InstanceType.Tree:
-                        {
-                            m_startPosition = TreeManager.instance.m_trees.m_buffer[id.Tree].Position;
-                            break;
-                        }
-                    case InstanceType.NetNode:
-                        {
-                            NetManager netManager = NetManager.instance;
-
-                            m_startPosition = netManager.m_nodes.m_buffer[id.NetNode].m_position;
-
-                            m_startNodeDirections = new Vector3[8];
-                            for (int i = 0; i < 8; i++)
-                            {
-                                ushort segment = netManager.m_nodes.m_buffer[id.NetNode].GetSegment(i);
-                                if (segment != 0)
-                                {
-                                    m_startNodeDirections[i] = netManager.m_segments.m_buffer[segment].GetDirection(id.NetNode);
-                                }
-                            }
-
-                            break;
-                        }
-                }
-            }
-
-            private void RelocateBuilding(ushort building, ref Building data, Vector3 position, float angle)
-            {
-                BuildingManager buildingManager = BuildingManager.instance;
-
-                BuildingInfo info = data.Info;
-                RemoveFromGrid(building, ref data);
-                data.UpdateBuilding(building);
-                buildingManager.UpdateBuildingRenderer(building, true);
-                if (info.m_hasParkingSpaces)
-                {
-                    buildingManager.UpdateParkingSpaces(building, ref data);
-                }
-                data.m_position = position;
-                data.m_angle = angle;
-
-                AddToGrid(building, ref data);
-                data.CalculateBuilding(building);
-                data.UpdateBuilding(building);
-                buildingManager.UpdateBuildingRenderer(building, true);
-            }
-
-            public void Transform(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
-            {
-                float fAngle = deltaAngle * 9.58738E-05f;
-
-                Matrix4x4 matrix4x = default(Matrix4x4);
-                matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
-
-                switch (id.Type)
-                {
-                    case InstanceType.Building:
-                        {
-                            BuildingManager buildingManager = BuildingManager.instance;
-                            NetManager netManager = NetManager.instance;
-                            ushort building = id.Building;
-
-                            RelocateBuilding(building, ref buildingManager.m_buildings.m_buffer[building], newPosition, m_startAngle + fAngle);
-
-                            if (subInstances != null)
-                            {
-                                matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                                foreach (Moveable subInstance in subInstances)
-                                {
-                                    Vector3 subPosition = subInstance.m_startPosition - m_startPosition;
-                                    subPosition = matrix4x.MultiplyPoint(subPosition);
-
-                                    subInstance.Move(subPosition, deltaAngle);
-                                }
-                            }
-
-                            break;
-                        }
-                    case InstanceType.Prop:
-                        {
-                            PropManager.instance.m_props.m_buffer[id.Prop].m_angle = (ushort)((ushort)m_startAngle + deltaAngle);
-                            PropManager.instance.MoveProp(id.Prop, newPosition);
-                            break;
-                        }
-                    case InstanceType.Tree:
-                        {
-                            TreeManager.instance.MoveTree(id.Tree, newPosition);
-                            break;
-                        }
-                    case InstanceType.NetNode:
-                        {
-                            NetManager netManager = NetManager.instance;
-                            ushort node = id.NetNode;
-
-                            float netAngle = deltaAngle * 9.58738E-05f;
-
-                            matrix4x.SetTRS(m_startPosition, Quaternion.AngleAxis(netAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                            for (int i = 0; i < 8; i++)
-                            {
-                                ushort segment = netManager.m_nodes.m_buffer[node].GetSegment(i);
-                                if (segment != 0)
-                                {
-                                    Vector3 newDirection = matrix4x.MultiplyVector(m_startNodeDirections[i]);
-
-                                    if (netManager.m_segments.m_buffer[segment].m_startNode == node)
-                                    {
-                                        netManager.m_segments.m_buffer[segment].m_startDirection = newDirection;
-                                    }
-                                    else
-                                    {
-                                        netManager.m_segments.m_buffer[segment].m_endDirection = newDirection;
-                                    }
-                                }
-                            }
-                            netManager.MoveNode(node, newPosition);
-                            break;
-                        }
-                }
-            }
-
-            private void Move(Vector3 location, ushort delta)
-            {
-                switch (id.Type)
-                {
-                    case InstanceType.Building:
-                        {
-                            BuildingManager buildingManager = BuildingManager.instance;
-                            ushort building = id.Building;
-
-                            RelocateBuilding(building, ref buildingManager.m_buildings.m_buffer[building], location, m_startAngle + delta * 9.58738E-05f);
-                            break;
-                        }
-                    case InstanceType.Prop:
-                        {
-                            PropManager.instance.m_props.m_buffer[id.Prop].m_angle = (ushort)((ushort)m_startAngle + delta);
-                            PropManager.instance.MoveProp(id.Prop, location);
-                            break;
-                        }
-                    case InstanceType.Tree:
-                        {
-                            TreeManager.instance.MoveTree(id.Tree, location);
-                            break;
-                        }
-                    case InstanceType.NetNode:
-                        {
-                            NetManager netManager = NetManager.instance;
-
-                            float netAngle = delta * 9.58738E-05f;
-
-                            Matrix4x4 matrix4x = default(Matrix4x4);
-                            matrix4x.SetTRS(m_startPosition, Quaternion.AngleAxis(netAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                            for (int i = 0; i < 8; i++)
-                            {
-                                ushort segment = netManager.m_nodes.m_buffer[id.NetNode].GetSegment(i);
-                                if (segment != 0)
-                                {
-                                    Vector3 newDirection = matrix4x.MultiplyVector(m_startNodeDirections[i]);
-
-                                    if (netManager.m_segments.m_buffer[segment].m_startNode == id.NetNode)
-                                    {
-                                        netManager.m_segments.m_buffer[segment].m_startDirection = newDirection;
-                                    }
-                                    else
-                                    {
-                                        netManager.m_segments.m_buffer[segment].m_endDirection = newDirection;
-                                    }
-                                }
-                            }
-
-                            NetManager.instance.MoveNode(id.NetNode, location);
-                            break;
-                        }
-                }
-            }
-
-            public override bool Equals(object obj)
-            {
-                Moveable instance = obj as Moveable;
-                if (instance != null)
-                {
-                    return instance.id == id;
-                }
-
-                return base.Equals(obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return id.GetHashCode();
-            }
-        }
-
         private Moveable m_hoverInstance;
+        private ToolBase m_prevTool;
+        private UIMoveItButton m_button;
+        private Stopwatch m_stopWatch = new Stopwatch();
+
+        private bool m_mouseDragging = false;
+        private Vector3 m_startPosition;
+        private Vector3 m_mouseStartPosition;
+
+        private bool m_mouseRotating = false;
+        private float m_mouseStartX;
+        private ushort m_startAngle;
+
 
         private struct MoveStep
         {
@@ -365,9 +89,12 @@ namespace MoveIt
 
         private Actions m_nextAction = Actions.None;
 
-        private UIMoveItButton m_button;
+        protected override void Awake()
+        {
+            m_toolController = GameObject.FindObjectOfType<ToolController>();
 
-        private ToolBase m_prevTool;
+            m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
+        }
 
         protected override void OnEnable()
         {
@@ -385,84 +112,105 @@ namespace MoveIt
             m_prevTool = null;
         }
 
-        protected override void Awake()
-        {
-            m_toolController = GameObject.FindObjectOfType<ToolController>();
-
-            m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
-        }
-
         protected override void OnToolUpdate()
         {
             if (!this.m_toolController.IsInsideUI && Cursor.visible)
             {
-                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                RaycastOutput output;
-
-                input.m_ignoreTerrain = true;
-
-                input.m_ignoreSegmentFlags = NetSegment.Flags.None;
-                input.m_ignoreBuildingFlags = Building.Flags.None;
-                input.m_ignorePropFlags = PropInstance.Flags.None;
-                input.m_ignoreTreeFlags = TreeInstance.Flags.None;
-
-                m_hoverInstance = null;
-
-                if (ToolBase.RayCast(input, out output))
+                lock (m_moves)
                 {
-                    InstanceID id = default(InstanceID);
+                    Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+                    RaycastOutput output;
 
-                    if (output.m_netSegment != 0)
+                    input.m_ignoreTerrain = true;
+
+                    input.m_ignoreSegmentFlags = NetSegment.Flags.None;
+                    input.m_ignoreBuildingFlags = Building.Flags.None;
+                    input.m_ignorePropFlags = PropInstance.Flags.None;
+                    input.m_ignoreTreeFlags = TreeInstance.Flags.None;
+
+                    m_hoverInstance = null;
+
+                    if (ToolBase.RayCast(input, out output))
                     {
-                        NetManager netManager = NetManager.instance;
+                        InstanceID id = default(InstanceID);
 
-                        ushort building = NetSegment.FindOwnerBuilding(output.m_netSegment, 363f);
-
-                        if (building != 0)
+                        if (output.m_netSegment != 0)
                         {
-                            id.Building = building;
+                            NetManager netManager = NetManager.instance;
+
+                            ushort building = NetSegment.FindOwnerBuilding(output.m_netSegment, 363f);
+
+                            if (building != 0)
+                            {
+                                id.Building = building;
+                                m_hoverInstance = new Moveable(id);
+                            }
+                            else
+                            {
+                                NetSegment netSegment = netManager.m_segments.m_buffer[output.m_netSegment];
+                                NetNode startNode = netManager.m_nodes.m_buffer[netSegment.m_startNode];
+                                NetNode endNode = netManager.m_nodes.m_buffer[netSegment.m_endNode];
+
+                                if (startNode.m_bounds.IntersectRay(mouseRay))
+                                {
+                                    id.NetNode = netSegment.m_startNode;
+                                    m_hoverInstance = new Moveable(id);
+                                }
+                                else if (endNode.m_bounds.IntersectRay(mouseRay))
+                                {
+                                    id.NetNode = netSegment.m_endNode;
+                                    m_hoverInstance = new Moveable(id);
+                                }
+                            }
+                        }
+                        else if (output.m_building != 0)
+                        {
+                            id.Building = Building.FindParentBuilding(output.m_building);
+                            if (id.Building == 0) id.Building = output.m_building;
                             m_hoverInstance = new Moveable(id);
                         }
-                        else
+                        else if (output.m_propInstance != 0)
                         {
-                            NetSegment netSegment = netManager.m_segments.m_buffer[output.m_netSegment];
-                            NetNode startNode = netManager.m_nodes.m_buffer[netSegment.m_startNode];
-                            NetNode endNode = netManager.m_nodes.m_buffer[netSegment.m_endNode];
-
-                            if (startNode.m_bounds.IntersectRay(mouseRay))
-                            {
-                                id.NetNode = netSegment.m_startNode;
-                                m_hoverInstance = new Moveable(id);
-                            }
-                            else if (endNode.m_bounds.IntersectRay(mouseRay))
-                            {
-                                id.NetNode = netSegment.m_endNode;
-                                m_hoverInstance = new Moveable(id);
-                            }
+                            id.Prop = output.m_propInstance;
+                            m_hoverInstance = new Moveable(id);
+                        }
+                        else if (output.m_treeInstance != 0u)
+                        {
+                            id.Tree = output.m_treeInstance;
+                            m_hoverInstance = new Moveable(id);
                         }
                     }
-                    else if (output.m_building != 0)
-                    {
-                        id.Building = Building.FindParentBuilding(output.m_building);
-                        if (id.Building == 0) id.Building = output.m_building;
-                        m_hoverInstance = new Moveable(id);
-                    }
-                    else if (output.m_propInstance != 0)
-                    {
-                        id.Prop = output.m_propInstance;
-                        m_hoverInstance = new Moveable(id);
-                    }
-                    else if (output.m_treeInstance != 0u)
-                    {
-                        id.Tree = output.m_treeInstance;
-                        m_hoverInstance = new Moveable(id);
-                    }
-                }
 
-                if (Input.GetMouseButtonUp(0) && m_hoverInstance != null)
-                {
-                    lock (m_moves)
+
+                    if (m_nextAction == Actions.None && m_mouseRotating)
+                    {
+                        if (m_moveCurrent != -1)
+                        {
+                            m_moves[m_moveCurrent].angleDelta = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
+                            m_nextAction = Actions.Transform;
+                        }
+                    }
+                    else if (m_nextAction == Actions.None && m_mouseDragging)
+                    {
+                        input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+                        input.m_ignoreTerrain = false;
+                        ToolBase.RayCast(input, out output);
+
+                        if (m_moveCurrent != -1)
+                        {
+                            m_moves[m_moveCurrent].moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
+                            m_moves[m_moveCurrent].moveDelta.y = 0;
+                            m_nextAction = Actions.Transform;
+                        }
+                    }
+
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        m_mouseDragging = false;
+                    }
+
+                    if (Input.GetMouseButtonDown(0) && m_hoverInstance != null)
                     {
                         if (m_moveCurrent == -1)
                         {
@@ -504,31 +252,52 @@ namespace MoveIt
                         }
                         else
                         {
-                            if (m_moves[m_moveCurrent].hasMoved)
+
+                            if (!m_moves[m_moveCurrent].instances.Contains(m_hoverInstance))
                             {
-                                NextMove();
+                                if (m_moves[m_moveCurrent].hasMoved)
+                                {
+                                    NextMove();
+                                }
+
+                                m_moves[m_moveCurrent].instances.Clear();
+                                m_moves[m_moveCurrent].instances.Add(m_hoverInstance);
+                                m_moves[m_moveCurrent].center = GetTotalBounds().center;
                             }
 
-                            m_moves[m_moveCurrent].instances.Clear();
-                            m_moves[m_moveCurrent].instances.Add(m_hoverInstance);
-                            m_moves[m_moveCurrent].center = GetTotalBounds().center;
+                            input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+                            input.m_ignoreTerrain = false;
+                            ToolBase.RayCast(input, out output);
+
+                            m_mouseStartPosition = output.m_hitPos;
+                            m_startPosition = m_moves[m_moveCurrent].moveDelta;
+                            m_mouseDragging = true;
                         }
                     }
-                }
-                else if (Input.GetMouseButtonUp(1))
-                {
-                    //enabled = false;
-                    lock (m_moves)
+
+                    if (Input.GetMouseButtonDown(1) && m_moveCurrent != -1)
                     {
-                        if (m_moveCurrent != -1)
+                        m_mouseRotating = true;
+                        m_mouseStartX = Input.mousePosition.x;
+                        m_startAngle = m_moves[m_moveCurrent].angleDelta;
+                    }
+
+                    if (Input.GetMouseButtonUp(1))
+                    {
+                        m_mouseRotating = false;
+
+                        if (Input.mousePosition.x - m_mouseStartX == 0)
                         {
-                            if (m_moves[m_moveCurrent].hasMoved)
+                            if (m_moveCurrent != -1)
                             {
-                                NextMove();
-                            }
-                            else
-                            {
-                                m_moves[m_moveCurrent].instances.Clear();
+                                if (m_moves[m_moveCurrent].hasMoved)
+                                {
+                                    NextMove();
+                                }
+                                else
+                                {
+                                    m_moves[m_moveCurrent].instances.Clear();
+                                }
                             }
                         }
                     }
@@ -536,18 +305,113 @@ namespace MoveIt
             }
         }
 
-        private void NextMove()
+        protected override void OnToolGUI(Event e)
         {
-            m_moveCurrent = (m_moveCurrent + 1) % m_moves.Length;
-            m_moveHead = m_moveCurrent;
-            if (m_moveTail == m_moveHead)
+            if (m_nextAction != Actions.None)
             {
-                m_moveTail = (m_moveTail + 1) % m_moves.Length;
+                return;
             }
 
-            m_moves[m_moveCurrent].instances = new List<Moveable>();
-            m_moves[m_moveCurrent].moveDelta = Vector3.zero;
-            m_moves[m_moveCurrent].angleDelta = 0;
+            if (OptionsKeymapping.undo.IsPressed(e))
+            {
+                m_nextAction = Actions.Undo;
+            }
+            else if (OptionsKeymapping.redo.IsPressed(e))
+            {
+                m_nextAction = Actions.Redo;
+            }
+            else if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
+            {
+                Vector3 direction = Vector3.zero;
+                int angle = 0;
+
+                float magnitude = 5f;
+                if (e.shift) magnitude = magnitude * 5f;
+                if (e.alt) magnitude = magnitude / 5f;
+
+
+                if (IsKeyDown(OptionsKeymapping.moveXpos, e))
+                {
+                    direction.x = direction.x + magnitude;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.moveXneg, e))
+                {
+                    direction.x = direction.x - magnitude;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.moveYpos, e))
+                {
+                    direction.y = direction.y + magnitude;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.moveYneg, e))
+                {
+                    direction.y = direction.y - magnitude;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.moveZpos, e))
+                {
+                    direction.z = direction.z + magnitude;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.moveZneg, e))
+                {
+                    direction.z = direction.z - magnitude;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.turnPos, e))
+                {
+                    angle = angle - (int)magnitude * 20;
+                }
+
+                if (IsKeyDown(OptionsKeymapping.turnNeg, e))
+                {
+                    angle = angle + (int)magnitude * 20;
+                }
+
+                if (direction != Vector3.zero || angle != 0)
+                {
+                    if (!m_stopWatch.IsRunning || m_stopWatch.ElapsedMilliseconds >= 250)
+                    {
+                        if (m_stopWatch.IsRunning)
+                        {
+                            m_stopWatch.Stop();
+                        }
+                        else if (m_stopWatch.ElapsedMilliseconds < 250)
+                        {
+                            m_stopWatch.Start();
+                        }
+
+                        if (direction != Vector3.zero)
+                        {
+                            direction.x = direction.x * 0.263671875f;
+                            direction.y = direction.y * 0.015625f;
+                            direction.z = direction.z * 0.263671875f;
+
+                            if (!useCardinalMoves)
+                            {
+                                Matrix4x4 matrix4x = default(Matrix4x4);
+                                matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);
+
+                                direction = matrix4x.MultiplyVector(direction);
+                            }
+                        }
+
+                        lock (m_moves)
+                        {
+                            m_moves[m_moveCurrent].moveDelta = m_moves[m_moveCurrent].moveDelta + direction;
+                            m_moves[m_moveCurrent].angleDelta = (ushort)(m_moves[m_moveCurrent].angleDelta + angle);
+                        }
+
+                        m_nextAction = Actions.Transform;
+                    }
+                }
+                else
+                {
+                    m_stopWatch.Reset();
+                }
+            }
         }
 
         public override void SimulationStep()
@@ -578,6 +442,34 @@ namespace MoveIt
                 m_nextAction = Actions.None;
             }
         }
+
+        public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
+        {
+            if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
+            {
+                foreach (Moveable instance in m_moves[m_moveCurrent].instances)
+                {
+                    RenderInstanceOverlay(cameraInfo, instance.id, m_selectedColor);
+                }
+
+                Vector3 center = m_moves[m_moveCurrent].center + m_moves[m_moveCurrent].moveDelta;
+
+                center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
+                RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, center.y - 1f, center.y + 1f, true, true);
+
+                if (m_hoverInstance != null && !m_moves[m_moveCurrent].instances.Contains(m_hoverInstance))
+                {
+                    RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
+                }
+            }
+            else if (m_hoverInstance != null)
+            {
+                RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
+            }
+
+            base.RenderOverlay(cameraInfo);
+        }
+
 
         public void Undo()
         {
@@ -643,144 +535,28 @@ namespace MoveIt
             }
         }
 
-        protected override void OnToolGUI(Event e)
+        private void NextMove()
         {
-            if (m_nextAction != Actions.None)
+            m_moveCurrent = (m_moveCurrent + 1) % m_moves.Length;
+            m_moveHead = m_moveCurrent;
+            if (m_moveTail == m_moveHead)
             {
-                return;
+                m_moveTail = (m_moveTail + 1) % m_moves.Length;
             }
 
-            if (OptionsKeymapping.undo.IsPressed(e))
-            {
-                m_nextAction = Actions.Undo;
-            }
-            else if (OptionsKeymapping.redo.IsPressed(e))
-            {
-                m_nextAction = Actions.Redo;
-            }
-            else if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
-            {
-                Vector3 direction = Vector3.zero;
-                int angle = 0;
-
-                float magnitude = 5f;
-                if (e.alt) magnitude = 1f;
-
-                OptionsKeymapping.moveXpos.Alt = e.alt;
-                OptionsKeymapping.moveXneg.Alt = e.alt;
-                OptionsKeymapping.moveYpos.Alt = e.alt;
-                OptionsKeymapping.moveYneg.Alt = e.alt;
-                OptionsKeymapping.moveZpos.Alt = e.alt;
-                OptionsKeymapping.moveZneg.Alt = e.alt;
-                OptionsKeymapping.turnPos.Alt = e.alt;
-                OptionsKeymapping.turnNeg.Alt = e.alt;
-
-                if (OptionsKeymapping.moveXpos.IsPressed(e))
-                {
-                    direction.x = direction.x + magnitude;
-                }
-
-                if (OptionsKeymapping.moveXneg.IsPressed(e))
-                {
-                    direction.x = direction.x - magnitude;
-                }
-
-                if (OptionsKeymapping.moveYpos.IsPressed(e))
-                {
-                    direction.y = direction.y + magnitude;
-                }
-
-                if (OptionsKeymapping.moveYneg.IsPressed(e))
-                {
-                    direction.y = direction.y - magnitude;
-                }
-
-                if (OptionsKeymapping.moveZpos.IsPressed(e))
-                {
-                    direction.z = direction.z + magnitude;
-                }
-
-                if (OptionsKeymapping.moveZneg.IsPressed(e))
-                {
-                    direction.z = direction.z - magnitude;
-                }
-
-                if (OptionsKeymapping.turnPos.IsPressed(e))
-                {
-                    angle = angle + (int)magnitude * 20;
-                }
-
-                if (OptionsKeymapping.turnNeg.IsPressed(e))
-                {
-                    angle = angle - (int)magnitude * 20;
-                }
-
-                OptionsKeymapping.moveXpos.Alt = false;
-                OptionsKeymapping.moveXneg.Alt = false;
-                OptionsKeymapping.moveYpos.Alt = false;
-                OptionsKeymapping.moveYneg.Alt = false;
-                OptionsKeymapping.moveZpos.Alt = false;
-                OptionsKeymapping.moveZneg.Alt = false;
-                OptionsKeymapping.turnPos.Alt = false;
-                OptionsKeymapping.turnNeg.Alt = false;
-
-                if (direction != Vector3.zero)
-                {
-                    direction.x = direction.x * 0.263671875f;
-                    direction.y = direction.y * 0.015625f;
-                    direction.z = direction.z * 0.263671875f;
-
-                    if (!useCardinalMoves)
-                    {
-                        Matrix4x4 matrix4x = default(Matrix4x4);
-                        matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);
-
-                        direction = matrix4x.MultiplyVector(direction);
-                    }
-
-                    lock (m_moves)
-                    {
-                        m_moves[m_moveCurrent].moveDelta = m_moves[m_moveCurrent].moveDelta + direction;
-                    }
-                    m_nextAction = Actions.Transform;
-                }
-
-                if (angle != 0)
-                {
-                    lock (m_moves)
-                    {
-                        m_moves[m_moveCurrent].angleDelta = (ushort)(m_moves[m_moveCurrent].angleDelta + angle);
-                    }
-                    m_nextAction = Actions.Transform;
-                }
-            }
+            m_moves[m_moveCurrent].instances = new List<Moveable>();
+            m_moves[m_moveCurrent].moveDelta = Vector3.zero;
+            m_moves[m_moveCurrent].angleDelta = 0;
         }
 
-        public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
+        private bool IsKeyDown(SavedInputKey inputKey, Event e)
         {
-            if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
-            {
-                foreach (Moveable instance in m_moves[m_moveCurrent].instances)
-                {
-                    RenderInstanceOverlay(cameraInfo, instance.id, m_selectedColor);
-                }
+            int code = inputKey.value;
+            KeyCode keyCode = (KeyCode)(code & 0xFFFFFFF);
 
-                Vector3 center = m_moves[m_moveCurrent].center + m_moves[m_moveCurrent].moveDelta;
+            bool ctrl = ((code & 0x40000000) != 0);
 
-                center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-                RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, center.y - 1f, center.y + 1f, true, true);
-
-                if (m_hoverInstance != null && !m_moves[m_moveCurrent].instances.Contains(m_hoverInstance))
-                {
-                    RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
-                }
-            }
-            else if (m_hoverInstance != null)
-            {
-                RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
-            }
-
-            base.RenderOverlay(cameraInfo);
+            return Input.GetKey(keyCode) && ctrl == e.control;
         }
 
         private Bounds GetTotalBounds()
@@ -1005,77 +781,6 @@ namespace MoveIt
                         break;
                     }
 
-            }
-        }
-
-        private static void AddToGrid(ushort building, ref Building data)
-        {
-            BuildingManager buildingManager = BuildingManager.instance;
-
-            int num = Mathf.Clamp((int)(data.m_position.x / 64f + 135f), 0, 269);
-            int num2 = Mathf.Clamp((int)(data.m_position.z / 64f + 135f), 0, 269);
-            int num3 = num2 * 270 + num;
-            while (!Monitor.TryEnter(buildingManager.m_buildingGrid, SimulationManager.SYNCHRONIZE_TIMEOUT))
-            {
-            }
-            try
-            {
-                buildingManager.m_buildings.m_buffer[(int)building].m_nextGridBuilding = buildingManager.m_buildingGrid[num3];
-                buildingManager.m_buildingGrid[num3] = building;
-            }
-            finally
-            {
-                Monitor.Exit(buildingManager.m_buildingGrid);
-            }
-        }
-
-        private static void RemoveFromGrid(ushort building, ref Building data)
-        {
-            BuildingManager buildingManager = BuildingManager.instance;
-
-            BuildingInfo info = data.Info;
-            int num = Mathf.Clamp((int)(data.m_position.x / 64f + 135f), 0, 269);
-            int num2 = Mathf.Clamp((int)(data.m_position.z / 64f + 135f), 0, 269);
-            int num3 = num2 * 270 + num;
-            while (!Monitor.TryEnter(buildingManager.m_buildingGrid, SimulationManager.SYNCHRONIZE_TIMEOUT))
-            {
-            }
-            try
-            {
-                ushort num4 = 0;
-                ushort num5 = buildingManager.m_buildingGrid[num3];
-                int num6 = 0;
-                while (num5 != 0)
-                {
-                    if (num5 == building)
-                    {
-                        if (num4 == 0)
-                        {
-                            buildingManager.m_buildingGrid[num3] = data.m_nextGridBuilding;
-                        }
-                        else
-                        {
-                            buildingManager.m_buildings.m_buffer[(int)num4].m_nextGridBuilding = data.m_nextGridBuilding;
-                        }
-                        break;
-                    }
-                    num4 = num5;
-                    num5 = buildingManager.m_buildings.m_buffer[(int)num5].m_nextGridBuilding;
-                    if (++num6 > 49152)
-                    {
-                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                        break;
-                    }
-                }
-                data.m_nextGridBuilding = 0;
-            }
-            finally
-            {
-                Monitor.Exit(buildingManager.m_buildingGrid);
-            }
-            if (info != null)
-            {
-                Singleton<RenderManager>.instance.UpdateGroup(num * 45 / 270, num2 * 45 / 270, info.m_prefabDataLayer);
             }
         }
     }

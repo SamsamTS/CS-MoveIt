@@ -43,8 +43,8 @@ namespace MoveIt
             AddKeymapping("Move West", moveXneg);
             AddKeymapping("Move Up", moveYpos);
             AddKeymapping("Move Down", moveYneg);
-            AddKeymapping("Rotate Clockwise", turnNeg);
-            AddKeymapping("Rotate Counterclockwise", turnPos);
+            AddKeymapping("Rotate Counterclockwise", turnNeg);
+            AddKeymapping("Rotate Clockwise", turnPos);
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
         }
