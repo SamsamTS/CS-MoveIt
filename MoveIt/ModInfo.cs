@@ -33,7 +33,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "1.0.3";
+        public const string version = "1.0.4";
 
         public void OnSettingsUI(UIHelperBase helper)
         {
@@ -41,6 +41,15 @@ namespace MoveIt
             {
                 UIHelper group = helper.AddGroup(Name) as UIHelper;
                 UIPanel panel = group.self as UIPanel;
+
+
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
+                {
+                    MoveItTool.useCardinalMoves.value = b;
+                });
+                checkBox.tooltip = "If checked, Up will move in the North direction, Down is South, Left is West, Right is East.\n";
+
+                group.AddSpace(10);
 
                 panel.gameObject.AddComponent<OptionsKeymapping>();
 
