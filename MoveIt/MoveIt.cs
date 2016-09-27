@@ -47,13 +47,34 @@ namespace MoveIt
         private Moveable m_hoverInstance;
         private ToolBase m_prevTool;
         private UIMoveItButton m_button;
-        private Stopwatch m_stopWatch = new Stopwatch();
 
-        private bool m_mouseDragging = false;
+        private long m_keyTime;
+        private long m_rightClickTime;
+        private long m_leftClickTime;
+        private long m_stopWatchfrequency = Stopwatch.Frequency / 1000;
+
+        private long ElapsedMilliseconds(long startTime)
+        {
+            long endTime = Stopwatch.GetTimestamp();
+            long elapsed;
+
+            if(endTime > startTime)
+            {
+                elapsed = endTime - startTime;
+            }
+            else
+            {
+                elapsed = startTime - endTime;
+            }
+
+            return elapsed / m_stopWatchfrequency;
+        }
+
+        //private bool m_mouseDragging = false;
         private Vector3 m_startPosition;
         private Vector3 m_mouseStartPosition;
 
-        private bool m_mouseRotating = false;
+        //private bool m_mouseRotating = false;
         private float m_mouseStartX;
         private ushort m_startAngle;
 
@@ -182,32 +203,34 @@ namespace MoveIt
                         }
                     }
 
-
-                    if (m_nextAction == Actions.None && m_mouseRotating)
+                    if (m_nextAction == Actions.None)
                     {
-                        if (m_moveCurrent != -1)
+                        if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) > 200)
                         {
-                            m_moves[m_moveCurrent].angleDelta = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
-                            m_nextAction = Actions.Transform;
+                            if (m_moveCurrent != -1)
+                            {
+                                m_moves[m_moveCurrent].angleDelta = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
+                                m_nextAction = Actions.Transform;
+                            }
                         }
-                    }
-                    else if (m_nextAction == Actions.None && m_mouseDragging)
-                    {
-                        input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                        input.m_ignoreTerrain = false;
-                        ToolBase.RayCast(input, out output);
-
-                        if (m_moveCurrent != -1)
+                        else if (m_leftClickTime != 0 && ElapsedMilliseconds(m_leftClickTime) > 200)
                         {
-                            m_moves[m_moveCurrent].moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
-                            m_moves[m_moveCurrent].moveDelta.y = 0;
-                            m_nextAction = Actions.Transform;
+                            input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+                            input.m_ignoreTerrain = false;
+                            ToolBase.RayCast(input, out output);
+
+                            if (m_moveCurrent != -1)
+                            {
+                                m_moves[m_moveCurrent].moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
+                                m_moves[m_moveCurrent].moveDelta.y = 0;
+                                m_nextAction = Actions.Transform;
+                            }
                         }
                     }
 
                     if (Input.GetMouseButtonUp(0))
                     {
-                        m_mouseDragging = false;
+                        m_leftClickTime = 0;
                     }
 
                     if (Input.GetMouseButtonDown(0) && m_hoverInstance != null)
@@ -271,20 +294,20 @@ namespace MoveIt
 
                             m_mouseStartPosition = output.m_hitPos;
                             m_startPosition = m_moves[m_moveCurrent].moveDelta;
-                            m_mouseDragging = true;
+                            m_leftClickTime = Stopwatch.GetTimestamp();
                         }
                     }
 
                     if (Input.GetMouseButtonDown(1) && m_moveCurrent != -1)
                     {
-                        m_mouseRotating = true;
+                        m_rightClickTime = Stopwatch.GetTimestamp();
                         m_mouseStartX = Input.mousePosition.x;
                         m_startAngle = m_moves[m_moveCurrent].angleDelta;
                     }
 
                     if (Input.GetMouseButtonUp(1))
                     {
-                        m_mouseRotating = false;
+                        m_rightClickTime = 0;
 
                         if (Input.mousePosition.x - m_mouseStartX == 0)
                         {
@@ -372,17 +395,20 @@ namespace MoveIt
 
                 if (direction != Vector3.zero || angle != 0)
                 {
-                    if (!m_stopWatch.IsRunning || m_stopWatch.ElapsedMilliseconds >= 250)
-                    {
-                        if (m_stopWatch.IsRunning)
-                        {
-                            m_stopWatch.Stop();
-                        }
-                        else if (m_stopWatch.ElapsedMilliseconds < 250)
-                        {
-                            m_stopWatch.Start();
-                        }
+                    bool shouldMove = false;
 
+                    if (m_keyTime == 0)
+                    {
+                        m_keyTime = Stopwatch.GetTimestamp();
+                        shouldMove = true;
+                    }
+                    else if(ElapsedMilliseconds(m_keyTime) >= 250)
+                    {
+                        shouldMove = true;
+                    }
+
+                    if (shouldMove)
+                    {
                         if (direction != Vector3.zero)
                         {
                             direction.x = direction.x * 0.263671875f;
@@ -406,10 +432,11 @@ namespace MoveIt
 
                         m_nextAction = Actions.Transform;
                     }
+
                 }
                 else
                 {
-                    m_stopWatch.Reset();
+                    m_keyTime = 0;
                 }
             }
         }
