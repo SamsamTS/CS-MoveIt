@@ -39,6 +39,7 @@ namespace MoveIt
         public const string settingsFileName = "MoveItTool";
 
         public static MoveItTool instance;
+        public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
 
         private static Color m_hoverColor = new Color32(0, 181, 255, 255);
@@ -58,7 +59,7 @@ namespace MoveIt
             long endTime = Stopwatch.GetTimestamp();
             long elapsed;
 
-            if(endTime > startTime)
+            if (endTime > startTime)
             {
                 elapsed = endTime - startTime;
             }
@@ -119,6 +120,12 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
+            if (!MoveItTool.hideTips && UITipsWindow.instance != null)
+            {
+                UITipsWindow.instance.isVisible = true;
+                UITipsWindow.instance.NextTip();
+            }
+
             m_prevTool = m_toolController.CurrentTool;
             base.OnEnable();
         }
@@ -126,6 +133,11 @@ namespace MoveIt
         protected override void OnDisable()
         {
             base.OnDisable();
+
+            if (UITipsWindow.instance != null)
+            {
+                UITipsWindow.instance.isVisible = false;
+            }
 
             if (m_toolController.NextTool == null && m_prevTool != null)
                 m_prevTool.enabled = true;
@@ -402,7 +414,7 @@ namespace MoveIt
                         m_keyTime = Stopwatch.GetTimestamp();
                         shouldMove = true;
                     }
-                    else if(ElapsedMilliseconds(m_keyTime) >= 250)
+                    else if (ElapsedMilliseconds(m_keyTime) >= 250)
                     {
                         shouldMove = true;
                     }

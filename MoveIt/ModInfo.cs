@@ -33,7 +33,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "1.1.1";
+        public const string version = "1.1.2";
 
         public void OnSettingsUI(UIHelperBase helper)
         {
@@ -42,8 +42,17 @@ namespace MoveIt
                 UIHelper group = helper.AddGroup(Name) as UIHelper;
                 UIPanel panel = group.self as UIPanel;
 
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
+                {
+                    MoveItTool.hideTips.value = b;
+                    if (UITipsWindow.instance != null)
+                    {
+                        UITipsWindow.instance.isVisible = false;
+                    }
+                });
+                checkBox.tooltip = "Check this if you don't want to see the tips.\n";
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;
                 });

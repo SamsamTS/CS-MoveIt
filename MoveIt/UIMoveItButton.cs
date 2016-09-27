@@ -10,11 +10,21 @@ namespace MoveIt
         public static readonly SavedInt savedX = new SavedInt("savedX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt savedY = new SavedInt("savedY", MoveItTool.settingsFileName, -1000, true);
 
+        private UITipsWindow m_tipsWindow;
+
         public override void Start()
         {
             LoadResources();
 
-            UIComponent bulldoserButton = UIView.GetAView().FindUIComponent<UIComponent>("BulldozerButton");
+            m_tipsWindow = GetUIView().AddUIComponent(typeof(UITipsWindow)) as UITipsWindow;
+            m_tipsWindow.isVisible = false;
+
+            UIComponent bulldoserButton = GetUIView().FindUIComponent<UIComponent>("MarqueeBulldozer");
+
+            if (bulldoserButton == null)
+            {
+                bulldoserButton = GetUIView().FindUIComponent<UIComponent>("BulldozerButton");
+            }
 
             name = "MoveIt";
             tooltip = "Move It! " + ModInfo.version;
@@ -22,11 +32,13 @@ namespace MoveIt
             normalFgSprite = "MoveIt";
             hoveredFgSprite = "MoveIt_hover";
 
-            size = bulldoserButton.size;
+            playAudioEvents = true;
+
+            size = new Vector2(43, 49);
 
             if (savedX.value == -1000)
             {
-                absolutePosition = new Vector2(bulldoserButton.absolutePosition.x - bulldoserButton.width, bulldoserButton.absolutePosition.y);
+                absolutePosition = new Vector2(bulldoserButton.absolutePosition.x - width - 5, bulldoserButton.parent.absolutePosition.y);
             }
             else
             {
@@ -40,8 +52,6 @@ namespace MoveIt
             {
                 MoveItTool.instance.enabled = !MoveItTool.instance.enabled;
             }
-
-            base.OnClick(p);
         }
 
         private Vector3 m_deltaPos;
@@ -55,7 +65,6 @@ namespace MoveIt
                 m_deltaPos = absolutePosition - mousePos;
                 BringToFront();
             }
-            base.OnMouseDown(p);
         }
 
 
@@ -70,7 +79,6 @@ namespace MoveIt
                 savedX.value = (int)absolutePosition.x;
                 savedY.value = (int)absolutePosition.y;
             }
-            base.OnMouseDown(p);
         }
 
         public override void Update()
@@ -83,15 +91,13 @@ namespace MoveIt
             {
                 normalFgSprite = "MoveIt";
             }
-
-            base.Update();
         }
 
         public void OnGUI()
         {
             if (OptionsKeymapping.toggleTool.IsPressed(Event.current))
             {
-                MoveItTool.instance.enabled = !MoveItTool.instance.enabled;
+                SimulateClick();
             }
         }
 
