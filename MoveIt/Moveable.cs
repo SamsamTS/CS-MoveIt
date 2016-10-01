@@ -5,6 +5,7 @@ using System.Threading;
 using System.Collections.Generic;
 
 using ColossalFramework;
+using ColossalFramework.Math;
 
 namespace MoveIt
 {
@@ -80,7 +81,8 @@ namespace MoveIt
                         ushort node = buildingBuffer[id.Building].m_netNode;
                         while (node != 0)
                         {
-                            if ((nodeBuffer[node].m_flags & NetNode.Flags.Fixed) == NetNode.Flags.None)
+                            ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
+                            if (layer != ItemClass.Layer.PublicTransport)
                             {
                                 InstanceID nodeID = default(InstanceID);
                                 nodeID.NetNode = node;
@@ -98,6 +100,21 @@ namespace MoveIt
                             subBuilding.m_startPosition = buildingBuffer[building].m_position;
                             subBuilding.m_startAngle = buildingBuffer[building].m_angle;
                             subInstances.Add(subBuilding);
+
+                            node = buildingBuffer[building].m_netNode;
+                            while (node != 0)
+                            {
+                                ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
+
+                                if (layer != ItemClass.Layer.PublicTransport)
+                                {
+                                    InstanceID nodeID = default(InstanceID);
+                                    nodeID.NetNode = node;
+                                    subInstances.Add(new Moveable(nodeID));
+                                }
+
+                                node = nodeBuffer[node].m_nextBuildingNode;
+                            }
 
                             building = buildingBuffer[building].m_subBuilding;
                         }
@@ -163,6 +180,71 @@ namespace MoveIt
                     subInstance.Move(subPosition, deltaAngle);
                 }
             }
+        }
+
+        public Bounds GetBounds()
+        {
+            Bounds bounds = GetBounds(id);
+
+            if (subInstances != null)
+            {
+                foreach (Moveable subInstance in subInstances)
+                {
+                    bounds.Encapsulate(subInstance.GetBounds());
+                }
+            }
+
+            return bounds;
+        }
+
+        private Bounds GetBounds(InstanceID instance)
+        {
+            switch (instance.Type)
+            {
+                case InstanceType.Building:
+                    {
+                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+                        NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+
+                        ushort id = instance.Building;
+                        BuildingInfo info = buildingBuffer[id].Info;
+
+                        float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
+                        Bounds bounds = new Bounds(buildingBuffer[id].m_position, new Vector3(radius, 0, radius));
+
+                        return bounds;
+                    }
+                case InstanceType.Prop:
+                    {
+                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
+                        ushort id = instance.Prop;
+                        PropInfo info = buffer[id].Info;
+
+                        Randomizer randomizer = new Randomizer(id);
+                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+                        float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
+
+                        return new Bounds(buffer[id].Position, new Vector3(radius, 0, radius));
+                    }
+                case InstanceType.Tree:
+                    {
+                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
+                        uint id = instance.Tree;
+                        TreeInfo info = buffer[id].Info;
+
+                        Randomizer randomizer = new Randomizer(id);
+                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+                        float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
+
+                        return new Bounds(buffer[id].Position, new Vector3(radius, 0, radius));
+                    }
+                case InstanceType.NetNode:
+                    {
+                        return NetManager.instance.m_nodes.m_buffer[instance.NetNode].m_bounds;
+                    }
+            }
+
+            return default(Bounds);
         }
 
         private void Move(Vector3 location, ushort deltaAngle)

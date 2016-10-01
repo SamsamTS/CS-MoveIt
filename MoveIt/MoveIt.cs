@@ -161,7 +161,8 @@ namespace MoveIt
 
                             if (building != 0)
                             {
-                                id.Building = building;
+                                id.Building = Building.FindParentBuilding(building);
+                                if (id.Building == 0) id.Building = building;
                                 m_hoverInstance = new Moveable(id);
                             }
                             else
@@ -654,87 +655,16 @@ namespace MoveIt
             {
                 if (init)
                 {
-                    totalBounds.Encapsulate(GetBounds(instance.id));
+                    totalBounds.Encapsulate(instance.GetBounds());
                 }
                 else
                 {
-                    totalBounds = GetBounds(instance.id);
+                    totalBounds = instance.GetBounds();
                     init = true;
                 }
             }
 
             return totalBounds;
-        }
-
-        private Bounds GetBounds(InstanceID instance)
-        {
-            switch (instance.Type)
-            {
-                case InstanceType.Building:
-                    {
-                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-                        NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-
-                        ushort id = instance.Building;
-                        BuildingInfo info = buildingBuffer[id].Info;
-
-                        float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
-                        Bounds bounds = new Bounds(buildingBuffer[id].m_position, new Vector3(radius, 0, radius));
-
-                        ushort node = buildingBuffer[id].m_netNode;
-                        while (node != 0)
-                        {
-                            if ((nodeBuffer[node].m_flags & NetNode.Flags.Fixed) == NetNode.Flags.None)
-                            {
-                                bounds.Encapsulate(nodeBuffer[node].m_bounds);
-                            }
-
-                            node = nodeBuffer[node].m_nextBuildingNode;
-                        }
-
-                        ushort subBuilding = buildingBuffer[id].m_subBuilding;
-                        while (subBuilding != 0)
-                        {
-                            info = buildingBuffer[subBuilding].Info;
-                            radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
-                            bounds.Encapsulate(new Bounds(buildingBuffer[subBuilding].m_position, new Vector3(radius, 0, radius)));
-
-                            subBuilding = buildingBuffer[subBuilding].m_subBuilding;
-                        }
-
-                        return bounds;
-                    }
-                case InstanceType.Prop:
-                    {
-                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
-                        ushort id = instance.Prop;
-                        PropInfo info = buffer[id].Info;
-
-                        Randomizer randomizer = new Randomizer(id);
-                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
-                        float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
-
-                        return new Bounds(buffer[id].Position, new Vector3(radius, 0, radius));
-                    }
-                case InstanceType.Tree:
-                    {
-                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
-                        uint id = instance.Tree;
-                        TreeInfo info = buffer[id].Info;
-
-                        Randomizer randomizer = new Randomizer(id);
-                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
-                        float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
-
-                        return new Bounds(buffer[id].Position, new Vector3(radius, 0, radius));
-                    }
-                case InstanceType.NetNode:
-                    {
-                        return NetManager.instance.m_nodes.m_buffer[instance.NetNode].m_bounds;
-                    }
-            }
-
-            return default(Bounds);
         }
 
         private void RenderInstanceOverlay(RenderManager.CameraInfo cameraInfo, InstanceID id, Color toolColor)
