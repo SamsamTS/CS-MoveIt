@@ -7,7 +7,7 @@ namespace MoveIt
 {
     public class DebugUtils
     {
-        public const string modPrefix = "[MoveIt" + ModInfo.version + "] ";
+        public const string modPrefix = "[MoveIt " + ModInfo.version + "] ";
 
         public static void Message(string message)
         {

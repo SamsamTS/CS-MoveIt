@@ -36,50 +36,6 @@ namespace MoveIt
 
     public class MoveItTool : ToolBase
     {
-        public const string settingsFileName = "MoveItTool";
-
-        public static MoveItTool instance;
-        public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
-        public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
-
-        private static Color m_hoverColor = new Color32(0, 181, 255, 255);
-        private static Color m_selectedColor = new Color32(95, 166, 0, 244);
-
-        private Moveable m_hoverInstance;
-        private ToolBase m_prevTool;
-        private UIMoveItButton m_button;
-
-        private long m_keyTime;
-        private long m_rightClickTime;
-        private long m_leftClickTime;
-        private long m_stopWatchfrequency = Stopwatch.Frequency / 1000;
-
-        private long ElapsedMilliseconds(long startTime)
-        {
-            long endTime = Stopwatch.GetTimestamp();
-            long elapsed;
-
-            if (endTime > startTime)
-            {
-                elapsed = endTime - startTime;
-            }
-            else
-            {
-                elapsed = startTime - endTime;
-            }
-
-            return elapsed / m_stopWatchfrequency;
-        }
-
-        //private bool m_mouseDragging = false;
-        private Vector3 m_startPosition;
-        private Vector3 m_mouseStartPosition;
-
-        //private bool m_mouseRotating = false;
-        private float m_mouseStartX;
-        private ushort m_startAngle;
-
-
         private struct MoveStep
         {
             public List<Moveable> instances;
@@ -96,11 +52,6 @@ namespace MoveIt
             }
         }
 
-        private MoveStep[] m_moves = new MoveStep[50];
-        private int m_moveCurrent = -1;
-        private int m_moveHead = -1;
-        private int m_moveTail = 0;
-
         private enum Actions
         {
             None,
@@ -108,6 +59,38 @@ namespace MoveIt
             Redo,
             Transform
         }
+
+        public const string settingsFileName = "MoveItTool";
+
+        public static MoveItTool instance;
+        public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
+        public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
+
+        public static InfoManager.InfoMode infoMode;
+        public static InfoManager.SubInfoMode subInfoMode;
+
+        private static Color m_hoverColor = new Color32(0, 181, 255, 255);
+        private static Color m_selectedColor = new Color32(95, 166, 0, 244);
+
+        private Moveable m_hoverInstance;
+        private ToolBase m_prevTool;
+        private UIMoveItButton m_button;
+
+        private long m_keyTime;
+        private long m_rightClickTime;
+        private long m_leftClickTime;
+        private long m_stopWatchfrequency = Stopwatch.Frequency / 1000;
+
+        private Vector3 m_startPosition;
+        private Vector3 m_mouseStartPosition;
+
+        private float m_mouseStartX;
+        private ushort m_startAngle;
+
+        private MoveStep[] m_moves = new MoveStep[50];
+        private int m_moveCurrent = -1;
+        private int m_moveHead = -1;
+        private int m_moveTail = 0;
 
         private Actions m_nextAction = Actions.None;
 
@@ -128,12 +111,12 @@ namespace MoveIt
 
             m_prevTool = m_toolController.CurrentTool;
             base.OnEnable();
+
+            InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
         }
 
         protected override void OnDisable()
         {
-            base.OnDisable();
-
             if (UITipsWindow.instance != null)
             {
                 UITipsWindow.instance.isVisible = false;
@@ -143,6 +126,7 @@ namespace MoveIt
                 m_prevTool.enabled = true;
 
             m_prevTool = null;
+            //InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
         }
 
         protected override void OnToolUpdate()
@@ -155,6 +139,7 @@ namespace MoveIt
                     RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
                     RaycastOutput output;
 
+                    input.m_netService.m_itemLayers = (ItemClass.Layer)11;
                     input.m_ignoreTerrain = true;
 
                     input.m_ignoreSegmentFlags = NetSegment.Flags.None;
@@ -522,6 +507,7 @@ namespace MoveIt
                         instance.Transform(Vector3.zero, 0, m_moves[m_moveCurrent].center);
                     }
                     TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    UpdateRender(bounds);
 
                     if (m_moveCurrent == m_moveTail)
                     {
@@ -557,6 +543,7 @@ namespace MoveIt
                         instance.Transform(m_moves[m_moveCurrent].moveDelta, m_moves[m_moveCurrent].angleDelta, m_moves[m_moveCurrent].center);
                     }
                     TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    UpdateRender(bounds);
                 }
             }
         }
@@ -571,6 +558,65 @@ namespace MoveIt
                     instance.Transform(m_moves[m_moveCurrent].moveDelta, m_moves[m_moveCurrent].angleDelta, m_moves[m_moveCurrent].center);
                 }
                 TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                UpdateRender(bounds);
+            }
+        }
+
+
+        private long ElapsedMilliseconds(long startTime)
+        {
+            long endTime = Stopwatch.GetTimestamp();
+            long elapsed;
+
+            if (endTime > startTime)
+            {
+                elapsed = endTime - startTime;
+            }
+            else
+            {
+                elapsed = startTime - endTime;
+            }
+
+            return elapsed / m_stopWatchfrequency;
+        }
+
+        private void UpdateRender(Bounds bounds)
+        {
+            int num1 = Mathf.Clamp((int)(bounds.min.x / 64f + 135f), 0, 269);
+            int num2 = Mathf.Clamp((int)(bounds.min.z / 64f + 135f), 0, 269);
+            int x0 = num1 * 45 / 270 - 1;
+            int z0 = num2 * 45 / 270 - 1;
+
+            num1 = Mathf.Clamp((int)(bounds.max.x / 64f + 135f), 0, 269);
+            num2 = Mathf.Clamp((int)(bounds.max.z / 64f + 135f), 0, 269);
+            int x1 = num1 * 45 / 270 + 1;
+            int z1 = num2 * 45 / 270 + 1;
+
+            RenderManager renderManager = RenderManager.instance;
+            RenderGroup[] renderGroups = renderManager.m_groups;
+
+            for (int i = z0; i < z1; i++)
+            {
+                for (int j = x0; j < x1; j++)
+                {
+                    int n = Mathf.Clamp(i * 45 + j, 0, renderGroups.Length - 1);
+
+                    if (n < 0)
+                    {
+                        continue;
+                    }
+                    else if (n >= renderGroups.Length)
+                    {
+                        break;
+                    }
+
+                    if (renderGroups[n] != null)
+                    {
+                        renderGroups[n].SetAllLayersDirty();
+                        renderManager.m_updatedGroups1[n >> 6] |= 1uL << n;
+                        renderManager.m_groupsUpdated1 = true;
+                    }
+                }
             }
         }
 

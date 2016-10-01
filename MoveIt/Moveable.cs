@@ -11,11 +11,11 @@ namespace MoveIt
     internal class Moveable
     {
         public InstanceID id;
+        public List<Moveable> subInstances;
+
         private Vector3 m_startPosition;
         private float m_startAngle;
         private Vector3[] m_startNodeDirections;
-
-        public List<Moveable> subInstances;
 
         public Vector3 position
         {
@@ -43,6 +43,22 @@ namespace MoveIt
 
                 return Vector3.zero;
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            Moveable instance = obj as Moveable;
+            if (instance != null)
+            {
+                return instance.id == id;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return id.GetHashCode();
         }
 
         public Moveable(InstanceID instance)
@@ -133,40 +149,47 @@ namespace MoveIt
 
             Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
 
+            Move(newPosition, deltaAngle);
+
+            if (subInstances != null)
+            {
+                matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
+                foreach (Moveable subInstance in subInstances)
+                {
+                    Vector3 subPosition = subInstance.m_startPosition - m_startPosition;
+                    subPosition = matrix4x.MultiplyPoint(subPosition);
+
+                    subInstance.Move(subPosition, deltaAngle);
+                }
+            }
+        }
+
+        private void Move(Vector3 location, ushort deltaAngle)
+        {
             switch (id.Type)
             {
                 case InstanceType.Building:
                     {
                         BuildingManager buildingManager = BuildingManager.instance;
-                        NetManager netManager = NetManager.instance;
                         ushort building = id.Building;
 
-                        RelocateBuilding(building, ref buildingManager.m_buildings.m_buffer[building], newPosition, m_startAngle + fAngle);
-
-                        if (subInstances != null)
-                        {
-                            matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                            foreach (Moveable subInstance in subInstances)
-                            {
-                                Vector3 subPosition = subInstance.m_startPosition - m_startPosition;
-                                subPosition = matrix4x.MultiplyPoint(subPosition);
-
-                                subInstance.Move(subPosition, deltaAngle);
-                            }
-                        }
-
+                        RelocateBuilding(building, ref buildingManager.m_buildings.m_buffer[building], location, m_startAngle + deltaAngle * 9.58738E-05f);
                         break;
                     }
                 case InstanceType.Prop:
                     {
-                        PropManager.instance.m_props.m_buffer[id.Prop].m_angle = (ushort)((ushort)m_startAngle + deltaAngle);
-                        PropManager.instance.MoveProp(id.Prop, newPosition);
+                        ushort prop = id.Prop;
+                        PropManager.instance.m_props.m_buffer[prop].m_angle = (ushort)((ushort)m_startAngle + deltaAngle);
+                        PropManager.instance.MoveProp(prop, location);
+                        PropManager.instance.UpdatePropRenderer(prop, true);
                         break;
                     }
                 case InstanceType.Tree:
                     {
-                        TreeManager.instance.MoveTree(id.Tree, newPosition);
+                        uint tree = id.Tree;
+                        TreeManager.instance.MoveTree(tree, location);
+                        TreeManager.instance.UpdateTreeRenderer(tree, true);
                         break;
                     }
                 case InstanceType.NetNode:
@@ -176,6 +199,7 @@ namespace MoveIt
 
                         float netAngle = deltaAngle * 9.58738E-05f;
 
+                        Matrix4x4 matrix4x = default(Matrix4x4);
                         matrix4x.SetTRS(m_startPosition, Quaternion.AngleAxis(netAngle * 57.29578f, Vector3.down), Vector3.one);
 
                         for (int i = 0; i < 8; i++)
@@ -193,81 +217,13 @@ namespace MoveIt
                                 {
                                     netManager.m_segments.m_buffer[segment].m_endDirection = newDirection;
                                 }
-                            }
-                        }
-                        netManager.MoveNode(node, newPosition);
-                        break;
-                    }
-            }
-        }
 
-        public override bool Equals(object obj)
-        {
-            Moveable instance = obj as Moveable;
-            if (instance != null)
-            {
-                return instance.id == id;
-            }
-
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return id.GetHashCode();
-        }
-
-        private void Move(Vector3 location, ushort delta)
-        {
-            switch (id.Type)
-            {
-                case InstanceType.Building:
-                    {
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        ushort building = id.Building;
-
-                        RelocateBuilding(building, ref buildingManager.m_buildings.m_buffer[building], location, m_startAngle + delta * 9.58738E-05f);
-                        break;
-                    }
-                case InstanceType.Prop:
-                    {
-                        PropManager.instance.m_props.m_buffer[id.Prop].m_angle = (ushort)((ushort)m_startAngle + delta);
-                        PropManager.instance.MoveProp(id.Prop, location);
-                        break;
-                    }
-                case InstanceType.Tree:
-                    {
-                        TreeManager.instance.MoveTree(id.Tree, location);
-                        break;
-                    }
-                case InstanceType.NetNode:
-                    {
-                        NetManager netManager = NetManager.instance;
-
-                        float netAngle = delta * 9.58738E-05f;
-
-                        Matrix4x4 matrix4x = default(Matrix4x4);
-                        matrix4x.SetTRS(m_startPosition, Quaternion.AngleAxis(netAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                        for (int i = 0; i < 8; i++)
-                        {
-                            ushort segment = netManager.m_nodes.m_buffer[id.NetNode].GetSegment(i);
-                            if (segment != 0)
-                            {
-                                Vector3 newDirection = matrix4x.MultiplyVector(m_startNodeDirections[i]);
-
-                                if (netManager.m_segments.m_buffer[segment].m_startNode == id.NetNode)
-                                {
-                                    netManager.m_segments.m_buffer[segment].m_startDirection = newDirection;
-                                }
-                                else
-                                {
-                                    netManager.m_segments.m_buffer[segment].m_endDirection = newDirection;
-                                }
+                                netManager.UpdateSegmentRenderer(segment, true);
                             }
                         }
 
-                        NetManager.instance.MoveNode(id.NetNode, location);
+                        netManager.MoveNode(node, location);
+                        netManager.UpdateNodeRenderer(node, true);
                         break;
                     }
             }

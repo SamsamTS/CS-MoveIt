@@ -50,6 +50,9 @@ namespace MoveIt
         {
             if (p.buttons.IsFlagSet(UIMouseButton.Left))
             {
+                MoveItTool.infoMode = InfoManager.instance.CurrentMode;
+                MoveItTool.subInfoMode = InfoManager.instance.CurrentSubMode;
+
                 MoveItTool.instance.enabled = !MoveItTool.instance.enabled;
             }
         }
@@ -95,7 +98,7 @@ namespace MoveIt
 
         public void OnGUI()
         {
-            if (OptionsKeymapping.toggleTool.IsPressed(Event.current))
+            if (!UIView.HasModalInput() && !UIView.HasInputFocus() && OptionsKeymapping.toggleTool.IsPressed(Event.current))
             {
                 SimulateClick();
             }
