@@ -15,8 +15,44 @@ namespace MoveIt
         public List<Moveable> subInstances;
 
         private Vector3 m_startPosition;
+        private float m_terrainHeight;
         private float m_startAngle;
-        private Vector3[] m_startNodeDirections;
+
+        private SegmentSave[] m_segmentSave;
+
+        private struct SegmentSave
+        {
+            public Quaternion m_startRotation;
+            public Quaternion m_endRotation;
+        }
+
+        public object data
+        {
+            get
+            {
+                switch (id.Type)
+                {
+                    case InstanceType.Building:
+                        {
+                            return BuildingManager.instance.m_buildings.m_buffer[id.Building];
+                        }
+                    case InstanceType.Prop:
+                        {
+                            return PropManager.instance.m_props.m_buffer[id.Prop];
+                        }
+                    case InstanceType.Tree:
+                        {
+                            return TreeManager.instance.m_trees.m_buffer[id.Tree];
+                        }
+                    case InstanceType.NetNode:
+                        {
+                            return NetManager.instance.m_nodes.m_buffer[id.NetNode];
+                        }
+                }
+
+                return null;
+            }
+        }
 
         public Vector3 position
         {
@@ -139,22 +175,72 @@ namespace MoveIt
                 case InstanceType.NetNode:
                     {
                         NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+                        ushort node = id.NetNode;
 
-                        m_startPosition = netManager.m_nodes.m_buffer[id.NetNode].m_position;
+                        m_startPosition = nodeBuffer[node].m_position;
 
-                        m_startNodeDirections = new Vector3[8];
+                        m_segmentSave = new SegmentSave[8];
+
                         for (int i = 0; i < 8; i++)
                         {
-                            ushort segment = netManager.m_nodes.m_buffer[id.NetNode].GetSegment(i);
+                            ushort segment = nodeBuffer[node].GetSegment(i);
                             if (segment != 0)
                             {
-                                m_startNodeDirections[i] = netManager.m_segments.m_buffer[segment].GetDirection(id.NetNode);
+                                ushort startNode = segmentBuffer[segment].m_startNode;
+                                ushort endNode = segmentBuffer[segment].m_endNode;
+
+                                Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                                segVector.Normalize();
+
+                                Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
+                                Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
+
+                                startDirection.Normalize();
+                                endDirection.Normalize();
+
+                                m_segmentSave[i].m_startRotation = Quaternion.FromToRotation(segVector, startDirection);
+                                m_segmentSave[i].m_endRotation = Quaternion.FromToRotation(-segVector, endDirection);
                             }
                         }
 
                         break;
                     }
             }
+
+            if (!id.IsEmpty)
+            {
+                m_terrainHeight = TerrainManager.instance.SampleRawHeightSmooth(position);
+            }
+        }
+
+        Quaternion get_rotation_between(Vector3 u, Vector3 v)
+        {
+            u.Normalize();
+            v.Normalize();
+
+            if (u == -v)
+            {
+                u = orthogonal(u);
+                u.Normalize();
+                return Quaternion.AngleAxis(0, u);
+            }
+
+            Vector3 half = u + v;
+            half.Normalize();
+
+            return Quaternion.AngleAxis(Vector3.Dot(u, half), Vector3.Cross(u, half));
+        }
+
+        Vector3 orthogonal(Vector3 v)
+        {
+            float x = Mathf.Abs(v.x);
+            float y = Mathf.Abs(v.y);
+            float z = Mathf.Abs(v.z);
+
+            Vector3 other = x < y ? (x < z ? Vector3.right : Vector3.forward) : (y < z ? Vector3.up : Vector3.forward);
+            return Vector3.Cross(v, other);
         }
 
         public void Transform(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
@@ -165,6 +251,7 @@ namespace MoveIt
             matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
 
             Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
+            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleRawHeightSmooth(newPosition) - m_terrainHeight;
 
             Move(newPosition, deltaAngle);
 
@@ -182,22 +269,22 @@ namespace MoveIt
             }
         }
 
-        public Bounds GetBounds()
+        public Bounds GetBounds(bool ignoreSegments = true)
         {
-            Bounds bounds = GetBounds(id);
+            Bounds bounds = GetBounds(id, ignoreSegments);
 
             if (subInstances != null)
             {
                 foreach (Moveable subInstance in subInstances)
                 {
-                    bounds.Encapsulate(subInstance.GetBounds());
+                    bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
                 }
             }
 
             return bounds;
         }
 
-        private Bounds GetBounds(InstanceID instance)
+        private Bounds GetBounds(InstanceID instance, bool ignoreSegments = true)
         {
             switch (instance.Type)
             {
@@ -240,7 +327,35 @@ namespace MoveIt
                     }
                 case InstanceType.NetNode:
                     {
-                        return NetManager.instance.m_nodes.m_buffer[instance.NetNode].m_bounds;
+                        NetManager netManager = NetManager.instance;
+                        NetNode[] buffer = netManager.m_nodes.m_buffer;
+                        ushort node = id.NetNode;
+
+                        Bounds bounds = buffer[node].m_bounds;
+
+                        if (!ignoreSegments)
+                        {
+                            for (int i = 0; i < 8; i++)
+                            {
+                                ushort segment = buffer[node].GetSegment(i);
+                                if (segment != 0)
+                                {
+                                    ushort startNode = netManager.m_segments.m_buffer[segment].m_startNode;
+                                    ushort endNode = netManager.m_segments.m_buffer[segment].m_endNode;
+
+                                    if (node != startNode)
+                                    {
+                                        bounds.Encapsulate(buffer[startNode].m_bounds);
+                                    }
+                                    else
+                                    {
+                                        bounds.Encapsulate(buffer[endNode].m_bounds);
+                                    }
+                                }
+                            }
+                        }
+
+                        return bounds;
                     }
             }
 
@@ -277,35 +392,42 @@ namespace MoveIt
                 case InstanceType.NetNode:
                     {
                         NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
                         ushort node = id.NetNode;
 
-                        float netAngle = deltaAngle * 9.58738E-05f;
-
-                        Matrix4x4 matrix4x = default(Matrix4x4);
-                        matrix4x.SetTRS(m_startPosition, Quaternion.AngleAxis(netAngle * 57.29578f, Vector3.down), Vector3.one);
+                        netManager.MoveNode(node, location);
 
                         for (int i = 0; i < 8; i++)
                         {
-                            ushort segment = netManager.m_nodes.m_buffer[node].GetSegment(i);
+                            ushort segment = nodeBuffer[node].GetSegment(i);
                             if (segment != 0)
                             {
-                                Vector3 newDirection = matrix4x.MultiplyVector(m_startNodeDirections[i]);
+                                ushort startNode = segmentBuffer[segment].m_startNode;
+                                ushort endNode = segmentBuffer[segment].m_endNode;
 
-                                if (netManager.m_segments.m_buffer[segment].m_startNode == node)
-                                {
-                                    netManager.m_segments.m_buffer[segment].m_startDirection = newDirection;
-                                }
-                                else
-                                {
-                                    netManager.m_segments.m_buffer[segment].m_endDirection = newDirection;
-                                }
+                                Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                                segVector.Normalize();
+
+                                segmentBuffer[segment].m_startDirection = m_segmentSave[i].m_startRotation * segVector;
+                                segmentBuffer[segment].m_endDirection = m_segmentSave[i].m_endRotation * -segVector;
+
+                                segmentBuffer[segment].UpdateSegment(segment);
+                                UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                netManager.UpdateNode(startNode);
+                                netManager.UpdateNode(endNode);
+
+                                nodeBuffer[startNode].CalculateNode(startNode);
+                                nodeBuffer[endNode].CalculateNode(endNode);
+
+                                netManager.UpdateNodeRenderer(startNode, true);
+                                netManager.UpdateNodeRenderer(endNode, true);
 
                                 netManager.UpdateSegmentRenderer(segment, true);
                             }
                         }
 
-                        netManager.MoveNode(node, location);
-                        netManager.UpdateNodeRenderer(node, true);
                         break;
                     }
             }
@@ -400,6 +522,28 @@ namespace MoveIt
             if (info != null)
             {
                 Singleton<RenderManager>.instance.UpdateGroup(num * 45 / 270, num2 * 45 / 270, info.m_prefabDataLayer);
+            }
+        }
+
+        private void UpdateSegmentBlocks(ushort segment, ref NetSegment data)
+        {
+            if (data.m_flags != NetSegment.Flags.None)
+            {
+                ReleaseSegmentBlock(segment, ref data.m_blockStartLeft);
+                ReleaseSegmentBlock(segment, ref data.m_blockStartRight);
+                ReleaseSegmentBlock(segment, ref data.m_blockEndLeft);
+                ReleaseSegmentBlock(segment, ref data.m_blockEndRight);
+            }
+
+            data.Info.m_netAI.CreateSegment(segment, ref data);
+        }
+
+        private void ReleaseSegmentBlock(ushort segment, ref ushort segmentBlock)
+        {
+            if (segmentBlock != 0)
+            {
+                ZoneManager.instance.ReleaseBlock(segmentBlock);
+                segmentBlock = 0;
             }
         }
     }

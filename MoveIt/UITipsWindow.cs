@@ -11,17 +11,18 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "Hold Shift to select multiple objects to move at once",
-            "Use Left Click to drag objects around",
-            "While holding Right Click, move the mouse left and right to rotate objects",
-            "Use Alt for finer movements with the keyboard",
-            "Use Shift for faster movements with the keyboard",
-            "Right Click to clear the selection",
-            "Buildings, Trees, Props and Nodes can all be moved",
-            "Movable objects are highlighted when hovered",
-            "Hover various things to discover what can be moved",
-            "Look for the tiny green circle\nThat's the center of rotation",
-            "Disable tips in the mod options\nEsc > Options > Move It! > Hide tips"
+            "New in 1.1.5: Moving nodes has been improved, give it a try",
+            "Tip: Hold Shift to select multiple objects to move at once",
+            "Tip: Use Left Click to drag objects around",
+            "Tip: While holding Right Click, move the mouse left and right to rotate objects",
+            "Tip: Use Alt for finer movements with the keyboard",
+            "Tip: Use Shift for faster movements with the keyboard",
+            "Tip: Right Click to clear the selection",
+            "Tip: Buildings, Trees, Props and Nodes can all be moved",
+            "Tip: Movable objects are highlighted when hovered",
+            "Tip: Hover various things to discover what can be moved",
+            "Tip: Look for the tiny green circle\nThat's the center of rotation",
+            "Tip: Disable tips in the mod options\nEsc > Options > Move It! > Hide tips"
         };
         private int m_currentTip = -1;
 
@@ -52,7 +53,7 @@ namespace MoveIt
         public void NextTip()
         {
             m_currentTip = (m_currentTip + 1) % m_tips.Length;
-            text = "Tip: " + m_tips[m_currentTip] + "\n";
+            text = m_tips[m_currentTip] + "\n";
         }
 
         protected override void OnClick(UIMouseEventParameter p)

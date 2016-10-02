@@ -126,7 +126,6 @@ namespace MoveIt
                 m_prevTool.enabled = true;
 
             m_prevTool = null;
-            //InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
         }
 
         protected override void OnToolUpdate()
@@ -219,8 +218,9 @@ namespace MoveIt
 
                             if (m_moveCurrent != -1)
                             {
+                                float y = m_moves[m_moveCurrent].moveDelta.y;
                                 m_moves[m_moveCurrent].moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
-                                m_moves[m_moveCurrent].moveDelta.y = 0;
+                                m_moves[m_moveCurrent].moveDelta.y = y;
                                 m_nextAction = Actions.Transform;
                             }
                         }
@@ -502,13 +502,12 @@ namespace MoveIt
             {
                 if (m_moveCurrent != -1)
                 {
-                    Bounds bounds = GetTotalBounds();
+                    Bounds bounds = GetTotalBounds(false);
                     foreach (Moveable instance in m_moves[m_moveCurrent].instances)
                     {
                         instance.Transform(Vector3.zero, 0, m_moves[m_moveCurrent].center);
                     }
-                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                    UpdateRender(bounds);
+                    UpdateArea(bounds);
 
                     if (m_moveCurrent == m_moveTail)
                     {
@@ -538,13 +537,12 @@ namespace MoveIt
                         m_moveCurrent = (m_moveCurrent + 1) % m_moves.Length;
                     }
 
-                    Bounds bounds = GetTotalBounds();
+                    Bounds bounds = GetTotalBounds(false);
                     foreach (Moveable instance in m_moves[m_moveCurrent].instances)
                     {
                         instance.Transform(m_moves[m_moveCurrent].moveDelta, m_moves[m_moveCurrent].angleDelta, m_moves[m_moveCurrent].center);
                     }
-                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                    UpdateRender(bounds);
+                    UpdateArea(bounds);
                 }
             }
         }
@@ -553,16 +551,21 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                Bounds bounds = GetTotalBounds();
+                Bounds bounds = GetTotalBounds(false);
                 foreach (Moveable instance in m_moves[m_moveCurrent].instances)
                 {
                     instance.Transform(m_moves[m_moveCurrent].moveDelta, m_moves[m_moveCurrent].angleDelta, m_moves[m_moveCurrent].center);
                 }
-                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                UpdateRender(bounds);
+                UpdateArea(bounds);
             }
         }
 
+        private void UpdateArea(Bounds bounds)
+        {
+            ZoneManager.instance.UpdateBlocks(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            UpdateRender(bounds);
+        }
 
         private long ElapsedMilliseconds(long startTime)
         {
@@ -645,7 +648,7 @@ namespace MoveIt
             return Input.GetKey(keyCode) && ctrl == e.control;
         }
 
-        private Bounds GetTotalBounds()
+        private Bounds GetTotalBounds(bool ignoreSegments = true)
         {
             Bounds totalBounds = default(Bounds);
 
@@ -655,11 +658,11 @@ namespace MoveIt
             {
                 if (init)
                 {
-                    totalBounds.Encapsulate(instance.GetBounds());
+                    totalBounds.Encapsulate(instance.GetBounds(ignoreSegments));
                 }
                 else
                 {
-                    totalBounds = instance.GetBounds();
+                    totalBounds = instance.GetBounds(ignoreSegments);
                     init = true;
                 }
             }
@@ -795,7 +798,6 @@ namespace MoveIt
                         RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, position.y - 1f, position.y + 1f, true, true);
                         break;
                     }
-
             }
         }
     }
