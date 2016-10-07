@@ -82,6 +82,34 @@ namespace MoveIt
             }
         }
 
+        public bool isValid
+        {
+            get
+            {
+                switch (id.Type)
+                {
+                    case InstanceType.Building:
+                        {
+                            return (BuildingManager.instance.m_buildings.m_buffer[id.Building].m_flags & Building.Flags.Created) != Building.Flags.None;
+                        }
+                    case InstanceType.Prop:
+                        {
+                            return PropManager.instance.m_props.m_buffer[id.Prop].m_flags != 0;
+                        }
+                    case InstanceType.Tree:
+                        {
+                            return TreeManager.instance.m_trees.m_buffer[id.Tree].m_flags != 0;
+                        }
+                    case InstanceType.NetNode:
+                        {
+                            return (NetManager.instance.m_nodes.m_buffer[id.NetNode].m_flags & NetNode.Flags.Created) != NetNode.Flags.None;
+                        }
+                }
+
+                return false;
+            }
+        }
+
         public override bool Equals(object obj)
         {
             Moveable instance = obj as Moveable;
@@ -417,14 +445,6 @@ namespace MoveIt
 
                                 netManager.UpdateNode(startNode);
                                 netManager.UpdateNode(endNode);
-
-                                nodeBuffer[startNode].CalculateNode(startNode);
-                                nodeBuffer[endNode].CalculateNode(endNode);
-
-                                netManager.UpdateNodeRenderer(startNode, true);
-                                netManager.UpdateNodeRenderer(endNode, true);
-
-                                netManager.UpdateSegmentRenderer(segment, true);
                             }
                         }
 

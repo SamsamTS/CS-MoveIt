@@ -36,22 +36,6 @@ namespace MoveIt
 
     public class MoveItTool : ToolBase
     {
-        private struct MoveStep
-        {
-            public List<Moveable> instances;
-            public Vector3 moveDelta;
-            public ushort angleDelta;
-            public Vector3 center;
-
-            public bool hasMoved
-            {
-                get
-                {
-                    return moveDelta != Vector3.zero || angleDelta != 0;
-                }
-            }
-        }
-
         private enum Actions
         {
             None,
@@ -68,6 +52,7 @@ namespace MoveIt
 
         public static InfoManager.InfoMode infoMode;
         public static InfoManager.SubInfoMode subInfoMode;
+        public static bool renderZones;
 
         private static Color m_hoverColor = new Color32(0, 181, 255, 255);
         private static Color m_selectedColor = new Color32(95, 166, 0, 244);
@@ -87,10 +72,7 @@ namespace MoveIt
         private float m_mouseStartX;
         private ushort m_startAngle;
 
-        private MoveStep[] m_moves = new MoveStep[50];
-        private int m_moveCurrent = -1;
-        private int m_moveHead = -1;
-        private int m_moveTail = 0;
+        private MoveQueue m_moves = new MoveQueue();
 
         private Actions m_nextAction = Actions.None;
 
@@ -113,6 +95,7 @@ namespace MoveIt
             base.OnEnable();
 
             InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
+            TerrainManager.instance.RenderZones = true;
         }
 
         protected override void OnDisable()
@@ -123,9 +106,12 @@ namespace MoveIt
             }
 
             if (m_toolController.NextTool == null && m_prevTool != null)
+            {
                 m_prevTool.enabled = true;
-
+            }
             m_prevTool = null;
+
+            TerrainManager.instance.RenderZones = renderZones;
         }
 
         protected override void OnToolUpdate()
@@ -200,15 +186,19 @@ namespace MoveIt
                         }
                     }
 
-                    if (m_nextAction == Actions.None)
+                    if (m_nextAction == Actions.None && m_moves.currentType != MoveQueue.StepType.Invalid)
                     {
                         if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) > 200)
                         {
-                            if (m_moveCurrent != -1)
+                            if (m_moves.currentType == MoveQueue.StepType.Selection)
                             {
-                                m_moves[m_moveCurrent].angleDelta = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
-                                m_nextAction = Actions.Transform;
+                                m_moves.Push(MoveQueue.StepType.Move, true);
                             }
+                            MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                            step.angleDelta = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
+                            m_nextAction = Actions.Transform;
+
                         }
                         else if (m_leftClickTime != 0 && ElapsedMilliseconds(m_leftClickTime) > 200)
                         {
@@ -216,13 +206,17 @@ namespace MoveIt
                             input.m_ignoreTerrain = false;
                             ToolBase.RayCast(input, out output);
 
-                            if (m_moveCurrent != -1)
+
+                            if (m_moves.currentType == MoveQueue.StepType.Selection)
                             {
-                                float y = m_moves[m_moveCurrent].moveDelta.y;
-                                m_moves[m_moveCurrent].moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
-                                m_moves[m_moveCurrent].moveDelta.y = y;
-                                m_nextAction = Actions.Transform;
+                                m_moves.Push(MoveQueue.StepType.Move, true);
                             }
+                            MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                            float y = step.moveDelta.y;
+                            step.moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
+                            step.moveDelta.y = y;
+                            m_nextAction = Actions.Transform;
                         }
                     }
 
@@ -233,74 +227,81 @@ namespace MoveIt
 
                     if (Input.GetMouseButtonDown(0) && m_hoverInstance != null)
                     {
-                        if (m_moveCurrent == -1)
+                        if (m_moves.currentType == MoveQueue.StepType.Invalid)
                         {
-                            m_moveCurrent = 0;
-                            m_moveTail = 0;
-                            m_moveHead = 0;
-                            m_moves[m_moveCurrent].instances = new List<Moveable>();
-                            m_moves[m_moveCurrent].moveDelta = Vector3.zero;
-                            m_moves[m_moveCurrent].angleDelta = 0;
+                            m_moves.Push(MoveQueue.StepType.Selection);
                         }
 
                         if (Event.current.shift)
                         {
-                            if (m_moves[m_moveCurrent].hasMoved)
+                            if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
                             {
-                                int previous = m_moveCurrent;
-
-                                NextMove();
-
-                                foreach (Moveable instance in m_moves[previous].instances)
-                                {
-                                    m_moves[m_moveCurrent].instances.Add(new Moveable(instance.id));
-                                }
+                                m_moves.Push(MoveQueue.StepType.Selection, true);
                             }
 
-                            if (m_moves[m_moveCurrent].instances.Contains(m_hoverInstance))
+                            MoveQueue.Step step = m_moves.current;
+
+                            if (step.instances.Contains(m_hoverInstance))
                             {
-                                m_moves[m_moveCurrent].instances.Remove(m_hoverInstance);
+                                step.instances.Remove(m_hoverInstance);
                             }
                             else
                             {
-                                m_moves[m_moveCurrent].instances.Add(m_hoverInstance);
+                                step.instances.Add(m_hoverInstance);
                             }
 
-                            if (m_moves[m_moveCurrent].instances.Count > 0)
+                            if (step.instances.Count > 0)
                             {
-                                m_moves[m_moveCurrent].center = GetTotalBounds().center;
+                                step.center = GetTotalBounds().center;
                             }
                         }
                         else
                         {
-
-                            if (!m_moves[m_moveCurrent].instances.Contains(m_hoverInstance))
+                            if (!m_moves.current.instances.Contains(m_hoverInstance))
                             {
-                                if (m_moves[m_moveCurrent].hasMoved)
+                                if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
                                 {
-                                    NextMove();
+                                    m_moves.Push(MoveQueue.StepType.Selection, false);
                                 }
 
-                                m_moves[m_moveCurrent].instances.Clear();
-                                m_moves[m_moveCurrent].instances.Add(m_hoverInstance);
-                                m_moves[m_moveCurrent].center = GetTotalBounds().center;
+                                MoveQueue.Step step = m_moves.current;
+
+                                step.instances.Clear();
+                                step.instances.Add(m_hoverInstance);
+                                step.center = GetTotalBounds().center;
                             }
 
                             input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
                             input.m_ignoreTerrain = false;
                             ToolBase.RayCast(input, out output);
 
+                            if (m_moves.currentType == MoveQueue.StepType.Move)
+                            {
+                                m_startPosition = (m_moves.current as MoveQueue.MoveStep).moveDelta;
+                            }
+                            else
+                            {
+                                m_startPosition = Vector3.zero;
+                            }
+
                             m_mouseStartPosition = output.m_hitPos;
-                            m_startPosition = m_moves[m_moveCurrent].moveDelta;
                             m_leftClickTime = Stopwatch.GetTimestamp();
                         }
                     }
 
-                    if (Input.GetMouseButtonDown(1) && m_moveCurrent != -1)
+                    if (Input.GetMouseButtonDown(1) && m_moves.currentType != MoveQueue.StepType.Invalid)
                     {
                         m_rightClickTime = Stopwatch.GetTimestamp();
                         m_mouseStartX = Input.mousePosition.x;
-                        m_startAngle = m_moves[m_moveCurrent].angleDelta;
+
+                        if (m_moves.currentType == MoveQueue.StepType.Move)
+                        {
+                            m_startAngle = (m_moves.current as MoveQueue.MoveStep).angleDelta;
+                        }
+                        else
+                        {
+                            m_startAngle = 0;
+                        }
                     }
 
                     if (Input.GetMouseButtonUp(1))
@@ -309,18 +310,23 @@ namespace MoveIt
 
                         if (Input.mousePosition.x - m_mouseStartX == 0)
                         {
-                            if (m_moveCurrent != -1)
+                            if (m_moves.currentType != MoveQueue.StepType.Invalid)
                             {
-                                if (m_moves[m_moveCurrent].hasMoved)
+                                if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
                                 {
-                                    NextMove();
+                                    m_moves.Push(MoveQueue.StepType.Selection, false);
                                 }
                                 else
                                 {
-                                    m_moves[m_moveCurrent].instances.Clear();
+                                    m_moves.current.instances.Clear();
                                 }
                             }
                         }
+                    }
+
+                    if(m_leftClickTime != 0 || m_rightClickTime != 0)
+                    {
+                        m_hoverInstance = null;
                     }
                 }
             }
@@ -328,85 +334,40 @@ namespace MoveIt
 
         protected override void OnToolGUI(Event e)
         {
-            if (m_nextAction != Actions.None)
+            lock (m_moves)
             {
-                return;
-            }
-
-            if (OptionsKeymapping.undo.IsPressed(e))
-            {
-                m_nextAction = Actions.Undo;
-            }
-            else if (OptionsKeymapping.redo.IsPressed(e))
-            {
-                m_nextAction = Actions.Redo;
-            }
-            else if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
-            {
-                Vector3 direction = Vector3.zero;
-                int angle = 0;
-
-                float magnitude = 5f;
-                if (e.shift) magnitude = magnitude * 5f;
-                if (e.alt) magnitude = magnitude / 5f;
-
-
-                if (IsKeyDown(OptionsKeymapping.moveXpos, e))
+                if (m_nextAction != Actions.None)
                 {
-                    direction.x = direction.x + magnitude;
+                    return;
                 }
 
-                if (IsKeyDown(OptionsKeymapping.moveXneg, e))
+                if (OptionsKeymapping.undo.IsPressed(e))
                 {
-                    direction.x = direction.x - magnitude;
+                    m_nextAction = Actions.Undo;
                 }
-
-                if (IsKeyDown(OptionsKeymapping.moveYpos, e))
+                else if (OptionsKeymapping.redo.IsPressed(e))
                 {
-                    direction.y = direction.y + magnitude;
+                    m_nextAction = Actions.Redo;
                 }
-
-                if (IsKeyDown(OptionsKeymapping.moveYneg, e))
+                else if (m_moves.hasSelection || m_hoverInstance != null)
                 {
-                    direction.y = direction.y - magnitude;
-                }
+                    Vector3 direction;
+                    int angle;
 
-                if (IsKeyDown(OptionsKeymapping.moveZpos, e))
-                {
-                    direction.z = direction.z + magnitude;
-                }
-
-                if (IsKeyDown(OptionsKeymapping.moveZneg, e))
-                {
-                    direction.z = direction.z - magnitude;
-                }
-
-                if (IsKeyDown(OptionsKeymapping.turnPos, e))
-                {
-                    angle = angle - (int)magnitude * 20;
-                }
-
-                if (IsKeyDown(OptionsKeymapping.turnNeg, e))
-                {
-                    angle = angle + (int)magnitude * 20;
-                }
-
-                if (direction != Vector3.zero || angle != 0)
-                {
-                    bool shouldMove = false;
-
-                    if (m_keyTime == 0)
+                    if (ProcessMoveKeys(e, out direction, out angle))
                     {
-                        m_keyTime = Stopwatch.GetTimestamp();
-                        shouldMove = true;
-                    }
-                    else if (ElapsedMilliseconds(m_keyTime) >= 250)
-                    {
-                        shouldMove = true;
-                    }
+                        if (m_moves.currentType == MoveQueue.StepType.Selection)
+                        {
+                            m_moves.Push(MoveQueue.StepType.Move, true);
+                        }
+                        else if (m_moves.currentType == MoveQueue.StepType.Invalid ||
+                            (!m_moves.hasSelection && !m_moves.current.instances.Contains(m_hoverInstance)))
+                        {
+                            m_moves.Push(MoveQueue.StepType.Move);
+                            m_moves.current.isSelection = false;
+                            m_moves.current.instances.Add(m_hoverInstance);
+                        }
 
-                    if (shouldMove)
-                    {
                         if (direction != Vector3.zero)
                         {
                             direction.x = direction.x * 0.263671875f;
@@ -422,19 +383,13 @@ namespace MoveIt
                             }
                         }
 
-                        lock (m_moves)
-                        {
-                            m_moves[m_moveCurrent].moveDelta = m_moves[m_moveCurrent].moveDelta + direction;
-                            m_moves[m_moveCurrent].angleDelta = (ushort)(m_moves[m_moveCurrent].angleDelta + angle);
-                        }
+                        MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                        step.moveDelta = step.moveDelta + direction;
+                        step.angleDelta = (ushort)(step.angleDelta + angle);
 
                         m_nextAction = Actions.Transform;
                     }
-
-                }
-                else
-                {
-                    m_keyTime = 0;
                 }
             }
         }
@@ -470,19 +425,27 @@ namespace MoveIt
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
-            if (m_moveCurrent != -1 && m_moves[m_moveCurrent].instances.Count > 0)
+            if (m_moves.hasSelection)
             {
-                foreach (Moveable instance in m_moves[m_moveCurrent].instances)
+                MoveQueue.Step step = m_moves.current;
+                foreach (Moveable instance in step.instances)
                 {
-                    RenderInstanceOverlay(cameraInfo, instance.id, m_selectedColor);
+                    if (instance.isValid)
+                    {
+                        RenderInstanceOverlay(cameraInfo, instance.id, m_selectedColor);
+                    }
                 }
 
-                Vector3 center = m_moves[m_moveCurrent].center + m_moves[m_moveCurrent].moveDelta;
+                Vector3 center = step.center;
+                if (m_moves.currentType == MoveQueue.StepType.Move)
+                {
+                    center = center + (step as MoveQueue.MoveStep).moveDelta;
+                }
 
                 center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-                RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, center.y - 1f, center.y + 1f, true, true);
+                RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, center.y - 100f, center.y + 100f, true, true);
 
-                if (m_hoverInstance != null && !m_moves[m_moveCurrent].instances.Contains(m_hoverInstance))
+                if (m_hoverInstance != null && !step.instances.Contains(m_hoverInstance))
                 {
                     RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
                 }
@@ -500,25 +463,22 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                if (m_moveCurrent != -1)
+                if (m_moves.currentType == MoveQueue.StepType.Move)
                 {
+                    MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
                     Bounds bounds = GetTotalBounds(false);
-                    foreach (Moveable instance in m_moves[m_moveCurrent].instances)
+                    foreach (Moveable instance in step.instances)
                     {
-                        instance.Transform(Vector3.zero, 0, m_moves[m_moveCurrent].center);
+                        if (instance.isValid)
+                        {
+                            instance.Transform(Vector3.zero, 0, step.center);
+                        }
                     }
                     UpdateArea(bounds);
-
-                    if (m_moveCurrent == m_moveTail)
-                    {
-                        m_moveCurrent = -1;
-                    }
-                    else
-                    {
-                        m_moveCurrent = m_moveCurrent - 1;
-                        if (m_moveCurrent < 0) m_moveCurrent = m_moves.Length - 1;
-                    }
                 }
+
+                m_moves.Previous();
             }
         }
 
@@ -526,21 +486,17 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                if (m_moveHead != -1 && m_moveCurrent != m_moveHead)
+                if (m_moves.Next() && m_moves.currentType == MoveQueue.StepType.Move)
                 {
-                    if (m_moveCurrent == -1)
-                    {
-                        m_moveCurrent = m_moveTail;
-                    }
-                    else
-                    {
-                        m_moveCurrent = (m_moveCurrent + 1) % m_moves.Length;
-                    }
+                    MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
                     Bounds bounds = GetTotalBounds(false);
-                    foreach (Moveable instance in m_moves[m_moveCurrent].instances)
+                    foreach (Moveable instance in step.instances)
                     {
-                        instance.Transform(m_moves[m_moveCurrent].moveDelta, m_moves[m_moveCurrent].angleDelta, m_moves[m_moveCurrent].center);
+                        if (instance.isValid)
+                        {
+                            instance.Transform(step.moveDelta, step.angleDelta, step.center);
+                        }
                     }
                     UpdateArea(bounds);
                 }
@@ -551,13 +507,92 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                Bounds bounds = GetTotalBounds(false);
-                foreach (Moveable instance in m_moves[m_moveCurrent].instances)
+                if (m_moves.currentType == MoveQueue.StepType.Selection)
                 {
-                    instance.Transform(m_moves[m_moveCurrent].moveDelta, m_moves[m_moveCurrent].angleDelta, m_moves[m_moveCurrent].center);
+                    m_moves.Push(MoveQueue.StepType.Move, true);
+                }
+
+                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                Bounds bounds = GetTotalBounds(false);
+                foreach (Moveable instance in step.instances)
+                {
+                    if (instance.isValid)
+                    {
+                        instance.Transform(step.moveDelta, step.angleDelta, step.center);
+                    }
                 }
                 UpdateArea(bounds);
             }
+        }
+
+        private bool ProcessMoveKeys(Event e, out Vector3 direction, out int angle)
+        {
+            direction = Vector3.zero;
+            angle = 0;
+
+            float magnitude = 5f;
+            if (e.shift) magnitude = magnitude * 5f;
+            if (e.alt) magnitude = magnitude / 5f;
+
+            if (IsKeyDown(OptionsKeymapping.moveXpos, e))
+            {
+                direction.x = direction.x + magnitude;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.moveXneg, e))
+            {
+                direction.x = direction.x - magnitude;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.moveYpos, e))
+            {
+                direction.y = direction.y + magnitude;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.moveYneg, e))
+            {
+                direction.y = direction.y - magnitude;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.moveZpos, e))
+            {
+                direction.z = direction.z + magnitude;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.moveZneg, e))
+            {
+                direction.z = direction.z - magnitude;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.turnPos, e))
+            {
+                angle = angle - (int)magnitude * 20;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.turnNeg, e))
+            {
+                angle = angle + (int)magnitude * 20;
+            }
+
+            if (direction != Vector3.zero || angle != 0)
+            {
+                if (m_keyTime == 0)
+                {
+                    m_keyTime = Stopwatch.GetTimestamp();
+                    return true;
+                }
+                else if (ElapsedMilliseconds(m_keyTime) >= 250)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                m_keyTime = 0;
+            }
+
+            return false;
         }
 
         private void UpdateArea(Bounds bounds)
@@ -624,20 +659,6 @@ namespace MoveIt
             }
         }
 
-        private void NextMove()
-        {
-            m_moveCurrent = (m_moveCurrent + 1) % m_moves.Length;
-            m_moveHead = m_moveCurrent;
-            if (m_moveTail == m_moveHead)
-            {
-                m_moveTail = (m_moveTail + 1) % m_moves.Length;
-            }
-
-            m_moves[m_moveCurrent].instances = new List<Moveable>();
-            m_moves[m_moveCurrent].moveDelta = Vector3.zero;
-            m_moves[m_moveCurrent].angleDelta = 0;
-        }
-
         private bool IsKeyDown(SavedInputKey inputKey, Event e)
         {
             int code = inputKey.value;
@@ -654,7 +675,7 @@ namespace MoveIt
 
             bool init = false;
 
-            foreach (Moveable instance in m_moves[m_moveCurrent].instances)
+            foreach (Moveable instance in m_moves.current.instances)
             {
                 if (init)
                 {

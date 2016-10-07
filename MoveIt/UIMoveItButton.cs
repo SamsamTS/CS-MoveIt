@@ -52,6 +52,7 @@ namespace MoveIt
             {
                 MoveItTool.infoMode = InfoManager.instance.CurrentMode;
                 MoveItTool.subInfoMode = InfoManager.instance.CurrentSubMode;
+                MoveItTool.renderZones = TerrainManager.instance.RenderZones;
 
                 MoveItTool.instance.enabled = !MoveItTool.instance.enabled;
             }

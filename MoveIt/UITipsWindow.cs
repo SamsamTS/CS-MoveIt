@@ -11,7 +11,7 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.1.5: Moving nodes has been improved, give it a try",
+            "New in 1.1.6: The object under the mouse will move if nothing else is selected",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
             "Tip: While holding Right Click, move the mouse left and right to rotate objects",

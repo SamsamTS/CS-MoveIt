@@ -54,6 +54,7 @@
     <Compile Include="DebugUtils.cs" />
     <Compile Include="Moveable.cs" />
     <Compile Include="MoveIt.cs" />
+    <Compile Include="MoveQueue.cs" />
     <Compile Include="OptionsKeymapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceLoader.cs" />
