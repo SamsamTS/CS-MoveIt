@@ -259,7 +259,7 @@ namespace MoveIt
 
             if (!id.IsEmpty)
             {
-                m_terrainHeight = TerrainManager.instance.SampleRawHeightSmooth(position);
+                m_terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(position);
             }
         }
 
@@ -271,7 +271,7 @@ namespace MoveIt
             matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
 
             Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
-            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleRawHeightSmooth(newPosition) - m_terrainHeight;
+            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
 
             Move(newPosition, deltaAngle);
 
@@ -289,6 +289,19 @@ namespace MoveIt
             }
         }
 
+        public void Restore()
+        {
+            Move(m_startPosition, 0);
+
+            if (subInstances != null)
+            {
+                foreach (Moveable subInstance in subInstances)
+                {
+                    subInstance.Restore();
+                }
+            }
+        }
+
         public void CalculateNewPosition(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
         {
             float fAngle = deltaAngle * 9.58738E-05f;
@@ -297,7 +310,7 @@ namespace MoveIt
             matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
 
             newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
-            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleRawHeightSmooth(newPosition) - m_terrainHeight;
+            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
 
             newAngle = m_startAngle + fAngle;
         }

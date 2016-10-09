@@ -489,7 +489,7 @@ namespace MoveIt
                     {
                         if (instance.isValid)
                         {
-                            instance.Transform(Vector3.zero, 0, step.center);
+                            instance.Restore();
                         }
                     }
                     UpdateArea(bounds);
