@@ -14,10 +14,14 @@ namespace MoveIt
         public InstanceID id;
         public List<Moveable> subInstances;
 
+        public Vector3 newPosition;
+        public float newAngle;
+
         private Vector3 m_startPosition;
         private float m_terrainHeight;
         private float m_startAngle;
 
+        private HashSet<ushort> m_segmentHashSet = new HashSet<ushort>();
         private SegmentSave[] m_segmentSave;
 
         private struct SegmentSave
@@ -79,6 +83,14 @@ namespace MoveIt
                 }
 
                 return Vector3.zero;
+            }
+        }
+
+        public HashSet<ushort> segmentList
+        {
+            get
+            {
+                return m_segmentHashSet;
             }
         }
 
@@ -150,7 +162,10 @@ namespace MoveIt
                             {
                                 InstanceID nodeID = default(InstanceID);
                                 nodeID.NetNode = node;
-                                subInstances.Add(new Moveable(nodeID));
+                                Moveable subInstance = new Moveable(nodeID);
+                                subInstances.Add(subInstance);
+
+                                m_segmentHashSet.UnionWith(subInstance.m_segmentHashSet);
                             }
 
                             node = nodeBuffer[node].m_nextBuildingNode;
@@ -174,7 +189,10 @@ namespace MoveIt
                                 {
                                     InstanceID nodeID = default(InstanceID);
                                     nodeID.NetNode = node;
-                                    subInstances.Add(new Moveable(nodeID));
+                                    Moveable subInstance = new Moveable(nodeID);
+                                    subInstances.Add(subInstance);
+
+                                    m_segmentHashSet.UnionWith(subInstance.m_segmentHashSet);
                                 }
 
                                 node = nodeBuffer[node].m_nextBuildingNode;
@@ -216,6 +234,8 @@ namespace MoveIt
                             ushort segment = nodeBuffer[node].GetSegment(i);
                             if (segment != 0)
                             {
+                                m_segmentHashSet.Add(segment);
+
                                 ushort startNode = segmentBuffer[segment].m_startNode;
                                 ushort endNode = segmentBuffer[segment].m_endNode;
 
@@ -243,34 +263,6 @@ namespace MoveIt
             }
         }
 
-        Quaternion get_rotation_between(Vector3 u, Vector3 v)
-        {
-            u.Normalize();
-            v.Normalize();
-
-            if (u == -v)
-            {
-                u = orthogonal(u);
-                u.Normalize();
-                return Quaternion.AngleAxis(0, u);
-            }
-
-            Vector3 half = u + v;
-            half.Normalize();
-
-            return Quaternion.AngleAxis(Vector3.Dot(u, half), Vector3.Cross(u, half));
-        }
-
-        Vector3 orthogonal(Vector3 v)
-        {
-            float x = Mathf.Abs(v.x);
-            float y = Mathf.Abs(v.y);
-            float z = Mathf.Abs(v.z);
-
-            Vector3 other = x < y ? (x < z ? Vector3.right : Vector3.forward) : (y < z ? Vector3.up : Vector3.forward);
-            return Vector3.Cross(v, other);
-        }
-
         public void Transform(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
         {
             float fAngle = deltaAngle * 9.58738E-05f;
@@ -295,6 +287,19 @@ namespace MoveIt
                     subInstance.Move(subPosition, deltaAngle);
                 }
             }
+        }
+
+        public void CalculateNewPosition(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
+        {
+            float fAngle = deltaAngle * 9.58738E-05f;
+
+            Matrix4x4 matrix4x = default(Matrix4x4);
+            matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
+            newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
+            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleRawHeightSmooth(newPosition) - m_terrainHeight;
+
+            newAngle = m_startAngle + fAngle;
         }
 
         public Bounds GetBounds(bool ignoreSegments = true)

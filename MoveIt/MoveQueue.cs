@@ -1,13 +1,6 @@
-﻿using ICities;
-using UnityEngine;
+﻿using UnityEngine;
 
-using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
 
 namespace MoveIt
 {
@@ -24,6 +17,7 @@ namespace MoveIt
         {
             public List<Moveable> instances = new List<Moveable>();
             public Vector3 center;
+            public bool snap = false;
 
             public bool isSelection = true;
         }
@@ -49,13 +43,13 @@ namespace MoveIt
 
         public Step Push(StepType type, bool copySelection = false)
         {
-            if(type == StepType.Invalid)
+            if (type == StepType.Invalid)
             {
                 return null;
             }
 
             int previous = -1;
-            if(currentType != StepType.Invalid)
+            if (currentType != StepType.Invalid)
             {
                 previous = m_moveCurrent;
             }
@@ -97,7 +91,7 @@ namespace MoveIt
 
         public bool Next()
         {
-            if(m_moveCurrent == m_moveHead)
+            if (m_moveCurrent == m_moveHead)
             {
                 return false;
             }
@@ -170,7 +164,7 @@ namespace MoveIt
                     return StepType.Invalid;
                 }
 
-                if(m_moves[m_moveCurrent] is MoveStep)
+                if (m_moves[m_moveCurrent] is MoveStep)
                 {
                     return StepType.Move;
                 }

@@ -60,6 +60,8 @@
     <Compile Include="ResourceLoader.cs" />
     <Compile Include="UIMoveItButton.cs" />
     <Compile Include="UITipsWindow.cs" />
+    <Compile Include="UIToolOptionPanel.cs" />
+    <Compile Include="UIUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MoveIt.png" />

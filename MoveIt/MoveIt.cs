@@ -21,7 +21,6 @@ namespace MoveIt
                 ToolController toolController = GameObject.FindObjectOfType<ToolController>();
 
                 MoveItTool.instance = toolController.gameObject.AddComponent<MoveItTool>();
-                MoveItTool.instance.enabled = false;
             }
         }
 
@@ -50,6 +49,8 @@ namespace MoveIt
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
 
+        public static bool snapping = false;
+
         public static InfoManager.InfoMode infoMode;
         public static InfoManager.SubInfoMode subInfoMode;
         public static bool renderZones;
@@ -60,6 +61,7 @@ namespace MoveIt
         private Moveable m_hoverInstance;
         private ToolBase m_prevTool;
         private UIMoveItButton m_button;
+        private UIToolOptionPanel m_optionPanel;
 
         private long m_keyTime;
         private long m_rightClickTime;
@@ -78,9 +80,14 @@ namespace MoveIt
 
         protected override void Awake()
         {
+            enabled = false;
+
             m_toolController = GameObject.FindObjectOfType<ToolController>();
 
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
+
+            UIComponent TSBar = UIView.GetAView().FindUIComponent<UIComponent>("TSBar");
+            m_optionPanel = TSBar.AddUIComponent<UIToolOptionPanel>();
         }
 
         protected override void OnEnable()
@@ -89,6 +96,11 @@ namespace MoveIt
             {
                 UITipsWindow.instance.isVisible = true;
                 UITipsWindow.instance.NextTip();
+            }
+
+            if (UIToolOptionPanel.instance != null)
+            {
+                UIToolOptionPanel.instance.isVisible = true;
             }
 
             m_prevTool = m_toolController.CurrentTool;
@@ -103,6 +115,11 @@ namespace MoveIt
             if (UITipsWindow.instance != null)
             {
                 UITipsWindow.instance.isVisible = false;
+            }
+
+            if (UIToolOptionPanel.instance != null)
+            {
+                UIToolOptionPanel.instance.isVisible = false;
             }
 
             if (m_toolController.NextTool == null && m_prevTool != null)
@@ -324,7 +341,7 @@ namespace MoveIt
                         }
                     }
 
-                    if(m_leftClickTime != 0 || m_rightClickTime != 0)
+                    if (m_leftClickTime != 0 || m_rightClickTime != 0)
                     {
                         m_hoverInstance = null;
                     }
@@ -490,12 +507,18 @@ namespace MoveIt
                 {
                     MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
+                    Vector3 moveDelta = step.moveDelta;
+                    if (step.snap)
+                    {
+                        moveDelta = GetSnapPosition(step);
+                    }
+
                     Bounds bounds = GetTotalBounds(false);
                     foreach (Moveable instance in step.instances)
                     {
                         if (instance.isValid)
                         {
-                            instance.Transform(step.moveDelta, step.angleDelta, step.center);
+                            instance.Transform(moveDelta, step.angleDelta, step.center);
                         }
                     }
                     UpdateArea(bounds);
@@ -513,17 +536,132 @@ namespace MoveIt
                 }
 
                 MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                step.snap = snapping;
+
+                Vector3 moveDelta = step.moveDelta;
+                if (step.snap)
+                {
+                    moveDelta = GetSnapPosition(step);
+                }
 
                 Bounds bounds = GetTotalBounds(false);
                 foreach (Moveable instance in step.instances)
                 {
                     if (instance.isValid)
                     {
-                        instance.Transform(step.moveDelta, step.angleDelta, step.center);
+                        instance.Transform(moveDelta, step.angleDelta, step.center);
                     }
                 }
                 UpdateArea(bounds);
             }
+        }
+
+        private Vector3 GetSnapPosition(MoveQueue.MoveStep step)
+        {
+            Vector3 moveDelta = step.moveDelta;
+
+            NetManager netManager = NetManager.instance;
+            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+
+            HashSet<ushort> ingnoreSegments = new HashSet<ushort>();
+            HashSet<ushort> segmentList = new HashSet<ushort>();
+
+            ushort[] closeSegments = new ushort[16];
+            int closeSegmentCount;
+
+            foreach (Moveable instance in step.instances)
+            {
+                if (instance.isValid)
+                {
+                    instance.CalculateNewPosition(moveDelta, step.angleDelta, step.center);
+                    netManager.GetClosestSegments(instance.newPosition, closeSegments, out closeSegmentCount);
+                    segmentList.UnionWith(closeSegments);
+
+                    ingnoreSegments.UnionWith(instance.segmentList);
+                }
+            }
+
+            float distanceSq = 256f;
+            ushort block = 0;
+            ushort previousBlock = 0;
+            Vector3 refPosition = Vector3.zero;
+            bool smallRoad = false;
+
+            foreach (ushort segment in segmentList)
+            {
+                if (segment != 0 && !ingnoreSegments.Contains(segment))
+                {
+                    foreach (Moveable instance in step.instances)
+                    {
+                        Vector3 testPosition = instance.newPosition;
+
+                        if (instance.id.Type == InstanceType.Building)
+                        {
+                            testPosition = CalculateSnapPosition(instance.newPosition, instance.newAngle,
+                                buildingBuffer[instance.id.Building].Length, buildingBuffer[instance.id.Building].Width);
+                        }
+
+                        segmentBuffer[segment].GetClosestZoneBlock(testPosition, ref distanceSq, ref block);
+
+                        if (block != previousBlock)
+                        {
+                            refPosition = testPosition;
+
+                            if (instance.id.Type == InstanceType.NetNode)
+                            {
+                                if (nodeBuffer[instance.id.NetNode].Info.m_halfWidth <= 4f)
+                                {
+                                    smallRoad = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (block != 0)
+            {
+                Vector3 newPosition = refPosition;
+                ZoneBlock zoneBlock = ZoneManager.instance.m_blocks.m_buffer[block];
+                Snap(ref newPosition, zoneBlock.m_position, zoneBlock.m_angle, smallRoad);
+
+                moveDelta = moveDelta + newPosition - refPosition;
+            }
+
+            return moveDelta;
+        }
+
+        private Vector3 CalculateSnapPosition(Vector3 position, float angle, int length, int width)
+        {
+            float x = 0;
+            float z = length * 4f;
+
+            if (width % 2 != 0) x = 4f;
+
+            float ca = Mathf.Cos(angle);
+            float sa = Mathf.Sin(angle);
+
+            return position + new Vector3(ca * x - sa * z, 0f, sa * x + ca * z);
+        }
+
+        private void Snap(ref Vector3 point, Vector3 refPoint, float refAngle, bool smallRoad)
+        {
+            Vector3 direction = new Vector3(Mathf.Cos(refAngle), 0f, Mathf.Sin(refAngle));
+            Vector3 forward = direction * 8f;
+            Vector3 right = new Vector3(forward.z, 0f, -forward.x);
+
+            if (smallRoad)
+            {
+                refPoint.x += forward.x * 0.5f + right.x * 0.5f;
+                refPoint.z += forward.z * 0.5f + right.z * 0.5f;
+            }
+
+            Vector2 delta = new Vector2(point.x - refPoint.x, point.z - refPoint.z);
+            float num = Mathf.Round((delta.x * forward.x + delta.y * forward.z) * 0.015625f);
+            float num2 = Mathf.Round((delta.x * right.x + delta.y * right.z) * 0.015625f);
+            point.x = refPoint.x + num * forward.x + num2 * right.x;
+            point.z = refPoint.z + num * forward.z + num2 * right.z;
         }
 
         private bool ProcessMoveKeys(Event e, out Vector3 direction, out int angle)
