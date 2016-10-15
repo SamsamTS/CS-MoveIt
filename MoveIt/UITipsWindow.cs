@@ -10,7 +10,8 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.2.0: Snapping!\nClick the button below to toggle snapping",
+            "New in 1.3.0: Marquee Selection!\nClick the button below",
+            "Tip: Hold Alt to deselect using the marquee selection",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
             "Tip: While holding Right Click, move the mouse left and right to rotate objects",
@@ -53,7 +54,7 @@ namespace MoveIt
         public void NextTip()
         {
             m_currentTip = (m_currentTip + 1) % m_tips.Length;
-            text = m_tips[m_currentTip] + "\n";
+            text = m_tips[m_currentTip];
         }
 
         protected override void OnClick(UIMouseEventParameter p)
@@ -63,8 +64,24 @@ namespace MoveIt
 
         protected override void OnSizeChanged()
         {
+            RefreshPosition();
+        }
+
+        public void RefreshPosition()
+        {
+
             float x = Screen.width - width - 10f;
-            float y = GetUIView().FindUIComponent<UIComponent>("ThumbnailBar").absolutePosition.y - height - 30f;
+            float y;
+
+            if (UIToolOptionPanel.instance != null && MoveItTool.marqueeSelection)
+            {
+                y = UIToolOptionPanel.instance.filtersPanel.absolutePosition.y - height - 10f;
+            }
+            else
+            {
+                y = GetUIView().FindUIComponent<UIComponent>("ThumbnailBar").absolutePosition.y - height - 30f;
+            }
+
             absolutePosition = new Vector3(x, y);
         }
     }

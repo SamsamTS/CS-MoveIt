@@ -50,6 +50,12 @@ namespace MoveIt
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
 
         public static bool snapping = false;
+        public static bool marqueeSelection = false;
+
+        public static bool filterBuildings = true;
+        public static bool filterProps = true;
+        public static bool filterTrees = true;
+        public static bool filterNodes = true;
 
         public static InfoManager.InfoMode infoMode;
         public static InfoManager.SubInfoMode subInfoMode;
@@ -57,11 +63,13 @@ namespace MoveIt
 
         private static Color m_hoverColor = new Color32(0, 181, 255, 255);
         private static Color m_selectedColor = new Color32(95, 166, 0, 244);
+        private static Color m_removeColor = new Color32(255, 160, 47, 191);
 
         private Moveable m_hoverInstance;
+        private HashSet<Moveable> m_marqueeInstances;
+
         private ToolBase m_prevTool;
         private UIMoveItButton m_button;
-        private UIToolOptionPanel m_optionPanel;
 
         private long m_keyTime;
         private long m_rightClickTime;
@@ -70,6 +78,9 @@ namespace MoveIt
 
         private Vector3 m_startPosition;
         private Vector3 m_mouseStartPosition;
+
+        private bool m_drawingSelection;
+        private Quad3 m_selection;
 
         private float m_mouseStartX;
         private ushort m_startAngle;
@@ -85,22 +96,24 @@ namespace MoveIt
             m_toolController = GameObject.FindObjectOfType<ToolController>();
 
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
-
-            UIComponent TSBar = UIView.GetAView().FindUIComponent<UIComponent>("TSBar");
-            m_optionPanel = TSBar.AddUIComponent<UIToolOptionPanel>();
         }
 
         protected override void OnEnable()
         {
+            if (UIToolOptionPanel.instance == null)
+            {
+                UIComponent TSBar = UIView.GetAView().FindUIComponent<UIComponent>("TSBar");
+                TSBar.AddUIComponent<UIToolOptionPanel>();
+            }
+            else
+            {
+                UIToolOptionPanel.instance.isVisible = true;
+            }
+
             if (!MoveItTool.hideTips && UITipsWindow.instance != null)
             {
                 UITipsWindow.instance.isVisible = true;
                 UITipsWindow.instance.NextTip();
-            }
-
-            if (UIToolOptionPanel.instance != null)
-            {
-                UIToolOptionPanel.instance.isVisible = true;
             }
 
             m_prevTool = m_toolController.CurrentTool;
@@ -203,6 +216,11 @@ namespace MoveIt
                         }
                     }
 
+                    if(m_drawingSelection)
+                    {
+                        m_marqueeInstances = GetMarqueeList(mouseRay);
+                    }
+
                     if (m_nextAction == Actions.None && m_moves.currentType != MoveQueue.StepType.Invalid)
                     {
                         if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) > 200)
@@ -223,7 +241,6 @@ namespace MoveIt
                             input.m_ignoreTerrain = false;
                             ToolBase.RayCast(input, out output);
 
-
                             if (m_moves.currentType == MoveQueue.StepType.Selection)
                             {
                                 m_moves.Push(MoveQueue.StepType.Move, true);
@@ -239,106 +256,22 @@ namespace MoveIt
 
                     if (Input.GetMouseButtonUp(0))
                     {
-                        m_leftClickTime = 0;
+                        OnLeftMouseUp(mouseRay);
                     }
 
-                    if (Input.GetMouseButtonDown(0) && m_hoverInstance != null)
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        if (m_moves.currentType == MoveQueue.StepType.Invalid)
-                        {
-                            m_moves.Push(MoveQueue.StepType.Selection);
-                        }
-
-                        if (Event.current.shift)
-                        {
-                            if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
-                            {
-                                m_moves.Push(MoveQueue.StepType.Selection, true);
-                            }
-
-                            MoveQueue.Step step = m_moves.current;
-
-                            if (step.instances.Contains(m_hoverInstance))
-                            {
-                                step.instances.Remove(m_hoverInstance);
-                            }
-                            else
-                            {
-                                step.instances.Add(m_hoverInstance);
-                            }
-
-                            if (step.instances.Count > 0)
-                            {
-                                step.center = GetTotalBounds().center;
-                            }
-                        }
-                        else
-                        {
-                            if (!m_moves.current.instances.Contains(m_hoverInstance))
-                            {
-                                if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
-                                {
-                                    m_moves.Push(MoveQueue.StepType.Selection, false);
-                                }
-
-                                MoveQueue.Step step = m_moves.current;
-
-                                step.instances.Clear();
-                                step.instances.Add(m_hoverInstance);
-                                step.center = GetTotalBounds().center;
-                            }
-
-                            input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                            input.m_ignoreTerrain = false;
-                            ToolBase.RayCast(input, out output);
-
-                            if (m_moves.currentType == MoveQueue.StepType.Move)
-                            {
-                                m_startPosition = (m_moves.current as MoveQueue.MoveStep).moveDelta;
-                            }
-                            else
-                            {
-                                m_startPosition = Vector3.zero;
-                            }
-
-                            m_mouseStartPosition = output.m_hitPos;
-                            m_leftClickTime = Stopwatch.GetTimestamp();
-                        }
+                        OnLeftMouseDown(mouseRay);
                     }
 
-                    if (Input.GetMouseButtonDown(1) && m_moves.currentType != MoveQueue.StepType.Invalid)
+                    if (Input.GetMouseButtonDown(1))
                     {
-                        m_rightClickTime = Stopwatch.GetTimestamp();
-                        m_mouseStartX = Input.mousePosition.x;
-
-                        if (m_moves.currentType == MoveQueue.StepType.Move)
-                        {
-                            m_startAngle = (m_moves.current as MoveQueue.MoveStep).angleDelta;
-                        }
-                        else
-                        {
-                            m_startAngle = 0;
-                        }
+                        OnRightMouseDown();
                     }
 
                     if (Input.GetMouseButtonUp(1))
                     {
-                        m_rightClickTime = 0;
-
-                        if (Input.mousePosition.x - m_mouseStartX == 0)
-                        {
-                            if (m_moves.currentType != MoveQueue.StepType.Invalid)
-                            {
-                                if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
-                                {
-                                    m_moves.Push(MoveQueue.StepType.Selection, false);
-                                }
-                                else
-                                {
-                                    m_moves.current.instances.Clear();
-                                }
-                            }
-                        }
+                        OnRightMouseUp();
                     }
 
                     if (m_leftClickTime != 0 || m_rightClickTime != 0)
@@ -366,7 +299,7 @@ namespace MoveIt
                 {
                     m_nextAction = Actions.Redo;
                 }
-                else if (m_moves.hasSelection || m_hoverInstance != null)
+                else if (m_moves.hasSelection || (m_hoverInstance != null && !marqueeSelection))
                 {
                     Vector3 direction;
                     int angle;
@@ -442,12 +375,41 @@ namespace MoveIt
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
+            if(m_drawingSelection)
+            {
+                bool removing = Event.current.alt;
+
+                Color color = m_hoverColor;
+                if(removing)
+                {
+                    color = m_removeColor;
+                }
+
+                RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, m_selection.Min().y - 100f, m_selection.Max().y + 100f, true, true);
+
+                if (m_marqueeInstances != null)
+                {
+                    MoveQueue.Step step = m_moves.current;
+                    removing = removing && step != null;
+
+                    foreach (Moveable instance in m_marqueeInstances)
+                    {
+                        if (instance.isValid && (!removing || step.instances.Contains(instance)))
+                        {
+                            RenderInstanceOverlay(cameraInfo, instance.id, color);
+                        }
+                    }
+                }
+            }
+
             if (m_moves.hasSelection)
             {
+                bool removing = m_drawingSelection && Event.current.alt && m_marqueeInstances != null;
+
                 MoveQueue.Step step = m_moves.current;
                 foreach (Moveable instance in step.instances)
                 {
-                    if (instance.isValid)
+                    if (instance.isValid && !(removing && m_marqueeInstances.Contains(instance)))
                     {
                         RenderInstanceOverlay(cameraInfo, instance.id, m_selectedColor);
                     }
@@ -462,12 +424,12 @@ namespace MoveIt
                 center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
                 RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, center.y - 100f, center.y + 100f, true, true);
 
-                if (m_hoverInstance != null && !step.instances.Contains(m_hoverInstance))
+                if (!marqueeSelection && m_hoverInstance != null && !step.instances.Contains(m_hoverInstance))
                 {
                     RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
                 }
             }
-            else if (m_hoverInstance != null)
+            else if (!marqueeSelection && m_hoverInstance != null)
             {
                 RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
             }
@@ -556,6 +518,305 @@ namespace MoveIt
             }
         }
 
+        private void OnLeftMouseDown(Ray mouseRay)
+        {
+            bool shouldMove = m_hoverInstance != null;
+
+            if (shouldMove && marqueeSelection)
+            {
+                shouldMove = m_moves.currentType != MoveQueue.StepType.Invalid && m_moves.current.instances.Contains(m_hoverInstance);
+            }
+
+            if (shouldMove)
+            {
+                if (m_moves.currentType == MoveQueue.StepType.Invalid || !m_moves.current.isSelection)
+                {
+                    m_moves.Push(MoveQueue.StepType.Selection);
+                }
+
+                if (Event.current.shift)
+                {
+                    if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
+                    {
+                        m_moves.Push(MoveQueue.StepType.Selection, true);
+                    }
+
+                    MoveQueue.Step step = m_moves.current;
+
+                    if (step.instances.Contains(m_hoverInstance))
+                    {
+                        step.instances.Remove(m_hoverInstance);
+                    }
+                    else
+                    {
+                        step.instances.Add(m_hoverInstance);
+                    }
+
+                    if (step.instances.Count > 0)
+                    {
+                        step.center = GetTotalBounds().center;
+                    }
+                }
+                else
+                {
+                    if (!m_moves.current.instances.Contains(m_hoverInstance))
+                    {
+                        if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
+                        {
+                            m_moves.Push(MoveQueue.StepType.Selection, false);
+                        }
+
+                        MoveQueue.Step step = m_moves.current;
+
+                        step.instances.Clear();
+                        step.instances.Add(m_hoverInstance);
+                        step.center = GetTotalBounds().center;
+                    }
+
+                    RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+                    RaycastOutput output;
+                    input.m_ignoreTerrain = false;
+                    ToolBase.RayCast(input, out output);
+
+                    if (m_moves.currentType == MoveQueue.StepType.Move)
+                    {
+                        m_startPosition = (m_moves.current as MoveQueue.MoveStep).moveDelta;
+                    }
+                    else
+                    {
+                        m_startPosition = Vector3.zero;
+                    }
+
+                    m_mouseStartPosition = output.m_hitPos;
+                    m_leftClickTime = Stopwatch.GetTimestamp();
+                }
+            }
+            else if (marqueeSelection)
+            {
+                m_selection = default(Quad3);
+                m_marqueeInstances = null;
+
+                RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+                RaycastOutput output;
+                input.m_ignoreTerrain = false;
+                ToolBase.RayCast(input, out output);
+
+                m_mouseStartPosition = output.m_hitPos;
+                m_drawingSelection = true;
+            }
+        }
+
+        private void OnLeftMouseUp(Ray mouseRay)
+        {
+            m_leftClickTime = 0;
+
+            if (m_drawingSelection)
+            {
+                if (m_moves.currentType == MoveQueue.StepType.Invalid || !m_moves.current.isSelection)
+                {
+                    m_moves.Push(MoveQueue.StepType.Selection);
+                }
+                else if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
+                {
+                    m_moves.Push(MoveQueue.StepType.Selection, true);
+                }
+
+                Event e = Event.current;
+
+                if (e.alt)
+                {
+                    m_moves.current.instances.ExceptWith(m_marqueeInstances);
+                }
+                else
+                {
+                    if (!e.shift)
+                    {
+                        m_moves.current.instances.Clear();
+                    }
+                    m_moves.current.instances.UnionWith(m_marqueeInstances);
+                }
+
+                MoveQueue.Step step = m_moves.current;
+                if (step.instances.Count > 0)
+                {
+                    step.center = GetTotalBounds().center;
+                }
+
+                m_drawingSelection = false;
+            }
+        }
+
+        private void OnRightMouseDown()
+        {
+            if(m_drawingSelection)
+            {
+                m_drawingSelection = false;
+            }
+            else if (m_moves.currentType != MoveQueue.StepType.Invalid && m_moves.current.isSelection)
+            {
+                m_rightClickTime = Stopwatch.GetTimestamp();
+                m_mouseStartX = Input.mousePosition.x;
+
+                if (m_moves.currentType == MoveQueue.StepType.Move)
+                {
+                    m_startAngle = (m_moves.current as MoveQueue.MoveStep).angleDelta;
+                }
+                else
+                {
+                    m_startAngle = 0;
+                }
+            }
+
+        }
+
+        private void OnRightMouseUp()
+        {
+            if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) < 200)
+            {
+                if (m_moves.currentType != MoveQueue.StepType.Invalid)
+                {
+                    if (m_moves.currentType == MoveQueue.StepType.Move && (m_moves.current as MoveQueue.MoveStep).hasMoved)
+                    {
+                        m_moves.Push(MoveQueue.StepType.Selection, false);
+                    }
+                    else
+                    {
+                        m_moves.current.instances.Clear();
+                    }
+                }
+            }
+
+            m_rightClickTime = 0;
+        }
+
+        private HashSet<Moveable> GetMarqueeList(Ray mouseRay)
+        {
+            HashSet<Moveable> list = new HashSet<Moveable>();
+
+            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+            PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
+            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+            TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
+
+            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+            RaycastOutput output;
+            input.m_ignoreTerrain = false;
+            ToolBase.RayCast(input, out output);
+
+            m_selection.a = m_mouseStartPosition;
+            m_selection.c = output.m_hitPos;
+
+            if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)
+            {
+                m_selection = default(Quad3);
+            }
+            else
+            {
+                float angle = Camera.main.transform.localEulerAngles.y * Mathf.Deg2Rad;
+                Vector3 down = new Vector3(Mathf.Cos(angle), 0, -Mathf.Sin(angle));
+                Vector3 right = new Vector3(-down.z, 0, down.x);
+
+                Vector3 a = m_selection.c - m_selection.a;
+                float dotDown = Vector3.Dot(a, down);
+                float dotRight = Vector3.Dot(a, right);
+
+                if ((dotDown > 0 && dotRight > 0) || (dotDown <= 0 && dotRight <= 0))
+                {
+                    m_selection.b = m_selection.a + dotDown * down;
+                    m_selection.d = m_selection.a + dotRight * right;
+                }
+                else
+                {
+                    m_selection.b = m_selection.a + dotRight * right;
+                    m_selection.d = m_selection.a + dotDown * down;
+                }
+
+                Vector3 min = m_selection.Min();
+                Vector3 max = m_selection.Max();
+
+                int gridMinX = Mathf.Max((int)((min.x - 16f) / 64f + 135f), 0);
+                int gridMinZ = Mathf.Max((int)((min.z - 16f) / 64f + 135f), 0);
+                int gridMaxX = Mathf.Min((int)((max.x + 16f) / 64f + 135f), 269);
+                int gridMaxZ = Mathf.Min((int)((max.z + 16f) / 64f + 135f), 269);
+
+                InstanceID id = new InstanceID();
+
+                for (int i = gridMinZ; i <= gridMaxZ; i++)
+                {
+                    for (int j = gridMinX; j <= gridMaxX; j++)
+                    {
+                        if (filterBuildings)
+                        {
+                            ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
+                            while (building != 0u)
+                            {
+                                if (buildingBuffer[building].m_parentBuilding <= 0 && PointInRectangle(m_selection, buildingBuffer[building].m_position))
+                                {
+                                    id.Building = building;
+                                    list.Add(new Moveable(id));
+                                }
+                                building = buildingBuffer[building].m_nextGridBuilding;
+                            }
+                        }
+
+                        if (filterProps)
+                        {
+                            ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
+                            while (prop != 0u)
+                            {
+                                if (PointInRectangle(m_selection, propBuffer[prop].Position))
+                                {
+                                    id.Prop = prop;
+                                    list.Add(new Moveable(id));
+                                }
+                                prop = propBuffer[prop].m_nextGridProp;
+                            }
+                        }
+
+                        if (filterNodes)
+                        {
+                            ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
+                            while (node != 0u)
+                            {
+                                if (PointInRectangle(m_selection, nodeBuffer[node].m_position))
+                                {
+                                    id.NetNode = node;
+                                    list.Add(new Moveable(id));
+                                }
+                                node = nodeBuffer[node].m_nextGridNode;
+                            }
+                        }
+                    }
+                }
+
+                if (filterTrees)
+                {
+                    gridMinX = Mathf.Max((int)((min.x - 8f) / 32f + 270f), 0);
+                    gridMinZ = Mathf.Max((int)((min.z - 8f) / 32f + 270f), 0);
+                    gridMaxX = Mathf.Min((int)((max.x + 8f) / 32f + 270f), 539);
+                    gridMaxZ = Mathf.Min((int)((max.z + 8f) / 32f + 270f), 539);
+
+                    for (int i = gridMinZ; i <= gridMaxZ; i++)
+                    {
+                        for (int j = gridMinX; j <= gridMaxX; j++)
+                        {
+                            uint tree = TreeManager.instance.m_treeGrid[i * 540 + j];
+                            while (tree != 0)
+                            {
+                                if (PointInRectangle(m_selection, treeBuffer[tree].Position))
+                                {
+                                    id.Tree = tree;
+                                    list.Add(new Moveable(id));
+                                }
+                                tree = treeBuffer[tree].m_nextGridTree;
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
         private Vector3 GetSnapPosition(MoveQueue.MoveStep step)
         {
             Vector3 moveDelta = step.moveDelta;
@@ -616,10 +877,13 @@ namespace MoveIt
                                     smallRoad = true;
                                 }
                             }
+
+                            previousBlock = block;
                         }
                     }
                 }
             }
+
             if (block != 0)
             {
                 Vector3 newPosition = refPosition;
@@ -627,6 +891,38 @@ namespace MoveIt
                 Snap(ref newPosition, zoneBlock.m_position, zoneBlock.m_angle, smallRoad);
 
                 moveDelta = moveDelta + newPosition - refPosition;
+            }
+            else if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
+            {
+                Vector3 assetGridPosition = Vector3.zero;
+                float testMagnitude = 0;
+
+                foreach (Moveable instance in step.instances)
+                {
+                    Vector3 testPosition = instance.newPosition;
+
+                    if (instance.id.Type == InstanceType.Building)
+                    {
+                        testPosition = CalculateSnapPosition(instance.newPosition, instance.newAngle,
+                            buildingBuffer[instance.id.Building].Length, buildingBuffer[instance.id.Building].Width);
+                    }
+
+
+                    float x = Mathf.Round(testPosition.x / 8f) * 8f;
+                    float z = Mathf.Round(testPosition.z / 8f) * 8f;
+
+                    Vector3 newPosition = new Vector3(x, testPosition.y, z);
+                    float deltaMagnitude = (newPosition - testPosition).sqrMagnitude;
+
+                    if (assetGridPosition == Vector3.zero || deltaMagnitude < testMagnitude)
+                    {
+                        refPosition = testPosition;
+                        assetGridPosition = newPosition;
+                        deltaMagnitude = testMagnitude;
+                    }
+                }
+
+                moveDelta = moveDelta + assetGridPosition - refPosition;
             }
 
             return moveDelta;
@@ -827,6 +1123,16 @@ namespace MoveIt
             }
 
             return totalBounds;
+        }
+
+        private bool isLeft(Vector3 P0, Vector3 P1, Vector3 P2)
+        {
+            return ((P1.x - P0.x) * (P2.z - P0.z) - (P2.x - P0.x) * (P1.z - P0.z)) > 0;
+        }
+
+        private bool PointInRectangle(Quad3 rectangle, Vector3 p)
+        {
+            return isLeft(rectangle.a, rectangle.b, p) && isLeft(rectangle.b, rectangle.c, p) && isLeft(rectangle.c, rectangle.d, p) && isLeft(rectangle.d, rectangle.a, p);
         }
 
         private void RenderInstanceOverlay(RenderManager.CameraInfo cameraInfo, InstanceID id, Color toolColor)

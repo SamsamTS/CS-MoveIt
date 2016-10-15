@@ -15,7 +15,7 @@ namespace MoveIt
 
         public class Step
         {
-            public List<Moveable> instances = new List<Moveable>();
+            public HashSet<Moveable> instances = new HashSet<Moveable>();
             public Vector3 center;
             public bool snap = false;
 

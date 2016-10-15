@@ -12,7 +12,7 @@ namespace MoveIt
     internal class Moveable
     {
         public InstanceID id;
-        public List<Moveable> subInstances;
+        public HashSet<Moveable> subInstances;
 
         public Vector3 newPosition;
         public float newAngle;
@@ -28,6 +28,9 @@ namespace MoveIt
         {
             public Quaternion m_startRotation;
             public Quaternion m_endRotation;
+
+            public Vector3 m_startDirection;
+            public Vector3 m_endDirection;
         }
 
         public object data
@@ -152,7 +155,7 @@ namespace MoveIt
                         m_startPosition = buildingBuffer[id.Building].m_position;
                         m_startAngle = buildingBuffer[id.Building].m_angle;
 
-                        subInstances = new List<Moveable>();
+                        subInstances = new HashSet<Moveable>();
 
                         ushort node = buildingBuffer[id.Building].m_netNode;
                         while (node != 0)
@@ -242,14 +245,14 @@ namespace MoveIt
                                 Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
                                 segVector.Normalize();
 
+                                m_segmentSave[i].m_startDirection = segmentBuffer[segment].m_startDirection;
+                                m_segmentSave[i].m_endDirection = segmentBuffer[segment].m_endDirection;
+
                                 Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
                                 Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
 
-                                startDirection.Normalize();
-                                endDirection.Normalize();
-
-                                m_segmentSave[i].m_startRotation = Quaternion.FromToRotation(segVector, startDirection);
-                                m_segmentSave[i].m_endRotation = Quaternion.FromToRotation(-segVector, endDirection);
+                                m_segmentSave[i].m_startRotation = Quaternion.FromToRotation(segVector, startDirection.normalized);
+                                m_segmentSave[i].m_endRotation = Quaternion.FromToRotation(-segVector, endDirection.normalized);
                             }
                         }
 
@@ -291,7 +294,38 @@ namespace MoveIt
 
         public void Restore()
         {
-            Move(m_startPosition, 0);
+            if (id.Type == InstanceType.NetNode)
+            {
+                NetManager netManager = NetManager.instance;
+                NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+                ushort node = id.NetNode;
+
+                netManager.MoveNode(node, m_startPosition);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    ushort segment = nodeBuffer[node].GetSegment(i);
+                    if (segment != 0)
+                    {
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
+
+                        segmentBuffer[segment].m_startDirection = m_segmentSave[i].m_startDirection;
+                        segmentBuffer[segment].m_endDirection = m_segmentSave[i].m_endDirection;
+
+                        segmentBuffer[segment].UpdateSegment(segment);
+                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                        netManager.UpdateNode(startNode);
+                        netManager.UpdateNode(endNode);
+                    }
+                }
+            }
+            else
+            {
+                Move(m_startPosition, 0);
+            }
 
             if (subInstances != null)
             {
