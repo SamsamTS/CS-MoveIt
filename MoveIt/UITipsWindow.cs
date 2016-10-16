@@ -10,7 +10,7 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.3.0: Marquee Selection!\nClick the button below",
+            "New in 1.4.0: Segment bending!\nYou can now select road segments and bend them",
             "Tip: Hold Alt to deselect using the marquee selection",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
@@ -70,7 +70,7 @@ namespace MoveIt
         public void RefreshPosition()
         {
 
-            float x = Screen.width - width - 10f;
+            float x = UIView.GetAView().fixedWidth - width - 10f;
             float y;
 
             if (UIToolOptionPanel.instance != null && MoveItTool.marqueeSelection)

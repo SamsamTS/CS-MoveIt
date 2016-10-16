@@ -56,6 +56,7 @@ namespace MoveIt
         public static bool filterProps = true;
         public static bool filterTrees = true;
         public static bool filterNodes = true;
+        public static bool filterSegments = true;
 
         public static InfoManager.InfoMode infoMode;
         public static InfoManager.SubInfoMode subInfoMode;
@@ -151,70 +152,7 @@ namespace MoveIt
                 lock (m_moves)
                 {
                     Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                    RaycastOutput output;
-
-                    input.m_netService.m_itemLayers = (ItemClass.Layer)11;
-                    input.m_ignoreTerrain = true;
-
-                    input.m_ignoreSegmentFlags = NetSegment.Flags.None;
-                    input.m_ignoreBuildingFlags = Building.Flags.None;
-                    input.m_ignorePropFlags = PropInstance.Flags.None;
-                    input.m_ignoreTreeFlags = TreeInstance.Flags.None;
-
-                    m_hoverInstance = null;
-
-                    if (ToolBase.RayCast(input, out output))
-                    {
-                        InstanceID id = default(InstanceID);
-
-                        if (output.m_netSegment != 0)
-                        {
-                            NetManager netManager = NetManager.instance;
-
-                            ushort building = NetSegment.FindOwnerBuilding(output.m_netSegment, 363f);
-
-                            if (building != 0)
-                            {
-                                id.Building = Building.FindParentBuilding(building);
-                                if (id.Building == 0) id.Building = building;
-                                m_hoverInstance = new Moveable(id);
-                            }
-                            else
-                            {
-                                NetSegment netSegment = netManager.m_segments.m_buffer[output.m_netSegment];
-                                NetNode startNode = netManager.m_nodes.m_buffer[netSegment.m_startNode];
-                                NetNode endNode = netManager.m_nodes.m_buffer[netSegment.m_endNode];
-
-                                if (startNode.m_bounds.IntersectRay(mouseRay))
-                                {
-                                    id.NetNode = netSegment.m_startNode;
-                                    m_hoverInstance = new Moveable(id);
-                                }
-                                else if (endNode.m_bounds.IntersectRay(mouseRay))
-                                {
-                                    id.NetNode = netSegment.m_endNode;
-                                    m_hoverInstance = new Moveable(id);
-                                }
-                            }
-                        }
-                        else if (output.m_building != 0)
-                        {
-                            id.Building = Building.FindParentBuilding(output.m_building);
-                            if (id.Building == 0) id.Building = output.m_building;
-                            m_hoverInstance = new Moveable(id);
-                        }
-                        else if (output.m_propInstance != 0)
-                        {
-                            id.Prop = output.m_propInstance;
-                            m_hoverInstance = new Moveable(id);
-                        }
-                        else if (output.m_treeInstance != 0u)
-                        {
-                            id.Tree = output.m_treeInstance;
-                            m_hoverInstance = new Moveable(id);
-                        }
-                    }
+                    RaycastHoverInstance(mouseRay);
 
                     if(m_drawingSelection)
                     {
@@ -231,16 +169,16 @@ namespace MoveIt
                             }
                             MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
-                            step.angleDelta = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
-                            m_nextAction = Actions.Transform;
+                            ushort newAngle = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
+                            if (step.angleDelta != newAngle)
+                            {
+                                step.angleDelta = newAngle;
+                                m_nextAction = Actions.Transform;
+                            }
 
                         }
                         else if (m_leftClickTime != 0 && ElapsedMilliseconds(m_leftClickTime) > 200)
                         {
-                            input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                            input.m_ignoreTerrain = false;
-                            ToolBase.RayCast(input, out output);
-
                             if (m_moves.currentType == MoveQueue.StepType.Selection)
                             {
                                 m_moves.Push(MoveQueue.StepType.Move, true);
@@ -248,20 +186,25 @@ namespace MoveIt
                             MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
                             float y = step.moveDelta.y;
-                            step.moveDelta = m_startPosition + output.m_hitPos - m_mouseStartPosition;
-                            step.moveDelta.y = y;
-                            m_nextAction = Actions.Transform;
-                        }
-                    }
+                            Vector3 newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
+                            newMove.y = y;
 
-                    if (Input.GetMouseButtonUp(0))
-                    {
-                        OnLeftMouseUp(mouseRay);
+                            if (step.moveDelta != newMove)
+                            {
+                                step.moveDelta = newMove;
+                                m_nextAction = Actions.Transform;
+                            }
+                        }
                     }
 
                     if (Input.GetMouseButtonDown(0))
                     {
                         OnLeftMouseDown(mouseRay);
+                    }
+
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        OnLeftMouseUp(mouseRay);
                     }
 
                     if (Input.GetMouseButtonDown(1))
@@ -368,7 +311,7 @@ namespace MoveIt
                             break;
                         }
                 }
-
+                
                 m_nextAction = Actions.None;
             }
         }
@@ -445,7 +388,7 @@ namespace MoveIt
                 if (m_moves.currentType == MoveQueue.StepType.Move)
                 {
                     MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
-
+                    
                     Bounds bounds = GetTotalBounds(false);
                     foreach (Moveable instance in step.instances)
                     {
@@ -476,11 +419,16 @@ namespace MoveIt
                     }
 
                     Bounds bounds = GetTotalBounds(false);
+                    float fAngle = step.angleDelta * 9.58738E-05f;
+
+                    Matrix4x4 matrix4x = default(Matrix4x4);
+                    matrix4x.SetTRS(step.center + moveDelta, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
                     foreach (Moveable instance in step.instances)
                     {
                         if (instance.isValid)
                         {
-                            instance.Transform(moveDelta, step.angleDelta, step.center);
+                            instance.Transform(ref matrix4x, moveDelta, step.angleDelta, step.center);
                         }
                     }
                     UpdateArea(bounds);
@@ -507,15 +455,33 @@ namespace MoveIt
                 }
 
                 Bounds bounds = GetTotalBounds(false);
+                float fAngle = step.angleDelta * 9.58738E-05f;
+
+                Matrix4x4 matrix4x = default(Matrix4x4);
+                matrix4x.SetTRS(step.center + moveDelta, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
                 foreach (Moveable instance in step.instances)
                 {
                     if (instance.isValid)
                     {
-                        instance.Transform(moveDelta, step.angleDelta, step.center);
+                        instance.Transform(ref matrix4x, moveDelta, step.angleDelta, step.center);
                     }
                 }
                 UpdateArea(bounds);
             }
+        }
+
+        public bool IsSegmentSelected(ushort segment)
+        {
+            if(m_moves.currentType == MoveQueue.StepType.Invalid)
+            {
+                return false;
+            }
+
+            Moveable instance = new Moveable(InstanceID.Empty);
+            instance.id.NetSegment = segment;
+
+            return m_moves.current.instances.Contains(instance);
         }
 
         private void OnLeftMouseDown(Ray mouseRay)
@@ -573,11 +539,6 @@ namespace MoveIt
                         step.center = GetTotalBounds().center;
                     }
 
-                    RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                    RaycastOutput output;
-                    input.m_ignoreTerrain = false;
-                    ToolBase.RayCast(input, out output);
-
                     if (m_moves.currentType == MoveQueue.StepType.Move)
                     {
                         m_startPosition = (m_moves.current as MoveQueue.MoveStep).moveDelta;
@@ -587,7 +548,7 @@ namespace MoveIt
                         m_startPosition = Vector3.zero;
                     }
 
-                    m_mouseStartPosition = output.m_hitPos;
+                    m_mouseStartPosition = RaycastMouseLocation(mouseRay);
                     m_leftClickTime = Stopwatch.GetTimestamp();
                 }
             }
@@ -596,12 +557,7 @@ namespace MoveIt
                 m_selection = default(Quad3);
                 m_marqueeInstances = null;
 
-                RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-                RaycastOutput output;
-                input.m_ignoreTerrain = false;
-                ToolBase.RayCast(input, out output);
-
-                m_mouseStartPosition = output.m_hitPos;
+                m_mouseStartPosition = RaycastMouseLocation(mouseRay);
                 m_drawingSelection = true;
             }
         }
@@ -689,6 +645,89 @@ namespace MoveIt
             m_rightClickTime = 0;
         }
 
+        private void RaycastHoverInstance(Ray mouseRay)
+        {
+            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+            RaycastOutput output;
+
+            input.m_netService.m_itemLayers = (ItemClass.Layer)11;
+            input.m_ignoreTerrain = true;
+
+            input.m_ignoreSegmentFlags = NetSegment.Flags.None;
+            input.m_ignoreBuildingFlags = Building.Flags.None;
+            input.m_ignorePropFlags = PropInstance.Flags.None;
+            input.m_ignoreTreeFlags = TreeInstance.Flags.None;
+
+            m_hoverInstance = null;
+
+            if (ToolBase.RayCast(input, out output))
+            {
+                InstanceID id = default(InstanceID);
+
+                if (output.m_netSegment != 0)
+                {
+                    NetManager netManager = NetManager.instance;
+
+                    ushort building = NetSegment.FindOwnerBuilding(output.m_netSegment, 363f);
+
+                    if (building != 0)
+                    {
+                        id.Building = Building.FindParentBuilding(building);
+                        if (id.Building == 0) id.Building = building;
+                        m_hoverInstance = new Moveable(id);
+                    }
+                    else
+                    {
+                        NetSegment netSegment = netManager.m_segments.m_buffer[output.m_netSegment];
+                        NetNode startNode = netManager.m_nodes.m_buffer[netSegment.m_startNode];
+                        NetNode endNode = netManager.m_nodes.m_buffer[netSegment.m_endNode];
+
+                        if (startNode.m_bounds.IntersectRay(mouseRay))
+                        {
+                            id.NetNode = netSegment.m_startNode;
+                            m_hoverInstance = new Moveable(id);
+                        }
+                        else if (endNode.m_bounds.IntersectRay(mouseRay))
+                        {
+                            id.NetNode = netSegment.m_endNode;
+                            m_hoverInstance = new Moveable(id);
+                        }
+                        else
+                        {
+                            id.NetSegment = output.m_netSegment;
+                            m_hoverInstance = new Moveable(id);
+                        }
+                    }
+                }
+                else if (output.m_building != 0)
+                {
+                    id.Building = Building.FindParentBuilding(output.m_building);
+                    if (id.Building == 0) id.Building = output.m_building;
+                    m_hoverInstance = new Moveable(id);
+                }
+                else if (output.m_propInstance != 0)
+                {
+                    id.Prop = output.m_propInstance;
+                    m_hoverInstance = new Moveable(id);
+                }
+                else if (output.m_treeInstance != 0u)
+                {
+                    id.Tree = output.m_treeInstance;
+                    m_hoverInstance = new Moveable(id);
+                }
+            }
+        }
+
+        private Vector3 RaycastMouseLocation(Ray mouseRay)
+        {
+            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
+            RaycastOutput output;
+            input.m_ignoreTerrain = false;
+            ToolBase.RayCast(input, out output);
+
+            return output.m_hitPos;
+        }
+
         private HashSet<Moveable> GetMarqueeList(Ray mouseRay)
         {
             HashSet<Moveable> list = new HashSet<Moveable>();
@@ -696,15 +735,11 @@ namespace MoveIt
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
             PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
             NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
             TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
 
-            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-            RaycastOutput output;
-            input.m_ignoreTerrain = false;
-            ToolBase.RayCast(input, out output);
-
             m_selection.a = m_mouseStartPosition;
-            m_selection.c = output.m_hitPos;
+            m_selection.c = RaycastMouseLocation(mouseRay);
 
             if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)
             {
@@ -784,6 +819,20 @@ namespace MoveIt
                                     list.Add(new Moveable(id));
                                 }
                                 node = nodeBuffer[node].m_nextGridNode;
+                            }
+                        }
+
+                        if (filterSegments)
+                        {
+                            ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
+                            while (segment != 0u)
+                            {
+                                if (PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
+                                {
+                                    id.NetSegment = segment;
+                                    list.Add(new Moveable(id));
+                                }
+                                segment = segmentBuffer[segment].m_nextGridSegment;
                             }
                         }
                     }
@@ -1261,6 +1310,33 @@ namespace MoveIt
                         NetTool.CheckOverlayAlpha(netInfo, ref alpha);
                         toolColor.a *= alpha;
                         RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, position.y - 1f, position.y + 1f, true, true);
+                        break;
+                    }
+                case InstanceType.NetSegment:
+                    {
+                        ushort segment = id.NetSegment;
+                        NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+                        NetInfo netInfo = segmentBuffer[segment].Info;
+
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
+                        
+			            bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+			            bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+
+                        Bezier3 bezier;
+                        bezier.a = nodeBuffer[startNode].m_position;
+                        bezier.d = nodeBuffer[endNode].m_position;
+
+                        NetSegment.CalculateMiddlePoints(
+                            bezier.a, segmentBuffer[segment].m_startDirection,
+                            bezier.d, segmentBuffer[segment].m_endDirection,
+                            smoothStart, smoothEnd, out bezier.b, out bezier.c);
+
+                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, true, true);
                         break;
                     }
             }

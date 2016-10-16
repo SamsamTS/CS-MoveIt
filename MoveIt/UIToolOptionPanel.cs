@@ -23,7 +23,7 @@ namespace MoveIt
             instance = this;
 
             size = new Vector2(41, 41);
-            relativePosition = new Vector2(Screen.width - 300, -41);
+            relativePosition = new Vector2(UIView.GetAView().fixedWidth - 300, -41);
             name = "MoveIt_ToolOptionPanel";
 
             m_snapping = AddUIComponent<UIMultiStateButton>();
@@ -116,7 +116,7 @@ namespace MoveIt
             filtersPanel.backgroundSprite = "SubcategoriesPanel";
             filtersPanel.clipChildren = true;
 
-            filtersPanel.size = new Vector2(150, 110);
+            filtersPanel.size = new Vector2(150, 140);
             filtersPanel.isVisible = false;
             
             UICheckBox checkBox = UIUtils.CreateCheckBox(filtersPanel);
@@ -151,14 +151,22 @@ namespace MoveIt
                 MoveItTool.filterNodes = p;
             };
 
+            checkBox = UIUtils.CreateCheckBox(filtersPanel);
+            checkBox.label.text = "Segments";
+            checkBox.isChecked = true;
+            checkBox.eventCheckChanged += (c, p) =>
+            {
+                MoveItTool.filterSegments = p;
+            };
+
             filtersPanel.padding = new RectOffset(10, 10, 10, 10);
             filtersPanel.autoLayoutDirection = LayoutDirection.Vertical;
             filtersPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 5);
             filtersPanel.autoLayout = true;
 
-            filtersPanel.height = 110;
+            filtersPanel.height = 140;
 
-            filtersPanel.absolutePosition = m_marquee.absolutePosition - new Vector3(57, 115);
+            filtersPanel.absolutePosition = m_marquee.absolutePosition - new Vector3(57, filtersPanel.height + 5);
 
             m_marquee.eventButtonStateChanged += (c, p) =>
             {
