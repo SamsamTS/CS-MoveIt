@@ -49,7 +49,6 @@ namespace MoveIt
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
 
-        public static bool snapping = false;
         public static bool marqueeSelection = false;
 
         public static bool filterBuildings = true;
@@ -58,13 +57,12 @@ namespace MoveIt
         public static bool filterNodes = true;
         public static bool filterSegments = true;
 
-        public static InfoManager.InfoMode infoMode;
-        public static InfoManager.SubInfoMode subInfoMode;
-        public static bool renderZones;
-
         private static Color m_hoverColor = new Color32(0, 181, 255, 255);
         private static Color m_selectedColor = new Color32(95, 166, 0, 244);
         private static Color m_removeColor = new Color32(255, 160, 47, 191);
+
+        private bool m_snapping = false;
+        private bool m_prevRenderZones;
 
         private Moveable m_hoverInstance;
         private HashSet<Moveable> m_marqueeInstances;
@@ -87,8 +85,24 @@ namespace MoveIt
         private ushort m_startAngle;
 
         private MoveQueue m_moves = new MoveQueue();
-
         private Actions m_nextAction = Actions.None;
+
+        public bool snapping
+        {
+            get
+            {
+                if (m_leftClickTime != 0)
+                {
+                    return m_snapping != Event.current.alt;
+                }
+                return m_snapping;
+            }
+
+            set
+            {
+                m_snapping = value;
+            }
+        }
 
         protected override void Awake()
         {
@@ -117,8 +131,13 @@ namespace MoveIt
                 UITipsWindow.instance.NextTip();
             }
 
+            InfoManager.InfoMode infoMode = InfoManager.instance.CurrentMode;
+            InfoManager.SubInfoMode subInfoMode = InfoManager.instance.CurrentSubMode;
+
+            m_prevRenderZones = TerrainManager.instance.RenderZones;
             m_prevTool = m_toolController.CurrentTool;
-            base.OnEnable();
+
+            m_toolController.CurrentTool = this;
 
             InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
             TerrainManager.instance.RenderZones = true;
@@ -136,13 +155,13 @@ namespace MoveIt
                 UIToolOptionPanel.instance.isVisible = false;
             }
 
-            if (m_toolController.NextTool == null && m_prevTool != null)
+            TerrainManager.instance.RenderZones = m_prevRenderZones;
+
+            if (m_toolController.NextTool == null && m_prevTool != null && m_prevTool != this)
             {
                 m_prevTool.enabled = true;
             }
             m_prevTool = null;
-
-            TerrainManager.instance.RenderZones = renderZones;
         }
 
         protected override void OnToolUpdate()
@@ -154,7 +173,7 @@ namespace MoveIt
                     Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHoverInstance(mouseRay);
 
-                    if(m_drawingSelection)
+                    if (m_drawingSelection)
                     {
                         m_marqueeInstances = GetMarqueeList(mouseRay);
                     }
@@ -283,6 +302,8 @@ namespace MoveIt
 
                         m_nextAction = Actions.Transform;
                     }
+
+                    UIToolOptionPanel.RefreshSnapButton();
                 }
             }
         }
@@ -311,19 +332,19 @@ namespace MoveIt
                             break;
                         }
                 }
-                
+
                 m_nextAction = Actions.None;
             }
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
-            if(m_drawingSelection)
+            if (m_drawingSelection)
             {
                 bool removing = Event.current.alt;
 
                 Color color = m_hoverColor;
-                if(removing)
+                if (removing)
                 {
                     color = m_removeColor;
                 }
@@ -388,7 +409,7 @@ namespace MoveIt
                 if (m_moves.currentType == MoveQueue.StepType.Move)
                 {
                     MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
-                    
+
                     Bounds bounds = GetTotalBounds(false);
                     foreach (Moveable instance in step.instances)
                     {
@@ -473,7 +494,7 @@ namespace MoveIt
 
         public bool IsSegmentSelected(ushort segment)
         {
-            if(m_moves.currentType == MoveQueue.StepType.Invalid)
+            if (m_moves.currentType == MoveQueue.StepType.Invalid)
             {
                 return false;
             }
@@ -604,7 +625,7 @@ namespace MoveIt
 
         private void OnRightMouseDown()
         {
-            if(m_drawingSelection)
+            if (m_drawingSelection)
             {
                 m_drawingSelection = false;
             }
@@ -1323,9 +1344,9 @@ namespace MoveIt
 
                         ushort startNode = segmentBuffer[segment].m_startNode;
                         ushort endNode = segmentBuffer[segment].m_endNode;
-                        
-			            bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-			            bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+
+                        bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                        bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
 
                         Bezier3 bezier;
                         bezier.a = nodeBuffer[startNode].m_position;
@@ -1349,7 +1370,7 @@ namespace MoveIt
                         toolColor.a = toolColor.a / 2;
                         RenderManager.instance.OverlayEffect.DrawSegment(cameraInfo, toolColor, segment1, segment2, 0, 10f, -1f, 1280f, true, true);
                         RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, -1f, 1280f, true, true);
-                        
+
                         break;
                     }
             }

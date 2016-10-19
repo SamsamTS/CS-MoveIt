@@ -48,12 +48,8 @@ namespace MoveIt
 
         protected override void OnClick(UIMouseEventParameter p)
         {
-            if (p.buttons.IsFlagSet(UIMouseButton.Left))
+            if (p.buttons.IsFlagSet(UIMouseButton.Left) && MoveItTool.instance != null)
             {
-                MoveItTool.infoMode = InfoManager.instance.CurrentMode;
-                MoveItTool.subInfoMode = InfoManager.instance.CurrentSubMode;
-                MoveItTool.renderZones = TerrainManager.instance.RenderZones;
-
                 MoveItTool.instance.enabled = !MoveItTool.instance.enabled;
             }
         }
@@ -87,7 +83,7 @@ namespace MoveIt
 
         public override void Update()
         {
-            if (MoveItTool.instance.enabled)
+            if (MoveItTool.instance != null && MoveItTool.instance.enabled)
             {
                 normalFgSprite = "MoveIt_focused";
             }

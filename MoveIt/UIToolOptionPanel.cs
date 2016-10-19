@@ -59,11 +59,14 @@ namespace MoveIt
 
             m_snapping.relativePosition = Vector2.zero;
 
-            m_snapping.activeStateIndex = MoveItTool.snapping ? 1 : 0;
+            m_snapping.activeStateIndex = (MoveItTool.instance != null && MoveItTool.instance.snapping) ? 1 : 0;
 
-            m_snapping.eventActiveStateIndexChanged += (c, p) =>
+            m_snapping.eventClicked += (c, p) =>
             {
-                MoveItTool.snapping = (p == 1);
+                if (MoveItTool.instance != null)
+                {
+                    MoveItTool.instance.snapping = (m_snapping.activeStateIndex == 1);
+                }
             };
 
             m_tabStrip = AddUIComponent<UITabstrip>();
@@ -178,6 +181,14 @@ namespace MoveIt
                     UITipsWindow.instance.RefreshPosition();
                 }
             };
+        }
+
+        public static void RefreshSnapButton()
+        {
+            if (instance != null && instance.m_snapping != null && MoveItTool.instance != null)
+            {
+                instance.m_snapping.activeStateIndex = MoveItTool.instance.snapping ? 1 : 0;
+            }
         }
     }
 }

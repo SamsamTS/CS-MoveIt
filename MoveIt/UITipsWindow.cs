@@ -14,6 +14,7 @@ namespace MoveIt
             "Tip: Hold Alt to deselect using the marquee selection",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
+            "Tip: Hold Alt while dragging objects to reverse the Snapping option",
             "Tip: While holding Right Click, move the mouse left and right to rotate objects",
             "Tip: Use Alt for finer movements with the keyboard",
             "Tip: Use Shift for faster movements with the keyboard",
