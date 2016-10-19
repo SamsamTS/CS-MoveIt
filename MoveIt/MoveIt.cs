@@ -1337,9 +1337,48 @@ namespace MoveIt
                             smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
                         RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, true, true);
+
+                        Segment3 segment1, segment2;
+
+                        segment1.a = nodeBuffer[startNode].m_position;
+                        segment2.a = nodeBuffer[endNode].m_position;
+
+                        segment1.b = GetControlPoint(segment);
+                        segment2.b = segment1.b;
+
+                        toolColor.a = toolColor.a / 2;
+                        RenderManager.instance.OverlayEffect.DrawSegment(cameraInfo, toolColor, segment1, segment2, 0, 10f, -1f, 1280f, true, true);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, -1f, 1280f, true, true);
+                        
                         break;
                     }
             }
+        }
+
+        public static Vector3 GetControlPoint(ushort segment)
+        {
+            NetManager netManager = NetManager.instance;
+            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
+            Vector3 startDir = segmentBuffer[segment].m_startDirection;
+            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
+            Vector3 endDir = segmentBuffer[segment].m_endDirection;
+
+            float num;
+            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
+            {
+                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
+                float u;
+                float v;
+                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
+                {
+                    return startPos + startDir * u;
+                }
+            }
+
+            return (startPos + endPos) / 2f;
         }
     }
 }

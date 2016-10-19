@@ -91,7 +91,7 @@ namespace MoveIt
                         }
                     case InstanceType.NetSegment:
                         {
-                            return GetControlPoint();
+                            return MoveItTool.GetControlPoint(id.NetSegment);
                         }
                 }
 
@@ -282,7 +282,7 @@ namespace MoveIt
                         m_segmentSave.m_startDirection = segmentBuffer[segment].m_startDirection;
                         m_segmentSave.m_endDirection = segmentBuffer[segment].m_endDirection;
 
-                        m_startPosition = GetControlPoint();
+                        m_startPosition = MoveItTool.GetControlPoint(id.NetSegment);
 
                         m_segmentsHashSet.Add(segment);
                         break;
@@ -566,6 +566,9 @@ namespace MoveIt
                         segmentBuffer[segment].m_startDirection = location - nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
                         segmentBuffer[segment].m_endDirection = location - nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
 
+                        segmentBuffer[segment].m_startDirection.y = 0;
+                        segmentBuffer[segment].m_endDirection.y = 0;
+
                         segmentBuffer[segment].m_startDirection.Normalize();
                         segmentBuffer[segment].m_endDirection.Normalize();
 
@@ -598,34 +601,6 @@ namespace MoveIt
             data.CalculateBuilding(building);
             data.UpdateBuilding(building);
             buildingManager.UpdateBuildingRenderer(building, true);
-        }
-
-        private Vector3 GetControlPoint()
-        {
-            NetManager netManager = NetManager.instance;
-            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
-            ushort segment = id.NetSegment;
-
-            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
-            Vector3 startDir = segmentBuffer[segment].m_startDirection;
-            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
-            Vector3 endDir = segmentBuffer[segment].m_endDirection;
-
-            float num;
-            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
-            {
-                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
-                float u;
-                float v;
-                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
-                {
-                    return startPos + startDir * u;
-                }
-            }
-
-            return (startPos + endPos) / 2f;
         }
 
         private static void AddToGrid(ushort building, ref Building data)
