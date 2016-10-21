@@ -337,7 +337,6 @@ namespace MoveIt
                         segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startDirection;
                         segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endDirection;
 
-                        segmentBuffer[segment].UpdateSegment(segment);
                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
                         netManager.UpdateNode(startNode);
@@ -359,7 +358,6 @@ namespace MoveIt
                 segmentBuffer[segment].m_startDirection = m_segmentSave.m_startDirection;
                 segmentBuffer[segment].m_endDirection = m_segmentSave.m_endDirection;
 
-                segmentBuffer[segment].UpdateSegment(segment);
                 UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
                 netManager.UpdateNode(startNode);
@@ -510,14 +508,12 @@ namespace MoveIt
                         ushort prop = id.Prop;
                         PropManager.instance.m_props.m_buffer[prop].m_angle = (ushort)((ushort)m_startAngle + deltaAngle);
                         PropManager.instance.MoveProp(prop, location);
-                        PropManager.instance.UpdatePropRenderer(prop, true);
                         break;
                     }
                 case InstanceType.Tree:
                     {
                         uint tree = id.Tree;
                         TreeManager.instance.MoveTree(tree, location);
-                        TreeManager.instance.UpdateTreeRenderer(tree, true);
                         break;
                     }
                 case InstanceType.NetNode:
@@ -543,13 +539,19 @@ namespace MoveIt
                                 segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
                                 segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
 
-                                segmentBuffer[segment].UpdateSegment(segment);
                                 UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
-                                netManager.UpdateNode(startNode);
-                                netManager.UpdateNode(endNode);
+                                if (node != startNode)
+                                {
+                                    netManager.UpdateNode(startNode);
+                                }
+                                else
+                                {
+                                    netManager.UpdateNode(endNode);
+                                }
                             }
                         }
+                        netManager.UpdateNode(node);
 
                         break;
                     }
@@ -572,7 +574,6 @@ namespace MoveIt
                         segmentBuffer[segment].m_startDirection.Normalize();
                         segmentBuffer[segment].m_endDirection.Normalize();
 
-                        segmentBuffer[segment].UpdateSegment(segment);
                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
                         netManager.UpdateNode(startNode);
@@ -588,8 +589,6 @@ namespace MoveIt
 
             BuildingInfo info = data.Info;
             RemoveFromGrid(building, ref data);
-            data.UpdateBuilding(building);
-            buildingManager.UpdateBuildingRenderer(building, true);
             if (info.m_hasParkingSpaces)
             {
                 buildingManager.UpdateParkingSpaces(building, ref data);
@@ -599,8 +598,6 @@ namespace MoveIt
 
             AddToGrid(building, ref data);
             data.CalculateBuilding(building);
-            data.UpdateBuilding(building);
-            buildingManager.UpdateBuildingRenderer(building, true);
         }
 
         private static void AddToGrid(ushort building, ref Building data)

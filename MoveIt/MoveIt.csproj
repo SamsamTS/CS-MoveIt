@@ -58,6 +58,7 @@
     <Compile Include="OptionsKeymapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceLoader.cs" />
+    <Compile Include="Statistics.cs" />
     <Compile Include="UIMoveItButton.cs" />
     <Compile Include="UITipsWindow.cs" />
     <Compile Include="UIToolOptionPanel.cs" />

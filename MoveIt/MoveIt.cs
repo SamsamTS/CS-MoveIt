@@ -87,6 +87,8 @@ namespace MoveIt
         private MoveQueue m_moves = new MoveQueue();
         private Actions m_nextAction = Actions.None;
 
+        private Dictionary<string, Statistics.stats> m_counters;
+
         public bool snapping
         {
             get
@@ -106,6 +108,9 @@ namespace MoveIt
 
         protected override void Awake()
         {
+            m_counters = Statistics.counters;
+            m_counters.Clear();
+
             enabled = false;
 
             m_toolController = GameObject.FindObjectOfType<ToolController>();
@@ -419,6 +424,7 @@ namespace MoveIt
                         }
                     }
                     UpdateArea(bounds);
+                    UpdateArea(GetTotalBounds(false));
                 }
 
                 m_moves.Previous();
@@ -453,6 +459,7 @@ namespace MoveIt
                         }
                     }
                     UpdateArea(bounds);
+                    UpdateArea(GetTotalBounds(false));
                 }
             }
         }
@@ -489,6 +496,7 @@ namespace MoveIt
                     }
                 }
                 UpdateArea(bounds);
+                UpdateArea(GetTotalBounds(false));
             }
         }
 
@@ -1101,7 +1109,19 @@ namespace MoveIt
 
         private void UpdateArea(Bounds bounds)
         {
+            bounds.Expand(64f);
+
+            BuildingManager.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             ZoneManager.instance.UpdateBlocks(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            PropManager.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            TreeManager.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+
+            bounds.Expand(64f);
+
+            ElectricityManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            WaterManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+
             TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
             UpdateRender(bounds);
         }
