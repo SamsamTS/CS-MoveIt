@@ -508,12 +508,14 @@ namespace MoveIt
                         ushort prop = id.Prop;
                         PropManager.instance.m_props.m_buffer[prop].m_angle = (ushort)((ushort)m_startAngle + deltaAngle);
                         PropManager.instance.MoveProp(prop, location);
+                        PropManager.instance.UpdatePropRenderer(prop, true);
                         break;
                     }
                 case InstanceType.Tree:
                     {
                         uint tree = id.Tree;
                         TreeManager.instance.MoveTree(tree, location);
+                        TreeManager.instance.UpdateTreeRenderer(tree, true);
                         break;
                     }
                 case InstanceType.NetNode:
@@ -539,6 +541,7 @@ namespace MoveIt
                                 segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
                                 segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
 
+                                netManager.UpdateSegmentRenderer(segment, true);
                                 UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
                                 if (node != startNode)
@@ -574,6 +577,7 @@ namespace MoveIt
                         segmentBuffer[segment].m_startDirection.Normalize();
                         segmentBuffer[segment].m_endDirection.Normalize();
 
+                        netManager.UpdateSegmentRenderer(segment, true);
                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
                         netManager.UpdateNode(startNode);
@@ -598,6 +602,7 @@ namespace MoveIt
 
             AddToGrid(building, ref data);
             data.CalculateBuilding(building);
+            buildingManager.UpdateBuildingRenderer(building, true);
         }
 
         private static void AddToGrid(ushort building, ref Building data)

@@ -111,9 +111,8 @@ namespace MoveIt
             m_counters = Statistics.counters;
             m_counters.Clear();
 
-            enabled = false;
-
             m_toolController = GameObject.FindObjectOfType<ToolController>();
+            enabled = false;
 
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
         }
@@ -910,6 +909,7 @@ namespace MoveIt
             ushort[] closeSegments = new ushort[16];
             int closeSegmentCount;
 
+            // Get list of closest segments
             foreach (Moveable instance in step.instances)
             {
                 if (instance.isValid)
@@ -928,35 +928,48 @@ namespace MoveIt
             Vector3 refPosition = Vector3.zero;
             bool smallRoad = false;
 
+            /*foreach (Moveable instance in step.instances)
+            {
+                if (instance.id.Type == InstanceType.NetSegment && instance.isValid)
+                {
+                    //TODO
+                }
+            }*/
+
+            // Snap to grid
             foreach (ushort segment in segmentList)
             {
-                if (segment != 0 && !ingnoreSegments.Contains(segment))
+                bool hasBlocks = segment != 0 && (segmentBuffer[segment].m_blockStartLeft != 0 || segmentBuffer[segment].m_blockStartRight != 0 || segmentBuffer[segment].m_blockEndLeft != 0 || segmentBuffer[segment].m_blockEndRight != 0);
+                if (hasBlocks && !ingnoreSegments.Contains(segment))
                 {
                     foreach (Moveable instance in step.instances)
                     {
-                        Vector3 testPosition = instance.newPosition;
-
-                        if (instance.id.Type == InstanceType.Building)
+                        if (instance.id.Type != InstanceType.NetSegment && instance.isValid)
                         {
-                            testPosition = CalculateSnapPosition(instance.newPosition, instance.newAngle,
-                                buildingBuffer[instance.id.Building].Length, buildingBuffer[instance.id.Building].Width);
-                        }
+                            Vector3 testPosition = instance.newPosition;
 
-                        segmentBuffer[segment].GetClosestZoneBlock(testPosition, ref distanceSq, ref block);
-
-                        if (block != previousBlock)
-                        {
-                            refPosition = testPosition;
-
-                            if (instance.id.Type == InstanceType.NetNode)
+                            if (instance.id.Type == InstanceType.Building)
                             {
-                                if (nodeBuffer[instance.id.NetNode].Info.m_halfWidth <= 4f)
-                                {
-                                    smallRoad = true;
-                                }
+                                testPosition = CalculateSnapPosition(instance.newPosition, instance.newAngle,
+                                    buildingBuffer[instance.id.Building].Length, buildingBuffer[instance.id.Building].Width);
                             }
 
-                            previousBlock = block;
+                            segmentBuffer[segment].GetClosestZoneBlock(testPosition, ref distanceSq, ref block);
+
+                            if (block != previousBlock)
+                            {
+                                refPosition = testPosition;
+
+                                if (instance.id.Type == InstanceType.NetNode)
+                                {
+                                    if (nodeBuffer[instance.id.NetNode].Info.m_halfWidth <= 4f)
+                                    {
+                                        smallRoad = true;
+                                    }
+                                }
+
+                                previousBlock = block;
+                            }
                         }
                     }
                 }
