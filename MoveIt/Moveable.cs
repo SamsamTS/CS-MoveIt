@@ -295,10 +295,15 @@ namespace MoveIt
             }
         }
 
-        public void Transform(ref Matrix4x4 matrix4x, Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
+        public void Transform(ref Matrix4x4 matrix4x, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain)
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center);
-            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            newPosition.y = m_startPosition.y + deltaPosition.y;
+
+            if(followTerrain)
+            {
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            }
 
             Move(newPosition, deltaAngle);
 
@@ -314,6 +319,20 @@ namespace MoveIt
                 }
             }
         }
+
+        public InstanceID Clone(ref Matrix4x4 matrix4x, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        {
+            Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center);
+            newPosition.y = m_startPosition.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            }
+
+            return Clone(newPosition, deltaAngle, clonedNodes);
+        }
+
 
         public void Restore()
         {
@@ -377,6 +396,38 @@ namespace MoveIt
             }
         }
 
+        public void Delete()
+        {
+            switch (id.Type)
+            {
+                case InstanceType.Building:
+                    {
+                        BuildingManager.instance.ReleaseBuilding(id.Building);
+                        break;
+                    }
+                case InstanceType.Prop:
+                    {
+                        PropManager.instance.ReleaseProp(id.Prop);
+                        break;
+                    }
+                case InstanceType.Tree:
+                    {
+                        TreeManager.instance.ReleaseTree(id.Tree);
+                        break;
+                    }
+                case InstanceType.NetNode:
+                    {
+                        NetManager.instance.ReleaseNode(id.NetNode);
+                        break;
+                    }
+                case InstanceType.NetSegment:
+                    {
+                        NetManager.instance.ReleaseSegment(id.NetSegment, true);
+                        break;
+                    }
+            }
+        }
+
         public void CalculateNewPosition(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
         {
             float fAngle = deltaAngle * 9.58738E-05f;
@@ -403,6 +454,100 @@ namespace MoveIt
             }
 
             return bounds;
+        }
+
+        public void RenderClone(RenderManager.CameraInfo cameraInfo, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Color toolColor)
+        {
+            float fAngle = deltaAngle * 9.58738E-05f;
+
+            Matrix4x4 matrix4x = default(Matrix4x4);
+            matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
+            newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
+            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+
+            newAngle = m_startAngle + fAngle;
+
+            switch (id.Type)
+            {
+                case InstanceType.Building:
+                    {
+                        BuildingManager buildingManager = BuildingManager.instance;
+                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
+                        ushort building = id.Building;
+
+                        BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
+                        int length = buildingManager.m_buildings.m_buffer[building].Length;
+                        float angle = buildingManager.m_buildings.m_buffer[building].m_angle;
+
+                        BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, newPosition, newAngle, toolColor, false);
+                        break;
+                    }
+                case InstanceType.Prop:
+                    {
+                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
+                        ushort prop = id.Prop;
+
+                        PropInfo info = buffer[prop].Info;
+                        Randomizer randomizer = new Randomizer(prop);
+                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+
+                        PropTool.RenderOverlay(cameraInfo, info, newPosition, scale, newAngle, toolColor);
+                        break;
+                    }
+                case InstanceType.Tree:
+                    {
+                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
+                        uint tree = id.Tree;
+
+                        TreeInfo info = buffer[tree].Info;
+                        Randomizer randomizer = new Randomizer(tree);
+                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+
+                        TreeTool.RenderOverlay(cameraInfo, info, newPosition, scale, toolColor);
+                        break;
+                    }
+                case InstanceType.NetSegment:
+                    {
+                        ushort segment = id.NetSegment;
+                        NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+                        NetInfo netInfo = segmentBuffer[segment].Info;
+
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
+
+                        bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                        bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                        
+                        Bezier3 bezier;
+                        bezier.a = matrix4x.MultiplyPoint(nodeBuffer[startNode].m_position - center) + deltaPosition;
+                        bezier.d = matrix4x.MultiplyPoint(nodeBuffer[endNode].m_position - center) + deltaPosition;
+
+                        Vector3 startDirection = newPosition - bezier.a;
+                        Vector3 endDirection = newPosition - bezier.d;
+
+                        startDirection.y = 0;
+                        endDirection.y = 0;
+
+                        startDirection.Normalize();
+                        endDirection.Normalize();
+
+                        NetSegment.CalculateMiddlePoints(
+                            bezier.a, startDirection,
+                            bezier.d, endDirection,
+                            smoothStart, smoothEnd, out bezier.b, out bezier.c);
+
+                        float minY = Mathf.Min(bezier.a.y, bezier.d.y);
+                        float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
+
+                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, minY, maxY, true, true);
+
+                        break;
+                    }
+            }
         }
 
         private Bounds GetBounds(InstanceID instance, bool ignoreSegments = true)
@@ -585,6 +730,129 @@ namespace MoveIt
                         break;
                     }
             }
+        }
+
+        private InstanceID Clone(Vector3 location, ushort deltaAngle, Dictionary<ushort, ushort> clonedNodes)
+        {
+            InstanceID cloneID = new InstanceID();
+
+            switch (id.Type)
+            {
+                case InstanceType.Building:
+                    {
+                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+                        ushort building = id.Building;
+
+                        //if ((buildingBuffer[building].m_flags & Building.Flags.Untouchable) == Building.Flags.None)
+                        if (buildingBuffer[building].FindParentNode(building) == 0)
+                        {
+                            ushort clone;
+                            if (BuildingManager.instance.CreateBuilding(out clone, ref SimulationManager.instance.m_randomizer,
+                                buildingBuffer[building].Info, location, buildingBuffer[building].m_angle + deltaAngle * 9.58738E-05f,
+                                buildingBuffer[building].Length, SimulationManager.instance.m_currentBuildIndex))
+                            {
+                                SimulationManager.instance.m_currentBuildIndex++;
+                                cloneID.Building = clone;
+                                if ((buildingBuffer[building].m_flags & Building.Flags.Completed) != Building.Flags.None)
+                                {
+                                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Completed;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case InstanceType.Prop:
+                    {
+                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
+                        ushort prop = id.Prop;
+
+                        ushort clone;
+                        if (PropManager.instance.CreateProp(out clone, ref SimulationManager.instance.m_randomizer,
+                            buffer[prop].Info, location, (buffer[prop].m_angle + deltaAngle) * 9.58738E-05f, buffer[prop].Single))
+                        {
+                            cloneID.Prop = clone;
+                        }
+                        break;
+                    }
+                case InstanceType.Tree:
+                    {
+                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
+                        uint tree = id.Tree;
+
+                        uint clone;
+                        if (TreeManager.instance.CreateTree(out clone, ref SimulationManager.instance.m_randomizer,
+                            buffer[tree].Info, location, buffer[tree].Single))
+                        {
+                            cloneID.Tree = clone;
+                        }
+                        break;
+                    }
+                case InstanceType.NetNode:
+                    {
+                        NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+                        ushort node = id.NetNode;
+
+                        ushort clone;
+                        if (NetManager.instance.CreateNode(out clone, ref SimulationManager.instance.m_randomizer, nodeBuffer[node].Info,
+                            location, SimulationManager.instance.m_currentBuildIndex))
+                        {
+                            SimulationManager.instance.m_currentBuildIndex++;
+                            cloneID.NetNode = clone;
+                        }
+                        
+                        break;
+                    }
+                case InstanceType.NetSegment:
+                    {
+                        NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+                        ushort segment = id.NetSegment;
+
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
+
+                        if(clonedNodes.ContainsKey(startNode))
+                        {
+                            startNode = clonedNodes[startNode];
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+                        if (clonedNodes.ContainsKey(endNode))
+                        {
+                            endNode = clonedNodes[endNode];
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+                        Vector3 startDirection = location - nodeBuffer[startNode].m_position;
+                        Vector3 endDirection = location - nodeBuffer[endNode].m_position;
+
+                        startDirection.y = 0;
+                        endDirection.y = 0;
+
+                        startDirection.Normalize();
+                        endDirection.Normalize();
+
+                        ushort clone;
+                        if(netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, segmentBuffer[segment].Info,
+                            startNode, endNode, startDirection, endDirection,
+                            SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
+                            (segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert))
+                        {
+                            SimulationManager.instance.m_currentBuildIndex++;
+                            cloneID.NetSegment = clone;
+                        }
+
+                        break;
+                    }
+            }
+            return cloneID;
         }
 
         private void RelocateBuilding(ushort building, ref Building data, Vector3 position, float angle)

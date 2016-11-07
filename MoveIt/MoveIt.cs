@@ -40,7 +40,8 @@ namespace MoveIt
             None,
             Undo,
             Redo,
-            Transform
+            Transform,
+            Clone
         }
 
         public const string settingsFileName = "MoveItTool";
@@ -57,8 +58,11 @@ namespace MoveIt
         public static bool filterNodes = true;
         public static bool filterSegments = true;
 
+        public static bool followTerrain = true;
+
         private static Color m_hoverColor = new Color32(0, 181, 255, 255);
         private static Color m_selectedColor = new Color32(95, 166, 0, 244);
+        private static Color m_moveColor = new Color32(125, 196, 30, 244);
         private static Color m_removeColor = new Color32(255, 160, 47, 191);
 
         private bool m_snapping = false;
@@ -89,11 +93,13 @@ namespace MoveIt
 
         private Dictionary<string, Statistics.stats> m_counters;
 
+        public bool cloning;
+
         public bool snapping
         {
             get
             {
-                if (m_leftClickTime != 0)
+                if (m_leftClickTime != 0 || cloning)
                 {
                     return m_snapping != Event.current.alt;
                 }
@@ -170,144 +176,212 @@ namespace MoveIt
 
         protected override void OnToolUpdate()
         {
-            if (!this.m_toolController.IsInsideUI && Cursor.visible)
+            lock (m_moves)
             {
-                lock (m_moves)
+                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (!this.m_toolController.IsInsideUI && Cursor.visible)
                 {
-                    Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    RaycastHoverInstance(mouseRay);
-
-                    if (m_drawingSelection)
+                    if (cloning)
                     {
-                        m_marqueeInstances = GetMarqueeList(mouseRay);
-                    }
+                        MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                        step.snap = snapping;
 
-                    if (m_nextAction == Actions.None && m_moves.currentType != MoveQueue.StepType.Invalid)
-                    {
-                        if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) > 200)
+                        float y = step.moveDelta.y;
+                        step.moveDelta = RaycastMouseLocation(mouseRay) - step.center;
+                        step.moveDelta.y = y;
+
+                        if (step.snap)
                         {
-                            if (m_moves.currentType == MoveQueue.StepType.Selection)
-                            {
-                                m_moves.Push(MoveQueue.StepType.Move, true);
-                            }
-                            MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                            step.moveDelta = GetSnapPosition(step);
+                        }
 
+                        if (m_rightClickTime != 0)
+                        {
                             ushort newAngle = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
                             if (step.angleDelta != newAngle)
                             {
                                 step.angleDelta = newAngle;
-                                m_nextAction = Actions.Transform;
                             }
-
                         }
-                        else if (m_leftClickTime != 0 && ElapsedMilliseconds(m_leftClickTime) > 200)
+
+                        if (Input.GetMouseButtonDown(0))
                         {
-                            if (m_moves.currentType == MoveQueue.StepType.Selection)
+                            m_nextAction = Actions.Clone;
+                            cloning = false;
+                        }
+                        else if (Input.GetMouseButtonDown(1))
+                        {
+                            OnRightMouseDown();
+                        }
+
+                        UIToolOptionPanel.RefreshSnapButton();
+                    }
+                    else
+                    {
+                        RaycastHoverInstance(mouseRay);
+
+                        if (m_drawingSelection)
+                        {
+                            m_marqueeInstances = GetMarqueeList(mouseRay);
+                        }
+
+                        if (m_nextAction == Actions.None && m_moves.currentType != MoveQueue.StepType.Invalid)
+                        {
+                            if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) > 200)
                             {
-                                m_moves.Push(MoveQueue.StepType.Move, true);
+                                if (m_moves.currentType == MoveQueue.StepType.Selection)
+                                {
+                                    m_moves.Push(MoveQueue.StepType.Move, true);
+                                }
+                                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                                ushort newAngle = (ushort)(m_startAngle + (ushort)(ushort.MaxValue * (Input.mousePosition.x - m_mouseStartX) / Screen.width));
+                                if (step.angleDelta != newAngle)
+                                {
+                                    step.angleDelta = newAngle;
+                                    m_nextAction = Actions.Transform;
+                                }
+
                             }
-                            MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
-
-                            float y = step.moveDelta.y;
-                            Vector3 newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
-                            newMove.y = y;
-
-                            if (step.moveDelta != newMove)
+                            else if (m_leftClickTime != 0 && ElapsedMilliseconds(m_leftClickTime) > 200)
                             {
-                                step.moveDelta = newMove;
-                                m_nextAction = Actions.Transform;
+                                if (m_moves.currentType == MoveQueue.StepType.Selection)
+                                {
+                                    m_moves.Push(MoveQueue.StepType.Move, true);
+                                }
+                                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                                float y = step.moveDelta.y;
+                                Vector3 newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
+                                newMove.y = y;
+
+                                if (step.moveDelta != newMove)
+                                {
+                                    step.moveDelta = newMove;
+                                    m_nextAction = Actions.Transform;
+                                }
                             }
                         }
-                    }
 
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        OnLeftMouseDown(mouseRay);
-                    }
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            OnLeftMouseDown(mouseRay);
+                        }
 
-                    if (Input.GetMouseButtonUp(0))
-                    {
-                        OnLeftMouseUp(mouseRay);
+                        if (Input.GetMouseButtonDown(1))
+                        {
+                            OnRightMouseDown();
+                        }
                     }
+                }
 
-                    if (Input.GetMouseButtonDown(1))
-                    {
-                        OnRightMouseDown();
-                    }
+                if ((m_leftClickTime != 0 || m_drawingSelection) && !Input.GetMouseButton(0))
+                {
+                    OnLeftMouseUp(mouseRay);
+                }
 
-                    if (Input.GetMouseButtonUp(1))
-                    {
-                        OnRightMouseUp();
-                    }
+                if (m_rightClickTime != 0 && !Input.GetMouseButton(1))
+                {
+                    OnRightMouseUp();
+                }
 
-                    if (m_leftClickTime != 0 || m_rightClickTime != 0)
-                    {
-                        m_hoverInstance = null;
-                    }
+                if (m_leftClickTime != 0 || m_rightClickTime != 0)
+                {
+                    m_hoverInstance = null;
                 }
             }
         }
 
         protected override void OnToolGUI(Event e)
         {
-            lock (m_moves)
+            if (!UIView.HasModalInput() && !UIView.HasInputFocus())
             {
-                if (m_nextAction != Actions.None)
+                lock (m_moves)
                 {
-                    return;
-                }
-
-                if (OptionsKeymapping.undo.IsPressed(e))
-                {
-                    m_nextAction = Actions.Undo;
-                }
-                else if (OptionsKeymapping.redo.IsPressed(e))
-                {
-                    m_nextAction = Actions.Redo;
-                }
-                else if (m_moves.hasSelection || (m_hoverInstance != null && !marqueeSelection))
-                {
-                    Vector3 direction;
-                    int angle;
-
-                    if (ProcessMoveKeys(e, out direction, out angle))
+                    if (m_nextAction != Actions.None)
                     {
-                        if (m_moves.currentType == MoveQueue.StepType.Selection)
-                        {
-                            m_moves.Push(MoveQueue.StepType.Move, true);
-                        }
-                        else if (m_moves.currentType == MoveQueue.StepType.Invalid ||
-                            (!m_moves.hasSelection && !m_moves.current.instances.Contains(m_hoverInstance)))
-                        {
-                            m_moves.Push(MoveQueue.StepType.Move);
-                            m_moves.current.isSelection = false;
-                            m_moves.current.instances.Add(m_hoverInstance);
-                        }
-
-                        if (direction != Vector3.zero)
-                        {
-                            direction.x = direction.x * 0.263671875f;
-                            direction.y = direction.y * 0.015625f;
-                            direction.z = direction.z * 0.263671875f;
-
-                            if (!useCardinalMoves)
-                            {
-                                Matrix4x4 matrix4x = default(Matrix4x4);
-                                matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);
-
-                                direction = matrix4x.MultiplyVector(direction);
-                            }
-                        }
-
-                        MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
-
-                        step.moveDelta = step.moveDelta + direction;
-                        step.angleDelta = (ushort)(step.angleDelta + angle);
-
-                        m_nextAction = Actions.Transform;
+                        return;
                     }
 
-                    UIToolOptionPanel.RefreshSnapButton();
+                    if (cloning)
+                    {
+                        if (OptionsKeymapping.copy.IsPressed(e) || OptionsKeymapping.undo.IsPressed(e))
+                        {
+                            m_moves.Previous();
+                            cloning = false;
+                        }
+
+                        Vector3 direction;
+                            int angle;
+
+                            if (ProcessMoveKeys(e, out direction, out angle))
+                            {
+                                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                                step.moveDelta.y = step.moveDelta.y + direction.y * 0.015625f;
+                                step.angleDelta = (ushort)(step.angleDelta + angle);
+                            }
+                    }
+                    else
+                    {
+                        if (OptionsKeymapping.undo.IsPressed(e))
+                        {
+                            m_nextAction = Actions.Undo;
+                        }
+                        else if (OptionsKeymapping.redo.IsPressed(e))
+                        {
+                            m_nextAction = Actions.Redo;
+                        }
+                        else if (OptionsKeymapping.copy.IsPressed(e))
+                        {
+                            StartCloning();
+                        }
+                        else if (m_moves.hasSelection || (m_hoverInstance != null && !marqueeSelection))
+                        {
+                            Vector3 direction;
+                            int angle;
+
+                            if (ProcessMoveKeys(e, out direction, out angle))
+                            {
+                                if (m_moves.currentType == MoveQueue.StepType.Selection)
+                                {
+                                    m_moves.Push(MoveQueue.StepType.Move, true);
+                                }
+                                else if (m_moves.currentType == MoveQueue.StepType.Invalid ||
+                                    (!m_moves.hasSelection && !m_moves.current.instances.Contains(m_hoverInstance)))
+                                {
+                                    m_moves.Push(MoveQueue.StepType.Move);
+                                    m_moves.current.isSelection = false;
+                                    m_moves.current.instances.Add(m_hoverInstance);
+                                }
+
+                                if (direction != Vector3.zero)
+                                {
+                                    direction.x = direction.x * 0.263671875f;
+                                    direction.y = direction.y * 0.015625f;
+                                    direction.z = direction.z * 0.263671875f;
+
+                                    if (!useCardinalMoves)
+                                    {
+                                        Matrix4x4 matrix4x = default(Matrix4x4);
+                                        matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);
+
+                                        direction = matrix4x.MultiplyVector(direction);
+                                    }
+                                }
+
+                                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                                step.moveDelta = step.moveDelta + direction;
+                                step.angleDelta = (ushort)(step.angleDelta + angle);
+
+                                m_nextAction = Actions.Transform;
+                            }
+
+                            UIToolOptionPanel.RefreshSnapButton();
+                        }
+                    }
                 }
             }
         }
@@ -333,6 +407,11 @@ namespace MoveIt
                     case Actions.Transform:
                         {
                             Transform();
+                            break;
+                        }
+                    case Actions.Clone:
+                        {
+                            Clone();
                             break;
                         }
                 }
@@ -370,16 +449,33 @@ namespace MoveIt
                 }
             }
 
-            if (m_moves.hasSelection)
+            if(cloning)
+            {
+                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                foreach (Moveable instance in step.instances)
+                {
+                    if (instance.isValid)
+                    {
+                        instance.RenderClone(cameraInfo, step.moveDelta, step.angleDelta, step.center, step.followTerrain, m_hoverColor);
+                    }
+                }
+            }
+            else if (m_moves.hasSelection)
             {
                 bool removing = m_drawingSelection && Event.current.alt && m_marqueeInstances != null;
+
+                Color color = m_selectedColor;
+                if(m_hoverInstance != null || m_leftClickTime != 0 || m_rightClickTime != 0)
+                {
+                    color = m_moveColor;
+                }
 
                 MoveQueue.Step step = m_moves.current;
                 foreach (Moveable instance in step.instances)
                 {
                     if (instance.isValid && !(removing && m_marqueeInstances.Contains(instance)))
                     {
-                        RenderInstanceOverlay(cameraInfo, instance.id, m_selectedColor);
+                        RenderInstanceOverlay(cameraInfo, instance.id, color);
                     }
                 }
 
@@ -405,6 +501,88 @@ namespace MoveIt
             base.RenderOverlay(cameraInfo);
         }
 
+        public void StartCloning()
+        {
+            if (!cloning && m_moves.currentType != MoveQueue.StepType.Invalid && m_moves.hasSelection)
+            {
+                m_moves.Push(MoveQueue.StepType.Move, true);
+
+                NetManager netManager = NetManager.instance;
+                NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+                InstanceID id = new InstanceID();
+
+
+                HashSet<Moveable> toAdd = new HashSet<Moveable>();
+
+                // Adding missing nodes
+                foreach (Moveable instance in m_moves.current.instances)
+                {
+                    if (instance.id.Type == InstanceType.NetSegment)
+                    {
+                        ushort segment = instance.id.NetSegment;
+
+                        id.NetNode = segmentBuffer[segment].m_startNode;
+                        if (!m_moves.current.Contain(id))
+                        {
+                            toAdd.Add(new Moveable(id));
+                        }
+
+                        id.NetNode = segmentBuffer[segment].m_endNode;
+                        if (!m_moves.current.Contain(id))
+                        {
+                            toAdd.Add(new Moveable(id));
+                        }
+                    }
+                }
+
+                m_moves.current.instances.UnionWith(toAdd);
+                toAdd.Clear();
+
+                // Adding missing segments
+                foreach (Moveable instance in m_moves.current.instances)
+                {
+                    if (instance.id.Type == InstanceType.NetNode)
+                    {
+                        ushort node = instance.id.NetNode;
+                        for (int i = 0; i < 8; i++)
+                        {
+                            ushort segment = nodeBuffer[node].GetSegment(i);
+                            id.NetSegment = segment;
+
+                            if (segment != 0 && !m_moves.current.Contain(id))
+                            {
+                                ushort startNode = segmentBuffer[segment].m_startNode;
+                                ushort endNode = segmentBuffer[segment].m_endNode;
+
+                                if (node == startNode)
+                                {
+                                    id.NetNode = endNode;
+                                }
+                                else
+                                {
+                                    id.NetNode = startNode;
+                                }
+
+                                if (m_moves.current.Contain(id))
+                                {
+                                    id.NetSegment = segment;
+                                    toAdd.Add(new Moveable(id));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                m_moves.current.instances.UnionWith(toAdd);
+                m_moves.current.center = GetTotalBounds().center;
+
+                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                step.clone = true;
+                cloning = true;
+            }
+        }
 
         public void Undo()
         {
@@ -425,6 +603,23 @@ namespace MoveIt
                     UpdateArea(bounds);
                     UpdateArea(GetTotalBounds(false));
                 }
+                else if (m_moves.currentType == MoveQueue.StepType.Clone)
+                {
+                    MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+                    if (step.clones != null)
+                    {
+                        foreach (Moveable clone in step.clones)
+                        {
+                            if (clone.isValid)
+                            {
+                                clone.Delete();
+                            }
+                        }
+                    }
+
+                    step.clones = null;
+                }
 
                 m_moves.Previous();
             }
@@ -434,31 +629,40 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                if (m_moves.Next() && m_moves.currentType == MoveQueue.StepType.Move)
+                if (m_moves.Next())
                 {
-                    MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
-
-                    Vector3 moveDelta = step.moveDelta;
-                    if (step.snap)
+                    if (m_moves.currentType == MoveQueue.StepType.Move)
                     {
-                        moveDelta = GetSnapPosition(step);
-                    }
+                        MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
-                    Bounds bounds = GetTotalBounds(false);
-                    float fAngle = step.angleDelta * 9.58738E-05f;
-
-                    Matrix4x4 matrix4x = default(Matrix4x4);
-                    matrix4x.SetTRS(step.center + moveDelta, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
-
-                    foreach (Moveable instance in step.instances)
-                    {
-                        if (instance.isValid)
+                        Vector3 moveDelta = step.moveDelta;
+                        if (step.snap)
                         {
-                            instance.Transform(ref matrix4x, moveDelta, step.angleDelta, step.center);
+                            moveDelta = GetSnapPosition(step);
                         }
+
+                        float fAngle = step.angleDelta * 9.58738E-05f;
+
+                        Matrix4x4 matrix4x = default(Matrix4x4);
+                        matrix4x.SetTRS(step.center + moveDelta, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
+                        Bounds bounds = GetTotalBounds(false);
+
+                        foreach (Moveable instance in step.instances)
+                        {
+                            if (instance.isValid)
+                            {
+                                instance.Transform(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain);
+                            }
+                        }
+
+                        UpdateArea(bounds);
+                        UpdateArea(GetTotalBounds(false));
                     }
-                    UpdateArea(bounds);
-                    UpdateArea(GetTotalBounds(false));
+                    else if (m_moves.currentType == MoveQueue.StepType.Clone)
+                    {
+                        Clone();
+                    }
                 }
             }
         }
@@ -473,6 +677,7 @@ namespace MoveIt
                 }
 
                 MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                step.followTerrain = followTerrain;
                 step.snap = snapping;
 
                 Vector3 moveDelta = step.moveDelta;
@@ -491,12 +696,66 @@ namespace MoveIt
                 {
                     if (instance.isValid)
                     {
-                        instance.Transform(ref matrix4x, moveDelta, step.angleDelta, step.center);
+                        instance.Transform(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain);
                     }
                 }
                 UpdateArea(bounds);
                 UpdateArea(GetTotalBounds(false));
             }
+        }
+
+        public void Clone()
+        {
+            MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+
+            step.snap = snapping;
+            step.followTerrain = followTerrain;
+
+            Vector3 moveDelta = step.moveDelta;
+            if (step.snap)
+            {
+                moveDelta = GetSnapPosition(step);
+            }
+
+            float fAngle = step.angleDelta * 9.58738E-05f;
+
+            Matrix4x4 matrix4x = default(Matrix4x4);
+            matrix4x.SetTRS(step.center + moveDelta, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
+            step.clones = new HashSet<Moveable>();
+
+            Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort,ushort>();
+
+            foreach (Moveable instance in step.instances)
+            {
+                if (instance.isValid && instance.id.Type != InstanceType.NetSegment)
+                {
+                    InstanceID clone = instance.Clone(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain, clonedNodes);
+                    if (clone != default(InstanceID))
+                    {
+                        step.clones.Add(new Moveable(clone));
+                    }
+                    if(clone.Type == InstanceType.NetNode)
+                    {
+                        clonedNodes.Add(instance.id.NetNode, clone.NetNode);
+                    }
+                }
+            }
+
+            foreach (Moveable instance in step.instances)
+            {
+                if (instance.isValid && instance.id.Type == InstanceType.NetSegment)
+                {
+                    InstanceID clone = instance.Clone(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain, clonedNodes);
+                    if (clone != default(InstanceID))
+                    {
+                        step.clones.Add(new Moveable(clone));
+                    }
+                }
+            }
+
+            m_moves.Push(MoveQueue.StepType.Selection, true);
+            m_moves.current.center = GetTotalBounds().center;
         }
 
         public bool IsSegmentSelected(ushort segment)
@@ -510,6 +769,32 @@ namespace MoveIt
             instance.id.NetSegment = segment;
 
             return m_moves.current.instances.Contains(instance);
+        }
+
+        public static Vector3 GetControlPoint(ushort segment)
+        {
+            NetManager netManager = NetManager.instance;
+            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
+            Vector3 startDir = segmentBuffer[segment].m_startDirection;
+            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
+            Vector3 endDir = segmentBuffer[segment].m_endDirection;
+
+            float num;
+            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
+            {
+                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
+                float u;
+                float v;
+                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
+                {
+                    return startPos + startDir * u;
+                }
+            }
+
+            return (startPos + endPos) / 2f;
         }
 
         private void OnLeftMouseDown(Ray mouseRay)
@@ -627,6 +912,7 @@ namespace MoveIt
                 }
 
                 m_drawingSelection = false;
+                m_marqueeInstances = null;
             }
         }
 
@@ -641,7 +927,7 @@ namespace MoveIt
                 m_rightClickTime = Stopwatch.GetTimestamp();
                 m_mouseStartX = Input.mousePosition.x;
 
-                if (m_moves.currentType == MoveQueue.StepType.Move)
+                if (m_moves.currentType == MoveQueue.StepType.Move || m_moves.currentType == MoveQueue.StepType.Clone)
                 {
                     m_startAngle = (m_moves.current as MoveQueue.MoveStep).angleDelta;
                 }
@@ -663,7 +949,7 @@ namespace MoveIt
                     {
                         m_moves.Push(MoveQueue.StepType.Selection, false);
                     }
-                    else
+                    else if (!cloning)
                     {
                         m_moves.current.instances.Clear();
                     }
@@ -678,7 +964,7 @@ namespace MoveIt
             RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
             RaycastOutput output;
 
-            input.m_netService.m_itemLayers = (ItemClass.Layer)11;
+            input.m_netService.m_itemLayers = GetItemLayers();
             input.m_ignoreTerrain = true;
 
             input.m_ignoreSegmentFlags = NetSegment.Flags.None;
@@ -804,6 +1090,8 @@ namespace MoveIt
 
                 InstanceID id = new InstanceID();
 
+                ItemClass.Layer itemLayers = GetItemLayers();
+
                 for (int i = gridMinZ; i <= gridMaxZ; i++)
                 {
                     for (int j = gridMinX; j <= gridMaxX; j++)
@@ -813,7 +1101,7 @@ namespace MoveIt
                             ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
                             while (building != 0u)
                             {
-                                if (buildingBuffer[building].m_parentBuilding <= 0 && PointInRectangle(m_selection, buildingBuffer[building].m_position))
+                                if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].m_parentBuilding <= 0 && PointInRectangle(m_selection, buildingBuffer[building].m_position))
                                 {
                                     id.Building = building;
                                     list.Add(new Moveable(id));
@@ -841,7 +1129,7 @@ namespace MoveIt
                             ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
                             while (node != 0u)
                             {
-                                if (PointInRectangle(m_selection, nodeBuffer[node].m_position))
+                                if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
                                 {
                                     id.NetNode = node;
                                     list.Add(new Moveable(id));
@@ -855,7 +1143,7 @@ namespace MoveIt
                             ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
                             while (segment != 0u)
                             {
-                                if (PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
+                                if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
                                 {
                                     id.NetSegment = segment;
                                     list.Add(new Moveable(id));
@@ -894,6 +1182,53 @@ namespace MoveIt
             return list;
         }
 
+        private ItemClass.Layer GetItemLayers()
+        {
+            ItemClass.Layer itemLayers = ItemClass.Layer.Default;
+
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Water)
+            {
+                itemLayers = itemLayers | ItemClass.Layer.WaterPipes;
+            }
+
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            {
+                itemLayers = itemLayers | ItemClass.Layer.MetroTunnels;
+            }
+
+            return itemLayers;
+        }
+
+        private bool IsBuildingValid(ref Building building, ItemClass.Layer itemLayers)
+        {
+            if ((building.m_flags & Building.Flags.Created) == Building.Flags.Created)
+            {
+                return (building.Info.m_class.m_layer & itemLayers) != ItemClass.Layer.None;
+            }
+
+            return false;
+        }
+
+        private bool IsNodeValid(ref NetNode node, ItemClass.Layer itemLayers)
+        {
+            if((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)
+            {
+                return (node.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;
+            }
+
+            return false;
+        }
+
+        private bool IsSegmentValid(ref NetSegment segment, ItemClass.Layer itemLayers)
+        {
+            if ((segment.m_flags & NetSegment.Flags.Created) == NetSegment.Flags.Created)
+            {
+                return (segment.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;
+            }
+
+            return false;
+        }
+
         private Vector3 GetSnapPosition(MoveQueue.MoveStep step)
         {
             Vector3 moveDelta = step.moveDelta;
@@ -918,7 +1253,10 @@ namespace MoveIt
                     netManager.GetClosestSegments(instance.newPosition, closeSegments, out closeSegmentCount);
                     segmentList.UnionWith(closeSegments);
 
-                    ingnoreSegments.UnionWith(instance.segmentList);
+                    if (!step.clone)
+                    {
+                        ingnoreSegments.UnionWith(instance.segmentList);
+                    }
                 }
             }
 
@@ -1407,32 +1745,6 @@ namespace MoveIt
                         break;
                     }
             }
-        }
-
-        public static Vector3 GetControlPoint(ushort segment)
-        {
-            NetManager netManager = NetManager.instance;
-            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
-            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
-            Vector3 startDir = segmentBuffer[segment].m_startDirection;
-            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
-            Vector3 endDir = segmentBuffer[segment].m_endDirection;
-
-            float num;
-            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
-            {
-                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
-                float u;
-                float v;
-                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
-                {
-                    return startPos + startDir * u;
-                }
-            }
-
-            return (startPos + endPos) / 2f;
         }
     }
 }

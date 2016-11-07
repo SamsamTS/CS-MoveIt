@@ -32,6 +32,8 @@ namespace MoveIt
         public static readonly SavedInputKey undo = new SavedInputKey("undo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
 
+        public static readonly SavedInputKey copy = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
+
         private int count = 0;
 
         private void Awake()
@@ -47,6 +49,7 @@ namespace MoveIt
             AddKeymapping("Rotate Clockwise", turnPos);
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
+            AddKeymapping("Copy", copy);
         }
 
         private void AddKeymapping(string label, SavedInputKey savedInputKey)

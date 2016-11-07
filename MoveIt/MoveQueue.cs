@@ -10,7 +10,8 @@ namespace MoveIt
         {
             Invalid,
             Selection,
-            Move
+            Move,
+            Clone
         }
 
         public class Step
@@ -18,14 +19,30 @@ namespace MoveIt
             public HashSet<Moveable> instances = new HashSet<Moveable>();
             public Vector3 center;
             public bool snap = false;
+            public bool followTerrain = true;
 
             public bool isSelection = true;
+
+            public bool Contain(InstanceID id)
+            {
+                foreach (Moveable instance in instances)
+                {
+                    if(instance.id == id)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         public class MoveStep : Step
         {
             public Vector3 moveDelta;
             public ushort angleDelta;
+
+            public bool clone;
+            public HashSet<Moveable> clones;
 
             public bool hasMoved
             {
@@ -72,11 +89,22 @@ namespace MoveIt
 
             if (copySelection && previous != -1)
             {
-                if (m_moves[previous] is MoveStep)
+                MoveStep step = m_moves[previous] as MoveStep;
+                if (step != null)
                 {
-                    foreach (Moveable instance in m_moves[previous].instances)
+                    if (step.clone)
                     {
-                        m_moves[m_moveCurrent].instances.Add(new Moveable(instance.id));
+                        foreach (Moveable instance in step.clones)
+                        {
+                            m_moves[m_moveCurrent].instances.Add(new Moveable(instance.id));
+                        }
+                    }
+                    else
+                    {
+                        foreach (Moveable instance in m_moves[previous].instances)
+                        {
+                            m_moves[m_moveCurrent].instances.Add(new Moveable(instance.id));
+                        }
                     }
                 }
                 else
@@ -166,7 +194,7 @@ namespace MoveIt
 
                 if (m_moves[m_moveCurrent] is MoveStep)
                 {
-                    return StepType.Move;
+                    return ((MoveStep)m_moves[m_moveCurrent]).clone ? StepType.Clone : StepType.Move;
                 }
 
                 return StepType.Selection;

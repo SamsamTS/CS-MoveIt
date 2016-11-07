@@ -69,6 +69,13 @@
     <EmbeddedResource Include="Icons\MoveIt_focused.png" />
     <EmbeddedResource Include="Icons\MoveIt_hover.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Copy.png" />
+    <EmbeddedResource Include="Icons\FollowTerrain.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\FollowTerrain_disabled.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"

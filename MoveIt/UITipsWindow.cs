@@ -10,7 +10,8 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.4.0: Segment bending!\nYou can now select road segments and bend them",
+            "New in 1.5.0: Copy!\nYou can now make a copy of selected objects",
+            "New in 1.5.0: Follow Terrain option!\nIf disabled, objects will stay at the same height (when applicable)",
             "Tip: Hold Alt to deselect using the marquee selection",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",

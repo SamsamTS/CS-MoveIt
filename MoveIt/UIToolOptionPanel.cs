@@ -10,11 +10,13 @@ namespace MoveIt
     {
         public static UIToolOptionPanel instance;
 
+        private UIMultiStateButton m_followTerrain;
         private UIMultiStateButton m_snapping;
 
         private UITabstrip m_tabStrip;
         private UIButton m_single;
         private UIButton m_marquee;
+        private UIButton m_copy;
 
         public UIPanel filtersPanel;
 
@@ -25,6 +27,40 @@ namespace MoveIt
             size = new Vector2(41, 41);
             relativePosition = new Vector2(UIView.GetAView().fixedWidth - 300, -41);
             name = "MoveIt_ToolOptionPanel";
+
+            m_followTerrain = AddUIComponent<UIMultiStateButton>();
+            m_followTerrain.atlas = GetFollowTerrainAtlas();
+            m_followTerrain.name = "MoveIt_Snapping";
+            m_followTerrain.tooltip = "Follow Terrain";
+            m_followTerrain.playAudioEvents = true;
+
+            m_followTerrain.size = new Vector2(36, 36);
+            m_followTerrain.spritePadding = new RectOffset();
+
+            m_followTerrain.backgroundSprites[0].disabled = "ToggleBaseDisabled";
+            m_followTerrain.backgroundSprites[0].hovered = "ToggleBaseHovered";
+            m_followTerrain.backgroundSprites[0].normal = "ToggleBase";
+            m_followTerrain.backgroundSprites[0].pressed = "ToggleBasePressed";
+
+            m_followTerrain.backgroundSprites.AddState();
+            m_followTerrain.backgroundSprites[1].disabled = "ToggleBaseDisabled";
+            m_followTerrain.backgroundSprites[1].hovered = "";
+            m_followTerrain.backgroundSprites[1].normal = "ToggleBaseFocused";
+            m_followTerrain.backgroundSprites[1].pressed = "ToggleBasePressed";
+
+            m_followTerrain.foregroundSprites[0].normal = "FollowTerrain_disabled";
+
+            m_followTerrain.foregroundSprites.AddState();
+            m_followTerrain.foregroundSprites[1].normal = "FollowTerrain";
+
+            m_followTerrain.relativePosition = Vector2.zero;
+
+            m_followTerrain.activeStateIndex = MoveItTool.followTerrain ? 1 : 0;
+
+            m_followTerrain.eventClicked += (c, p) =>
+            {
+                MoveItTool.followTerrain = (m_followTerrain.activeStateIndex == 1);
+            };
 
             m_snapping = AddUIComponent<UIMultiStateButton>();
             m_snapping.atlas = UIUtils.GetAtlas("Ingame");
@@ -57,7 +93,7 @@ namespace MoveIt
             m_snapping.foregroundSprites[1].normal = "SnappingFocused";
             m_snapping.foregroundSprites[1].pressed = "SnappingPressed";
 
-            m_snapping.relativePosition = Vector2.zero;
+            m_snapping.relativePosition = m_followTerrain.relativePosition + new Vector3(m_followTerrain.width, 0);
 
             m_snapping.activeStateIndex = (MoveItTool.instance != null && MoveItTool.instance.snapping) ? 1 : 0;
 
@@ -181,6 +217,32 @@ namespace MoveIt
                     UITipsWindow.instance.RefreshPosition();
                 }
             };
+
+            m_copy = AddUIComponent<UIButton>();
+            m_copy.name = "MoveIt_Copy";
+            m_copy.group = m_tabStrip;
+            m_copy.atlas = GetCopyAtlas();
+            m_copy.tooltip = "Copy";
+            m_copy.playAudioEvents = true;
+
+            m_copy.size = new Vector2(36, 36);
+
+            m_copy.normalBgSprite =  "OptionBase";
+            m_copy.hoveredBgSprite = "OptionBaseHovered";
+            m_copy.pressedBgSprite = "OptionBasePressed";
+            m_copy.disabledBgSprite = "OptionBaseDisabled";
+
+            m_copy.normalFgSprite = "Copy";
+
+            m_copy.relativePosition = m_tabStrip.relativePosition + new Vector3(m_single.width + m_marquee.width, 0);
+
+            m_copy.eventClicked += (c, p) =>
+            {
+                if (MoveItTool.instance != null)
+                {
+                    MoveItTool.instance.StartCloning();
+                }
+            };
         }
 
         public static void RefreshSnapButton()
@@ -189,6 +251,54 @@ namespace MoveIt
             {
                 instance.m_snapping.activeStateIndex = MoveItTool.instance.snapping ? 1 : 0;
             }
+        }
+
+        private UITextureAtlas GetFollowTerrainAtlas()
+        {
+
+            Texture2D[] textures = 
+            {
+                atlas["ToggleBaseDisabled"].texture,
+                atlas["ToggleBaseHovered"].texture,
+                atlas["ToggleBase"].texture,
+                atlas["ToggleBasePressed"].texture,
+                atlas["ToggleBaseFocused"].texture
+                
+            };
+
+            string[] spriteNames = new string[]
+			{
+				"FollowTerrain",
+                "FollowTerrain_disabled"
+			};
+
+            UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_FollowTerrain", spriteNames, "MoveIt.Icons.");
+            ResourceLoader.AddTexturesInAtlas(loadedAtlas, textures);
+
+            return loadedAtlas;
+        }
+
+        private UITextureAtlas GetCopyAtlas()
+        {
+
+            Texture2D[] textures = 
+            {
+                atlas["OptionBase"].texture,
+                atlas["OptionBaseHovered"].texture,
+                atlas["OptionBasePressed"].texture,
+                atlas["OptionBaseDisabled"].texture
+                
+            };
+
+            string[] spriteNames = new string[]
+			{
+				"Copy"
+			};
+
+            UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Copy", spriteNames, "MoveIt.Icons.");
+            ResourceLoader.AddTexturesInAtlas(loadedAtlas, textures);
+
+            return loadedAtlas;
         }
     }
 }
