@@ -245,6 +245,15 @@ namespace MoveIt
             };
         }
 
+        protected override void OnVisibilityChanged()
+        {
+            if(isVisible)
+            {
+                relativePosition = new Vector2(UIView.GetAView().fixedWidth - 300, -41);
+            }
+            base.OnVisibilityChanged();
+        }
+
         public static void RefreshSnapButton()
         {
             if (instance != null && instance.m_snapping != null && MoveItTool.instance != null)

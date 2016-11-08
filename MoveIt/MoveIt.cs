@@ -420,6 +420,22 @@ namespace MoveIt
             }
         }
 
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo)
+        {
+            if (cloning)
+            {
+                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                foreach (Moveable instance in step.instances)
+                {
+                    if (instance.isValid)
+                    {
+                        instance.RenderCloneGeometry(cameraInfo, step.moveDelta, step.angleDelta, step.center, step.followTerrain, m_hoverColor);
+                    }
+                }
+            }
+            base.RenderGeometry(cameraInfo);
+        }
+
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
             if (m_drawingSelection)
@@ -443,7 +459,7 @@ namespace MoveIt
                     {
                         if (instance.isValid && (!removing || step.instances.Contains(instance)))
                         {
-                            RenderInstanceOverlay(cameraInfo, instance.id, color);
+                            instance.RenderOverlay(cameraInfo, color);
                         }
                     }
                 }
@@ -456,7 +472,7 @@ namespace MoveIt
                 {
                     if (instance.isValid)
                     {
-                        instance.RenderClone(cameraInfo, step.moveDelta, step.angleDelta, step.center, step.followTerrain, m_hoverColor);
+                        instance.RenderCloneOverlay(cameraInfo, step.moveDelta, step.angleDelta, step.center, step.followTerrain, m_hoverColor);
                     }
                 }
             }
@@ -464,18 +480,19 @@ namespace MoveIt
             {
                 bool removing = m_drawingSelection && Event.current.alt && m_marqueeInstances != null;
 
+                MoveQueue.Step step = m_moves.current;
+
                 Color color = m_selectedColor;
-                if(m_hoverInstance != null || m_leftClickTime != 0 || m_rightClickTime != 0)
+                if ((m_hoverInstance != null && step.instances.Contains(m_hoverInstance)) || m_leftClickTime != 0 || m_rightClickTime != 0)
                 {
                     color = m_moveColor;
                 }
 
-                MoveQueue.Step step = m_moves.current;
                 foreach (Moveable instance in step.instances)
                 {
                     if (instance.isValid && !(removing && m_marqueeInstances.Contains(instance)))
                     {
-                        RenderInstanceOverlay(cameraInfo, instance.id, color);
+                        instance.RenderOverlay(cameraInfo, color);
                     }
                 }
 
@@ -490,12 +507,12 @@ namespace MoveIt
 
                 if (!marqueeSelection && m_hoverInstance != null && !step.instances.Contains(m_hoverInstance))
                 {
-                    RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
+                    m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor);
                 }
             }
             else if (!marqueeSelection && m_hoverInstance != null)
             {
-                RenderInstanceOverlay(cameraInfo, m_hoverInstance.id, m_hoverColor);
+                m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor);
             }
 
             base.RenderOverlay(cameraInfo);
@@ -769,32 +786,6 @@ namespace MoveIt
             instance.id.NetSegment = segment;
 
             return m_moves.current.instances.Contains(instance);
-        }
-
-        public static Vector3 GetControlPoint(ushort segment)
-        {
-            NetManager netManager = NetManager.instance;
-            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
-            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
-            Vector3 startDir = segmentBuffer[segment].m_startDirection;
-            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
-            Vector3 endDir = segmentBuffer[segment].m_endDirection;
-
-            float num;
-            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
-            {
-                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
-                float u;
-                float v;
-                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
-                {
-                    return startPos + startDir * u;
-                }
-            }
-
-            return (startPos + endPos) / 2f;
         }
 
         private void OnLeftMouseDown(Ray mouseRay)
@@ -1574,177 +1565,6 @@ namespace MoveIt
         private bool PointInRectangle(Quad3 rectangle, Vector3 p)
         {
             return isLeft(rectangle.a, rectangle.b, p) && isLeft(rectangle.b, rectangle.c, p) && isLeft(rectangle.c, rectangle.d, p) && isLeft(rectangle.d, rectangle.a, p);
-        }
-
-        private void RenderInstanceOverlay(RenderManager.CameraInfo cameraInfo, InstanceID id, Color toolColor)
-        {
-            switch (id.Type)
-            {
-                case InstanceType.Building:
-                    {
-                        ushort building = id.Building;
-                        NetManager netManager = NetManager.instance;
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
-                        float alpha = 1f;
-                        BuildingTool.CheckOverlayAlpha(buildingInfo, ref alpha);
-                        ushort node = buildingManager.m_buildings.m_buffer[building].m_netNode;
-                        int count = 0;
-                        while (node != 0)
-                        {
-                            for (int j = 0; j < 8; j++)
-                            {
-                                ushort segment = netManager.m_nodes.m_buffer[node].GetSegment(j);
-                                if (segment != 0 && netManager.m_segments.m_buffer[segment].m_startNode == node && (netManager.m_segments.m_buffer[segment].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
-                                {
-                                    NetTool.CheckOverlayAlpha(ref netManager.m_segments.m_buffer[segment], ref alpha);
-                                }
-                            }
-                            node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
-                            if (++count > 32768)
-                            {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                                break;
-                            }
-                        }
-                        ushort subBuilding = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
-                        count = 0;
-                        while (subBuilding != 0)
-                        {
-                            BuildingTool.CheckOverlayAlpha(buildingManager.m_buildings.m_buffer[subBuilding].Info, ref alpha);
-                            subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
-                            if (++count > 49152)
-                            {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                                break;
-                            }
-                        }
-                        toolColor.a *= alpha;
-                        int length = buildingManager.m_buildings.m_buffer[building].Length;
-                        Vector3 position = buildingManager.m_buildings.m_buffer[building].m_position;
-                        float angle = buildingManager.m_buildings.m_buffer[building].m_angle;
-                        BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, position, angle, toolColor, false);
-
-                        node = buildingManager.m_buildings.m_buffer[building].m_netNode;
-                        count = 0;
-                        while (node != 0)
-                        {
-                            for (int k = 0; k < 8; k++)
-                            {
-                                ushort segment2 = netManager.m_nodes.m_buffer[node].GetSegment(k);
-                                if (segment2 != 0 && netManager.m_segments.m_buffer[segment2].m_startNode == node && (netManager.m_segments.m_buffer[segment2].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
-                                {
-                                    NetTool.RenderOverlay(cameraInfo, ref netManager.m_segments.m_buffer[segment2], toolColor, toolColor);
-                                }
-                            }
-                            node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
-                            if (++count > 32768)
-                            {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                                break;
-                            }
-                        }
-                        subBuilding = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
-                        count = 0;
-                        while (subBuilding != 0)
-                        {
-                            BuildingInfo subBuildingInfo = buildingManager.m_buildings.m_buffer[subBuilding].Info;
-                            int subLength = buildingManager.m_buildings.m_buffer[subBuilding].Length;
-                            Vector3 subPosition = buildingManager.m_buildings.m_buffer[subBuilding].m_position;
-                            float subAngle = buildingManager.m_buildings.m_buffer[subBuilding].m_angle;
-                            BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subPosition, subAngle, toolColor, false);
-                            subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
-                            if (++count > 49152)
-                            {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                case InstanceType.Prop:
-                    {
-                        ushort prop = id.Prop;
-                        PropManager propManager = PropManager.instance;
-                        PropInfo propInfo = propManager.m_props.m_buffer[prop].Info;
-                        Vector3 position = propManager.m_props.m_buffer[prop].Position;
-                        float angle = propManager.m_props.m_buffer[prop].Angle;
-                        Randomizer randomizer = new Randomizer((int)prop);
-                        float scale = propInfo.m_minScale + (float)randomizer.Int32(10000u) * (propInfo.m_maxScale - propInfo.m_minScale) * 0.0001f;
-                        float alpha = 1f;
-                        PropTool.CheckOverlayAlpha(propInfo, scale, ref alpha);
-                        toolColor.a *= alpha;
-                        PropTool.RenderOverlay(cameraInfo, propInfo, position, scale, angle, toolColor);
-                        break;
-                    }
-                case InstanceType.Tree:
-                    {
-                        uint tree = id.Tree;
-                        TreeManager treeManager = TreeManager.instance;
-                        TreeInfo treeInfo = treeManager.m_trees.m_buffer[tree].Info;
-                        Vector3 position = treeManager.m_trees.m_buffer[tree].Position;
-                        Randomizer randomizer = new Randomizer(tree);
-                        float scale = treeInfo.m_minScale + (float)randomizer.Int32(10000u) * (treeInfo.m_maxScale - treeInfo.m_minScale) * 0.0001f;
-                        float alpha = 1f;
-                        TreeTool.CheckOverlayAlpha(treeInfo, scale, ref alpha);
-                        toolColor.a *= alpha;
-                        TreeTool.RenderOverlay(cameraInfo, treeInfo, position, scale, toolColor);
-                        break;
-                    }
-                case InstanceType.NetNode:
-                    {
-                        ushort node = id.NetNode;
-                        NetManager netManager = NetManager.instance;
-                        NetInfo netInfo = netManager.m_nodes.m_buffer[node].Info;
-                        Vector3 position = netManager.m_nodes.m_buffer[node].m_position;
-                        Randomizer randomizer = new Randomizer(node);
-                        float alpha = 1f;
-                        NetTool.CheckOverlayAlpha(netInfo, ref alpha);
-                        toolColor.a *= alpha;
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, position.y - 1f, position.y + 1f, true, true);
-                        break;
-                    }
-                case InstanceType.NetSegment:
-                    {
-                        ushort segment = id.NetSegment;
-                        NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
-                        NetInfo netInfo = segmentBuffer[segment].Info;
-
-                        ushort startNode = segmentBuffer[segment].m_startNode;
-                        ushort endNode = segmentBuffer[segment].m_endNode;
-
-                        bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-                        bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-
-                        Bezier3 bezier;
-                        bezier.a = nodeBuffer[startNode].m_position;
-                        bezier.d = nodeBuffer[endNode].m_position;
-
-                        NetSegment.CalculateMiddlePoints(
-                            bezier.a, segmentBuffer[segment].m_startDirection,
-                            bezier.d, segmentBuffer[segment].m_endDirection,
-                            smoothStart, smoothEnd, out bezier.b, out bezier.c);
-
-                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, true, true);
-
-                        Segment3 segment1, segment2;
-
-                        segment1.a = nodeBuffer[startNode].m_position;
-                        segment2.a = nodeBuffer[endNode].m_position;
-
-                        segment1.b = GetControlPoint(segment);
-                        segment2.b = segment1.b;
-
-                        toolColor.a = toolColor.a / 2;
-                        RenderManager.instance.OverlayEffect.DrawSegment(cameraInfo, toolColor, segment1, segment2, 0, 10f, -1f, 1280f, true, true);
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, -1f, 1280f, true, true);
-
-                        break;
-                    }
-            }
         }
     }
 }

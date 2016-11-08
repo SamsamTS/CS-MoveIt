@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Collections.Generic;
 
@@ -34,6 +35,8 @@ namespace MoveIt
             public Vector3 m_startDirection;
             public Vector3 m_endDirection;
         }
+
+        private static MethodInfo RenderSegment = typeof(NetTool).GetMethod("RenderSegment", BindingFlags.NonPublic | BindingFlags.Static);
 
         public object data
         {
@@ -91,7 +94,7 @@ namespace MoveIt
                         }
                     case InstanceType.NetSegment:
                         {
-                            return MoveItTool.GetControlPoint(id.NetSegment);
+                            return GetControlPoint(id.NetSegment);
                         }
                 }
 
@@ -282,7 +285,7 @@ namespace MoveIt
                         m_segmentSave.m_startDirection = segmentBuffer[segment].m_startDirection;
                         m_segmentSave.m_endDirection = segmentBuffer[segment].m_endDirection;
 
-                        m_startPosition = MoveItTool.GetControlPoint(id.NetSegment);
+                        m_startPosition = GetControlPoint(id.NetSegment);
 
                         m_segmentsHashSet.Add(segment);
                         break;
@@ -456,8 +459,194 @@ namespace MoveIt
             return bounds;
         }
 
-        public void RenderClone(RenderManager.CameraInfo cameraInfo, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Color toolColor)
+        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            switch (id.Type)
+            {
+                case InstanceType.Building:
+                    {
+                        ushort building = id.Building;
+                        NetManager netManager = NetManager.instance;
+                        BuildingManager buildingManager = BuildingManager.instance;
+                        BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
+                        float alpha = 1f;
+                        BuildingTool.CheckOverlayAlpha(buildingInfo, ref alpha);
+                        ushort node = buildingManager.m_buildings.m_buffer[building].m_netNode;
+                        int count = 0;
+                        while (node != 0)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                ushort segment = netManager.m_nodes.m_buffer[node].GetSegment(j);
+                                if (segment != 0 && netManager.m_segments.m_buffer[segment].m_startNode == node && (netManager.m_segments.m_buffer[segment].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
+                                {
+                                    NetTool.CheckOverlayAlpha(ref netManager.m_segments.m_buffer[segment], ref alpha);
+                                }
+                            }
+                            node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
+                            if (++count > 32768)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                        ushort subBuilding = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
+                        count = 0;
+                        while (subBuilding != 0)
+                        {
+                            BuildingTool.CheckOverlayAlpha(buildingManager.m_buildings.m_buffer[subBuilding].Info, ref alpha);
+                            subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
+                            if (++count > 49152)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                        toolColor.a *= alpha;
+                        int length = buildingManager.m_buildings.m_buffer[building].Length;
+                        Vector3 position = buildingManager.m_buildings.m_buffer[building].m_position;
+                        float angle = buildingManager.m_buildings.m_buffer[building].m_angle;
+                        BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, position, angle, toolColor, false);
+
+                        node = buildingManager.m_buildings.m_buffer[building].m_netNode;
+                        count = 0;
+                        while (node != 0)
+                        {
+                            for (int k = 0; k < 8; k++)
+                            {
+                                ushort segment2 = netManager.m_nodes.m_buffer[node].GetSegment(k);
+                                if (segment2 != 0 && netManager.m_segments.m_buffer[segment2].m_startNode == node && (netManager.m_segments.m_buffer[segment2].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
+                                {
+                                    NetTool.RenderOverlay(cameraInfo, ref netManager.m_segments.m_buffer[segment2], toolColor, toolColor);
+                                }
+                            }
+                            node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
+                            if (++count > 32768)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                        subBuilding = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
+                        count = 0;
+                        while (subBuilding != 0)
+                        {
+                            BuildingInfo subBuildingInfo = buildingManager.m_buildings.m_buffer[subBuilding].Info;
+                            int subLength = buildingManager.m_buildings.m_buffer[subBuilding].Length;
+                            Vector3 subPosition = buildingManager.m_buildings.m_buffer[subBuilding].m_position;
+                            float subAngle = buildingManager.m_buildings.m_buffer[subBuilding].m_angle;
+                            BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subPosition, subAngle, toolColor, false);
+                            subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
+                            if (++count > 49152)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                case InstanceType.Prop:
+                    {
+                        ushort prop = id.Prop;
+                        PropManager propManager = PropManager.instance;
+                        PropInfo propInfo = propManager.m_props.m_buffer[prop].Info;
+                        Vector3 position = propManager.m_props.m_buffer[prop].Position;
+                        float angle = propManager.m_props.m_buffer[prop].Angle;
+                        Randomizer randomizer = new Randomizer((int)prop);
+                        float scale = propInfo.m_minScale + (float)randomizer.Int32(10000u) * (propInfo.m_maxScale - propInfo.m_minScale) * 0.0001f;
+                        float alpha = 1f;
+                        PropTool.CheckOverlayAlpha(propInfo, scale, ref alpha);
+                        toolColor.a *= alpha;
+                        PropTool.RenderOverlay(cameraInfo, propInfo, position, scale, angle, toolColor);
+                        break;
+                    }
+                case InstanceType.Tree:
+                    {
+                        uint tree = id.Tree;
+                        TreeManager treeManager = TreeManager.instance;
+                        TreeInfo treeInfo = treeManager.m_trees.m_buffer[tree].Info;
+                        Vector3 position = treeManager.m_trees.m_buffer[tree].Position;
+                        Randomizer randomizer = new Randomizer(tree);
+                        float scale = treeInfo.m_minScale + (float)randomizer.Int32(10000u) * (treeInfo.m_maxScale - treeInfo.m_minScale) * 0.0001f;
+                        float alpha = 1f;
+                        TreeTool.CheckOverlayAlpha(treeInfo, scale, ref alpha);
+                        toolColor.a *= alpha;
+                        TreeTool.RenderOverlay(cameraInfo, treeInfo, position, scale, toolColor);
+                        break;
+                    }
+                case InstanceType.NetNode:
+                    {
+                        ushort node = id.NetNode;
+                        NetManager netManager = NetManager.instance;
+                        NetInfo netInfo = netManager.m_nodes.m_buffer[node].Info;
+                        Vector3 position = netManager.m_nodes.m_buffer[node].m_position;
+                        Randomizer randomizer = new Randomizer(node);
+                        float alpha = 1f;
+                        NetTool.CheckOverlayAlpha(netInfo, ref alpha);
+                        toolColor.a *= alpha;
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, 0f/*position.y - 10f*/, position.y + 10f, false, true);
+                        break;
+                    }
+                case InstanceType.NetSegment:
+                    {
+                        ushort segment = id.NetSegment;
+                        NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+                        NetInfo netInfo = segmentBuffer[segment].Info;
+
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
+
+                        bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                        bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+
+                        Bezier3 bezier;
+                        bezier.a = nodeBuffer[startNode].m_position;
+                        bezier.d = nodeBuffer[endNode].m_position;
+
+                        NetSegment.CalculateMiddlePoints(
+                            bezier.a, segmentBuffer[segment].m_startDirection,
+                            bezier.d, segmentBuffer[segment].m_endDirection,
+                            smoothStart, smoothEnd, out bezier.b, out bezier.c);
+
+                        float minY = 10f;//Mathf.Min(bezier.a.y, bezier.d.y);
+                        float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
+
+                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, minY - 10f, maxY + 10f, false, true);
+
+                        Segment3 segment1, segment2;
+
+                        segment1.a = nodeBuffer[startNode].m_position;
+                        segment2.a = nodeBuffer[endNode].m_position;
+
+                        segment1.b = GetControlPoint(segment);
+                        segment2.b = segment1.b;
+
+                        toolColor.a = toolColor.a / 2;
+
+                        minY = 10f;//Mathf.Min(Mathf.Min(segment1.a.y, segment1.b.y), segment2.a.y);
+                        maxY = Mathf.Max(Mathf.Max(segment1.a.y, segment1.b.y), segment2.a.y);
+
+                        RenderManager.instance.OverlayEffect.DrawSegment(cameraInfo, toolColor, segment1, segment2, 0, 10f, minY, maxY, true, true);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, segment1.b.y - 10f, segment1.b.y + 10f, true, true);
+
+                        break;
+                    }
+            }
+        }
+
+        public void RenderCloneOverlay(RenderManager.CameraInfo cameraInfo, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Color toolColor)
+        {
+            /*if (subInstances != null)
+            {
+                foreach (Moveable subInstance in subInstances)
+                {
+                    subInstance.RenderCloneOverlay(cameraInfo, deltaPosition, deltaAngle, center, followTerrain, toolColor);
+                }
+            }*/
+
             float fAngle = deltaAngle * 9.58738E-05f;
 
             Matrix4x4 matrix4x = default(Matrix4x4);
@@ -465,8 +654,6 @@ namespace MoveIt
 
             newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
             newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
-
-            newAngle = m_startAngle + fAngle;
 
             switch (id.Type)
             {
@@ -476,10 +663,12 @@ namespace MoveIt
                         Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
                         ushort building = id.Building;
 
-                        BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
-                        int length = buildingManager.m_buildings.m_buffer[building].Length;
-                        float angle = buildingManager.m_buildings.m_buffer[building].m_angle;
+                        BuildingInfo buildingInfo = buildingBuffer[building].Info;
+                        int length = buildingBuffer[building].Length;
+                        float angle = buildingBuffer[building].m_angle;
+                        Color color = buildingInfo.m_buildingAI.GetColor(0, ref buildingBuffer[building], InfoManager.instance.CurrentMode);
 
+                        newAngle = m_startAngle + fAngle;
                         BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, newPosition, newAngle, toolColor, false);
                         break;
                     }
@@ -492,6 +681,7 @@ namespace MoveIt
                         Randomizer randomizer = new Randomizer(prop);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
+                        newAngle = (m_startAngle + deltaAngle) * 9.58738E-05f;
                         PropTool.RenderOverlay(cameraInfo, info, newPosition, scale, newAngle, toolColor);
                         break;
                     }
@@ -503,6 +693,7 @@ namespace MoveIt
                         TreeInfo info = buffer[tree].Info;
                         Randomizer randomizer = new Randomizer(tree);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+                        float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
                         TreeTool.RenderOverlay(cameraInfo, info, newPosition, scale, toolColor);
                         break;
@@ -521,10 +712,21 @@ namespace MoveIt
 
                         bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
                         bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-                        
+
                         Bezier3 bezier;
                         bezier.a = matrix4x.MultiplyPoint(nodeBuffer[startNode].m_position - center) + deltaPosition;
                         bezier.d = matrix4x.MultiplyPoint(nodeBuffer[endNode].m_position - center) + deltaPosition;
+
+                        if (followTerrain)
+                        {
+                            bezier.a.y = bezier.a.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.a) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[startNode].m_position);
+                            bezier.d.y = bezier.d.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.d) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[endNode].m_position);
+                        }
+                        else
+                        {
+                            bezier.a.y = nodeBuffer[startNode].m_position.y + deltaPosition.y;
+                            bezier.d.y = nodeBuffer[endNode].m_position.y + deltaPosition.y;
+                        }
 
                         Vector3 startDirection = newPosition - bezier.a;
                         Vector3 endDirection = newPosition - bezier.d;
@@ -540,14 +742,163 @@ namespace MoveIt
                             bezier.d, endDirection,
                             smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                        float minY = Mathf.Min(bezier.a.y, bezier.d.y);
+                        float minY = 10f;// Mathf.Min(bezier.a.y, bezier.d.y);
                         float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
 
-                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, minY, maxY, true, true);
-
+                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, minY - 10f, maxY + 10f, false, true);
                         break;
                     }
             }
+        }
+
+        public void RenderCloneGeometry(RenderManager.CameraInfo cameraInfo, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Color toolColor)
+        {
+            float fAngle = deltaAngle * 9.58738E-05f;
+
+            Matrix4x4 matrix4x = default(Matrix4x4);
+            matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
+
+            newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
+            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+
+            switch (id.Type)
+            {
+                case InstanceType.Building:
+                    {
+                        BuildingManager buildingManager = BuildingManager.instance;
+                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
+                        ushort building = id.Building;
+
+                        BuildingInfo buildingInfo = buildingBuffer[building].Info;
+                        int length = buildingBuffer[building].Length;
+                        float angle = buildingBuffer[building].m_angle;
+                        Color color = buildingInfo.m_buildingAI.GetColor(0, ref buildingBuffer[building], InfoManager.instance.CurrentMode);
+
+                        newAngle = m_startAngle + fAngle;
+
+                        BuildingTool.RenderGeometry(cameraInfo, buildingInfo, length, newPosition, newAngle, false, color);
+                        if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
+                        {
+                            matrix4x = default(Matrix4x4);
+                            matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                            for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
+                            {
+                                BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
+                                Vector3 position = matrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
+                                angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
+                                buildingInfo2.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
+                                BuildingTool.RenderGeometry(cameraInfo, buildingInfo2, 0, position, angle, true, color);
+                            }
+                        }
+                        break;
+                    }
+                case InstanceType.Prop:
+                    {
+                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
+                        ushort prop = id.Prop;
+
+                        PropInfo info = buffer[prop].Info;
+                        Randomizer randomizer = new Randomizer(prop);
+                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+
+                        newAngle = (m_startAngle + deltaAngle) * 9.58738E-05f;
+
+                        if (info.m_requireHeightMap)
+                        {
+                            Texture heightMap;
+                            Vector4 heightMapping;
+                            Vector4 surfaceMapping;
+                            TerrainManager.instance.GetHeightMapping(newPosition, out heightMap, out heightMapping, out surfaceMapping);
+                            PropInstance.RenderInstance(cameraInfo, info, id, newPosition, scale, newAngle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true, heightMap, heightMapping, surfaceMapping);
+                        }
+                        else
+                        {
+                            PropInstance.RenderInstance(cameraInfo, info, id, newPosition, scale, newAngle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true);
+                        }
+                        break;
+                    }
+                case InstanceType.Tree:
+                    {
+                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
+                        uint tree = id.Tree;
+
+                        TreeInfo info = buffer[tree].Info;
+                        Randomizer randomizer = new Randomizer(tree);
+                        float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+                        float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
+
+                        TreeInstance.RenderInstance(cameraInfo, info, newPosition, scale, brightness);
+                        break;
+                    }
+                case InstanceType.NetSegment:
+                    {
+                        ushort segment = id.NetSegment;
+                        NetManager netManager = NetManager.instance;
+                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+                        NetInfo netInfo = segmentBuffer[segment].Info;
+
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
+
+                        bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                        bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+
+                        Bezier3 bezier;
+                        bezier.a = matrix4x.MultiplyPoint(nodeBuffer[startNode].m_position - center) + deltaPosition;
+                        bezier.d = matrix4x.MultiplyPoint(nodeBuffer[endNode].m_position - center) + deltaPosition;
+
+                        if (followTerrain)
+                        {
+                            bezier.a.y = bezier.a.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.a) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[startNode].m_position);
+                            bezier.d.y = bezier.d.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.d) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[endNode].m_position);
+                        }
+                        else
+                        {
+                            bezier.a.y = nodeBuffer[startNode].m_position.y + deltaPosition.y;
+                            bezier.d.y = nodeBuffer[endNode].m_position.y + deltaPosition.y;
+                        }
+
+                        Vector3 startDirection = newPosition - bezier.a;
+                        Vector3 endDirection = newPosition - bezier.d;
+
+                        startDirection.y = 0;
+                        endDirection.y = 0;
+
+                        startDirection.Normalize();
+                        endDirection.Normalize();
+                        
+                        RenderSegment.Invoke(null, new object[] { netInfo, bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
+                        break;
+                    }
+            }
+        }
+
+        private Vector3 GetControlPoint(ushort segment)
+        {
+            NetManager netManager = NetManager.instance;
+            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
+            Vector3 startDir = segmentBuffer[segment].m_startDirection;
+            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
+            Vector3 endDir = segmentBuffer[segment].m_endDirection;
+
+            float num;
+            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
+            {
+                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
+                float u;
+                float v;
+                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
+                {
+                    return startPos + startDir * u;
+                }
+            }
+
+            return (startPos + endPos) / 2f;
         }
 
         private Bounds GetBounds(InstanceID instance, bool ignoreSegments = true)
@@ -740,15 +1091,17 @@ namespace MoveIt
             {
                 case InstanceType.Building:
                     {
-                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+                        BuildingManager buildingManager = BuildingManager.instance;
+                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
                         ushort building = id.Building;
+                        BuildingInfo info = buildingBuffer[building].Info;
 
-                        //if ((buildingBuffer[building].m_flags & Building.Flags.Untouchable) == Building.Flags.None)
                         if (buildingBuffer[building].FindParentNode(building) == 0)
                         {
+                            newAngle = buildingBuffer[building].m_angle + deltaAngle * 9.58738E-05f;
                             ushort clone;
                             if (BuildingManager.instance.CreateBuilding(out clone, ref SimulationManager.instance.m_randomizer,
-                                buildingBuffer[building].Info, location, buildingBuffer[building].m_angle + deltaAngle * 9.58738E-05f,
+                                info, location, newAngle,
                                 buildingBuffer[building].Length, SimulationManager.instance.m_currentBuildIndex))
                             {
                                 SimulationManager.instance.m_currentBuildIndex++;
@@ -757,7 +1110,41 @@ namespace MoveIt
                                 {
                                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Completed;
                                 }
+                                if (info.m_fixedHeight)
+		                        {
+			                        buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+		                        }
                             }
+
+					        if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
+					        {
+                                Matrix4x4 matrix4x = default(Matrix4x4);
+						        matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                                for(int i = 0; i < info.m_subBuildings.Length; i++)
+						        {
+							        BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
+							        Vector3 subPosition = matrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
+							        float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
+
+                                    ushort subClone;
+                                    if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
+                                        subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
+                                    {
+                                        SimulationManager.instance.m_currentBuildIndex++;
+                                        if (info.m_fixedHeight)
+		                                {
+			                                buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+		                                }
+                                    }
+							        if (clone != 0 && subClone != 0)
+							        {
+								        buildingBuffer[clone].m_subBuilding = subClone;
+								        buildingBuffer[subClone].m_parentBuilding = clone;
+								        buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.Untouchable;
+								        clone = subClone;
+							        }
+						        }
+					        }
                         }
                         break;
                     }

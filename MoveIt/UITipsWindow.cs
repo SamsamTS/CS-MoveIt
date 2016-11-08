@@ -64,6 +64,15 @@ namespace MoveIt
             NextTip();
         }
 
+        protected override void OnVisibilityChanged()
+        {
+            if (isVisible)
+            {
+                RefreshPosition();
+            }
+            base.OnVisibilityChanged();
+        }
+
         protected override void OnSizeChanged()
         {
             RefreshPosition();
