@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 using ColossalFramework.UI;
+using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
 {
@@ -31,6 +32,7 @@ namespace MoveIt
 
         public override void Start()
         {
+            atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "GenericPanelWhite";
 
             size = new Vector2(300, 100);
@@ -81,7 +83,7 @@ namespace MoveIt
         public void RefreshPosition()
         {
 
-            float x = UIView.GetAView().fixedWidth - width - 10f;
+            float x = Screen.width - width - 10f;
             float y;
 
             if (UIToolOptionPanel.instance != null && MoveItTool.marqueeSelection)
@@ -90,7 +92,15 @@ namespace MoveIt
             }
             else
             {
-                y = GetUIView().FindUIComponent<UIComponent>("ThumbnailBar").absolutePosition.y - height - 30f;
+                UIComponent thumbnailBar = GetUIView().FindUIComponent<UIComponent>("ThumbnailBar");
+                if (thumbnailBar != null)
+                {
+                    y = thumbnailBar.absolutePosition.y - height - 30f;
+                }
+                else
+                {
+                    y = Screen.height - height - 200;
+                }
             }
 
             absolutePosition = new Vector3(x, y);

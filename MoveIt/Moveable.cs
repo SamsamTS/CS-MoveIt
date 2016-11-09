@@ -240,6 +240,7 @@ namespace MoveIt
                     }
                 case InstanceType.NetNode:
                     {
+                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
                         NetManager netManager = NetManager.instance;
                         NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
                         NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
@@ -271,6 +272,17 @@ namespace MoveIt
                                 m_nodeSegmentsSave[i].m_startRotation = Quaternion.FromToRotation(segVector, startDirection.normalized);
                                 m_nodeSegmentsSave[i].m_endRotation = Quaternion.FromToRotation(-segVector, endDirection.normalized);
                             }
+                        }
+
+                        if(nodeBuffer[node].m_building != 0)
+                        {
+                            ushort building = nodeBuffer[node].m_building;
+                            subInstances = new HashSet<Moveable>();
+                            Moveable subBuilding = new Moveable(InstanceID.Empty);
+                            subBuilding.id.Building = building;
+                            subBuilding.m_startPosition = buildingBuffer[building].m_position;
+                            subBuilding.m_startAngle = buildingBuffer[building].m_angle;
+                            subInstances.Add(subBuilding);
                         }
 
                         break;
@@ -431,7 +443,7 @@ namespace MoveIt
             }
         }
 
-        public void CalculateNewPosition(Vector3 deltaPosition, ushort deltaAngle, Vector3 center)
+        public void CalculateNewPosition(Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain)
         {
             float fAngle = deltaAngle * 9.58738E-05f;
 
@@ -439,7 +451,12 @@ namespace MoveIt
             matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
 
             newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
-            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            newPosition.y = m_startPosition.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            }
 
             newAngle = m_startAngle + fAngle;
         }
@@ -639,21 +656,18 @@ namespace MoveIt
 
         public void RenderCloneOverlay(RenderManager.CameraInfo cameraInfo, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Color toolColor)
         {
-            /*if (subInstances != null)
-            {
-                foreach (Moveable subInstance in subInstances)
-                {
-                    subInstance.RenderCloneOverlay(cameraInfo, deltaPosition, deltaAngle, center, followTerrain, toolColor);
-                }
-            }*/
-
             float fAngle = deltaAngle * 9.58738E-05f;
 
             Matrix4x4 matrix4x = default(Matrix4x4);
             matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
 
             newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
-            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            newPosition.y = m_startPosition.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            }
 
             switch (id.Type)
             {
@@ -665,11 +679,24 @@ namespace MoveIt
 
                         BuildingInfo buildingInfo = buildingBuffer[building].Info;
                         int length = buildingBuffer[building].Length;
-                        float angle = buildingBuffer[building].m_angle;
                         Color color = buildingInfo.m_buildingAI.GetColor(0, ref buildingBuffer[building], InfoManager.instance.CurrentMode);
 
                         newAngle = m_startAngle + fAngle;
+                        buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, newPosition, newAngle, default(Segment3));
                         BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, newPosition, newAngle, toolColor, false);
+                        if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
+                        {
+                            matrix4x = default(Matrix4x4);
+                            matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                            for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
+                            {
+                                BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
+                                Vector3 position = matrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
+                                float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
+                                buildingInfo2.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, position, angle, default(Segment3));
+                                BuildingTool.RenderOverlay(cameraInfo, buildingInfo2, 0, position, angle, toolColor, true);
+                            }
+                        }
                         break;
                     }
                 case InstanceType.Prop:
@@ -759,7 +786,12 @@ namespace MoveIt
             matrix4x.SetTRS(center, Quaternion.AngleAxis(fAngle * 57.29578f, Vector3.down), Vector3.one);
 
             newPosition = matrix4x.MultiplyPoint(m_startPosition - center) + deltaPosition;
-            newPosition.y = m_startPosition.y + deltaPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            newPosition.y = m_startPosition.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
+            }
 
             switch (id.Type)
             {
@@ -776,6 +808,7 @@ namespace MoveIt
 
                         newAngle = m_startAngle + fAngle;
 
+                        buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, newPosition, newAngle, 0);
                         BuildingTool.RenderGeometry(cameraInfo, buildingInfo, length, newPosition, newAngle, false, color);
                         if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
                         {
@@ -1176,6 +1209,8 @@ namespace MoveIt
                     }
                 case InstanceType.NetNode:
                     {
+                        BuildingManager buildingManager = BuildingManager.instance;
+                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
                         NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
                         ushort node = id.NetNode;
 
@@ -1185,6 +1220,8 @@ namespace MoveIt
                         {
                             SimulationManager.instance.m_currentBuildIndex++;
                             cloneID.NetNode = clone;
+
+                            nodeBuffer[clone].m_flags = nodeBuffer[node].m_flags;
                         }
                         
                         break;

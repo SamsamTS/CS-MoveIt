@@ -186,6 +186,7 @@ namespace MoveIt
                     {
                         MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
                         step.snap = snapping;
+                        step.followTerrain = followTerrain;
 
                         float y = step.moveDelta.y;
                         step.moveDelta = RaycastMouseLocation(mouseRay) - step.center;
@@ -1240,7 +1241,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    instance.CalculateNewPosition(moveDelta, step.angleDelta, step.center);
+                    instance.CalculateNewPosition(moveDelta, step.angleDelta, step.center, step.followTerrain);
                     netManager.GetClosestSegments(instance.newPosition, closeSegments, out closeSegmentCount);
                     segmentList.UnionWith(closeSegments);
 
