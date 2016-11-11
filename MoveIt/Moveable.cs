@@ -476,7 +476,7 @@ namespace MoveIt
             return bounds;
         }
 
-        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             switch (id.Type)
             {
@@ -486,6 +486,12 @@ namespace MoveIt
                         NetManager netManager = NetManager.instance;
                         BuildingManager buildingManager = BuildingManager.instance;
                         BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
+
+                        if(WillBuildingDespawn(building))
+                        {
+                            toolColor = despawnColor;
+                        }
+
                         float alpha = 1f;
                         BuildingTool.CheckOverlayAlpha(buildingInfo, ref alpha);
                         ushort node = buildingManager.m_buildings.m_buffer[building].m_netNode;
@@ -908,6 +914,29 @@ namespace MoveIt
             }
         }
 
+        private bool WillBuildingDespawn(ushort building)
+        {
+            Building[] buffer = BuildingManager.instance.m_buildings.m_buffer;
+            BuildingInfo info = buffer[building].Info;
+
+            ItemClass.Zone zone1 = info.m_class.GetZone();
+            ItemClass.Zone zone2 = info.m_class.GetSecondaryZone();
+
+            if (zone1 == ItemClass.Zone.None)
+            {
+                return false;
+            }
+
+            info.m_buildingAI.CheckRoadAccess(building, ref buffer[building]);
+            if ((buffer[building].m_problems & Notification.Problem.RoadNotConnected) == Notification.Problem.RoadNotConnected ||
+                !buffer[building].CheckZoning(zone1, zone2))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private Vector3 GetControlPoint(ushort segment)
         {
             NetManager netManager = NetManager.instance;
@@ -1144,40 +1173,102 @@ namespace MoveIt
                                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Completed;
                                 }
                                 if (info.m_fixedHeight)
-		                        {
-			                        buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
-		                        }
-                            }
+                                {
+                                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+                                }
 
-					        if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
-					        {
-                                Matrix4x4 matrix4x = default(Matrix4x4);
-						        matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
-                                for(int i = 0; i < info.m_subBuildings.Length; i++)
-						        {
-							        BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
-							        Vector3 subPosition = matrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
-							        float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
 
-                                    ushort subClone;
-                                    if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
-                                        subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
+                                if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
+                                {
+                                    Matrix4x4 matrix4x = default(Matrix4x4);
+                                    matrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                                    for (int i = 0; i < info.m_subBuildings.Length; i++)
                                     {
-                                        SimulationManager.instance.m_currentBuildIndex++;
-                                        if (info.m_fixedHeight)
-		                                {
-			                                buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
-		                                }
+                                        BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
+                                        Vector3 subPosition = matrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
+                                        float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
+
+                                        ushort subClone;
+                                        if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
+                                            subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
+                                        {
+                                            SimulationManager.instance.m_currentBuildIndex++;
+                                            if (info.m_fixedHeight)
+                                            {
+                                                buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+                                            }
+                                        }
+                                        if (clone != 0 && subClone != 0)
+                                        {
+                                            buildingBuffer[clone].m_subBuilding = subClone;
+                                            buildingBuffer[subClone].m_parentBuilding = clone;
+                                            buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.Untouchable;
+                                            clone = subClone;
+                                        }
                                     }
-							        if (clone != 0 && subClone != 0)
-							        {
-								        buildingBuffer[clone].m_subBuilding = subClone;
-								        buildingBuffer[subClone].m_parentBuilding = clone;
-								        buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.Untouchable;
-								        clone = subClone;
-							        }
-						        }
-					        }
+                                }
+
+                                /*ItemClass.Zone zone = info.m_class.GetZone();
+
+                                if (zone != ItemClass.Zone.None)
+                                {
+                                    Bounds bounds = GetBounds(cloneID);
+
+                                    Vector2 minPos = VectorUtils.XZ(bounds.min);
+                                    Vector2 maxPos = VectorUtils.XZ(bounds.max);
+
+                                    ZoneManager instance = Singleton<ZoneManager>.instance;
+                                    int minX = Mathf.Max((int)((minPos.x - 46f) / 64f + 75f), 0);
+                                    int minY = Mathf.Max((int)((minPos.y - 46f) / 64f + 75f), 0);
+                                    int maxX = Mathf.Min((int)((maxPos.x + 46f) / 64f + 75f), 149);
+                                    int maxY = Mathf.Min((int)((maxPos.y + 46f) / 64f + 75f), 149);
+
+                                    for (int i = minY; i <= maxY; i++)
+                                    {
+                                        for (int j = minX; j <= maxX; j++)
+                                        {
+                                            ushort gridBlock = instance.m_zoneGrid[i * 150 + j];
+                                            while (gridBlock != 0)
+                                            {
+                                                ZoneBlock[] blockBuffer = instance.m_blocks.m_buffer;
+                                                Vector3 position = blockBuffer[gridBlock].m_position;
+                                                //float num11 = Mathf.Max(Mathf.Max(minPos.x - 46f - position.x, minPos.y - 46f - position.z), Mathf.Max(position.x - maxPos.x - 46f, position.z - maxPos.y - 46f));
+                                                //if (num11 < 0f)
+                                                {
+                                                    int rowCount = blockBuffer[gridBlock].RowCount;
+                                                    
+                                                    Vector2 a = new Vector2(Mathf.Cos(blockBuffer[gridBlock].m_angle), Mathf.Sin(blockBuffer[gridBlock].m_angle)) * 8f;
+                                                    Vector2 a2 = new Vector2(a.y, -a.x);
+                                                    Vector2 a3 = VectorUtils.XZ(blockBuffer[gridBlock].m_position);
+
+                                                    bool update = false;
+
+                                                    for (int k = 0; k < rowCount; k++)
+                                                    {
+		                                                Vector2 b = ((float)k - 3.5f) * a2;
+                                                        for (int l = 0; l < 4; l++)
+                                                        {
+                                                            Vector2 b2 = ((float)l - 3.5f) * a;
+                                                            Vector2 p = a3 + b2 + b;
+                                                            if (bounds.Contains(p))
+                                                            {
+                                                                instance.m_blocks.m_buffer[gridBlock].SetZone(l, k, zone);
+                                                                update = true;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if(update)
+                                                    {
+                                                        blockBuffer[gridBlock].RefreshZoning(gridBlock);
+                                                    }
+                                                }
+                                                gridBlock = instance.m_blocks.m_buffer[(int)gridBlock].m_nextGridBlock;
+                                            }
+                                        }
+                                    }
+                                }*/
+                            }
                         }
                         break;
                     }

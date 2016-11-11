@@ -11,9 +11,8 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.5.0: Copy!\nYou can now make a copy of selected objects",
-            "New in 1.5.0: Follow Terrain option!\nIf disabled, objects will stay at the same height (when applicable)",
-            "Tip: Hold Alt to deselect using the marquee selection",
+            "New in 1.5.3: A growable building with an orange highlight will despawn when the simulation is running",
+            "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
             "Tip: Hold Alt while dragging objects to reverse the Snapping option",
@@ -21,7 +20,8 @@ namespace MoveIt
             "Tip: Use Alt for finer movements with the keyboard",
             "Tip: Use Shift for faster movements with the keyboard",
             "Tip: The object under the mouse will move if nothing else is selected",
-            "Tip: Right Click to clear the selection",
+            "Tip: When Follow Terrain is disabled, objects will keep their height when moved",
+            "Tip: Right Click to clear the selection or cancel the copy",
             "Tip: Buildings, Trees, Props and Nodes can all be moved",
             "Tip: Movable objects are highlighted when hovered",
             "Tip: Hover various things to discover what can be moved",

@@ -64,6 +64,7 @@ namespace MoveIt
         private static Color m_selectedColor = new Color32(95, 166, 0, 244);
         private static Color m_moveColor = new Color32(125, 196, 30, 244);
         private static Color m_removeColor = new Color32(255, 160, 47, 191);
+        private static Color m_despawnColor = new Color32(255, 160, 47, 191);
 
         private bool m_snapping = false;
         private bool m_prevRenderZones;
@@ -460,7 +461,7 @@ namespace MoveIt
                     {
                         if (instance.isValid && (!removing || step.instances.Contains(instance)))
                         {
-                            instance.RenderOverlay(cameraInfo, color);
+                            instance.RenderOverlay(cameraInfo, color, m_despawnColor);
                         }
                     }
                 }
@@ -493,7 +494,7 @@ namespace MoveIt
                 {
                     if (instance.isValid && !(removing && m_marqueeInstances.Contains(instance)))
                     {
-                        instance.RenderOverlay(cameraInfo, color);
+                        instance.RenderOverlay(cameraInfo, color, m_despawnColor);
                     }
                 }
 
@@ -508,12 +509,12 @@ namespace MoveIt
 
                 if (!marqueeSelection && m_hoverInstance != null && !step.instances.Contains(m_hoverInstance))
                 {
-                    m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor);
+                    m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor, m_despawnColor);
                 }
             }
             else if (!marqueeSelection && m_hoverInstance != null)
             {
-                m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor);
+                m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor, m_despawnColor);
             }
 
             base.RenderOverlay(cameraInfo);
@@ -594,7 +595,7 @@ namespace MoveIt
                 }
 
                 m_moves.current.instances.UnionWith(toAdd);
-                m_moves.current.center = GetTotalBounds().center;
+                m_moves.current.center = GetCenter();
 
                 MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
                 step.clone = true;
@@ -746,15 +747,12 @@ namespace MoveIt
 
             foreach (Moveable instance in step.instances)
             {
-                if (instance.isValid && instance.id.Type != InstanceType.NetSegment)
+                if (instance.isValid && instance.id.Type == InstanceType.NetNode)
                 {
                     InstanceID clone = instance.Clone(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain, clonedNodes);
-                    if (clone != default(InstanceID))
+                    if (clone.Type == InstanceType.NetNode)
                     {
                         step.clones.Add(new Moveable(clone));
-                    }
-                    if(clone.Type == InstanceType.NetNode)
-                    {
                         clonedNodes.Add(instance.id.NetNode, clone.NetNode);
                     }
                 }
@@ -765,6 +763,18 @@ namespace MoveIt
                 if (instance.isValid && instance.id.Type == InstanceType.NetSegment)
                 {
                     InstanceID clone = instance.Clone(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain, clonedNodes);
+                    if (clone.Type == InstanceType.NetSegment)
+                    {
+                        step.clones.Add(new Moveable(clone));
+                    }
+                }
+            }
+
+            foreach (Moveable instance in step.instances)
+            {
+                if (instance.isValid && instance.id.Type != InstanceType.NetNode && instance.id.Type != InstanceType.NetSegment)
+                {
+                    InstanceID clone = instance.Clone(ref matrix4x, moveDelta, step.angleDelta, step.center, step.followTerrain, clonedNodes);
                     if (clone != default(InstanceID))
                     {
                         step.clones.Add(new Moveable(clone));
@@ -773,7 +783,7 @@ namespace MoveIt
             }
 
             m_moves.Push(MoveQueue.StepType.Selection, true);
-            m_moves.current.center = GetTotalBounds().center;
+            m_moves.current.center = GetCenter();
         }
 
         public bool IsSegmentSelected(ushort segment)
@@ -825,7 +835,7 @@ namespace MoveIt
 
                     if (step.instances.Count > 0)
                     {
-                        step.center = GetTotalBounds().center;
+                        step.center = GetCenter();
                     }
                 }
                 else
@@ -841,7 +851,7 @@ namespace MoveIt
 
                         step.instances.Clear();
                         step.instances.Add(m_hoverInstance);
-                        step.center = GetTotalBounds().center;
+                        step.center = GetCenter();
                     }
 
                     if (m_moves.currentType == MoveQueue.StepType.Move)
@@ -900,7 +910,7 @@ namespace MoveIt
                 MoveQueue.Step step = m_moves.current;
                 if (step.instances.Count > 0)
                 {
-                    step.center = GetTotalBounds().center;
+                    step.center = GetCenter();
                 }
 
                 m_drawingSelection = false;
@@ -941,7 +951,12 @@ namespace MoveIt
                     {
                         m_moves.Push(MoveQueue.StepType.Selection, false);
                     }
-                    else if (!cloning)
+                    else if (cloning)
+                    {
+                        m_moves.Previous();
+                        cloning = false;
+                    }
+                    else
                     {
                         m_moves.current.instances.Clear();
                     }
@@ -1534,6 +1549,11 @@ namespace MoveIt
             bool ctrl = ((code & 0x40000000) != 0);
 
             return Input.GetKey(keyCode) && ctrl == e.control;
+        }
+
+        private Vector3 GetCenter()
+        {
+            return GetTotalBounds().center;
         }
 
         private Bounds GetTotalBounds(bool ignoreSegments = true)
