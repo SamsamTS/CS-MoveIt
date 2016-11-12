@@ -26,8 +26,10 @@ namespace MoveIt
 
             atlas = UIUtils.GetAtlas("Ingame");
             size = new Vector2(41, 41);
-            relativePosition = new Vector2(Screen.width - 300, -41);
+            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 300, -41);
             name = "MoveIt_ToolOptionPanel";
+
+            DebugUtils.Log("ToolOptionPanel position: " + absolutePosition);
 
             m_followTerrain = AddUIComponent<UIMultiStateButton>();
             m_followTerrain.atlas = GetFollowTerrainAtlas();
@@ -250,7 +252,7 @@ namespace MoveIt
         {
             if(isVisible)
             {
-                relativePosition = new Vector2(Screen.width - 300, -41);
+                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 300, -41);
             }
             base.OnVisibilityChanged();
         }

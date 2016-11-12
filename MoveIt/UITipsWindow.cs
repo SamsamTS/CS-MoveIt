@@ -82,8 +82,7 @@ namespace MoveIt
 
         public void RefreshPosition()
         {
-
-            float x = Screen.width - width - 10f;
+            float x = GetUIView().GetScreenResolution().x - width - 10f;
             float y;
 
             if (UIToolOptionPanel.instance != null && MoveItTool.marqueeSelection)
