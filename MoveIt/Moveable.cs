@@ -175,6 +175,7 @@ namespace MoveIt
                         subInstances = new HashSet<Moveable>();
 
                         ushort node = buildingBuffer[id.Building].m_netNode;
+                        int count = 0;
                         while (node != 0)
                         {
                             ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
@@ -189,9 +190,16 @@ namespace MoveIt
                             }
 
                             node = nodeBuffer[node].m_nextBuildingNode;
+
+                            if (++count > 32768)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
                         }
 
                         ushort building = buildingBuffer[id.Building].m_subBuilding;
+                        count = 0;
                         while (building != 0)
                         {
                             Moveable subBuilding = new Moveable(InstanceID.Empty);
@@ -201,6 +209,7 @@ namespace MoveIt
                             subInstances.Add(subBuilding);
 
                             node = buildingBuffer[building].m_netNode;
+                            int count2 = 0;
                             while (node != 0)
                             {
                                 ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
@@ -216,9 +225,21 @@ namespace MoveIt
                                 }
 
                                 node = nodeBuffer[node].m_nextBuildingNode;
+
+                                if (++count2 > 32768)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    break;
+                                }
                             }
 
                             building = buildingBuffer[building].m_subBuilding;
+
+                            if (++count > 49152)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
                         }
 
                         if (subInstances.Count == 0)
@@ -544,6 +565,7 @@ namespace MoveIt
                                 }
                             }
                             node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
+
                             if (++count > 32768)
                             {
                                 CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
@@ -560,6 +582,7 @@ namespace MoveIt
                             float subAngle = buildingManager.m_buildings.m_buffer[subBuilding].m_angle;
                             BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subPosition, subAngle, toolColor, false);
                             subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
+
                             if (++count > 49152)
                             {
                                 CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
@@ -922,14 +945,14 @@ namespace MoveIt
             ItemClass.Zone zone1 = info.m_class.GetZone();
             ItemClass.Zone zone2 = info.m_class.GetSecondaryZone();
 
-            if (zone1 == ItemClass.Zone.None)
+            if (info.m_placementStyle != ItemClass.Placement.Automatic || zone1 == ItemClass.Zone.None)
             {
                 return false;
             }
 
             info.m_buildingAI.CheckRoadAccess(building, ref buffer[building]);
             if ((buffer[building].m_problems & Notification.Problem.RoadNotConnected) == Notification.Problem.RoadNotConnected ||
-                !buffer[building].CheckZoning(zone1, zone2))
+                !buffer[building].CheckZoning(zone1, zone2, true))
             {
                 return true;
             }
@@ -1376,7 +1399,7 @@ namespace MoveIt
 
             BuildingInfo info = data.Info;
             RemoveFromGrid(building, ref data);
-            if (info.m_hasParkingSpaces)
+            if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
             {
                 buildingManager.UpdateParkingSpaces(building, ref data);
             }

@@ -17,6 +17,7 @@ namespace MoveIt
         private UIButton m_single;
         private UIButton m_marquee;
         private UIButton m_copy;
+        private UIButton m_bulldoze;
 
         public UIPanel filtersPanel;
 
@@ -224,7 +225,7 @@ namespace MoveIt
             m_copy = AddUIComponent<UIButton>();
             m_copy.name = "MoveIt_Copy";
             m_copy.group = m_tabStrip;
-            m_copy.atlas = GetCopyAtlas();
+            m_copy.atlas = GetIconsAtlas();
             m_copy.tooltip = "Copy";
             m_copy.playAudioEvents = true;
 
@@ -244,6 +245,32 @@ namespace MoveIt
                 if (MoveItTool.instance != null)
                 {
                     MoveItTool.instance.StartCloning();
+                }
+            };
+
+            m_bulldoze = AddUIComponent<UIButton>();
+            m_bulldoze.name = "MoveIt_Bulldoze";
+            m_bulldoze.group = m_tabStrip;
+            m_bulldoze.atlas = GetIconsAtlas();
+            m_bulldoze.tooltip = "Bulldoze\nWARNING: NO UNDO!";
+            m_bulldoze.playAudioEvents = true;
+
+            m_bulldoze.size = new Vector2(36, 36);
+
+            m_bulldoze.normalBgSprite = "OptionBase";
+            m_bulldoze.hoveredBgSprite = "OptionBaseHovered";
+            m_bulldoze.pressedBgSprite = "OptionBasePressed";
+            m_bulldoze.disabledBgSprite = "OptionBaseDisabled";
+
+            m_bulldoze.normalFgSprite = "Bulldoze";
+
+            m_bulldoze.relativePosition = m_copy.relativePosition + new Vector3(m_copy.width, 0);
+
+            m_bulldoze.eventClicked += (c, p) =>
+            {
+                if (MoveItTool.instance != null)
+                {
+                    MoveItTool.instance.StartBulldoze();
                 }
             };
         }
@@ -290,7 +317,7 @@ namespace MoveIt
             return loadedAtlas;
         }
 
-        private UITextureAtlas GetCopyAtlas()
+        private UITextureAtlas GetIconsAtlas()
         {
 
             Texture2D[] textures = 
@@ -304,10 +331,11 @@ namespace MoveIt
 
             string[] spriteNames = new string[]
 			{
-				"Copy"
+				"Copy",
+                "Bulldoze"
 			};
 
-            UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Copy", spriteNames, "MoveIt.Icons.");
+            UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Icons", spriteNames, "MoveIt.Icons.");
             ResourceLoader.AddTexturesInAtlas(loadedAtlas, textures);
 
             return loadedAtlas;

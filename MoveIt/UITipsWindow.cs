@@ -11,8 +11,10 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.5.3: A growable building with an orange highlight will despawn when the simulation is running",
+            "New in 1.6.0: Bulldozer!\nWARNING: Bulldozing is permanent, no undo",
+            "New in 1.6.0: Improved snapping!\nTry to bend a single segment or move a single node with snapping",
             "Tip: Hold Alt to deselect objects using the marquee selection",
+            "Tip: A building with an orange highlight will despawn when the simulation is running",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
             "Tip: Hold Alt while dragging objects to reverse the Snapping option",
@@ -38,6 +40,7 @@ namespace MoveIt
             size = new Vector2(300, 100);
             padding = new RectOffset(10, 10, 10, 10);
             textColor = new Color32(109, 109, 109, 255);
+            textScale = 0.9f;
 
             wordWrap = true;
             autoHeight = true;

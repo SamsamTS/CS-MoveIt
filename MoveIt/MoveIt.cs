@@ -41,7 +41,8 @@ namespace MoveIt
             Undo,
             Redo,
             Transform,
-            Clone
+            Clone,
+            Bulldoze
         }
 
         public const string settingsFileName = "MoveItTool";
@@ -85,6 +86,8 @@ namespace MoveIt
 
         private bool m_drawingSelection;
         private Quad3 m_selection;
+
+        private NetSegment segmentGuide;
 
         private float m_mouseStartX;
         private ushort m_startAngle;
@@ -315,15 +318,15 @@ namespace MoveIt
                         }
 
                         Vector3 direction;
-                            int angle;
+                        int angle;
 
-                            if (ProcessMoveKeys(e, out direction, out angle))
-                            {
-                                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                        if (ProcessMoveKeys(e, out direction, out angle))
+                        {
+                            MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
-                                step.moveDelta.y = step.moveDelta.y + direction.y * 0.015625f;
-                                step.angleDelta = (ushort)(step.angleDelta + angle);
-                            }
+                            step.moveDelta.y = step.moveDelta.y + direction.y * 0.015625f;
+                            step.angleDelta = (ushort)(step.angleDelta + angle);
+                        }
                     }
                     else
                     {
@@ -414,6 +417,11 @@ namespace MoveIt
                     case Actions.Clone:
                         {
                             Clone();
+                            break;
+                        }
+                    case Actions.Bulldoze:
+                        {
+                            Bulldoze();
                             break;
                         }
                 }
@@ -511,6 +519,31 @@ namespace MoveIt
                 {
                     m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor, m_despawnColor);
                 }
+
+                if (m_leftClickTime != 0 && segmentGuide.m_startNode != 0 && segmentGuide.m_endNode != 0)
+                {
+                    NetManager netManager = NetManager.instance;
+                    NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                    NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+                    Bezier3 bezier;
+                    bezier.a = nodeBuffer[segmentGuide.m_startNode].m_position;
+                    bezier.d = nodeBuffer[segmentGuide.m_endNode].m_position;
+
+                    bool smoothStart = ((nodeBuffer[segmentGuide.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                    bool smoothEnd = ((nodeBuffer[segmentGuide.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+
+                    NetSegment.CalculateMiddlePoints(
+                        bezier.a, segmentGuide.m_startDirection,
+                        bezier.d, segmentGuide.m_endDirection,
+                        smoothStart, smoothEnd, out bezier.b, out bezier.c);
+
+                    float minY = 10f;//Mathf.Min(bezier.a.y, bezier.d.y);
+                    float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
+
+                    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, m_selectedColor, bezier, 0f, 100000f, -100000f, minY - 10f, maxY + 10f, false, true);
+                }
+
             }
             else if (!marqueeSelection && m_hoverInstance != null)
             {
@@ -531,7 +564,6 @@ namespace MoveIt
                 NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
 
                 InstanceID id = new InstanceID();
-
 
                 HashSet<Moveable> toAdd = new HashSet<Moveable>();
 
@@ -601,6 +633,12 @@ namespace MoveIt
                 step.clone = true;
                 cloning = true;
             }
+        }
+
+        
+        public void StartBulldoze()
+        {
+            m_nextAction = Actions.Bulldoze;
         }
 
         public void Undo()
@@ -786,6 +824,42 @@ namespace MoveIt
             m_moves.current.center = GetCenter();
         }
 
+        
+        public void Bulldoze()
+        {
+            MoveQueue.Step step = m_moves.current;
+
+            if(m_moves.currentType == MoveQueue.StepType.Invalid || !step.isSelection || step.instances.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Moveable instance in step.instances)
+            {
+                if (instance.isValid)
+                {
+                    instance.Delete();
+                }
+            }
+
+            while (m_moves.currentType != MoveQueue.StepType.Selection && m_moves.currentType != MoveQueue.StepType.Invalid)
+            {
+                m_moves.Previous();
+            }
+
+            m_moves.Previous();
+
+            if (m_moves.currentType == MoveQueue.StepType.Clone)
+            {
+                m_moves.Previous();
+            }
+
+            if (m_moves.currentType != MoveQueue.StepType.Invalid && m_moves.current.isSelection)
+            {
+                m_moves.Push(MoveQueue.StepType.Selection);
+            }
+        }
+
         public bool IsSegmentSelected(ushort segment)
         {
             if (m_moves.currentType == MoveQueue.StepType.Invalid)
@@ -880,6 +954,8 @@ namespace MoveIt
         private void OnLeftMouseUp(Ray mouseRay)
         {
             m_leftClickTime = 0;
+
+            segmentGuide = default(NetSegment);
 
             if (m_drawingSelection)
             {
@@ -1106,6 +1182,7 @@ namespace MoveIt
                         if (filterBuildings)
                         {
                             ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
+                            int count = 0;
                             while (building != 0u)
                             {
                                 if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].m_parentBuilding <= 0 && PointInRectangle(m_selection, buildingBuffer[building].m_position))
@@ -1114,12 +1191,19 @@ namespace MoveIt
                                     list.Add(new Moveable(id));
                                 }
                                 building = buildingBuffer[building].m_nextGridBuilding;
+
+                                if (++count > 49152)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    break;
+                                }
                             }
                         }
 
                         if (filterProps)
                         {
                             ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
+                            int count = 0;
                             while (prop != 0u)
                             {
                                 if (PointInRectangle(m_selection, propBuffer[prop].Position))
@@ -1128,12 +1212,18 @@ namespace MoveIt
                                     list.Add(new Moveable(id));
                                 }
                                 prop = propBuffer[prop].m_nextGridProp;
+
+                                if (++count > 65536)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                }
                             }
                         }
 
                         if (filterNodes)
                         {
                             ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
+                            int count = 0;
                             while (node != 0u)
                             {
                                 if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
@@ -1142,12 +1232,18 @@ namespace MoveIt
                                     list.Add(new Moveable(id));
                                 }
                                 node = nodeBuffer[node].m_nextGridNode;
+
+                                if (++count > 32768)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                }
                             }
                         }
 
                         if (filterSegments)
                         {
                             ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
+                            int count = 0;
                             while (segment != 0u)
                             {
                                 if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
@@ -1156,6 +1252,11 @@ namespace MoveIt
                                     list.Add(new Moveable(id));
                                 }
                                 segment = segmentBuffer[segment].m_nextGridSegment;
+
+                                if (++count > 36864)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                }
                             }
                         }
                     }
@@ -1173,6 +1274,7 @@ namespace MoveIt
                         for (int j = gridMinX; j <= gridMaxX; j++)
                         {
                             uint tree = TreeManager.instance.m_treeGrid[i * 540 + j];
+                            int count = 0;
                             while (tree != 0)
                             {
                                 if (PointInRectangle(m_selection, treeBuffer[tree].Position))
@@ -1181,6 +1283,11 @@ namespace MoveIt
                                     list.Add(new Moveable(id));
                                 }
                                 tree = treeBuffer[tree].m_nextGridTree;
+
+                                if (++count > 262144)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                }
                             }
                         }
                     }
@@ -1238,12 +1345,42 @@ namespace MoveIt
 
         private Vector3 GetSnapPosition(MoveQueue.MoveStep step)
         {
+            if(VectorUtils.XZ(step.moveDelta) == Vector2.zero)
+            {
+                return step.moveDelta;
+            }
+
             Vector3 moveDelta = step.moveDelta;
 
             NetManager netManager = NetManager.instance;
             NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
             NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+
+            bool snap = false;
+
+            // Snap to direction
+            if (step.instances.Count == 1)
+            {
+                foreach (Moveable instance in step.instances)
+                {
+                    if (instance.id.Type == InstanceType.NetSegment && instance.isValid)
+                    {
+                        instance.CalculateNewPosition(moveDelta, step.angleDelta, step.center, step.followTerrain);
+                        return SnapSegmentDirections(instance, step);
+                    }
+                    else if (instance.id.Type == InstanceType.NetNode && instance.isValid)
+                    {
+                        instance.CalculateNewPosition(moveDelta, step.angleDelta, step.center, step.followTerrain);
+                        snap = TrySnapNodeDirections(instance, step, out moveDelta) || snap;
+                    }
+                }
+            }
+
+            if(snap)
+            {
+                return moveDelta;
+            }
 
             HashSet<ushort> ingnoreSegments = new HashSet<ushort>();
             HashSet<ushort> segmentList = new HashSet<ushort>();
@@ -1267,19 +1404,51 @@ namespace MoveIt
                 }
             }
 
-            float distanceSq = 256f;
+            float distanceSq = float.MaxValue;
+
+            // Snap to segment
+            foreach (ushort segment in segmentList)
+            {
+                if (!ingnoreSegments.Contains(segment))
+                {
+                    foreach (Moveable instance in step.instances)
+                    {
+                        if (instance.id.Type == InstanceType.NetNode && instance.isValid)
+                        {
+                            float minSqDistance = segmentBuffer[segment].Info.GetMinNodeDistance() / 2f;
+                            minSqDistance *= minSqDistance;
+
+                            ushort startNode = segmentBuffer[segment].m_startNode;
+                            ushort endNode = segmentBuffer[segment].m_endNode;
+                            
+                            bool segmentSnap = false;
+                            segmentSnap = TrySnapping(nodeBuffer[startNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta);
+                            segmentSnap = TrySnapping(nodeBuffer[endNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || segmentSnap;
+
+                            if (!segmentSnap)
+                            {
+                                Vector3 testPos;
+                                Vector3 direction;
+                                segmentBuffer[segment].GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
+
+                                segmentSnap = TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || segmentSnap;
+                            }
+
+                            snap = segmentSnap || snap;
+                        }
+                    }
+                }
+            }
+
+            if(snap)
+            {
+                return moveDelta;
+            }
+
             ushort block = 0;
             ushort previousBlock = 0;
             Vector3 refPosition = Vector3.zero;
             bool smallRoad = false;
-
-            /*foreach (Moveable instance in step.instances)
-            {
-                if (instance.id.Type == InstanceType.NetSegment && instance.isValid)
-                {
-                    //TODO
-                }
-            }*/
 
             // Snap to grid
             foreach (ushort segment in segmentList)
@@ -1295,7 +1464,7 @@ namespace MoveIt
 
                             if (instance.id.Type == InstanceType.Building)
                             {
-                                testPosition = CalculateSnapPosition(instance.newPosition, instance.newAngle,
+                                testPosition = GetBuildingSnapPoint(instance.newPosition, instance.newAngle,
                                     buildingBuffer[instance.id.Building].Length, buildingBuffer[instance.id.Building].Width);
                             }
 
@@ -1326,9 +1495,11 @@ namespace MoveIt
                 ZoneBlock zoneBlock = ZoneManager.instance.m_blocks.m_buffer[block];
                 Snap(ref newPosition, zoneBlock.m_position, zoneBlock.m_angle, smallRoad);
 
-                moveDelta = moveDelta + newPosition - refPosition;
+                return step.moveDelta + newPosition - refPosition;
             }
-            else if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
+            
+            // Snap to editor grid
+            if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
             {
                 Vector3 assetGridPosition = Vector3.zero;
                 float testMagnitude = 0;
@@ -1339,7 +1510,7 @@ namespace MoveIt
 
                     if (instance.id.Type == InstanceType.Building)
                     {
-                        testPosition = CalculateSnapPosition(instance.newPosition, instance.newAngle,
+                        testPosition = GetBuildingSnapPoint(instance.newPosition, instance.newAngle,
                             buildingBuffer[instance.id.Building].Length, buildingBuffer[instance.id.Building].Width);
                     }
 
@@ -1358,13 +1529,29 @@ namespace MoveIt
                     }
                 }
 
-                moveDelta = moveDelta + assetGridPosition - refPosition;
+                return moveDelta + assetGridPosition - refPosition;
             }
 
-            return moveDelta;
+            return step.moveDelta;
         }
 
-        private Vector3 CalculateSnapPosition(Vector3 position, float angle, int length, int width)
+        private bool TrySnapping(Vector3 testPos, Vector3 newPosition, float minSqDistance, ref float distanceSq, Vector3 moveDelta, ref Vector3 newMoveDelta)
+        {
+            float testSqDist = Vector2.SqrMagnitude(VectorUtils.XZ(testPos - newPosition));
+
+            if (testSqDist < minSqDistance && testSqDist < distanceSq)
+            {
+                newMoveDelta = moveDelta + (testPos - newPosition);
+                newMoveDelta.y = moveDelta.y;
+
+                distanceSq = testSqDist;
+                return true;
+            }
+
+            return false;
+        }
+
+        private Vector3 GetBuildingSnapPoint(Vector3 position, float angle, int length, int width)
         {
             float x = 0;
             float z = length * 4f;
@@ -1395,6 +1582,207 @@ namespace MoveIt
             point.x = refPoint.x + num * forward.x + num2 * right.x;
             point.z = refPoint.z + num * forward.z + num2 * right.z;
         }
+
+        private Vector3 SnapSegmentDirections(Moveable instance, MoveQueue.MoveStep step)
+        {
+            ushort segment = instance.id.NetSegment;
+
+            NetManager netManager = NetManager.instance;
+            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+            float minSqDistance = segmentBuffer[segment].Info.GetMinNodeDistance() / 2f;
+            minSqDistance *= minSqDistance;
+
+            ushort startNode = segmentBuffer[segment].m_startNode;
+            ushort endNode = segmentBuffer[segment].m_endNode;
+
+            Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
+            Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
+
+            Vector3 moveDelta = step.moveDelta;
+            float distanceSq = minSqDistance;
+            bool snap = false;
+
+            // Snap to tangent intersection
+            for (int i = 0; i < 8; i++)
+            {
+                ushort segmentA = nodeBuffer[startNode].GetSegment(i);
+                if (segmentA != 0 && segmentA != segment)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        ushort segmentB = nodeBuffer[endNode].GetSegment(j);
+
+                        if (segmentB != 0 && segmentB != segment)
+                        {
+                            Vector3 startDir = segmentBuffer[segmentA].m_startNode == startNode ? segmentBuffer[segmentA].m_startDirection : segmentBuffer[segmentA].m_endDirection;
+                            Vector3 endDir = segmentBuffer[segmentB].m_startNode == endNode ? segmentBuffer[segmentB].m_startDirection : segmentBuffer[segmentB].m_endDirection;
+
+                            float num;
+                            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
+                            {
+                                float dot = startDir.x * endDir.x + startDir.z * endDir.z;
+                                float u;
+                                float v;
+                                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
+                                {
+                                    snap = TrySnapping(startPos + startDir * u, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || snap;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!snap)
+            {
+                // Snap to start tangent
+                for (int i = 0; i < 8; i++)
+                {
+                    ushort segmentA = nodeBuffer[startNode].GetSegment(i);
+                    if (segmentA != 0 && segmentA != segment)
+                    {
+                        Vector3 startDir = segmentBuffer[segmentA].m_startNode == startNode ? segmentBuffer[segmentA].m_startDirection : segmentBuffer[segmentA].m_endDirection;
+                        Vector3 offset = Line2.Offset(startDir, startPos - instance.newPosition);
+                        offset = instance.newPosition + offset - startPos;
+                        float num = offset.x * startDir.x + offset.z * startDir.z;
+
+                        TrySnapping(startPos + startDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta);
+                    }
+                }
+
+                // Snap to end tangent
+                for (int i = 0; i < 8; i++)
+                {
+                    ushort segmentB = nodeBuffer[endNode].GetSegment(i);
+
+                    if (segmentB != 0 && segmentB != segment)
+                    {
+                        Vector3 endDir = segmentBuffer[segmentB].m_startNode == endNode ? segmentBuffer[segmentB].m_startDirection : segmentBuffer[segmentB].m_endDirection;
+                        Vector3 offset = Line2.Offset(endDir, endPos - instance.newPosition);
+                        offset = instance.newPosition + offset - endPos;
+                        float num = offset.x * endDir.x + offset.z * endDir.z;
+
+                        TrySnapping(endPos + endDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta);
+                    }
+                }
+            }
+
+            // Snap straight
+            TrySnapping((startPos + endPos) / 2f, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta);
+
+            return moveDelta;
+        }
+
+        private bool TrySnapNodeDirections(Moveable instance, MoveQueue.MoveStep step, out Vector3 moveDelta)
+        {
+            segmentGuide = default(NetSegment);
+
+            ushort node = instance.id.NetNode;
+
+            NetManager netManager = NetManager.instance;
+            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+
+            float minSqDistance = nodeBuffer[node].Info.GetMinNodeDistance() / 2f;
+            minSqDistance *= minSqDistance;
+
+            moveDelta = step.moveDelta;
+            float distanceSq = minSqDistance;
+            bool snap = false;
+
+            // Snap to curve
+            for (int i = 0; i < 8; i++)
+            {
+                ushort segmentA = nodeBuffer[node].GetSegment(i);
+                if (segmentA != 0)
+                {
+                    for (int j = i + 1; j < 8; j++)
+                    {
+                        ushort segmentB = nodeBuffer[node].GetSegment(j);
+
+                        if (segmentB != 0 && segmentB != segmentA)
+                        {
+                            NetSegment segment = default(NetSegment);
+                            segment.m_startNode = segmentBuffer[segmentA].m_startNode == node ? segmentBuffer[segmentA].m_endNode : segmentBuffer[segmentA].m_startNode;
+                            segment.m_endNode = segmentBuffer[segmentB].m_startNode == node ? segmentBuffer[segmentB].m_endNode : segmentBuffer[segmentB].m_startNode;
+
+                            Vector3 testPos;
+                            Vector3 direction;
+                            segment.m_startDirection = (nodeBuffer[segment.m_startNode].m_position - nodeBuffer[segment.m_endNode].m_position).normalized;
+                            segment.m_endDirection = -segment.m_startDirection;
+
+                            segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
+                            // Straight
+                            if(TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                            {
+                                segmentGuide = segment;
+                                snap = true;
+                            }
+
+                            for (int k = 0; k < 8; k++)
+                            {
+                                ushort segmentC = nodeBuffer[segment.m_startNode].GetSegment(k);
+                                if (segmentC != 0 && segmentC != segmentA)
+                                {
+                                    for (int l = 0; l < 8; l++)
+                                    {
+                                        ushort segmentD = nodeBuffer[segment.m_endNode].GetSegment(l);
+
+                                        if (segmentD != 0 && segmentD != segmentB)
+                                        {
+                                            segment.m_startDirection = segmentBuffer[segmentC].m_startNode == segment.m_startNode ? -segmentBuffer[segmentC].m_startDirection : -segmentBuffer[segmentC].m_endDirection;
+                                            segment.m_endDirection = segmentBuffer[segmentD].m_startNode == segment.m_endNode ? -segmentBuffer[segmentD].m_startDirection : -segmentBuffer[segmentD].m_endDirection;
+
+                                            segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
+                                            // Curve
+                                            if(TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                                            {
+                                                segmentGuide = segment;
+                                                snap = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Snap to tangent
+            for (int i = 0; i < 8; i++)
+            {
+                ushort segment = nodeBuffer[node].GetSegment(i);
+                if (segment != 0)
+                {
+                    ushort testNode = segmentBuffer[segment].m_startNode == node ? segmentBuffer[segment].m_endNode : segmentBuffer[segment].m_startNode;
+                    Vector3 testPos = nodeBuffer[testNode].m_position;
+
+                    for (int j = 0; j < 8; j++)
+                    {
+                        ushort segmentA = nodeBuffer[testNode].GetSegment(j);
+                        if (segmentA != 0 && segmentA != segment)
+                        {
+                            Vector3 startDir = segmentBuffer[segmentA].m_startNode == testNode ? segmentBuffer[segmentA].m_startDirection : segmentBuffer[segmentA].m_endDirection;
+                            Vector3 offset = Line2.Offset(startDir, testPos - instance.newPosition);
+                            offset = instance.newPosition + offset - testPos;
+                            float num = offset.x * startDir.x + offset.z * startDir.z;
+
+                            if(TrySnapping(testPos + startDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                            {
+                                segmentGuide = default(NetSegment);
+                                snap = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return snap;
+        }
+
 
         private bool ProcessMoveKeys(Event e, out Vector3 direction, out int angle)
         {
@@ -1470,7 +1858,7 @@ namespace MoveIt
             bounds.Expand(64f);
 
             BuildingManager.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            ZoneManager.instance.UpdateBlocks(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            //ZoneManager.instance.UpdateBlocks(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             PropManager.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             TreeManager.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
