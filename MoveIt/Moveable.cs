@@ -36,6 +36,9 @@ namespace MoveIt
             public Vector3 m_endDirection;
         }
 
+        public bool autoCurve = false;
+        public NetSegment segmentCurve;
+
         private static MethodInfo RenderSegment = typeof(NetTool).GetMethod("RenderSegment", BindingFlags.NonPublic | BindingFlags.Static);
 
         public object data
@@ -1108,42 +1111,115 @@ namespace MoveIt
 
                         netManager.MoveNode(node, location);
 
-                        for (int i = 0; i < 8; i++)
+                        if (autoCurve && segmentCurve.m_startNode != 0 && segmentCurve.m_endNode != 0)
                         {
-                            ushort segment = nodeBuffer[node].GetSegment(i);
-                            if (segment != 0 && !MoveItTool.instance.IsSegmentSelected(segment))
+                            Vector3 p, tangent;
+                            segmentCurve.GetClosestPositionAndDirection(location, out p, out tangent);
+
+                            for (int i = 0; i < 8; i++)
                             {
-                                ushort startNode = segmentBuffer[segment].m_startNode;
-                                ushort endNode = segmentBuffer[segment].m_endNode;
+                                ushort segment = nodeBuffer[segmentCurve.m_startNode].GetSegment(i);
 
-                                Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
-                                segVector.Normalize();
-
-                                segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
-                                segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
-
-                                segmentBuffer[segment].m_startDirection.y = 0;
-                                segmentBuffer[segment].m_endDirection.y = 0;
-
-                                segmentBuffer[segment].m_startDirection.Normalize();
-                                segmentBuffer[segment].m_endDirection.Normalize();
-
-                                segmentBuffer[segment].CalculateSegment(segment);
-                                
-                                netManager.UpdateSegmentRenderer(segment, true);
-                                UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
-
-                                if (node != startNode)
+                                if (segment != 0)
                                 {
-                                    netManager.UpdateNode(startNode);
+                                    ushort startNode = segmentBuffer[segment].m_startNode;
+                                    ushort endNode = segmentBuffer[segment].m_endNode;
+
+                                    if (startNode == node)
+                                    {
+                                        segmentBuffer[segment].m_startDirection = -tangent;
+                                        segmentBuffer[segment].m_endDirection = segmentCurve.m_startDirection;
+
+                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        netManager.UpdateSegmentRenderer(segment, true);
+                                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                        netManager.UpdateNode(endNode);
+                                    }
+                                    else if (endNode == node)
+                                    {
+                                        segmentBuffer[segment].m_startDirection = segmentCurve.m_startDirection;
+                                        segmentBuffer[segment].m_endDirection = -tangent;
+
+                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        netManager.UpdateSegmentRenderer(segment, true);
+                                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                        netManager.UpdateNode(startNode);
+                                    }
                                 }
-                                else
+
+                                segment = nodeBuffer[segmentCurve.m_endNode].GetSegment(i);
+
+                                if (segment != 0)
                                 {
-                                    netManager.UpdateNode(endNode);
+                                    ushort startNode = segmentBuffer[segment].m_startNode;
+                                    ushort endNode = segmentBuffer[segment].m_endNode;
+
+                                    if (startNode == node)
+                                    {
+                                        segmentBuffer[segment].m_startDirection = tangent;
+                                        segmentBuffer[segment].m_endDirection = segmentCurve.m_endDirection;
+
+                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        netManager.UpdateSegmentRenderer(segment, true);
+                                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                        netManager.UpdateNode(endNode);
+                                    }
+                                    else if (endNode == node)
+                                    {
+                                        segmentBuffer[segment].m_startDirection = segmentCurve.m_endDirection;
+                                        segmentBuffer[segment].m_endDirection = tangent;
+
+                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        netManager.UpdateSegmentRenderer(segment, true);
+                                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                        netManager.UpdateNode(startNode);
+                                    }
                                 }
                             }
                         }
-                        netManager.UpdateNode(node);
+                        else
+                        {
+                            for (int i = 0; i < 8; i++)
+                            {
+                                ushort segment = nodeBuffer[node].GetSegment(i);
+                                if (segment != 0 && !MoveItTool.instance.IsSegmentSelected(segment))
+                                {
+                                    ushort startNode = segmentBuffer[segment].m_startNode;
+                                    ushort endNode = segmentBuffer[segment].m_endNode;
+
+                                    Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                                    segVector.Normalize();
+
+                                    segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
+                                    segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
+
+                                    segmentBuffer[segment].m_startDirection.y = 0;
+                                    segmentBuffer[segment].m_endDirection.y = 0;
+
+                                    segmentBuffer[segment].m_startDirection.Normalize();
+                                    segmentBuffer[segment].m_endDirection.Normalize();
+
+                                    segmentBuffer[segment].CalculateSegment(segment);
+
+                                    netManager.UpdateSegmentRenderer(segment, true);
+                                    UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                    if (node != startNode)
+                                    {
+                                        netManager.UpdateNode(startNode);
+                                    }
+                                    else
+                                    {
+                                        netManager.UpdateNode(endNode);
+                                    }
+                                }
+                            }
+                            netManager.UpdateNode(node);
+                        }
 
                         break;
                     }

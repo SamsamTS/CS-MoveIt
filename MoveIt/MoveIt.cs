@@ -693,6 +693,12 @@ namespace MoveIt
                         MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
                         Vector3 moveDelta = step.moveDelta;
+
+                        foreach (Moveable instance in step.instances)
+                        {
+                            instance.autoCurve = false;
+                        }
+
                         if (step.snap)
                         {
                             moveDelta = GetSnapPosition(step);
@@ -738,6 +744,12 @@ namespace MoveIt
                 step.snap = snapping;
 
                 Vector3 moveDelta = step.moveDelta;
+
+                foreach (Moveable instance in step.instances)
+                {
+                    instance.autoCurve = false;
+                }
+
                 if (step.snap)
                 {
                     moveDelta = GetSnapPosition(step);
@@ -1075,25 +1087,32 @@ namespace MoveIt
                     }
                     else
                     {
-                        NetSegment netSegment = netManager.m_segments.m_buffer[output.m_netSegment];
-                        NetNode startNode = netManager.m_nodes.m_buffer[netSegment.m_startNode];
-                        NetNode endNode = netManager.m_nodes.m_buffer[netSegment.m_endNode];
+                        ushort startNode = netManager.m_segments.m_buffer[output.m_netSegment].m_startNode;
+                        ushort endNode = netManager.m_segments.m_buffer[output.m_netSegment].m_endNode;
+                        float sqDist = netManager.m_segments.m_buffer[output.m_netSegment].Info.m_halfWidth;
+                        sqDist = sqDist * sqDist;
 
-                        if (startNode.m_bounds.IntersectRay(mouseRay))
+                        Vector2 mousePos = VectorUtils.XZ(output.m_hitPos);
+                        Vector2 testPos = VectorUtils.XZ(netManager.m_nodes.m_buffer[startNode].m_position);
+
+                        if ((mousePos - testPos).sqrMagnitude < sqDist)
                         {
-                            id.NetNode = netSegment.m_startNode;
+                            id.NetNode = startNode;
                             m_hoverInstance = new Moveable(id);
+                            return;
                         }
-                        else if (endNode.m_bounds.IntersectRay(mouseRay))
+
+                        testPos = VectorUtils.XZ(netManager.m_nodes.m_buffer[endNode].m_position);
+
+                        if ((mousePos - testPos).sqrMagnitude < sqDist)
                         {
-                            id.NetNode = netSegment.m_endNode;
+                            id.NetNode = endNode;
                             m_hoverInstance = new Moveable(id);
+                            return;
                         }
-                        else
-                        {
-                            id.NetSegment = output.m_netSegment;
-                            m_hoverInstance = new Moveable(id);
-                        }
+
+                        id.NetSegment = output.m_netSegment;
+                        m_hoverInstance = new Moveable(id);
                     }
                 }
                 else if (output.m_building != 0)
@@ -1739,6 +1758,8 @@ namespace MoveIt
                                             // Curve
                                             if(TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                                             {
+                                                instance.segmentCurve = segment;
+                                                instance.autoCurve = true;
                                                 segmentGuide = segment;
                                                 snap = true;
                                             }
