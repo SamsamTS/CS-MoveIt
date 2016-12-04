@@ -1773,6 +1773,12 @@ namespace MoveIt
                             if(TrySnapping(testPos + startDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                             {
                                 segmentGuide = default(NetSegment);
+
+                                segmentGuide.m_startNode = node;
+                                segmentGuide.m_endNode = testNode;
+
+                                segmentGuide.m_startDirection = startDir;
+                                segmentGuide.m_endDirection = -startDir;
                                 snap = true;
                             }
                         }

@@ -1122,6 +1122,14 @@ namespace MoveIt
                                 segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
                                 segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
 
+                                segmentBuffer[segment].m_startDirection.y = 0;
+                                segmentBuffer[segment].m_endDirection.y = 0;
+
+                                segmentBuffer[segment].m_startDirection.Normalize();
+                                segmentBuffer[segment].m_endDirection.Normalize();
+
+                                segmentBuffer[segment].CalculateSegment(segment);
+                                
                                 netManager.UpdateSegmentRenderer(segment, true);
                                 UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
@@ -1157,6 +1165,8 @@ namespace MoveIt
 
                         segmentBuffer[segment].m_startDirection.Normalize();
                         segmentBuffer[segment].m_endDirection.Normalize();
+
+                        segmentBuffer[segment].CalculateSegment(segment);
 
                         netManager.UpdateSegmentRenderer(segment, true);
                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
