@@ -638,6 +638,12 @@ namespace MoveIt
         
         public void StartBulldoze()
         {
+            if (cloning)
+            {
+                m_moves.Previous();
+                cloning = false;
+            }
+
             m_nextAction = Actions.Bulldoze;
         }
 
