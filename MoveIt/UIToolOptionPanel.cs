@@ -161,7 +161,7 @@ namespace MoveIt
 
             filtersPanel.size = new Vector2(150, 140);
             filtersPanel.isVisible = false;
-            
+
             UICheckBox checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Buildings";
             checkBox.isChecked = true;
@@ -231,7 +231,7 @@ namespace MoveIt
 
             m_copy.size = new Vector2(36, 36);
 
-            m_copy.normalBgSprite =  "OptionBase";
+            m_copy.normalBgSprite = "OptionBase";
             m_copy.hoveredBgSprite = "OptionBaseHovered";
             m_copy.pressedBgSprite = "OptionBasePressed";
             m_copy.disabledBgSprite = "OptionBaseDisabled";
@@ -277,7 +277,7 @@ namespace MoveIt
 
         protected override void OnVisibilityChanged()
         {
-            if(isVisible)
+            if (isVisible)
             {
                 relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 300, -41);
             }

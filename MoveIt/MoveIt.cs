@@ -67,12 +67,15 @@ namespace MoveIt
         private static Color m_removeColor = new Color32(255, 160, 47, 191);
         private static Color m_despawnColor = new Color32(255, 160, 47, 191);
 
-        private bool m_snapping = false;
+        private bool m_snapping;
         private bool m_prevRenderZones;
 
         private Moveable m_hoverInstance;
         private HashSet<Moveable> m_marqueeInstances;
 
+        private NetTool m_netTool;
+        private UIMultiStateButton m_roadsSnapping;
+        private PropertyChangedEventHandler<int> m_snapChanged;
         private ToolBase m_prevTool;
         private UIMoveItButton m_button;
 
@@ -95,7 +98,7 @@ namespace MoveIt
         private MoveQueue m_moves = new MoveQueue();
         private Actions m_nextAction = Actions.None;
 
-        private Dictionary<string, Statistics.stats> m_counters;
+        //private Dictionary<string, Statistics.stats> m_counters;
 
         public bool cloning;
 
@@ -113,13 +116,27 @@ namespace MoveIt
             set
             {
                 m_snapping = value;
+
+                if (m_roadsSnapping != null)
+                {
+                    m_roadsSnapping.activeStateIndex = m_snapping ? 1 : 0;
+                }
             }
         }
 
         protected override void Awake()
         {
-            m_counters = Statistics.counters;
-            m_counters.Clear();
+            //m_counters = Statistics.counters;
+            //m_counters.Clear();
+
+            // Getting NetTool
+            m_netTool = GameObject.FindObjectOfType<NetTool>();
+            if (m_netTool == null)
+            {
+                DebugUtils.Log("NetTool not found.");
+            }
+
+            m_snapChanged = (c, i) => { m_snapping = i == 1; UIToolOptionPanel.RefreshSnapButton(); };
 
             m_toolController = GameObject.FindObjectOfType<ToolController>();
             enabled = false;
@@ -155,6 +172,19 @@ namespace MoveIt
 
             InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
             TerrainManager.instance.RenderZones = true;
+
+            foreach (RoadsOptionPanel panel in GameObject.FindObjectsOfType<RoadsOptionPanel>())
+            {
+                UIMultiStateButton snap = panel.Find<UIMultiStateButton>("SnappingToggle");
+                if (snap != null && snap.isVisible)
+                {
+                    m_roadsSnapping = snap;
+                    m_roadsSnapping.eventActiveStateIndexChanged += m_snapChanged;
+                    m_snapping = m_roadsSnapping.activeStateIndex == 1;
+                    UIToolOptionPanel.RefreshSnapButton();
+                    break;
+                }
+            }
         }
 
         protected override void OnDisable()
@@ -176,6 +206,12 @@ namespace MoveIt
                 m_prevTool.enabled = true;
             }
             m_prevTool = null;
+
+            if (m_roadsSnapping != null)
+            {
+                m_roadsSnapping.eventActiveStateIndexChanged -= m_snapChanged;
+                m_roadsSnapping = null;
+            }
         }
 
         protected override void OnToolUpdate()
@@ -475,7 +511,7 @@ namespace MoveIt
                 }
             }
 
-            if(cloning)
+            if (cloning)
             {
                 MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
                 foreach (Moveable instance in step.instances)
@@ -635,7 +671,7 @@ namespace MoveIt
             }
         }
 
-        
+
         public void StartBulldoze()
         {
             if (cloning)
@@ -799,7 +835,7 @@ namespace MoveIt
 
             step.clones = new HashSet<Moveable>();
 
-            Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort,ushort>();
+            Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
             foreach (Moveable instance in step.instances)
             {
@@ -842,12 +878,12 @@ namespace MoveIt
             m_moves.current.center = GetCenter();
         }
 
-        
+
         public void Bulldoze()
         {
             MoveQueue.Step step = m_moves.current;
 
-            if(m_moves.currentType == MoveQueue.StepType.Invalid || !step.isSelection || step.instances.Count == 0)
+            if (m_moves.currentType == MoveQueue.StepType.Invalid || !step.isSelection || step.instances.Count == 0)
             {
                 return;
             }
@@ -1350,7 +1386,7 @@ namespace MoveIt
 
         private bool IsNodeValid(ref NetNode node, ItemClass.Layer itemLayers)
         {
-            if((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)
+            if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)
             {
                 return (node.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;
             }
@@ -1370,7 +1406,7 @@ namespace MoveIt
 
         private Vector3 GetSnapPosition(MoveQueue.MoveStep step)
         {
-            if(VectorUtils.XZ(step.moveDelta) == Vector2.zero)
+            if (VectorUtils.XZ(step.moveDelta) == Vector2.zero)
             {
                 return step.moveDelta;
             }
@@ -1402,7 +1438,7 @@ namespace MoveIt
                 }
             }
 
-            if(snap)
+            if (snap)
             {
                 return moveDelta;
             }
@@ -1445,7 +1481,7 @@ namespace MoveIt
 
                             ushort startNode = segmentBuffer[segment].m_startNode;
                             ushort endNode = segmentBuffer[segment].m_endNode;
-                            
+
                             bool segmentSnap = false;
                             segmentSnap = TrySnapping(nodeBuffer[startNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta);
                             segmentSnap = TrySnapping(nodeBuffer[endNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || segmentSnap;
@@ -1465,7 +1501,7 @@ namespace MoveIt
                 }
             }
 
-            if(snap)
+            if (snap)
             {
                 return moveDelta;
             }
@@ -1522,7 +1558,7 @@ namespace MoveIt
 
                 return step.moveDelta + newPosition - refPosition;
             }
-            
+
             // Snap to editor grid
             if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
             {
@@ -1740,7 +1776,7 @@ namespace MoveIt
 
                             segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
                             // Straight
-                            if(TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                            if (TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                             {
                                 segmentGuide = segment;
                                 snap = true;
@@ -1762,7 +1798,7 @@ namespace MoveIt
 
                                             segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
                                             // Curve
-                                            if(TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                                            if (TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                                             {
                                                 instance.segmentCurve = segment;
                                                 instance.autoCurve = true;
@@ -1797,7 +1833,7 @@ namespace MoveIt
                             offset = instance.newPosition + offset - testPos;
                             float num = offset.x * startDir.x + offset.z * startDir.z;
 
-                            if(TrySnapping(testPos + startDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                            if (TrySnapping(testPos + startDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                             {
                                 segmentGuide = default(NetSegment);
 

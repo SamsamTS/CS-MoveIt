@@ -298,7 +298,7 @@ namespace MoveIt
                             }
                         }
 
-                        if(nodeBuffer[node].m_building != 0)
+                        if (nodeBuffer[node].m_building != 0)
                         {
                             ushort building = nodeBuffer[node].m_building;
                             subInstances = new HashSet<Moveable>();
@@ -339,7 +339,7 @@ namespace MoveIt
             Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center);
             newPosition.y = m_startPosition.y + deltaPosition.y;
 
-            if(followTerrain)
+            if (followTerrain)
             {
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
             }
@@ -511,7 +511,7 @@ namespace MoveIt
                         BuildingManager buildingManager = BuildingManager.instance;
                         BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
 
-                        if(WillBuildingDespawn(building))
+                        if (WillBuildingDespawn(building))
                         {
                             toolColor = despawnColor;
                         }
@@ -933,7 +933,7 @@ namespace MoveIt
 
                         startDirection.Normalize();
                         endDirection.Normalize();
-                        
+
                         RenderSegment.Invoke(null, new object[] { netInfo, bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
                         break;
                     }
@@ -1111,6 +1111,37 @@ namespace MoveIt
 
                         netManager.MoveNode(node, location);
 
+                        for (int i = 0; i < 8; i++)
+                        {
+                            ushort segment = nodeBuffer[node].GetSegment(i);
+                            if (segment != 0 && !MoveItTool.instance.IsSegmentSelected(segment))
+                            {
+                                ushort startNode = segmentBuffer[segment].m_startNode;
+                                ushort endNode = segmentBuffer[segment].m_endNode;
+
+                                Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                                segVector.Normalize();
+
+                                segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
+                                segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
+
+                                CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+
+                                netManager.UpdateSegmentRenderer(segment, true);
+                                UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                                if (node != startNode)
+                                {
+                                    netManager.UpdateNode(startNode);
+                                }
+                                else
+                                {
+                                    netManager.UpdateNode(endNode);
+                                }
+                            }
+                        }
+
+                        // Auto curve
                         if (autoCurve && segmentCurve.m_startNode != 0 && segmentCurve.m_endNode != 0)
                         {
                             Vector3 p, tangent;
@@ -1130,7 +1161,7 @@ namespace MoveIt
                                         segmentBuffer[segment].m_startDirection = -tangent;
                                         segmentBuffer[segment].m_endDirection = segmentCurve.m_startDirection;
 
-                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
                                         netManager.UpdateSegmentRenderer(segment, true);
                                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
@@ -1141,7 +1172,7 @@ namespace MoveIt
                                         segmentBuffer[segment].m_startDirection = segmentCurve.m_startDirection;
                                         segmentBuffer[segment].m_endDirection = -tangent;
 
-                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
                                         netManager.UpdateSegmentRenderer(segment, true);
                                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
@@ -1161,7 +1192,7 @@ namespace MoveIt
                                         segmentBuffer[segment].m_startDirection = tangent;
                                         segmentBuffer[segment].m_endDirection = segmentCurve.m_endDirection;
 
-                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
                                         netManager.UpdateSegmentRenderer(segment, true);
                                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
@@ -1172,7 +1203,7 @@ namespace MoveIt
                                         segmentBuffer[segment].m_startDirection = segmentCurve.m_endDirection;
                                         segmentBuffer[segment].m_endDirection = tangent;
 
-                                        segmentBuffer[segment].CalculateSegment(segment);
+                                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
                                         netManager.UpdateSegmentRenderer(segment, true);
                                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
@@ -1181,45 +1212,8 @@ namespace MoveIt
                                 }
                             }
                         }
-                        else
-                        {
-                            for (int i = 0; i < 8; i++)
-                            {
-                                ushort segment = nodeBuffer[node].GetSegment(i);
-                                if (segment != 0 && !MoveItTool.instance.IsSegmentSelected(segment))
-                                {
-                                    ushort startNode = segmentBuffer[segment].m_startNode;
-                                    ushort endNode = segmentBuffer[segment].m_endNode;
 
-                                    Vector3 segVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
-                                    segVector.Normalize();
-
-                                    segmentBuffer[segment].m_startDirection = m_nodeSegmentsSave[i].m_startRotation * segVector;
-                                    segmentBuffer[segment].m_endDirection = m_nodeSegmentsSave[i].m_endRotation * -segVector;
-
-                                    segmentBuffer[segment].m_startDirection.y = 0;
-                                    segmentBuffer[segment].m_endDirection.y = 0;
-
-                                    segmentBuffer[segment].m_startDirection.Normalize();
-                                    segmentBuffer[segment].m_endDirection.Normalize();
-
-                                    segmentBuffer[segment].CalculateSegment(segment);
-
-                                    netManager.UpdateSegmentRenderer(segment, true);
-                                    UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
-
-                                    if (node != startNode)
-                                    {
-                                        netManager.UpdateNode(startNode);
-                                    }
-                                    else
-                                    {
-                                        netManager.UpdateNode(endNode);
-                                    }
-                                }
-                            }
-                            netManager.UpdateNode(node);
-                        }
+                        netManager.UpdateNode(node);
 
                         break;
                     }
@@ -1236,13 +1230,7 @@ namespace MoveIt
                         segmentBuffer[segment].m_startDirection = location - nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
                         segmentBuffer[segment].m_endDirection = location - nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
 
-                        segmentBuffer[segment].m_startDirection.y = 0;
-                        segmentBuffer[segment].m_endDirection.y = 0;
-
-                        segmentBuffer[segment].m_startDirection.Normalize();
-                        segmentBuffer[segment].m_endDirection.Normalize();
-
-                        segmentBuffer[segment].CalculateSegment(segment);
+                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
 
                         netManager.UpdateSegmentRenderer(segment, true);
                         UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
@@ -1422,8 +1410,13 @@ namespace MoveIt
                             cloneID.NetNode = clone;
 
                             nodeBuffer[clone].m_flags = nodeBuffer[node].m_flags;
+
+                            BuildingInfo newBuilding;
+                            float heightOffset;
+                            nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out newBuilding, out heightOffset);
+                            nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
                         }
-                        
+
                         break;
                     }
                 case InstanceType.NetSegment:
@@ -1436,7 +1429,7 @@ namespace MoveIt
                         ushort startNode = segmentBuffer[segment].m_startNode;
                         ushort endNode = segmentBuffer[segment].m_endNode;
 
-                        if(clonedNodes.ContainsKey(startNode))
+                        if (clonedNodes.ContainsKey(startNode))
                         {
                             startNode = clonedNodes[startNode];
                         }
@@ -1464,7 +1457,7 @@ namespace MoveIt
                         endDirection.Normalize();
 
                         ushort clone;
-                        if(netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, segmentBuffer[segment].Info,
+                        if (netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, segmentBuffer[segment].Info,
                             startNode, endNode, startDirection, endDirection,
                             SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                             (segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert))
@@ -1587,6 +1580,21 @@ namespace MoveIt
             {
                 ZoneManager.instance.ReleaseBlock(segmentBlock);
                 segmentBlock = 0;
+            }
+        }
+
+        public void CalculateSegmentDirections(ref NetSegment segment, ushort segmentID)
+        {
+            if (segment.m_flags != NetSegment.Flags.None)
+            {
+                segment.m_startDirection.y = 0;
+                segment.m_endDirection.y = 0;
+
+                segment.m_startDirection.Normalize();
+                segment.m_endDirection.Normalize();
+
+                segment.m_startDirection = segment.FindDirection(segmentID, segment.m_startNode);
+                segment.m_endDirection = segment.FindDirection(segmentID, segment.m_endNode);
             }
         }
     }

@@ -27,7 +27,7 @@ namespace MoveIt
             {
                 foreach (Moveable instance in instances)
                 {
-                    if(instance.id == id)
+                    if (instance.id == id)
                     {
                         return true;
                     }
