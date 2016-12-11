@@ -67,15 +67,12 @@ namespace MoveIt
         private static Color m_removeColor = new Color32(255, 160, 47, 191);
         private static Color m_despawnColor = new Color32(255, 160, 47, 191);
 
-        private bool m_snapping;
+        private bool m_snapping = false;
         private bool m_prevRenderZones;
 
         private Moveable m_hoverInstance;
         private HashSet<Moveable> m_marqueeInstances;
 
-        private NetTool m_netTool;
-        private UIMultiStateButton m_roadsSnapping;
-        private PropertyChangedEventHandler<int> m_snapChanged;
         private ToolBase m_prevTool;
         private UIMoveItButton m_button;
 
@@ -116,11 +113,6 @@ namespace MoveIt
             set
             {
                 m_snapping = value;
-
-                if (m_roadsSnapping != null)
-                {
-                    m_roadsSnapping.activeStateIndex = m_snapping ? 1 : 0;
-                }
             }
         }
 
@@ -128,15 +120,6 @@ namespace MoveIt
         {
             //m_counters = Statistics.counters;
             //m_counters.Clear();
-
-            // Getting NetTool
-            m_netTool = GameObject.FindObjectOfType<NetTool>();
-            if (m_netTool == null)
-            {
-                DebugUtils.Log("NetTool not found.");
-            }
-
-            m_snapChanged = (c, i) => { m_snapping = i == 1; UIToolOptionPanel.RefreshSnapButton(); };
 
             m_toolController = GameObject.FindObjectOfType<ToolController>();
             enabled = false;
@@ -172,19 +155,6 @@ namespace MoveIt
 
             InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
             TerrainManager.instance.RenderZones = true;
-
-            foreach (RoadsOptionPanel panel in GameObject.FindObjectsOfType<RoadsOptionPanel>())
-            {
-                UIMultiStateButton snap = panel.Find<UIMultiStateButton>("SnappingToggle");
-                if (snap != null && snap.isVisible)
-                {
-                    m_roadsSnapping = snap;
-                    m_roadsSnapping.eventActiveStateIndexChanged += m_snapChanged;
-                    m_snapping = m_roadsSnapping.activeStateIndex == 1;
-                    UIToolOptionPanel.RefreshSnapButton();
-                    break;
-                }
-            }
         }
 
         protected override void OnDisable()
@@ -206,12 +176,6 @@ namespace MoveIt
                 m_prevTool.enabled = true;
             }
             m_prevTool = null;
-
-            if (m_roadsSnapping != null)
-            {
-                m_roadsSnapping.eventActiveStateIndexChanged -= m_snapChanged;
-                m_roadsSnapping = null;
-            }
         }
 
         protected override void OnToolUpdate()
@@ -556,7 +520,7 @@ namespace MoveIt
                     m_hoverInstance.RenderOverlay(cameraInfo, m_hoverColor, m_despawnColor);
                 }
 
-                if (m_leftClickTime != 0 && segmentGuide.m_startNode != 0 && segmentGuide.m_endNode != 0)
+                if (snapping && m_leftClickTime != 0 && segmentGuide.m_startNode != 0 && segmentGuide.m_endNode != 0)
                 {
                     NetManager netManager = NetManager.instance;
                     NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
@@ -1771,13 +1735,15 @@ namespace MoveIt
 
                             Vector3 testPos;
                             Vector3 direction;
-                            segment.m_startDirection = (nodeBuffer[segment.m_startNode].m_position - nodeBuffer[segment.m_endNode].m_position).normalized;
+                            segment.m_startDirection = (nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
                             segment.m_endDirection = -segment.m_startDirection;
 
                             segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
                             // Straight
                             if (TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                             {
+                                instance.segmentCurve = segment;
+                                instance.autoCurve = true;
                                 segmentGuide = segment;
                                 snap = true;
                             }
@@ -1795,6 +1761,21 @@ namespace MoveIt
                                         {
                                             segment.m_startDirection = segmentBuffer[segmentC].m_startNode == segment.m_startNode ? -segmentBuffer[segmentC].m_startDirection : -segmentBuffer[segmentC].m_endDirection;
                                             segment.m_endDirection = segmentBuffer[segmentD].m_startNode == segment.m_endNode ? -segmentBuffer[segmentD].m_startDirection : -segmentBuffer[segmentD].m_endDirection;
+
+                                            Vector2 A = VectorUtils.XZ(nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
+                                            Vector2 B = VectorUtils.XZ(segment.m_startDirection);
+                                            float side1 = A.x * B.y - A.y * B.x;
+
+                                            B = VectorUtils.XZ(segment.m_endDirection);
+                                            float side2 = A.x * B.y - A.y * B.x;
+
+                                            if (Mathf.Sign(side1) != Mathf.Sign(side2) ||
+                                                (side1 != side2 && (side1 == 0 || side2 == 0)) ||
+                                                Vector2.Dot(A, VectorUtils.XZ(segment.m_startDirection)) < 0 ||
+                                                Vector2.Dot(A, VectorUtils.XZ(segment.m_endDirection)) > 0)
+                                            {
+                                                continue;
+                                            }
 
                                             segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
                                             // Curve
@@ -1851,7 +1832,6 @@ namespace MoveIt
 
             return snap;
         }
-
 
         private bool ProcessMoveKeys(Event e, out Vector3 direction, out int angle)
         {
