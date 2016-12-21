@@ -12,6 +12,11 @@ namespace MoveIt
 {
     internal class Moveable
     {
+        public static NetManager netManager = NetManager.instance;
+        public static Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+        public static NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+        public static NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+
         public InstanceID id;
         public HashSet<Moveable> subInstances;
 
@@ -21,6 +26,7 @@ namespace MoveIt
         private Vector3 m_startPosition;
         private float m_terrainHeight;
         private float m_startAngle;
+        private int m_flags;
 
         private HashSet<ushort> m_segmentsHashSet = new HashSet<ushort>();
         private SegmentSave[] m_nodeSegmentsSave;
@@ -169,11 +175,9 @@ namespace MoveIt
             {
                 case InstanceType.Building:
                     {
-                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-                        NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-
                         m_startPosition = buildingBuffer[id.Building].m_position;
                         m_startAngle = buildingBuffer[id.Building].m_angle;
+                        m_flags = (int)buildingBuffer[id.Building].m_flags;
 
                         subInstances = new HashSet<Moveable>();
 
@@ -264,10 +268,6 @@ namespace MoveIt
                     }
                 case InstanceType.NetNode:
                     {
-                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-                        NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
                         ushort node = id.NetNode;
 
                         m_startPosition = nodeBuffer[node].m_position;
@@ -313,9 +313,6 @@ namespace MoveIt
                     }
                 case InstanceType.NetSegment:
                     {
-                        NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-
                         ushort segment = id.NetSegment;
 
                         m_segmentSave.m_startDirection = segmentBuffer[segment].m_startDirection;
@@ -344,7 +341,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
             }
 
-            Move(newPosition, deltaAngle);
+            Move(newPosition, deltaAngle, deltaPosition.y > 0);
 
             if (subInstances != null)
             {
@@ -354,7 +351,7 @@ namespace MoveIt
                     subPosition = matrix4x.MultiplyPoint(subPosition);
                     subPosition.y = subInstance.m_startPosition.y - m_startPosition.y + newPosition.y;
 
-                    subInstance.Move(subPosition, deltaAngle);
+                    subInstance.Move(subPosition, deltaAngle, deltaPosition.y > 0);
                 }
             }
         }
@@ -377,9 +374,6 @@ namespace MoveIt
         {
             if (id.Type == InstanceType.NetNode)
             {
-                NetManager netManager = NetManager.instance;
-                NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-                NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
                 ushort node = id.NetNode;
 
                 netManager.MoveNode(node, m_startPosition);
@@ -404,10 +398,6 @@ namespace MoveIt
             }
             else if (id.Type == InstanceType.NetSegment)
             {
-                NetManager netManager = NetManager.instance;
-                NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-                NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
                 ushort segment = id.NetSegment;
 
                 ushort startNode = segmentBuffer[segment].m_startNode;
@@ -421,9 +411,15 @@ namespace MoveIt
                 netManager.UpdateNode(startNode);
                 netManager.UpdateNode(endNode);
             }
+            else if(id.Type == InstanceType.Building)
+            {
+
+                buildingBuffer[id.Building].m_flags = (Building.Flags)m_flags;
+                Move(m_startPosition, 0, false);
+            }
             else
             {
-                Move(m_startPosition, 0);
+                Move(m_startPosition, 0, false);
             }
 
             if (subInstances != null)
@@ -507,9 +503,7 @@ namespace MoveIt
                 case InstanceType.Building:
                     {
                         ushort building = id.Building;
-                        NetManager netManager = NetManager.instance;
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        BuildingInfo buildingInfo = buildingManager.m_buildings.m_buffer[building].Info;
+                        BuildingInfo buildingInfo = buildingBuffer[building].Info;
 
                         if (WillBuildingDespawn(building))
                         {
@@ -518,7 +512,7 @@ namespace MoveIt
 
                         float alpha = 1f;
                         BuildingTool.CheckOverlayAlpha(buildingInfo, ref alpha);
-                        ushort node = buildingManager.m_buildings.m_buffer[building].m_netNode;
+                        ushort node = buildingBuffer[building].m_netNode;
                         int count = 0;
                         while (node != 0)
                         {
@@ -537,12 +531,12 @@ namespace MoveIt
                                 break;
                             }
                         }
-                        ushort subBuilding = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
+                        ushort subBuilding = buildingBuffer[building].m_subBuilding;
                         count = 0;
                         while (subBuilding != 0)
                         {
-                            BuildingTool.CheckOverlayAlpha(buildingManager.m_buildings.m_buffer[subBuilding].Info, ref alpha);
-                            subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
+                            BuildingTool.CheckOverlayAlpha(buildingBuffer[subBuilding].Info, ref alpha);
+                            subBuilding = buildingBuffer[subBuilding].m_subBuilding;
                             if (++count > 49152)
                             {
                                 CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
@@ -550,12 +544,12 @@ namespace MoveIt
                             }
                         }
                         toolColor.a *= alpha;
-                        int length = buildingManager.m_buildings.m_buffer[building].Length;
-                        Vector3 position = buildingManager.m_buildings.m_buffer[building].m_position;
-                        float angle = buildingManager.m_buildings.m_buffer[building].m_angle;
+                        int length = buildingBuffer[building].Length;
+                        Vector3 position = buildingBuffer[building].m_position;
+                        float angle = buildingBuffer[building].m_angle;
                         BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, position, angle, toolColor, false);
 
-                        node = buildingManager.m_buildings.m_buffer[building].m_netNode;
+                        node = buildingBuffer[building].m_netNode;
                         count = 0;
                         while (node != 0)
                         {
@@ -575,16 +569,16 @@ namespace MoveIt
                                 break;
                             }
                         }
-                        subBuilding = buildingManager.m_buildings.m_buffer[building].m_subBuilding;
+                        subBuilding = buildingBuffer[building].m_subBuilding;
                         count = 0;
                         while (subBuilding != 0)
                         {
-                            BuildingInfo subBuildingInfo = buildingManager.m_buildings.m_buffer[subBuilding].Info;
-                            int subLength = buildingManager.m_buildings.m_buffer[subBuilding].Length;
-                            Vector3 subPosition = buildingManager.m_buildings.m_buffer[subBuilding].m_position;
-                            float subAngle = buildingManager.m_buildings.m_buffer[subBuilding].m_angle;
+                            BuildingInfo subBuildingInfo = buildingBuffer[subBuilding].Info;
+                            int subLength = buildingBuffer[subBuilding].Length;
+                            Vector3 subPosition = buildingBuffer[subBuilding].m_position;
+                            float subAngle = buildingBuffer[subBuilding].m_angle;
                             BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subPosition, subAngle, toolColor, false);
-                            subBuilding = buildingManager.m_buildings.m_buffer[subBuilding].m_subBuilding;
+                            subBuilding = buildingBuffer[subBuilding].m_subBuilding;
 
                             if (++count > 49152)
                             {
@@ -705,8 +699,6 @@ namespace MoveIt
             {
                 case InstanceType.Building:
                     {
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
                         ushort building = id.Building;
 
                         BuildingInfo buildingInfo = buildingBuffer[building].Info;
@@ -733,10 +725,9 @@ namespace MoveIt
                     }
                 case InstanceType.Prop:
                     {
-                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
                         ushort prop = id.Prop;
 
-                        PropInfo info = buffer[prop].Info;
+                        PropInfo info = PropManager.instance.m_props.m_buffer[prop].Info;
                         Randomizer randomizer = new Randomizer(prop);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
@@ -746,10 +737,9 @@ namespace MoveIt
                     }
                 case InstanceType.Tree:
                     {
-                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
                         uint tree = id.Tree;
 
-                        TreeInfo info = buffer[tree].Info;
+                        TreeInfo info = TreeManager.instance.m_trees.m_buffer[tree].Info;
                         Randomizer randomizer = new Randomizer(tree);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
                         float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
@@ -829,8 +819,6 @@ namespace MoveIt
             {
                 case InstanceType.Building:
                     {
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
                         ushort building = id.Building;
 
                         BuildingInfo buildingInfo = buildingBuffer[building].Info;
@@ -859,10 +847,9 @@ namespace MoveIt
                     }
                 case InstanceType.Prop:
                     {
-                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
                         ushort prop = id.Prop;
 
-                        PropInfo info = buffer[prop].Info;
+                        PropInfo info = PropManager.instance.m_props.m_buffer[prop].Info;
                         Randomizer randomizer = new Randomizer(prop);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
@@ -884,10 +871,9 @@ namespace MoveIt
                     }
                 case InstanceType.Tree:
                     {
-                        TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
                         uint tree = id.Tree;
 
-                        TreeInfo info = buffer[tree].Info;
+                        TreeInfo info = TreeManager.instance.m_trees.m_buffer[tree].Info;
                         Randomizer randomizer = new Randomizer(tree);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
                         float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
@@ -898,9 +884,6 @@ namespace MoveIt
                 case InstanceType.NetSegment:
                     {
                         ushort segment = id.NetSegment;
-                        NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
 
                         NetInfo netInfo = segmentBuffer[segment].Info;
 
@@ -942,8 +925,7 @@ namespace MoveIt
 
         private bool WillBuildingDespawn(ushort building)
         {
-            Building[] buffer = BuildingManager.instance.m_buildings.m_buffer;
-            BuildingInfo info = buffer[building].Info;
+            BuildingInfo info = buildingBuffer[building].Info;
 
             ItemClass.Zone zone1 = info.m_class.GetZone();
             ItemClass.Zone zone2 = info.m_class.GetSecondaryZone();
@@ -953,9 +935,9 @@ namespace MoveIt
                 return false;
             }
 
-            info.m_buildingAI.CheckRoadAccess(building, ref buffer[building]);
-            if ((buffer[building].m_problems & Notification.Problem.RoadNotConnected) == Notification.Problem.RoadNotConnected ||
-                !buffer[building].CheckZoning(zone1, zone2, true))
+            info.m_buildingAI.CheckRoadAccess(building, ref buildingBuffer[building]);
+            if ((buildingBuffer[building].m_problems & Notification.Problem.RoadNotConnected) == Notification.Problem.RoadNotConnected ||
+                !buildingBuffer[building].CheckZoning(zone1, zone2, true))
             {
                 return true;
             }
@@ -965,10 +947,6 @@ namespace MoveIt
 
         private Vector3 GetControlPoint(ushort segment)
         {
-            NetManager netManager = NetManager.instance;
-            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
             Vector3 startPos = nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
             Vector3 startDir = segmentBuffer[segment].m_startDirection;
             Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
@@ -995,9 +973,6 @@ namespace MoveIt
             {
                 case InstanceType.Building:
                     {
-                        Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-                        NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-
                         ushort id = instance.Building;
                         BuildingInfo info = buildingBuffer[id].Info;
 
@@ -1008,15 +983,14 @@ namespace MoveIt
                     }
                 case InstanceType.Prop:
                     {
-                        PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
                         ushort id = instance.Prop;
-                        PropInfo info = buffer[id].Info;
+                        PropInfo info = PropManager.instance.m_props.m_buffer[id].Info;
 
                         Randomizer randomizer = new Randomizer(id);
                         float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
                         float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
 
-                        return new Bounds(buffer[id].Position, new Vector3(radius, 0, radius));
+                        return new Bounds(PropManager.instance.m_props.m_buffer[id].Position, new Vector3(radius, 0, radius));
                     }
                 case InstanceType.Tree:
                     {
@@ -1032,29 +1006,27 @@ namespace MoveIt
                     }
                 case InstanceType.NetNode:
                     {
-                        NetManager netManager = NetManager.instance;
-                        NetNode[] buffer = netManager.m_nodes.m_buffer;
                         ushort node = id.NetNode;
 
-                        Bounds bounds = buffer[node].m_bounds;
+                        Bounds bounds = nodeBuffer[node].m_bounds;
 
                         if (!ignoreSegments)
                         {
                             for (int i = 0; i < 8; i++)
                             {
-                                ushort segment = buffer[node].GetSegment(i);
+                                ushort segment = nodeBuffer[node].GetSegment(i);
                                 if (segment != 0)
                                 {
-                                    ushort startNode = netManager.m_segments.m_buffer[segment].m_startNode;
-                                    ushort endNode = netManager.m_segments.m_buffer[segment].m_endNode;
+                                    ushort startNode = segmentBuffer[segment].m_startNode;
+                                    ushort endNode = segmentBuffer[segment].m_endNode;
 
                                     if (node != startNode)
                                     {
-                                        bounds.Encapsulate(buffer[startNode].m_bounds);
+                                        bounds.Encapsulate(nodeBuffer[startNode].m_bounds);
                                     }
                                     else
                                     {
-                                        bounds.Encapsulate(buffer[endNode].m_bounds);
+                                        bounds.Encapsulate(nodeBuffer[endNode].m_bounds);
                                     }
                                 }
                             }
@@ -1075,7 +1047,7 @@ namespace MoveIt
             return default(Bounds);
         }
 
-        private void Move(Vector3 location, ushort deltaAngle)
+        private void Move(Vector3 location, ushort deltaAngle, bool elevation)
         {
             switch (id.Type)
             {
@@ -1084,7 +1056,11 @@ namespace MoveIt
                         BuildingManager buildingManager = BuildingManager.instance;
                         ushort building = id.Building;
 
-                        RelocateBuilding(building, ref buildingManager.m_buildings.m_buffer[building], location, m_startAngle + deltaAngle * 9.58738E-05f);
+                        if(elevation)
+                        {
+                            buildingBuffer[building].m_flags = buildingBuffer[building].m_flags | Building.Flags.FixedHeight;
+                        }
+                        RelocateBuilding(building, ref buildingBuffer[building], location, m_startAngle + deltaAngle * 9.58738E-05f);
                         break;
                     }
                 case InstanceType.Prop:
@@ -1250,8 +1226,6 @@ namespace MoveIt
             {
                 case InstanceType.Building:
                     {
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
                         ushort building = id.Building;
                         BuildingInfo info = buildingBuffer[building].Info;
 
@@ -1269,7 +1243,7 @@ namespace MoveIt
                                 {
                                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Completed;
                                 }
-                                if (info.m_fixedHeight)
+                                if ((buildingBuffer[building].m_flags & Building.Flags.FixedHeight) != Building.Flags.None)
                                 {
                                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
                                 }
@@ -1397,9 +1371,6 @@ namespace MoveIt
                     }
                 case InstanceType.NetNode:
                     {
-                        BuildingManager buildingManager = BuildingManager.instance;
-                        Building[] buildingBuffer = buildingManager.m_buildings.m_buffer;
-                        NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
                         ushort node = id.NetNode;
 
                         ushort clone;
@@ -1421,9 +1392,6 @@ namespace MoveIt
                     }
                 case InstanceType.NetSegment:
                     {
-                        NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
                         ushort segment = id.NetSegment;
 
                         ushort startNode = segmentBuffer[segment].m_startNode;
@@ -1474,40 +1442,36 @@ namespace MoveIt
 
         private void RelocateBuilding(ushort building, ref Building data, Vector3 position, float angle)
         {
-            BuildingManager buildingManager = BuildingManager.instance;
-
             BuildingInfo info = data.Info;
             RemoveFromGrid(building, ref data);
             if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
             {
-                buildingManager.UpdateParkingSpaces(building, ref data);
+                BuildingManager.instance.UpdateParkingSpaces(building, ref data);
             }
             data.m_position = position;
             data.m_angle = angle;
 
             AddToGrid(building, ref data);
             data.CalculateBuilding(building);
-            buildingManager.UpdateBuildingRenderer(building, true);
+            BuildingManager.instance.UpdateBuildingRenderer(building, true);
         }
 
         private static void AddToGrid(ushort building, ref Building data)
         {
-            BuildingManager buildingManager = BuildingManager.instance;
-
             int num = Mathf.Clamp((int)(data.m_position.x / 64f + 135f), 0, 269);
             int num2 = Mathf.Clamp((int)(data.m_position.z / 64f + 135f), 0, 269);
             int num3 = num2 * 270 + num;
-            while (!Monitor.TryEnter(buildingManager.m_buildingGrid, SimulationManager.SYNCHRONIZE_TIMEOUT))
+            while (!Monitor.TryEnter(BuildingManager.instance.m_buildingGrid, SimulationManager.SYNCHRONIZE_TIMEOUT))
             {
             }
             try
             {
-                buildingManager.m_buildings.m_buffer[(int)building].m_nextGridBuilding = buildingManager.m_buildingGrid[num3];
-                buildingManager.m_buildingGrid[num3] = building;
+                buildingBuffer[(int)building].m_nextGridBuilding = BuildingManager.instance.m_buildingGrid[num3];
+                BuildingManager.instance.m_buildingGrid[num3] = building;
             }
             finally
             {
-                Monitor.Exit(buildingManager.m_buildingGrid);
+                Monitor.Exit(BuildingManager.instance.m_buildingGrid);
             }
         }
 
@@ -1537,12 +1501,12 @@ namespace MoveIt
                         }
                         else
                         {
-                            buildingManager.m_buildings.m_buffer[(int)num4].m_nextGridBuilding = data.m_nextGridBuilding;
+                            buildingBuffer[(int)num4].m_nextGridBuilding = data.m_nextGridBuilding;
                         }
                         break;
                     }
                     num4 = num5;
-                    num5 = buildingManager.m_buildings.m_buffer[(int)num5].m_nextGridBuilding;
+                    num5 = buildingBuffer[(int)num5].m_nextGridBuilding;
                     if (++num6 > 49152)
                     {
                         CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
