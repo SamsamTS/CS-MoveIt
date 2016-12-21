@@ -1431,7 +1431,7 @@ namespace MoveIt
 
             float distanceSq = float.MaxValue;
 
-            // Snap to segment
+            // Snap to node
             foreach (ushort segment in segmentList)
             {
                 if (!ingnoreSegments.Contains(segment))
@@ -1446,20 +1446,8 @@ namespace MoveIt
                             ushort startNode = segmentBuffer[segment].m_startNode;
                             ushort endNode = segmentBuffer[segment].m_endNode;
 
-                            bool segmentSnap = false;
-                            segmentSnap = TrySnapping(nodeBuffer[startNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta);
-                            segmentSnap = TrySnapping(nodeBuffer[endNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || segmentSnap;
-
-                            if (!segmentSnap)
-                            {
-                                Vector3 testPos;
-                                Vector3 direction;
-                                segmentBuffer[segment].GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
-
-                                segmentSnap = TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || segmentSnap;
-                            }
-
-                            snap = segmentSnap || snap;
+                            snap = TrySnapping(nodeBuffer[startNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || snap;
+                            snap = TrySnapping(nodeBuffer[endNode].m_position, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || snap;
                         }
                     }
                 }
@@ -1470,12 +1458,39 @@ namespace MoveIt
                 return moveDelta;
             }
 
+            // Snap to segment
+            foreach (ushort segment in segmentList)
+            {
+                if (!ingnoreSegments.Contains(segment))
+                {
+                    foreach (Moveable instance in step.instances)
+                    {
+                        if (instance.id.Type == InstanceType.NetNode && instance.isValid)
+                        {
+                            float minSqDistance = segmentBuffer[segment].Info.GetMinNodeDistance() / 2f;
+                            minSqDistance *= minSqDistance;
+
+                            Vector3 testPos;
+                            Vector3 direction;
+                            segmentBuffer[segment].GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
+
+                            snap = TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta) || snap;
+                        }
+                    }
+                }
+            }
+
+            if (snap)
+            {
+                return moveDelta;
+            }
+
+            // Snap to grid
             ushort block = 0;
             ushort previousBlock = 0;
             Vector3 refPosition = Vector3.zero;
             bool smallRoad = false;
 
-            // Snap to grid
             foreach (ushort segment in segmentList)
             {
                 bool hasBlocks = segment != 0 && (segmentBuffer[segment].m_blockStartLeft != 0 || segmentBuffer[segment].m_blockStartRight != 0 || segmentBuffer[segment].m_blockEndLeft != 0 || segmentBuffer[segment].m_blockEndRight != 0);
@@ -1777,14 +1792,33 @@ namespace MoveIt
                                                 continue;
                                             }
 
-                                            segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
-                                            // Curve
+                                            Bezier3 bezier = default(Bezier3);
+                                            bezier.a = Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_startNode].m_position;
+                                            bezier.d = Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_endNode].m_position;
+                                            bool smoothStart = (Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None;
+                                            bool smoothEnd = (Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None;
+                                            NetSegment.CalculateMiddlePoints(bezier.a, segment.m_startDirection, bezier.d, segment.m_endDirection, smoothStart, smoothEnd, out bezier.b, out bezier.c);
+
+                                            testPos = bezier.Position(0.5f);
+                                            // Curve Middle
                                             if (TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
                                             {
                                                 instance.segmentCurve = segment;
                                                 instance.autoCurve = true;
                                                 segmentGuide = segment;
                                                 snap = true;
+                                            }
+                                            else
+                                            {
+                                                segment.GetClosestPositionAndDirection(instance.newPosition, out testPos, out direction);
+                                                // Curve
+                                                if (TrySnapping(testPos, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                                                {
+                                                    instance.segmentCurve = segment;
+                                                    instance.autoCurve = true;
+                                                    segmentGuide = segment;
+                                                    snap = true;
+                                                }
                                             }
                                         }
                                     }
@@ -1809,6 +1843,7 @@ namespace MoveIt
                         ushort segmentA = nodeBuffer[testNode].GetSegment(j);
                         if (segmentA != 0 && segmentA != segment)
                         {
+                            // Straight
                             Vector3 startDir = segmentBuffer[segmentA].m_startNode == testNode ? segmentBuffer[segmentA].m_startDirection : segmentBuffer[segmentA].m_endDirection;
                             Vector3 offset = Line2.Offset(startDir, testPos - instance.newPosition);
                             offset = instance.newPosition + offset - testPos;
@@ -1824,6 +1859,26 @@ namespace MoveIt
                                 segmentGuide.m_startDirection = startDir;
                                 segmentGuide.m_endDirection = -startDir;
                                 snap = true;
+                            }
+                            else
+                            {
+                                // 90°
+                                startDir = new Vector3(-startDir.z, startDir.y, startDir.x);
+                                offset = Line2.Offset(startDir, testPos - instance.newPosition);
+                                offset = instance.newPosition + offset - testPos;
+                                num = offset.x * startDir.x + offset.z * startDir.z;
+
+                                if (TrySnapping(testPos + startDir * num, instance.newPosition, minSqDistance, ref distanceSq, step.moveDelta, ref moveDelta))
+                                {
+                                    segmentGuide = default(NetSegment);
+
+                                    segmentGuide.m_startNode = node;
+                                    segmentGuide.m_endNode = testNode;
+
+                                    segmentGuide.m_startDirection = startDir;
+                                    segmentGuide.m_endDirection = -startDir;
+                                    snap = true;
+                                }
                             }
                         }
                     }
