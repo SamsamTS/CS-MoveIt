@@ -11,8 +11,7 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.6.0: Bulldozer!\nWARNING: Bulldozing is permanent, no undo",
-            "New in 1.6.0: Improved snapping!\nTry to bend a single segment or move a single node with snapping",
+            "New in 1.7.0: All buildings can now have their elevation changed",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
             "Tip: Hold Shift to select multiple objects to move at once",

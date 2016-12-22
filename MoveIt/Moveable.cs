@@ -213,6 +213,7 @@ namespace MoveIt
                             subBuilding.id.Building = building;
                             subBuilding.m_startPosition = buildingBuffer[building].m_position;
                             subBuilding.m_startAngle = buildingBuffer[building].m_angle;
+                            subBuilding.m_flags = (int)buildingBuffer[building].m_flags;
                             subInstances.Add(subBuilding);
 
                             node = buildingBuffer[building].m_netNode;
@@ -351,7 +352,7 @@ namespace MoveIt
                     subPosition = matrix4x.MultiplyPoint(subPosition);
                     subPosition.y = subInstance.m_startPosition.y - m_startPosition.y + newPosition.y;
 
-                    subInstance.Move(subPosition, deltaAngle, deltaPosition.y > 0);
+                    subInstance.Move(subPosition, deltaAngle, false);
                 }
             }
         }
