@@ -628,7 +628,7 @@ namespace MoveIt
                         float alpha = 1f;
                         NetTool.CheckOverlayAlpha(netInfo, ref alpha);
                         toolColor.a *= alpha;
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, 0f/*position.y - 10f*/, position.y + 10f, false, true);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, -1f, 1280f, false, true);
                         break;
                     }
                 case InstanceType.NetSegment:
@@ -655,10 +655,7 @@ namespace MoveIt
                             bezier.d, segmentBuffer[segment].m_endDirection,
                             smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                        float minY = 10f;//Mathf.Min(bezier.a.y, bezier.d.y);
-                        float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
-
-                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, minY - 10f, maxY + 10f, false, true);
+                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, false, true);
 
                         Segment3 segment1, segment2;
 
@@ -670,11 +667,8 @@ namespace MoveIt
 
                         toolColor.a = toolColor.a / 2;
 
-                        minY = 10f;//Mathf.Min(Mathf.Min(segment1.a.y, segment1.b.y), segment2.a.y);
-                        maxY = Mathf.Max(Mathf.Max(segment1.a.y, segment1.b.y), segment2.a.y);
-
-                        RenderManager.instance.OverlayEffect.DrawSegment(cameraInfo, toolColor, segment1, segment2, 0, 10f, minY, maxY, true, true);
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, segment1.b.y - 10f, segment1.b.y + 10f, true, true);
+                        RenderManager.instance.OverlayEffect.DrawSegment(cameraInfo, toolColor, segment1, segment2, 0, 10f, -1f, 1280f, false, true);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, -1f, 1280f, false, true);
 
                         break;
                     }
@@ -792,10 +786,7 @@ namespace MoveIt
                             bezier.d, endDirection,
                             smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                        float minY = 10f;// Mathf.Min(bezier.a.y, bezier.d.y);
-                        float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
-
-                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, minY - 10f, maxY + 10f, false, true);
+                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, false, true);
                         break;
                     }
             }

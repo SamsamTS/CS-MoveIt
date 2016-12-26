@@ -458,7 +458,7 @@ namespace MoveIt
                     color = m_removeColor;
                 }
 
-                RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, m_selection.Min().y - 100f, m_selection.Max().y + 100f, true, true);
+                RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, -1f, 1280f, false, true);
 
                 if (m_marqueeInstances != null)
                 {
@@ -513,7 +513,7 @@ namespace MoveIt
                 }
 
                 center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-                RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, center.y - 100f, center.y + 100f, true, true);
+                RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
 
                 if (!marqueeSelection && m_hoverInstance != null && !step.instances.Contains(m_hoverInstance))
                 {
@@ -538,10 +538,7 @@ namespace MoveIt
                         bezier.d, segmentGuide.m_endDirection,
                         smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                    float minY = 10f;//Mathf.Min(bezier.a.y, bezier.d.y);
-                    float maxY = Mathf.Max(bezier.a.y, bezier.d.y);
-
-                    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, m_selectedColor, bezier, 0f, 100000f, -100000f, minY - 10f, maxY + 10f, false, true);
+                    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, m_selectedColor, bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
                 }
 
             }
