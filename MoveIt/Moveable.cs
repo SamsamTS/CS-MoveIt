@@ -342,7 +342,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - m_terrainHeight;
             }
 
-            Move(newPosition, deltaAngle, deltaPosition.y > 0);
+            Move(newPosition, deltaAngle, deltaPosition.y != 0f);
 
             if (subInstances != null)
             {
