@@ -837,6 +837,8 @@ namespace MoveIt
 
             m_moves.Push(MoveQueue.StepType.Selection, true);
             m_moves.current.center = GetCenter();
+
+            StartCloning();
         }
 
 
