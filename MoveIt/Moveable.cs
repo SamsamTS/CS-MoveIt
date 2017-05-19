@@ -908,8 +908,8 @@ namespace MoveIt
 
                         startDirection.Normalize();
                         endDirection.Normalize();
-
-                        RenderSegment.Invoke(null, new object[] { netInfo, bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
+                        //private static void RenderSegment(NetInfo info, NetSegment.Flags flags, Vector3 startPosition, Vector3 endPosition, Vector3 startDirection, Vector3 endDirection, bool smoothStart, bool smoothEnd)
+                        RenderSegment.Invoke(null, new object[] { netInfo, NetSegment.Flags.All ,bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
                         break;
                     }
             }
