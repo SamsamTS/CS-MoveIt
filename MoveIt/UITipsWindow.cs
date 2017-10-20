@@ -11,7 +11,7 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.7.0: All buildings can now have their elevation changed",
+            "New in 1.7.6: Decal filter for marquee selection",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
             "Tip: Hold Shift to select multiple objects to move at once",

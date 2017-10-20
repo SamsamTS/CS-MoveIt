@@ -179,13 +179,21 @@ namespace MoveIt
             };
 
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
+            checkBox.label.text = "Decals";
+            checkBox.isChecked = true;
+            checkBox.eventCheckChanged += (c, p) =>
+            {
+                MoveItTool.filterDecals = p;
+            };
+
+            checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Trees";
             checkBox.isChecked = true;
             checkBox.eventCheckChanged += (c, p) =>
             {
                 MoveItTool.filterTrees = p;
             };
-
+            
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Nodes";
             checkBox.isChecked = true;
@@ -207,7 +215,7 @@ namespace MoveIt
             filtersPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 5);
             filtersPanel.autoLayout = true;
 
-            filtersPanel.height = 140;
+            filtersPanel.height = 160;
 
             filtersPanel.absolutePosition = m_marquee.absolutePosition - new Vector3(57, filtersPanel.height + 5);
 

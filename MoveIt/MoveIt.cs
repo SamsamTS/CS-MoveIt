@@ -55,6 +55,7 @@ namespace MoveIt
 
         public static bool filterBuildings = true;
         public static bool filterProps = true;
+        public static bool filterDecals = true;
         public static bool filterTrees = true;
         public static bool filterNodes = true;
         public static bool filterSegments = true;
@@ -1224,17 +1225,22 @@ namespace MoveIt
                             }
                         }
 
-                        if (filterProps)
+                        if (filterProps || filterDecals)
                         {
                             ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
                             int count = 0;
                             while (prop != 0u)
                             {
-                                if (PointInRectangle(m_selection, propBuffer[prop].Position))
+                                bool isDecal = IsDecal(propBuffer[prop].Info);
+                                if ((filterDecals && isDecal) || (filterProps && !isDecal))
                                 {
-                                    id.Prop = prop;
-                                    list.Add(new Moveable(id));
+                                    if (PointInRectangle(m_selection, propBuffer[prop].Position))
+                                    {
+                                        id.Prop = prop;
+                                        list.Add(new Moveable(id));
+                                    }
                                 }
+
                                 prop = propBuffer[prop].m_nextGridProp;
 
                                 if (++count > 65536)
@@ -1329,12 +1335,26 @@ namespace MoveIt
                 itemLayers = itemLayers | ItemClass.Layer.WaterPipes;
             }
 
-            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
             {
                 itemLayers = itemLayers | ItemClass.Layer.MetroTunnels;
             }
 
             return itemLayers;
+        }
+
+
+        public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
+        public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
+
+        private bool IsDecal(PropInfo prop)
+        {
+            if (prop != null && prop.m_material != null)
+            {
+                return (prop.m_material.shader == shaderBlend || prop.m_material.shader == shaderSolid);
+            }
+
+            return false;
         }
 
         private bool IsBuildingValid(ref Building building, ItemClass.Layer itemLayers)
