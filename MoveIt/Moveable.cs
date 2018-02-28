@@ -307,6 +307,7 @@ namespace MoveIt
                             subBuilding.id.Building = building;
                             subBuilding.m_startPosition = buildingBuffer[building].m_position;
                             subBuilding.m_startAngle = buildingBuffer[building].m_angle;
+                            subBuilding.m_flags = (int)buildingBuffer[building].m_flags;
                             subInstances.Add(subBuilding);
                         }
 
