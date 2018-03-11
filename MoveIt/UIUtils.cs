@@ -45,6 +45,7 @@ namespace SamsamTS
             ((UISprite)checkBox.checkedBoxObject).spriteName = "ToggleBaseFocused";
             checkBox.checkedBoxObject.size = new Vector2(16f, 16f);
             checkBox.checkedBoxObject.relativePosition = Vector3.zero;
+            checkBox.checkedBoxObject.isInteractive = false; // Don't eat my double click event please
 
             checkBox.label = checkBox.AddUIComponent<UILabel>();
             checkBox.label.text = " ";

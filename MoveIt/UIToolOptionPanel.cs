@@ -162,6 +162,17 @@ namespace MoveIt
             filtersPanel.size = new Vector2(150, 140);
             filtersPanel.isVisible = false;
 
+            MouseEventHandler OnDoubleClick = (c, p) =>
+            {
+                foreach (UIComponent comp in filtersPanel.components)
+                {
+                    UICheckBox box = comp as UICheckBox;
+                    if (box != null && box != c) box.isChecked = false;
+                }
+
+                ((UICheckBox)c).isChecked = true;
+            };
+
             UICheckBox checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Buildings";
             checkBox.isChecked = true;
@@ -169,6 +180,9 @@ namespace MoveIt
             {
                 MoveItTool.filterBuildings = p;
             };
+
+            checkBox.eventDoubleClick += OnDoubleClick;
+            
 
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Props";
@@ -178,6 +192,8 @@ namespace MoveIt
                 MoveItTool.filterProps = p;
             };
 
+            checkBox.eventDoubleClick += OnDoubleClick;
+
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Decals";
             checkBox.isChecked = true;
@@ -186,6 +202,8 @@ namespace MoveIt
                 MoveItTool.filterDecals = p;
             };
 
+            checkBox.eventDoubleClick += OnDoubleClick;
+
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Trees";
             checkBox.isChecked = true;
@@ -193,6 +211,8 @@ namespace MoveIt
             {
                 MoveItTool.filterTrees = p;
             };
+
+            checkBox.eventDoubleClick += OnDoubleClick;
             
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Nodes";
@@ -202,6 +222,8 @@ namespace MoveIt
                 MoveItTool.filterNodes = p;
             };
 
+            checkBox.eventDoubleClick += OnDoubleClick;
+
             checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Segments";
             checkBox.isChecked = true;
@@ -209,6 +231,8 @@ namespace MoveIt
             {
                 MoveItTool.filterSegments = p;
             };
+
+            checkBox.eventDoubleClick += OnDoubleClick;
 
             filtersPanel.padding = new RectOffset(10, 10, 10, 10);
             filtersPanel.autoLayoutDirection = LayoutDirection.Vertical;
