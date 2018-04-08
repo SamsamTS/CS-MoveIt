@@ -11,7 +11,8 @@ namespace MoveIt
             Invalid,
             Selection,
             Move,
-            Clone
+            Clone,
+            AlignHeight
         }
 
         public class Step
@@ -40,6 +41,9 @@ namespace MoveIt
         {
             public Vector3 moveDelta;
             public ushort angleDelta;
+
+            public bool alignHeight;
+            public float alignY;
 
             public bool clone;
             public HashSet<Moveable> clones;
@@ -194,7 +198,18 @@ namespace MoveIt
 
                 if (m_moves[m_moveCurrent] is MoveStep)
                 {
-                    return ((MoveStep)m_moves[m_moveCurrent]).clone ? StepType.Clone : StepType.Move;
+                    MoveStep step = (MoveStep)m_moves[m_moveCurrent];
+                    if(step.clone)
+                    {
+                        return StepType.Clone; 
+                    }
+
+                    if (step.alignHeight)
+                    {
+                        return StepType.AlignHeight;
+                    }
+
+                    return StepType.Move;
                 }
 
                 return StepType.Selection;

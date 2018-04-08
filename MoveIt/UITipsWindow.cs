@@ -11,7 +11,7 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.7.6: Decal filter for marquee selection",
+            "New in 1.8.0: You can now align heights. Select objects you want to align, click the Align Heights button then the object you want to align to.",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
             "Tip: Hold Shift to select multiple objects to move at once",

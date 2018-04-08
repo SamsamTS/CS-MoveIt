@@ -42,7 +42,8 @@ namespace MoveIt
             Redo,
             Transform,
             Clone,
-            Bulldoze
+            Bulldoze,
+            AlignHeight
         }
 
         public const string settingsFileName = "MoveItTool";
@@ -67,6 +68,7 @@ namespace MoveIt
         private static Color m_moveColor = new Color32(125, 196, 30, 244);
         private static Color m_removeColor = new Color32(255, 160, 47, 191);
         private static Color m_despawnColor = new Color32(255, 160, 47, 191);
+        private static Color m_alignColor = new Color32(255, 255, 255, 244);
 
         private bool m_snapping = false;
         private bool m_prevRenderZones;
@@ -99,6 +101,7 @@ namespace MoveIt
         //private Dictionary<string, Statistics.stats> m_counters;
 
         public bool cloning;
+        public bool aligningHeight;
 
         public bool snapping
         {
@@ -222,6 +225,22 @@ namespace MoveIt
                         }
 
                         UIToolOptionPanel.RefreshSnapButton();
+                    }
+                    else if(aligningHeight)
+                    {
+                        RaycastHoverInstance(mouseRay);
+
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            m_nextAction = Actions.AlignHeight;
+                            aligningHeight = false;
+                        }
+                        else if (Input.GetMouseButtonDown(1))
+                        {
+                            aligningHeight = false;
+                        }
+
+                        UIToolOptionPanel.RefreshAlignHeightButton();
                     }
                     else
                     {
@@ -386,6 +405,7 @@ namespace MoveIt
                             }
 
                             UIToolOptionPanel.RefreshSnapButton();
+                            UIToolOptionPanel.RefreshAlignHeightButton();
                         }
                     }
                 }
@@ -413,6 +433,11 @@ namespace MoveIt
                     case Actions.Transform:
                         {
                             Transform();
+                            break;
+                        }
+                    case Actions.AlignHeight:
+                        {
+                            AlignHeight();
                             break;
                         }
                     case Actions.Clone:
@@ -457,6 +482,11 @@ namespace MoveIt
                 if (removing)
                 {
                     color = m_removeColor;
+                }
+
+                if(aligningHeight)
+                {
+                    color = m_alignColor;
                 }
 
                 RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, -1f, 1280f, false, true);
@@ -551,8 +581,28 @@ namespace MoveIt
             base.RenderOverlay(cameraInfo);
         }
 
+        public void StartAligningHeight()
+        {
+            if (cloning)
+            {
+                m_moves.Previous();
+                cloning = false;
+            }
+
+            if (!aligningHeight && m_moves.currentType != MoveQueue.StepType.Invalid && m_moves.hasSelection)
+            {
+                aligningHeight = true;
+            }
+        }
+
         public void StartCloning()
         {
+            if (aligningHeight)
+            {
+                aligningHeight = false;
+                UIToolOptionPanel.RefreshAlignHeightButton();
+            }
+
             if (!cloning && m_moves.currentType != MoveQueue.StepType.Invalid && m_moves.hasSelection)
             {
                 m_moves.Push(MoveQueue.StepType.Move, true);
@@ -642,6 +692,12 @@ namespace MoveIt
                 cloning = false;
             }
 
+            if (aligningHeight)
+            {
+                aligningHeight = false;
+                UIToolOptionPanel.RefreshAlignHeightButton();
+            }
+
             m_nextAction = Actions.Bulldoze;
         }
 
@@ -649,7 +705,7 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                if (m_moves.currentType == MoveQueue.StepType.Move)
+                if (m_moves.currentType == MoveQueue.StepType.Move || m_moves.currentType == MoveQueue.StepType.AlignHeight)
                 {
                     MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
 
@@ -730,6 +786,13 @@ namespace MoveIt
                     {
                         Clone();
                     }
+                    else if(m_moves.currentType == MoveQueue.StepType.AlignHeight)
+                    {
+                        MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                        AlignHeight(step.alignY);
+
+                        DebugUtils.Log("Height: " + step.alignY);
+                    }
                 }
             }
         }
@@ -738,7 +801,7 @@ namespace MoveIt
         {
             lock (m_moves)
             {
-                if (m_moves.currentType == MoveQueue.StepType.Selection)
+                if (m_moves.currentType == MoveQueue.StepType.Selection || m_moves.currentType == MoveQueue.StepType.AlignHeight)
                 {
                     m_moves.Push(MoveQueue.StepType.Move, true);
                 }
@@ -773,6 +836,40 @@ namespace MoveIt
                     }
                 }
                 UpdateArea(bounds);
+                UpdateArea(GetTotalBounds(false));
+            }
+        }
+
+        public void AlignHeight()
+        {
+            if (m_hoverInstance != null)
+            {
+                m_moves.Push(MoveQueue.StepType.AlignHeight, true);
+
+                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                step.alignHeight = true;
+
+                AlignHeight(m_hoverInstance.position.y);
+            }
+
+            UIToolOptionPanel.RefreshAlignHeightButton();
+        }
+
+        public void AlignHeight(float height)
+        {
+            lock (m_moves)
+            {
+                MoveQueue.MoveStep step = m_moves.current as MoveQueue.MoveStep;
+                step.alignY = height;
+
+                foreach (Moveable instance in step.instances)
+                {
+                    if (instance.isValid)
+                    {
+                        instance.ChangeHeight(height);
+                    }
+                }
+
                 UpdateArea(GetTotalBounds(false));
             }
         }

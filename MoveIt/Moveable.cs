@@ -358,6 +358,25 @@ namespace MoveIt
             }
         }
 
+        public void ChangeHeight(float height)
+        {
+            Vector3 newPosition = m_startPosition;
+            newPosition.y = height;
+
+            Move(newPosition, 0, true);
+
+            if (subInstances != null)
+            {
+                foreach (Moveable subInstance in subInstances)
+                {
+                    Vector3 subPosition = subInstance.m_startPosition;
+                    subPosition.y = subInstance.m_startPosition.y - m_startPosition.y + height;
+
+                    subInstance.Move(subPosition, 0, false);
+                }
+            }
+        }
+
         public InstanceID Clone(ref Matrix4x4 matrix4x, Vector3 deltaPosition, ushort deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(m_startPosition - center);

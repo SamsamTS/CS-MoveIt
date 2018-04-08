@@ -16,6 +16,7 @@ namespace MoveIt
         private UITabstrip m_tabStrip;
         private UIButton m_single;
         private UIButton m_marquee;
+        private UIButton m_alignHeight;
         private UIButton m_copy;
         private UIButton m_bulldoze;
 
@@ -27,7 +28,7 @@ namespace MoveIt
 
             atlas = UIUtils.GetAtlas("Ingame");
             size = new Vector2(41, 41);
-            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 300, -41);
+            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 340, -41);
             name = "MoveIt_ToolOptionPanel";
 
             DebugUtils.Log("ToolOptionPanel position: " + absolutePosition);
@@ -254,6 +255,33 @@ namespace MoveIt
                 }
             };
 
+            m_alignHeight = AddUIComponent<UIButton>();
+            m_alignHeight.name = "MoveIt_AlignHeight";
+            m_alignHeight.group = m_tabStrip;
+            m_alignHeight.atlas = GetIconsAtlas();
+            m_alignHeight.tooltip = "Align Heights";
+            m_alignHeight.playAudioEvents = true;
+
+            m_alignHeight.size = new Vector2(36, 36);
+
+            m_alignHeight.normalBgSprite = "OptionBase";
+            m_alignHeight.hoveredBgSprite = "OptionBaseHovered";
+            m_alignHeight.pressedBgSprite = "OptionBasePressed";
+            m_alignHeight.disabledBgSprite = "OptionBaseDisabled";
+
+            m_alignHeight.normalFgSprite = "AlignHeight";
+
+            m_alignHeight.relativePosition = m_tabStrip.relativePosition + new Vector3(m_single.width + m_marquee.width, 0);
+
+            m_alignHeight.eventClicked += (c, p) =>
+            {
+                if (MoveItTool.instance != null)
+                {
+                    MoveItTool.instance.StartAligningHeight();
+                    RefreshAlignHeightButton();
+                }
+            };
+
             m_copy = AddUIComponent<UIButton>();
             m_copy.name = "MoveIt_Copy";
             m_copy.group = m_tabStrip;
@@ -270,7 +298,7 @@ namespace MoveIt
 
             m_copy.normalFgSprite = "Copy";
 
-            m_copy.relativePosition = m_tabStrip.relativePosition + new Vector3(m_single.width + m_marquee.width, 0);
+            m_copy.relativePosition = m_alignHeight.relativePosition + new Vector3(m_alignHeight.width, 0);
 
             m_copy.eventClicked += (c, p) =>
             {
@@ -311,7 +339,7 @@ namespace MoveIt
         {
             if (isVisible)
             {
-                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 300, -41);
+                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 340, -41);
             }
             base.OnVisibilityChanged();
         }
@@ -321,6 +349,21 @@ namespace MoveIt
             if (instance != null && instance.m_snapping != null && MoveItTool.instance != null)
             {
                 instance.m_snapping.activeStateIndex = MoveItTool.instance.snapping ? 1 : 0;
+            }
+        }
+
+        public static void RefreshAlignHeightButton()
+        {
+            if (instance != null && instance.m_alignHeight != null && MoveItTool.instance != null)
+            {
+                if(MoveItTool.instance.aligningHeight)
+                {
+                    instance.m_alignHeight.normalBgSprite = "OptionBaseFocused";
+                }
+                else
+                {
+                    instance.m_alignHeight.normalBgSprite = "OptionBase";
+                }
             }
         }
 
@@ -357,12 +400,13 @@ namespace MoveIt
                 atlas["OptionBase"].texture,
                 atlas["OptionBaseHovered"].texture,
                 atlas["OptionBasePressed"].texture,
-                atlas["OptionBaseDisabled"].texture
-                
+                atlas["OptionBaseDisabled"].texture,
+                atlas["OptionBaseFocused"].texture
             };
 
             string[] spriteNames = new string[]
 			{
+                "AlignHeight",
 				"Copy",
                 "Bulldoze"
 			};
