@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using ColossalFramework.Plugins;
+using ColossalFramework;
 
 using System;
 
@@ -9,20 +9,12 @@ namespace MoveIt
     {
         public const string modPrefix = "[MoveIt " + ModInfo.version + "] ";
 
-        public static void Message(string message)
-        {
-            Log(message);
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, modPrefix + message);
-        }
-
-        public static void Warning(string message)
-        {
-            Debug.LogWarning(modPrefix + message);
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Warning, modPrefix + message);
-        }
+        public static SavedBool hideDebugMessages = new SavedBool("hideDebugMessages", MoveItTool.settingsFileName, true, true);
 
         public static void Log(string message)
         {
+            if (hideDebugMessages.value) return;
+
             if (message == m_lastLog)
             {
                 m_duplicates++;
@@ -42,7 +34,7 @@ namespace MoveIt
 
         public static void LogException(Exception e)
         {
-            Log("Intercepted exception (not game breaking):");
+            Debug.Log(modPrefix + "Intercepted exception (not game breaking):");
             Debug.LogException(e);
         }
 

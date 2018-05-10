@@ -34,6 +34,9 @@ namespace MoveIt
 
         public static readonly SavedInputKey copy = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
 
+        public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
+
+
         private int count = 0;
 
         private void Awake()
@@ -50,6 +53,7 @@ namespace MoveIt
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
             AddKeymapping("Copy", copy);
+            AddKeymapping("Align Heights", alignHeights);
         }
 
         private void AddKeymapping(string label, SavedInputKey savedInputKey)

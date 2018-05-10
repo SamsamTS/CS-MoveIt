@@ -33,7 +33,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "1.8.0";
+        public const string version = "2.0.0";
 
         public void OnSettingsUI(UIHelperBase helper)
         {
@@ -57,6 +57,14 @@ namespace MoveIt
                     MoveItTool.useCardinalMoves.value = b;
                 });
                 checkBox.tooltip = "If checked, Up will move in the North direction, Down is South, Left is West, Right is East.\n";
+
+                group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages", DebugUtils.hideDebugMessages.value, (b) =>
+                {
+                    DebugUtils.hideDebugMessages.value = b;
+                });
+                checkBox.tooltip = "If checked, debug messages won't be logged.\n";
 
                 group.AddSpace(10);
 

@@ -277,8 +277,14 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    MoveItTool.instance.StartAligningHeight();
-                    RefreshAlignHeightButton();
+                    if(MoveItTool.instance.toolState == MoveItTool.ToolState.AligningHeights)
+                    {
+                        MoveItTool.instance.StopAligningHeights();
+                    }
+                    else
+                    {
+                        MoveItTool.instance.StartAligningHeights();
+                    }
                 }
             };
 
@@ -304,7 +310,14 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    MoveItTool.instance.StartCloning();
+                    if (MoveItTool.instance.toolState == MoveItTool.ToolState.Cloning)
+                    {
+                        MoveItTool.instance.StopCloning();
+                    }
+                    else
+                    {
+                        MoveItTool.instance.StartCloning();
+                    }
                 }
             };
 
@@ -356,13 +369,28 @@ namespace MoveIt
         {
             if (instance != null && instance.m_alignHeight != null && MoveItTool.instance != null)
             {
-                if(MoveItTool.instance.aligningHeight)
+                if(MoveItTool.instance.toolState == MoveItTool.ToolState.AligningHeights)
                 {
                     instance.m_alignHeight.normalBgSprite = "OptionBaseFocused";
                 }
                 else
                 {
                     instance.m_alignHeight.normalBgSprite = "OptionBase";
+                }
+            }
+        }
+
+        public static void RefreshCloneButton()
+        {
+            if (instance != null && instance.m_copy != null && MoveItTool.instance != null)
+            {
+                if (MoveItTool.instance.toolState == MoveItTool.ToolState.AligningHeights)
+                {
+                    instance.m_copy.normalBgSprite = "OptionBaseFocused";
+                }
+                else
+                {
+                    instance.m_copy.normalBgSprite = "OptionBase";
                 }
             }
         }

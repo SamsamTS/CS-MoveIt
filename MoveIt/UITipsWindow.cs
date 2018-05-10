@@ -11,18 +11,19 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 1.8.0: You can now align heights. Select objects you want to align, click the Align Heights button then the object you want to align to.",
+            "New in 2.0.0: Bulldoze can be undone. Various controls tweaks and fixes.",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
+            "Tip: While cloning, Right Click to rotate 45° clockwise",
+            "Tip: Hold Ctrl while rotating to snap to 45° angles",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
             "Tip: Hold Alt while dragging objects to reverse the Snapping option",
             "Tip: While holding Right Click, move the mouse left and right to rotate objects",
             "Tip: Use Alt for finer movements with the keyboard",
             "Tip: Use Shift for faster movements with the keyboard",
-            "Tip: The object under the mouse will move if nothing else is selected",
             "Tip: When Follow Terrain is disabled, objects will keep their height when moved",
-            "Tip: Right Click to clear the selection or cancel the copy",
+            "Tip: Right Click to clear the selection",
             "Tip: Buildings, Trees, Props and Nodes can all be moved",
             "Tip: Movable objects are highlighted when hovered",
             "Tip: Hover various things to discover what can be moved",
