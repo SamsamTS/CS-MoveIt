@@ -644,12 +644,12 @@ namespace MoveIt
 
         public BulldozeAction()
         {
+            HashSet<Instance> newSelection = new HashSet<Instance>(selection);
+
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
-
                     if (instance.id.Type == InstanceType.NetNode)
                     {
                         for (int i = 0; i < 8; i++)
@@ -660,11 +660,16 @@ namespace MoveIt
                                 InstanceID instanceID = default(InstanceID);
                                 instanceID.NetSegment = segment;
 
-                                m_states.Add(((Instance)instanceID).GetState());
+                                newSelection.Add((Instance)instanceID);
                             }
                         }
                     }
                 }
+            }
+
+            foreach (Instance instance in newSelection)
+            {
+                m_states.Add(instance.GetState());
             }
         }
 
@@ -704,6 +709,8 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
+                if (state.instance.id.Type == InstanceType.NetNode) continue;
+
                 if (state.instance.id.Type == InstanceType.NetSegment)
                 {
                     SegmentState segState = state as SegmentState;
@@ -721,7 +728,7 @@ namespace MoveIt
 
             selection = m_oldSelection;
         }
-
+        
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
             foreach (InstanceState state in m_states)

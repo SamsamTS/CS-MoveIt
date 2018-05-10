@@ -25,7 +25,7 @@ namespace MoveIt
 
             MoveableNode node = instance as MoveableNode;
 
-            pillarState.instance = node.pillar;
+            if (pillarState != null) pillarState.instance = node.pillar;
         }
     }
 
@@ -374,7 +374,7 @@ namespace MoveIt
         {
             NodeState state = instanceState as NodeState;
 
-            Instance cloneInstance = null;
+            MoveableNode cloneInstance = null;
 
             ushort clone;
             if (NetManager.instance.CreateNode(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,

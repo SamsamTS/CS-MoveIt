@@ -17,9 +17,14 @@ namespace MoveIt
         {
             instance = newInstance;
 
+            if (newInstance.id.Type != instance.id.Type)
+            {
+                DebugUtils.Log("Warning: Mismatching instances type ('" + newInstance.id.Type + "' -> '" + newInstance.id.Type + "').");
+            }
+
             if (newInstance.info != info)
             {
-                DebugUtils.Log("Warning: Mismatching prefab info when replacing instance ('" + info.name + "' -> '" + newInstance.info.name+"').");
+                DebugUtils.Log("Warning: Mismatching instances info ('" + info.name + "' -> '" + newInstance.info.name+"').");
             }
         }
     }
