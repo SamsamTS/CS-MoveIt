@@ -46,6 +46,8 @@ namespace MoveIt
             autoHeight = true;
 
             instance = this;
+
+            NextTip();
         }
 
         protected override void OnMouseEnter(UIMouseEventParameter p)

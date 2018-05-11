@@ -24,8 +24,7 @@ namespace MoveIt
         public enum ToolState
         {
             Default,
-            LeftDragging,
-            RightDragging,
+            MouseDragging,
             RightDraggingClone,
             DrawingSelection,
             Cloning,
@@ -70,7 +69,7 @@ namespace MoveIt
         {
             get
             {
-                if (toolState == ToolState.LeftDragging || toolState == ToolState.RightDragging ||
+                if (toolState == ToolState.MouseDragging ||
                     toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
                 {
                     return m_snapping != Event.current.alt;
@@ -124,57 +123,6 @@ namespace MoveIt
 
             lock (ActionQueue.instance)
             {
-                bool isInsideUI = this.m_toolController.IsInsideUI;
-                if (e.type == EventType.MouseDown)
-                {
-                    if (!isInsideUI)
-                    {
-                        if (e.button == 0)
-                        {
-                            m_leftClickTime = Stopwatch.GetTimestamp();
-                            OnLeftMouseDown();
-                        }
-                        else if (e.button == 1)
-                        {
-                            m_rightClickTime = Stopwatch.GetTimestamp();
-                            OnRightMouseDown();
-                        }
-                    }
-                }
-                else if (e.type == EventType.MouseUp)
-                {
-                    if (e.button == 0 && m_leftClickTime != 0)
-                    {
-                        if (ElapsedMilliseconds(m_leftClickTime) < 200)
-                        {
-                            OnLeftClick();
-                        }
-                        else
-                        {
-                            OnLeftDragStop();
-                        }
-
-                        OnLeftMouseUp();
-
-                        m_leftClickTime = 0;
-                    }
-                    else if (e.button == 1 && m_rightClickTime != 0)
-                    {
-                        if (ElapsedMilliseconds(m_rightClickTime) < 200)
-                        {
-                            OnRightClick();
-                        }
-                        else
-                        {
-                            OnRightDragStop();
-                        }
-
-                        OnRightMouseUp();
-
-                        m_rightClickTime = 0;
-                    }
-                }
-
                 if (toolState == ToolState.Default)
                 {
                     if (OptionsKeymapping.undo.IsPressed(e))
@@ -279,7 +227,8 @@ namespace MoveIt
             if (!MoveItTool.hideTips && UITipsWindow.instance != null)
             {
                 UITipsWindow.instance.isVisible = true;
-                UITipsWindow.instance.NextTip();
+                // TODO: ??? Cause crashes ???
+                //UITipsWindow.instance.NextTip();
             }
 
             InfoManager.InfoMode infoMode = InfoManager.instance.CurrentMode;
@@ -310,7 +259,7 @@ namespace MoveIt
                     DebugUtils.Log("Escape: " + toolState);
 
                     // Escape pressed
-                    if (toolState != ToolState.Default)
+                    if (toolState != ToolState.Default && toolState != ToolState.MouseDragging)
                     {
                         toolState = ToolState.Default;
 
@@ -384,7 +333,7 @@ namespace MoveIt
                     m_hoverInstance.RenderOverlay(cameraInfo, color, m_despawnColor);
                 }
             }
-            else if (toolState == ToolState.LeftDragging || toolState == ToolState.RightDragging)
+            else if (toolState == ToolState.MouseDragging)
             {
                 if (Action.selection.Count > 0)
                 {
@@ -506,19 +455,81 @@ namespace MoveIt
 
         protected override void OnToolUpdate()
         {
+            if (m_nextAction != ToolAction.None) return;
+
             lock (ActionQueue.instance)
             {
-                if (m_leftClickTime != 0 && ElapsedMilliseconds(m_leftClickTime) >= 200)
+                bool isInsideUI = this.m_toolController.IsInsideUI;
+
+                if (m_leftClickTime == 0 && Input.GetMouseButton(0))
                 {
-                    OnLeftDrag();
+                    if (!isInsideUI)
+                    {
+                        m_leftClickTime = Stopwatch.GetTimestamp();
+                        OnLeftMouseDown();
+                    }
                 }
 
-                if (m_rightClickTime != 0 && ElapsedMilliseconds(m_rightClickTime) >= 200)
+                if (m_leftClickTime != 0)
                 {
-                    OnRightDrag();
+                    long elapsed = ElapsedMilliseconds(m_leftClickTime);
+
+                    if (!Input.GetMouseButton(0))
+                    {
+                        m_leftClickTime = 0;
+
+                        if (elapsed < 200)
+                        {
+                            OnLeftClick();
+                        }
+                        else
+                        {
+                            OnLeftDragStop();
+                        }
+
+                        OnLeftMouseUp();
+                    }
+                    else if(elapsed >= 200)
+                    {
+                        OnLeftDrag();
+                    }
                 }
 
-                if (!this.m_toolController.IsInsideUI && Cursor.visible)
+                if (m_rightClickTime == 0 && Input.GetMouseButton(1))
+                {
+                    if (!isInsideUI)
+                    {
+                        m_rightClickTime = Stopwatch.GetTimestamp();
+                        OnRightMouseDown();
+                    }
+                }
+
+                if (m_rightClickTime != 0)
+                {
+                    long elapsed = ElapsedMilliseconds(m_rightClickTime);
+
+                    if (!Input.GetMouseButton(1))
+                    {
+                        m_rightClickTime = 0;
+
+                        if (elapsed < 200)
+                        {
+                            OnRightClick();
+                        }
+                        else
+                        {
+                            OnRightDragStop();
+                        }
+
+                        OnRightMouseUp();
+                    }
+                    else if (elapsed >= 200)
+                    {
+                        OnRightDrag();
+                    }
+                }
+
+                if (!isInsideUI && Cursor.visible)
                 {
                     Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -534,13 +545,31 @@ namespace MoveIt
                                 RaycastHoverInstance(mouseRay);
                                 break;
                             }
-                        case ToolState.LeftDragging:
+                        case ToolState.MouseDragging:
                             {
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
-                                float y = action.moveDelta.y;
-                                Vector3 newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
-                                newMove.y = y;
+                                Vector3 newMove = action.moveDelta;
+
+                                if (m_leftClickTime > 0)
+                                {
+                                    float y = action.moveDelta.y;
+                                    newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
+                                    newMove.y = y;
+                                }
+
+                                float newAngle = action.angleDelta;
+
+                                if (m_rightClickTime > 0)
+                                {
+                                    newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
+                                    if (Event.current.control)
+                                    {
+                                        float quarterPI = Mathf.PI / 4;
+                                        newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
+                                    }
+                                    newAngle += m_startAngle;
+                                }
 
                                 if(snapping)
                                 {
@@ -552,30 +581,9 @@ namespace MoveIt
                                     }
                                 }
 
-                                if (action.moveDelta != newMove)
+                                if (action.moveDelta != newMove || action.angleDelta != newAngle)
                                 {
                                     action.moveDelta = newMove;
-                                    action.followTerrain = followTerrain;
-                                    m_nextAction = ToolAction.Do;
-                                }
-
-                                UIToolOptionPanel.RefreshSnapButton();
-                                break;
-                            }
-                        case ToolState.RightDragging:
-                            {
-                                TransformAction action = ActionQueue.instance.current as TransformAction;
-
-                                float newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
-                                if(Event.current.control)
-                                {
-                                    float quarterPI = Mathf.PI / 4;
-                                    newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
-                                }
-                                newAngle += m_startAngle;
-
-                                if (action.angleDelta != newAngle)
-                                {
                                     action.angleDelta = newAngle;
                                     action.followTerrain = followTerrain;
                                     m_nextAction = ToolAction.Do;
@@ -776,6 +784,14 @@ namespace MoveIt
                 Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 m_mouseStartPosition = RaycastMouseLocation(mouseRay);
             }
+            else if(toolState == ToolState.MouseDragging)
+            {
+                TransformAction action = ActionQueue.instance.current as TransformAction;
+                m_startPosition = action.moveDelta;
+
+                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                m_mouseStartPosition = RaycastMouseLocation(mouseRay);
+            }
             else if (toolState == ToolState.Cloning)
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
@@ -788,8 +804,17 @@ namespace MoveIt
 
         private void OnRightMouseDown()
         {
+            DebugUtils.Log("OnRightMouseDown: " + toolState);
+
             if (toolState == ToolState.Default || toolState == ToolState.Cloning)
             {
+                m_mouseStartX = Input.mousePosition.x;
+            }
+            else if (toolState == ToolState.MouseDragging)
+            {
+                TransformAction action = ActionQueue.instance.current as TransformAction;
+                m_startAngle = action.angleDelta;
+
                 m_mouseStartX = Input.mousePosition.x;
             }
         }
@@ -865,7 +890,7 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
                 action.angleDelta -= Mathf.PI / 4;
             }
-            else
+            else if (toolState != ToolState.MouseDragging)
             {
                 toolState = ToolState.Default;
             }
@@ -951,7 +976,7 @@ namespace MoveIt
 
                 m_startPosition = action.moveDelta;
 
-                toolState = ToolState.LeftDragging;
+                toolState = ToolState.MouseDragging;
             }
         }
 
@@ -971,7 +996,7 @@ namespace MoveIt
                 }
 
                 m_startAngle = action.angleDelta;
-                toolState = ToolState.RightDragging;
+                toolState = ToolState.MouseDragging;
             }
             else if (toolState == ToolState.Cloning)
             {
@@ -986,9 +1011,11 @@ namespace MoveIt
         {
             DebugUtils.Log("OnLeftDragStop: " + toolState);
 
-            if (toolState == ToolState.LeftDragging)
+            if(toolState == ToolState.MouseDragging && m_rightClickTime == 0)
             {
                 toolState = ToolState.Default;
+
+                UIToolOptionPanel.RefreshSnapButton();
             }
         }
 
@@ -996,11 +1023,13 @@ namespace MoveIt
         {
             DebugUtils.Log("OnRightDragStop: " + toolState);
 
-            if (toolState == ToolState.RightDragging)
+            if (toolState == ToolState.MouseDragging && m_leftClickTime == 0)
             {
                 toolState = ToolState.Default;
+
+                UIToolOptionPanel.RefreshSnapButton();
             }
-            if (toolState == ToolState.RightDraggingClone)
+            else if (toolState == ToolState.RightDraggingClone)
             {
                 toolState = ToolState.Cloning;
             }
