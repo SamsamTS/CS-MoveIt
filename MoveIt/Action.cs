@@ -642,6 +642,8 @@ namespace MoveIt
 
         private HashSet<Instance> m_oldSelection;
 
+        public bool replaceInstances = true;
+
         public BulldozeAction()
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
@@ -670,6 +672,17 @@ namespace MoveIt
             foreach (Instance instance in newSelection)
             {
                 m_states.Add(instance.GetState());
+            }
+        }
+
+        public BulldozeAction(InstanceState [] states)
+        {
+            foreach (InstanceState state in states)
+            {
+                if (state.instance != null)
+                {
+                    m_states.Add(state);
+                }
             }
         }
 
@@ -717,16 +730,22 @@ namespace MoveIt
 
                     if (toReplace.ContainsKey(segState.startNode)) segState.startNode = toReplace[segState.startNode];
                     if (toReplace.ContainsKey(segState.endNode)) segState.endNode = toReplace[segState.endNode];
+
+                    // Don't clone if either node is missing
+                    if (!segState.startNode.isValid || !segState.endNode.isValid) continue;
                 }
 
                 Instance clone = state.instance.Clone(state);
                 toReplace.Add(state.instance, clone);
             }
 
-            ReplaceInstances(toReplace);
-            ActionQueue.instance.ReplaceInstancesBackward(toReplace);
+            if (replaceInstances)
+            {
+                ReplaceInstances(toReplace);
+                ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
-            selection = m_oldSelection;
+                selection = m_oldSelection;
+            }
         }
         
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)

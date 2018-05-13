@@ -6,13 +6,13 @@ using ColossalFramework.Math;
 
 namespace MoveIt
 {
+    public class PropState : InstanceState
+    {
+        public bool single;
+    }
+
     public class MoveableProp : Instance
     {
-        public class PropState : InstanceState
-        {
-            public bool single;
-        }
-
         public override HashSet<ushort> segmentList
         {
             get

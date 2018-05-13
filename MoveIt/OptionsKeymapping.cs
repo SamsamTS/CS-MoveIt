@@ -36,6 +36,9 @@ namespace MoveIt
 
         public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
 
+        /*public static readonly SavedInputKey export = new SavedInputKey("export", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.X, true, false, false), false);
+        public static readonly SavedInputKey import = new SavedInputKey("import", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.V, true, false, false), false);
+        */
 
         private int count = 0;
 

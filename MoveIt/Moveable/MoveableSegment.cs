@@ -4,13 +4,49 @@ using System.Reflection;
 using System.Collections.Generic;
 using ColossalFramework.Math;
 
+using System.Xml.Serialization;
 
 namespace MoveIt
 {
     public class SegmentState : InstanceState
     {
+        [XmlIgnore]
         public Instance startNode;
+
+        [XmlIgnore]
         public Instance endNode;
+
+        public ushort startNodeId
+        {
+            get
+            {
+                return startNode.id.NetNode;
+            }
+
+            set
+            {
+                InstanceID instanceID = InstanceID.Empty;
+                instanceID.NetNode = value;
+
+                startNode = new MoveableNode(instanceID);
+            }
+        }
+
+        public ushort endNodeId
+        {
+            get
+            {
+                return endNode.id.NetNode;
+            }
+
+            set
+            {
+                InstanceID instanceID = InstanceID.Empty;
+                instanceID.NetNode = value;
+
+                endNode = new MoveableNode(instanceID);
+            }
+        }
 
         public Vector3 startDirection;
         public Vector3 endDirection;

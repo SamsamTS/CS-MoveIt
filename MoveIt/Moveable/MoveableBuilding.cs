@@ -316,9 +316,9 @@ namespace MoveIt
                                 subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
                             {
                                 SimulationManager.instance.m_currentBuildIndex++;
-                                if (info.m_fixedHeight)
+                                if (info.m_subBuildings[i].m_fixedHeight)
                                 {
-                                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+                                    buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.FixedHeight;
                                 }
                             }
                             if (clone != 0 && subClone != 0)
@@ -371,9 +371,9 @@ namespace MoveIt
                             subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
                         {
                             SimulationManager.instance.m_currentBuildIndex++;
-                            if (info.m_fixedHeight)
+                            if (info.m_subBuildings[i].m_fixedHeight)
                             {
-                                buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+                                buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.FixedHeight;
                             }
                         }
                         if (clone != 0 && subClone != 0)

@@ -1,17 +1,75 @@
 ﻿using UnityEngine;
 
 using System.Collections.Generic;
+using System;
+using System.Xml.Serialization;
 
 namespace MoveIt
 {
+    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
     public class InstanceState
     {
+        [XmlIgnore]
         public Instance instance;
+
+        [XmlIgnore]
         public PrefabInfo info;
 
         public Vector3 position;
         public float angle;
         public float terrainHeight;
+
+        public uint id
+        {
+            get
+            {
+                return instance.id.RawData;
+            }
+
+            set
+            {
+                InstanceID instanceID = InstanceID.Empty;
+                instanceID.RawData = value;
+
+                instance = instanceID;
+            }
+        }
+
+        public string prefabName
+        {
+            get
+            {
+                return info.name;
+            }
+
+            set
+            {
+                switch(instance.id.Type)
+                {
+                    case InstanceType.Building:
+                        {
+                            info = PrefabCollection<BuildingInfo>.FindLoaded(value);
+                            break;
+                        }
+                    case InstanceType.Prop:
+                        {
+                            info = PrefabCollection<PropInfo>.FindLoaded(value);
+                            break;
+                        }
+                    case InstanceType.Tree:
+                        {
+                            info = PrefabCollection<TreeInfo>.FindLoaded(value);
+                            break;
+                        }
+                    case InstanceType.NetNode:
+                    case InstanceType.NetSegment:
+                        {
+                            info = PrefabCollection<NetInfo>.FindLoaded(value);
+                            break;
+                        }
+                }
+            }
+        }
 
         public virtual void ReplaceInstance(Instance newInstance)
         {

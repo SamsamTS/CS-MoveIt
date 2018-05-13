@@ -9,6 +9,10 @@ using ColossalFramework;
 using ColossalFramework.Math;
 using ColossalFramework.UI;
 
+/*using System.IO;
+using System.Xml;
+using System.Xml.Serialization;*/
+
 namespace MoveIt
 {
     public class MoveItTool : TransportTool
@@ -158,6 +162,83 @@ namespace MoveIt
                         StartAligningHeights();
                     }
                 }
+
+                /*if (OptionsKeymapping.export.IsPressed(e) && Action.selection.Count > 0)
+                {
+                    HashSet<Instance> newSelection = new HashSet<Instance>(Action.selection);
+
+                    foreach (Instance instance in Action.selection)
+                    {
+                        if (instance.isValid)
+                        {
+                            if (instance.id.Type == InstanceType.NetNode)
+                            {
+                                for (int i = 0; i < 8; i++)
+                                {
+                                    ushort segment = NetManager.instance.m_nodes.m_buffer[instance.id.NetNode].GetSegment(i);
+                                    if (segment != 0)
+                                    {
+                                        InstanceID instanceID = default(InstanceID);
+                                        instanceID.NetSegment = segment;
+
+                                        newSelection.Add((Instance)instanceID);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    InstanceState[] states = new InstanceState[newSelection.Count];
+                    int count = 0;
+
+                    foreach (Instance instance in newSelection)
+                    {
+                        states[count++] = instance.GetState();
+                    }
+
+                    using (FileStream stream = new FileStream("move_it_export.xml", FileMode.OpenOrCreate))
+                    {
+                        stream.SetLength(0); // Emptying the file !!!
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(InstanceState[]));
+                        xmlSerializer.Serialize(stream, states);
+                    }
+                }
+                if (OptionsKeymapping.import.IsPressed(e) && File.Exists("move_it_export.xml"))
+                {
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(InstanceState[]));
+                    InstanceState[] states;
+
+                    try
+                    {
+                        // Trying to Deserialize the file
+                        using (FileStream stream = new FileStream("move_it_export.xml", FileMode.Open))
+                        {
+                            states = xmlSerializer.Deserialize(stream) as InstanceState[];
+                        }
+
+                        SimulationManager.instance.AddAction(() =>
+                        {
+                            try
+                            {
+                                BulldozeAction action = new BulldozeAction(states);
+                                action.replaceInstances = false;
+                                action.Undo();
+                            }
+                            catch (Exception ex)
+                            {
+
+                                DebugUtils.Log("Couldn't clone");
+                                DebugUtils.LogException(ex);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        // Couldn't Deserialize (XML malformed?)
+                        DebugUtils.Log("Couldn't load file (XML malformed?)");
+                        DebugUtils.LogException(ex);
+                    }
+                }*/
 
                 if (toolState == ToolState.Cloning)
                 {
