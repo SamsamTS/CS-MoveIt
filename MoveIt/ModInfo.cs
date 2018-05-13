@@ -33,7 +33,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.0.2";
+        public const string version = "2.0.4";
 
         public void OnSettingsUI(UIHelperBase helper)
         {
@@ -50,21 +50,29 @@ namespace MoveIt
                         UITipsWindow.instance.isVisible = false;
                     }
                 });
-                checkBox.tooltip = "Check this if you don't want to see the tips.\n";
+                checkBox.tooltip = "Check this if you don't want to see the tips.";
+
+                group.AddSpace(10);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;
                 });
-                checkBox.tooltip = "If checked, Up will move in the North direction, Down is South, Left is West, Right is East.\n";
+                checkBox.tooltip = "If checked, Up will move in the North direction, Down is South, Left is West, Right is East.";
+
+                checkBox = (UICheckBox)group.AddCheckbox("Right click cancels cloning", MoveItTool.rmbCancelsCloning.value, (b) =>
+                {
+                    MoveItTool.rmbCancelsCloning.value = b;
+                });
+                checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages", DebugUtils.hideDebugMessages.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
                 {
                     DebugUtils.hideDebugMessages.value = b;
                 });
-                checkBox.tooltip = "If checked, debug messages won't be logged.\n";
+                checkBox.tooltip = "If checked, debug messages won't be logged.";
 
                 group.AddSpace(10);
 

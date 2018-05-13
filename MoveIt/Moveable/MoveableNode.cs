@@ -25,7 +25,14 @@ namespace MoveIt
 
             MoveableNode node = instance as MoveableNode;
 
-            if (pillarState != null) pillarState.instance = node.pillar;
+            if (pillarState != null)
+            {
+                pillarState.instance = node.pillar;
+                if(pillarState.instance == null)
+                {
+                    pillarState = null;
+                }
+            }
         }
     }
 
@@ -83,9 +90,10 @@ namespace MoveIt
 
             state.flags = nodeBuffer[node].m_flags;
 
-            if (nodeBuffer[node].m_building != 0)
+            MoveableBuilding pillarInstance = pillar;
+            if (pillar != null)
             {
-                state.pillarState = (BuildingState)pillar.GetState();
+                state.pillarState = pillar.GetState() as BuildingState;
             }
 
             for (int i = 0; i < 8; i++)

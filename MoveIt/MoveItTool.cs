@@ -36,6 +36,7 @@ namespace MoveIt
         public static MoveItTool instance;
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
+        public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
 
         public static bool followTerrain = true;
 
@@ -489,7 +490,7 @@ namespace MoveIt
 
                         OnLeftMouseUp();
                     }
-                    else if(elapsed >= 200)
+                    else if (elapsed >= 200)
                     {
                         OnLeftDrag();
                     }
@@ -571,14 +572,18 @@ namespace MoveIt
                                     newAngle += m_startAngle;
                                 }
 
-                                if(snapping)
+                                if (snapping)
                                 {
                                     newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out action.autoCurve);
 
-                                    if(action.autoCurve)
+                                    if (action.autoCurve)
                                     {
                                         action.segmentCurve = m_segmentGuide;
                                     }
+                                }
+                                else
+                                {
+                                    action.autoCurve = false;
                                 }
 
                                 if (action.moveDelta != newMove || action.angleDelta != newAngle)
@@ -594,6 +599,8 @@ namespace MoveIt
                             }
                         case ToolState.Cloning:
                             {
+                                if (m_rightClickTime != 0) break;
+
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                                 float y = action.moveDelta.y;
@@ -669,7 +676,7 @@ namespace MoveIt
                             {
                                 ActionQueue.instance.Do();
 
-                                if(ActionQueue.instance.current is CloneAction)
+                                if (ActionQueue.instance.current is CloneAction)
                                 {
                                     StartCloning();
                                 }
@@ -694,7 +701,7 @@ namespace MoveIt
 
         public void StartAligningHeights()
         {
-            if(toolState == ToolState.Cloning)
+            if (toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
             {
                 StopCloning();
             }
@@ -711,8 +718,11 @@ namespace MoveIt
 
         public void StopAligningHeights()
         {
-            toolState = ToolState.Default;
-            UIToolOptionPanel.RefreshAlignHeightButton();
+            if (toolState == ToolState.AligningHeights)
+            {
+                toolState = ToolState.Default;
+                UIToolOptionPanel.RefreshAlignHeightButton();
+            }
         }
 
         public void StartCloning()
@@ -731,6 +741,7 @@ namespace MoveIt
 
                         toolState = ToolState.Cloning;
                         UIToolOptionPanel.RefreshCloneButton();
+                        UIToolOptionPanel.RefreshAlignHeightButton();
                     }
                 }
             }
@@ -740,13 +751,14 @@ namespace MoveIt
         {
             lock (ActionQueue.instance)
             {
-                if (toolState != ToolState.Cloning || toolState != ToolState.RightDraggingClone) return;
+                if (toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
+                {
+                    ActionQueue.instance.Undo();
+                    ActionQueue.instance.Invalidate();
+                    toolState = ToolState.Default;
 
-                ActionQueue.instance.Undo();
-                ActionQueue.instance.Invalidate();
-                toolState = ToolState.Default;
-
-                UIToolOptionPanel.RefreshCloneButton();
+                    UIToolOptionPanel.RefreshCloneButton();
+                }
             }
         }
 
@@ -784,7 +796,7 @@ namespace MoveIt
                 Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 m_mouseStartPosition = RaycastMouseLocation(mouseRay);
             }
-            else if(toolState == ToolState.MouseDragging)
+            else if (toolState == ToolState.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_startPosition = action.moveDelta;
@@ -806,13 +818,20 @@ namespace MoveIt
         {
             DebugUtils.Log("OnRightMouseDown: " + toolState);
 
-            if (toolState == ToolState.Default || toolState == ToolState.Cloning)
+            if (toolState == ToolState.Default)
             {
                 m_mouseStartX = Input.mousePosition.x;
             }
             else if (toolState == ToolState.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
+                m_startAngle = action.angleDelta;
+
+                m_mouseStartX = Input.mousePosition.x;
+            }
+            else if (toolState == ToolState.Cloning)
+            {
+                CloneAction action = ActionQueue.instance.current as CloneAction;
                 m_startAngle = action.angleDelta;
 
                 m_mouseStartX = Input.mousePosition.x;
@@ -886,9 +905,16 @@ namespace MoveIt
             }
             else if (toolState == ToolState.Cloning)
             {
-                // Rotate 45° clockwise
-                CloneAction action = ActionQueue.instance.current as CloneAction;
-                action.angleDelta -= Mathf.PI / 4;
+                if (rmbCancelsCloning.value)
+                {
+                    StopCloning();
+                }
+                else
+                {
+                    // Rotate 45° clockwise
+                    CloneAction action = ActionQueue.instance.current as CloneAction;
+                    action.angleDelta -= Mathf.PI / 4;
+                }
             }
             else if (toolState != ToolState.MouseDragging)
             {
@@ -1000,9 +1026,6 @@ namespace MoveIt
             }
             else if (toolState == ToolState.Cloning)
             {
-                CloneAction action = ActionQueue.instance.current as CloneAction;
-
-                m_startAngle = action.angleDelta;
                 toolState = ToolState.RightDraggingClone;
             }
         }
@@ -1011,7 +1034,7 @@ namespace MoveIt
         {
             DebugUtils.Log("OnLeftDragStop: " + toolState);
 
-            if(toolState == ToolState.MouseDragging && m_rightClickTime == 0)
+            if (toolState == ToolState.MouseDragging && m_rightClickTime == 0)
             {
                 toolState = ToolState.Default;
 
@@ -1827,6 +1850,8 @@ namespace MoveIt
 
         private bool TrySnapNodeDirections(ushort node, Vector3 newPosition, Vector3 moveDelta, out Vector3 newMoveDelta, out bool autoCurve)
         {
+            string snapType = "";
+
             m_segmentGuide = default(NetSegment);
 
             NetManager netManager = NetManager.instance;
@@ -1869,6 +1894,7 @@ namespace MoveIt
                             {
                                 autoCurve = true;
                                 m_segmentGuide = segment;
+                                snapType = "Straight";
                                 snap = true;
                             }
 
@@ -1914,6 +1940,7 @@ namespace MoveIt
                                             {
                                                 autoCurve = true;
                                                 m_segmentGuide = segment;
+                                                snapType = "Curve Middle";
                                                 snap = true;
                                             }
                                             else
@@ -1924,6 +1951,7 @@ namespace MoveIt
                                                 {
                                                     autoCurve = true;
                                                     m_segmentGuide = segment;
+                                                    snapType = "Curve";
                                                     snap = true;
                                                 }
                                             }
@@ -1965,6 +1993,8 @@ namespace MoveIt
 
                                 m_segmentGuide.m_startDirection = startDir;
                                 m_segmentGuide.m_endDirection = -startDir;
+                                snapType = "Tangent Straight";
+                                autoCurve = false;
                                 snap = true;
                             }
                             else
@@ -1984,12 +2014,19 @@ namespace MoveIt
 
                                     m_segmentGuide.m_startDirection = startDir;
                                     m_segmentGuide.m_endDirection = -startDir;
+                                    snapType = "Tangent 90°";
+                                    autoCurve = false;
                                     snap = true;
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            if(snap)
+            {
+                DebugUtils.Log("Snapping " + snapType + " " + autoCurve);
             }
 
             return snap;

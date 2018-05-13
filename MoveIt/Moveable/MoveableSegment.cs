@@ -354,6 +354,10 @@ namespace MoveIt
                 {
                     return startPos + startDir * u;
                 }
+                else
+                {
+                    DebugUtils.Log("Warning! Invalid segment directions!");
+                }
             }
 
             return (startPos + endPos) / 2f;
