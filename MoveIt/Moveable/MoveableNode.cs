@@ -342,8 +342,10 @@ namespace MoveIt
             Move(newPosition, angle);
         }
 
-        public override Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
+            NodeState state = instanceState as NodeState;
+
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -353,11 +355,9 @@ namespace MoveIt
             }
 
             Instance cloneInstance = null;
-
-            ushort node = id.NetNode;
-
+            
             ushort clone;
-            if (NetManager.instance.CreateNode(out clone, ref SimulationManager.instance.m_randomizer, nodeBuffer[node].Info,
+            if (NetManager.instance.CreateNode(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
                 newPosition, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;
@@ -366,7 +366,7 @@ namespace MoveIt
                 cloneID.NetNode = clone;
                 cloneInstance = new MoveableNode(cloneID);
 
-                nodeBuffer[clone].m_flags = nodeBuffer[node].m_flags;
+                nodeBuffer[clone].m_flags = state.flags;
 
                 // TODO: Clone pillar instead?
                 BuildingInfo newBuilding;
@@ -378,7 +378,7 @@ namespace MoveIt
             return cloneInstance;
         }
 
-        public override Instance Clone(InstanceState instanceState)
+        public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             NodeState state = instanceState as NodeState;
 

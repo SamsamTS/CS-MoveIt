@@ -32,12 +32,22 @@ namespace MoveIt
             m_lastLog = message;
         }
 
+        public static void Warning(string message)
+        {
+            if (message != m_lastWarning)
+            {
+                Debug.LogWarning(modPrefix + "Warning: " + message);
+            }
+            m_lastWarning = message;
+        }
+
         public static void LogException(Exception e)
         {
-            Debug.Log(modPrefix + "Intercepted exception (not game breaking):");
+            Debug.LogError(modPrefix + "Intercepted exception (not game breaking):");
             Debug.LogException(e);
         }
 
+        private static string m_lastWarning;
         private static string m_lastLog;
         private static int m_duplicates = 0;
     }

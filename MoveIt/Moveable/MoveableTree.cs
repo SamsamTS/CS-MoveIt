@@ -105,8 +105,10 @@ namespace MoveIt
             TreeManager.instance.UpdateTreeRenderer(tree, true);
         }
 
-        public override Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
+            TreeState state = instanceState as TreeState;
+
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -118,11 +120,10 @@ namespace MoveIt
             Instance cloneInstance = null;
 
             TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
-            uint tree = id.Tree;
 
             uint clone;
             if (TreeManager.instance.CreateTree(out clone, ref SimulationManager.instance.m_randomizer,
-                buffer[tree].Info, newPosition, buffer[tree].Single))
+                state.info as TreeInfo, newPosition, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
                 cloneID.Tree = clone;
@@ -132,7 +133,7 @@ namespace MoveIt
             return cloneInstance;
         }
 
-        public override Instance Clone(InstanceState instanceState)
+        public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             TreeState state = instanceState as TreeState;
 
@@ -193,7 +194,15 @@ namespace MoveIt
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
             float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
-            TreeTool.RenderOverlay(cameraInfo, info, state.position, scale, toolColor);
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            TreeTool.RenderOverlay(cameraInfo, info, newPosition, scale, toolColor);
         }
 
         public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
@@ -205,7 +214,15 @@ namespace MoveIt
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
             float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
-            TreeInstance.RenderInstance(cameraInfo, info, state.position, scale, brightness);
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            TreeInstance.RenderInstance(cameraInfo, info, newPosition, scale, brightness, RenderManager.DefaultColorLocation);
         }
     }
 }

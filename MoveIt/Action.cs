@@ -339,7 +339,7 @@ namespace MoveIt
         public float angleDelta;
         public bool followTerrain;
 
-        private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
+        public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
         private HashSet<Instance> m_clones;
         private HashSet<Instance> m_oldSelection;
 
@@ -463,7 +463,20 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    savedStates.Add(instance.GetState());
+                }
+            }
+        }
+
+        public CloneAction(InstanceState[] states)
+        {
+            m_oldSelection = selection;
+
+            foreach (InstanceState state in states)
+            {
+                if (state.instance != null)
+                {
+                    savedStates.Add(state);
                 }
             }
         }
@@ -479,9 +492,9 @@ namespace MoveIt
             // Clone nodes first
             Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
             
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
-                if (state.instance.isValid && state.instance.id.Type == InstanceType.NetNode)
+                if (state.instance.id.Type == InstanceType.NetNode)
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes);
                     if (clone != null)
@@ -494,9 +507,9 @@ namespace MoveIt
             }
 
             // Clone everything else
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
-                if (state.instance.isValid && state.instance.id.Type != InstanceType.NetNode)
+                if (state.instance.id.Type != InstanceType.NetNode)
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes);
                     if (clone != null)
@@ -549,7 +562,7 @@ namespace MoveIt
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
                 if (toReplace.ContainsKey(state.instance))
                 {
@@ -594,7 +607,7 @@ namespace MoveIt
 
             HashSet<InstanceState> newStates = new HashSet<InstanceState>();
 
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
                 if (state.instance.isValid)
                 {
@@ -623,7 +636,7 @@ namespace MoveIt
         {
             get
             {
-                foreach(InstanceState state in m_states)
+                foreach(InstanceState state in savedStates)
                 {
                     yield return state.instance;
                 }
@@ -632,7 +645,7 @@ namespace MoveIt
 
         public int Count
         {
-            get { return m_states.Count; }
+            get { return savedStates.Count; }
         }
     }
 
@@ -675,7 +688,7 @@ namespace MoveIt
             }
         }
 
-        public BulldozeAction(InstanceState [] states)
+        /*public BulldozeAction(InstanceState [] states)
         {
             foreach (InstanceState state in states)
             {
@@ -684,7 +697,7 @@ namespace MoveIt
                     m_states.Add(state);
                 }
             }
-        }
+        }*/
 
         public override void Do()
         {
@@ -710,13 +723,15 @@ namespace MoveIt
             if (m_states == null) return;
             
             Dictionary<Instance, Instance> toReplace = new Dictionary<Instance,Instance>();
+            Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
             foreach(InstanceState state in m_states)
             {
                 if(state.instance.id.Type == InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state);
+                    Instance clone = state.instance.Clone(state, null);
                     toReplace.Add(state.instance, clone);
+                    clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
                 }
             }
 
@@ -728,14 +743,30 @@ namespace MoveIt
                 {
                     SegmentState segState = state as SegmentState;
 
-                    if (toReplace.ContainsKey(segState.startNode)) segState.startNode = toReplace[segState.startNode];
-                    if (toReplace.ContainsKey(segState.endNode)) segState.endNode = toReplace[segState.endNode];
+                    if (!clonedNodes.ContainsKey(segState.startNode))
+                    {
+                        InstanceID instanceID = InstanceID.Empty;
+                        instanceID.NetNode = segState.startNode;
 
-                    // Don't clone if either node is missing
-                    if (!segState.startNode.isValid || !segState.endNode.isValid) continue;
+                        // Don't clone if node is missing
+                        if (!((Instance)instanceID).isValid) continue;
+
+                        clonedNodes.Add(segState.startNode, segState.startNode);
+                    }
+
+                    if (!clonedNodes.ContainsKey(segState.endNode))
+                    {
+                        InstanceID instanceID = InstanceID.Empty;
+                        instanceID.NetNode = segState.endNode;
+
+                        // Don't clone if node is missing
+                        if (!((Instance)instanceID).isValid) continue;
+
+                        clonedNodes.Add(segState.endNode, segState.endNode);
+                    }
                 }
 
-                Instance clone = state.instance.Clone(state);
+                Instance clone = state.instance.Clone(state, clonedNodes);
                 toReplace.Add(state.instance, clone);
             }
 

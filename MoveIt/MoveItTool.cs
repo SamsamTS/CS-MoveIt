@@ -506,11 +506,9 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                 Matrix4x4 matrix4x = default(Matrix4x4);
-                matrix4x.SetTRS(action.center, Quaternion.AngleAxis(action.angleDelta * 57.29578f, Vector3.down), Vector3.one);
+                matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * 57.29578f, Vector3.down), Vector3.one);
 
-                HashSet<InstanceState> newStates = action.CalculateStates(action.moveDelta, action.angleDelta, action.center, followTerrain);
-
-                foreach (InstanceState state in newStates)
+                foreach (InstanceState state in action.savedStates)
                 {
                     state.instance.RenderCloneOverlay(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
                 }
@@ -524,11 +522,9 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                 Matrix4x4 matrix4x = default(Matrix4x4);
-                matrix4x.SetTRS(action.center, Quaternion.AngleAxis(action.angleDelta * 57.29578f, Vector3.down), Vector3.one);
+                matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * 57.29578f, Vector3.down), Vector3.one);
 
-                HashSet<InstanceState> newStates = action.CalculateStates(action.moveDelta, action.angleDelta, action.center, followTerrain);
-
-                foreach (InstanceState state in newStates)
+                foreach (InstanceState state in action.savedStates)
                 {
                     state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
                 }

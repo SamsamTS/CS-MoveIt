@@ -77,12 +77,12 @@ namespace MoveIt
 
             if (newInstance.id.Type != instance.id.Type)
             {
-                DebugUtils.Log("Warning: Mismatching instances type ('" + newInstance.id.Type + "' -> '" + newInstance.id.Type + "').");
+                DebugUtils.Warning("Mismatching instances type ('" + newInstance.id.Type + "' -> '" + newInstance.id.Type + "').");
             }
 
             if (newInstance.info != info)
             {
-                DebugUtils.Log("Warning: Mismatching instances info ('" + info.name + "' -> '" + newInstance.info.name+"').");
+                DebugUtils.Warning("Mismatching instances info ('" + info.name + "' -> '" + newInstance.info.name + "').");
             }
         }
     }
@@ -187,7 +187,7 @@ namespace MoveIt
         public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);
         public abstract Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes);
-        public abstract Instance Clone(InstanceState state);
+        public abstract Instance Clone(InstanceState state, Dictionary<ushort, ushort> clonedNodes);
         public abstract void Delete();
         public abstract Bounds GetBounds(bool ignoreSegments = true);
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);

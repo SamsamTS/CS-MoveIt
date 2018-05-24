@@ -263,8 +263,10 @@ namespace MoveIt
             Move(newPosition, angle);
         }
 
-        public override Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
+            BuildingState state = instanceState as BuildingState;
+
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -274,60 +276,55 @@ namespace MoveIt
             }
 
             MoveableBuilding cloneInstance = null;
+            BuildingInfo info = state.info as BuildingInfo;
 
-            ushort building = id.Building;
-            BuildingInfo info = buildingBuffer[building].Info;
-
-            if (buildingBuffer[building].FindParentNode(building) == 0)
+            float newAngle = state.angle + deltaAngle;
+            ushort clone;
+            if (BuildingManager.instance.CreateBuilding(out clone, ref SimulationManager.instance.m_randomizer,
+                info, newPosition, newAngle,
+                state.length, SimulationManager.instance.m_currentBuildIndex))
             {
-                float newAngle = buildingBuffer[building].m_angle + deltaAngle;
-                ushort clone;
-                if (BuildingManager.instance.CreateBuilding(out clone, ref SimulationManager.instance.m_randomizer,
-                    info, newPosition, newAngle,
-                    buildingBuffer[building].Length, SimulationManager.instance.m_currentBuildIndex))
+                SimulationManager.instance.m_currentBuildIndex++;
+
+                InstanceID cloneID = default(InstanceID);
+                cloneID.Building = clone;
+                cloneInstance = new MoveableBuilding(cloneID);
+
+                if ((state.flags & Building.Flags.Completed) != Building.Flags.None)
                 {
-                    SimulationManager.instance.m_currentBuildIndex++;
+                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Completed;
+                }
+                if ((state.flags & Building.Flags.FixedHeight) != Building.Flags.None)
+                {
+                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
+                }
 
-                    InstanceID cloneID = default(InstanceID);
-                    cloneID.Building = clone;
-                    cloneInstance = new MoveableBuilding(cloneID);
+                if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
+                {
+                    Matrix4x4 subMatrix4x = default(Matrix4x4);
+                    subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                    for (int i = 0; i < info.m_subBuildings.Length; i++)
+                    {
+                        BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
+                        Vector3 subPosition = subMatrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
+                        float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
 
-                    if ((buildingBuffer[building].m_flags & Building.Flags.Completed) != Building.Flags.None)
-                    {
-                        buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Completed;
-                    }
-                    if ((buildingBuffer[building].m_flags & Building.Flags.FixedHeight) != Building.Flags.None)
-                    {
-                        buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
-                    }
-
-                    if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
-                    {
-                        Matrix4x4 subMatrix4x = default(Matrix4x4);
-                        subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
-                        for (int i = 0; i < info.m_subBuildings.Length; i++)
+                        ushort subClone;
+                        if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
+                            subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
                         {
-                            BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
-                            Vector3 subPosition = subMatrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
-                            float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
-
-                            ushort subClone;
-                            if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
-                                subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
+                            SimulationManager.instance.m_currentBuildIndex++;
+                            if (info.m_subBuildings[i].m_fixedHeight)
                             {
-                                SimulationManager.instance.m_currentBuildIndex++;
-                                if (info.m_subBuildings[i].m_fixedHeight)
-                                {
-                                    buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.FixedHeight;
-                                }
+                                buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.FixedHeight;
                             }
-                            if (clone != 0 && subClone != 0)
-                            {
-                                buildingBuffer[clone].m_subBuilding = subClone;
-                                buildingBuffer[subClone].m_parentBuilding = clone;
-                                buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.Untouchable;
-                                clone = subClone;
-                            }
+                        }
+                        if (clone != 0 && subClone != 0)
+                        {
+                            buildingBuffer[clone].m_subBuilding = subClone;
+                            buildingBuffer[subClone].m_parentBuilding = clone;
+                            buildingBuffer[subClone].m_flags = buildingBuffer[subClone].m_flags | Building.Flags.Untouchable;
+                            clone = subClone;
                         }
                     }
                 }
@@ -336,7 +333,7 @@ namespace MoveIt
             return cloneInstance;
         }
 
-        public override Instance Clone(InstanceState instanceState)
+        public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             BuildingState state = instanceState as BuildingState;
 
@@ -480,54 +477,92 @@ namespace MoveIt
             }
         }
 
-        public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            ushort building = id.Building;
+            BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = buildingBuffer[building].Info;
-            int length = buildingBuffer[building].Length;
-            Color color = buildingInfo.m_buildingAI.GetColor(0, ref buildingBuffer[building], InfoManager.instance.CurrentMode);
+            BuildingInfo buildingInfo = state.info as BuildingInfo;
 
-            buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, state.position, state.angle, default(Segment3));
-            BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, state.position, state.angle, toolColor, false);
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            float newAngle = state.angle + deltaAngle;
+
+            buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, newPosition, newAngle, default(Segment3));
+            BuildingTool.RenderOverlay(cameraInfo, buildingInfo, state.length, newPosition, newAngle, toolColor, false);
             if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
             {
                 Matrix4x4 subMatrix4x = default(Matrix4x4);
-                subMatrix4x.SetTRS(state.position, Quaternion.AngleAxis(state.angle * 57.29578f, Vector3.down), Vector3.one);
+                subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
                 for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
                     Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
-                    float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + state.angle;
+                    float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
                     buildingInfo2.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, position, angle, default(Segment3));
                     BuildingTool.RenderOverlay(cameraInfo, buildingInfo2, 0, position, angle, toolColor, true);
                 }
             }
         }
 
-        public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            ushort building = id.Building;
+            BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = buildingBuffer[building].Info;
-            int length = buildingBuffer[building].Length;
-            float angle = buildingBuffer[building].m_angle;
-            Color color = buildingInfo.m_buildingAI.GetColor(0, ref buildingBuffer[building], InfoManager.instance.CurrentMode);
+            BuildingInfo buildingInfo = state.info as BuildingInfo;
+            Color color = GetColor(state.instance.id.Building, buildingInfo);
 
-            buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, state.position, state.angle, 0);
-            BuildingTool.RenderGeometry(cameraInfo, buildingInfo, length, state.position, state.angle, false, color);
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            float newAngle = state.angle + deltaAngle;
+
+            buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, newPosition, newAngle, 0);
+            BuildingTool.RenderGeometry(cameraInfo, buildingInfo, state.length, newPosition, newAngle, false, color);
             if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
             {
                 Matrix4x4 subMatrix4x = default(Matrix4x4);
-                subMatrix4x.SetTRS(state.position, Quaternion.AngleAxis(state.angle * 57.29578f, Vector3.down), Vector3.one);
+                subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
                 for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
                     Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
-                    angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + state.angle;
+                    float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
                     buildingInfo2.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
                     BuildingTool.RenderGeometry(cameraInfo, buildingInfo2, 0, position, angle, true, color);
                 }
+            }
+        }
+
+        private Color GetColor(ushort buildingID, BuildingInfo info)
+        {
+            if (!info.m_useColorVariations)
+            {
+                return info.m_color0;
+            }
+            Randomizer randomizer = new Randomizer((int)buildingID);
+            switch (randomizer.Int32(4u))
+            {
+                case 0:
+                    return info.m_color0;
+                case 1:
+                    return info.m_color1;
+                case 2:
+                    return info.m_color2;
+                case 3:
+                    return info.m_color3;
+                default:
+                    return info.m_color0;
             }
         }
 

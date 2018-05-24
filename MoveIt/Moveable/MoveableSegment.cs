@@ -10,46 +10,18 @@ namespace MoveIt
 {
     public class SegmentState : InstanceState
     {
-        [XmlIgnore]
-        public Instance startNode;
+        public ushort startNode;
+        public ushort endNode;
 
-        [XmlIgnore]
-        public Instance endNode;
 
-        public ushort startNodeId
-        {
-            get
-            {
-                return startNode.id.NetNode;
-            }
-
-            set
-            {
-                InstanceID instanceID = InstanceID.Empty;
-                instanceID.NetNode = value;
-
-                startNode = new MoveableNode(instanceID);
-            }
-        }
-
-        public ushort endNodeId
-        {
-            get
-            {
-                return endNode.id.NetNode;
-            }
-
-            set
-            {
-                InstanceID instanceID = InstanceID.Empty;
-                instanceID.NetNode = value;
-
-                endNode = new MoveableNode(instanceID);
-            }
-        }
+        public Vector3 startPosition;
+        public Vector3 endPosition;
 
         public Vector3 startDirection;
         public Vector3 endDirection;
+
+        public bool smoothStart;
+        public bool smoothEnd;
 
         public bool invert;
 
@@ -59,13 +31,27 @@ namespace MoveIt
 
             NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
 
-            InstanceID instanceID = default(InstanceID);
+            startNode = segmentBuffer[instance.id.NetSegment].m_startNode;
+            endNode = segmentBuffer[instance.id.NetSegment].m_endNode;
+        }
 
-            instanceID.NetNode = segmentBuffer[instance.id.NetSegment].m_startNode;
-            startNode = (Instance)instanceID;
+        public SegmentState Copy()
+        {
+            SegmentState state = new SegmentState();
+            state.angle = angle;
+            state.endDirection = endDirection;
+            state.endNode = endNode;
+            state.endPosition = endPosition;
+            state.info = info;
+            state.instance = instance;
+            state.invert = invert;
+            state.position = position;
+            state.startDirection = startDirection;
+            state.startNode = startNode;
+            state.startPosition = startPosition;
+            state.terrainHeight = terrainHeight;
 
-            instanceID.NetNode = segmentBuffer[instance.id.NetSegment].m_endNode;
-            endNode = (Instance)instanceID;
+            return state;
         }
     }
 
@@ -92,16 +78,17 @@ namespace MoveIt
 
             state.position = GetControlPoint(segment);
 
-            InstanceID instanceID = default(InstanceID);
-
-            instanceID.NetNode = segmentBuffer[segment].m_startNode;
-            state.startNode = (Instance)instanceID;
-
-            instanceID.NetNode = segmentBuffer[segment].m_endNode;
-            state.endNode = (Instance)instanceID;
+            state.startNode = segmentBuffer[segment].m_startNode;
+            state.endNode = segmentBuffer[segment].m_endNode;
 
             state.startDirection = segmentBuffer[segment].m_startDirection;
             state.endDirection = segmentBuffer[segment].m_endDirection;
+
+            state.startPosition = nodeBuffer[state.startNode].m_position;
+            state.endPosition = nodeBuffer[state.endNode].m_position;
+
+            state.smoothStart = ((nodeBuffer[state.startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+            state.smoothEnd = ((nodeBuffer[state.endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
 
             state.invert = ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert);
 
@@ -177,16 +164,16 @@ namespace MoveIt
 
         public override void SetHeight(float height) { }
 
-        public override Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
+            SegmentState state = instanceState as SegmentState;
+
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
 
             Instance cloneInstance = null;
 
-            ushort segment = id.NetSegment;
-
-            ushort startNode = segmentBuffer[segment].m_startNode;
-            ushort endNode = segmentBuffer[segment].m_endNode;
+            ushort startNode = state.startNode;
+            ushort endNode = state.endNode;
 
             // Nodes should exist
             startNode = clonedNodes[startNode];
@@ -202,10 +189,10 @@ namespace MoveIt
             endDirection.Normalize();
 
             ushort clone;
-            if (netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, segmentBuffer[segment].Info,
+            if (netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
                 startNode, endNode, startDirection, endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
-                (segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert))
+                state.invert))
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
@@ -217,15 +204,22 @@ namespace MoveIt
             return cloneInstance;
         }
 
-        public override Instance Clone(InstanceState instanceState)
+        public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             SegmentState state = instanceState as SegmentState;
 
             Instance cloneInstance = null;
 
+            ushort startNode = state.startNode;
+            ushort endNode = state.endNode;
+
+            // Nodes should exist
+            startNode = clonedNodes[startNode];
+            endNode = clonedNodes[endNode];
+
             ushort clone;
             if (netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
-                state.startNode.id.NetNode, state.endNode.id.NetNode, state.startDirection, state.endDirection,
+                startNode, endNode, state.startDirection, state.endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
             {
@@ -287,38 +281,37 @@ namespace MoveIt
             RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, segment1.b, netInfo.m_halfWidth / 2f, -1f, 1280f, false, true);
         }
 
-        public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            ushort segment = id.NetSegment;
-            NetManager netManager = NetManager.instance;
-            NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+            SegmentState state = instanceState as SegmentState;
 
-            NetInfo netInfo = segmentBuffer[segment].Info;
+            NetInfo netInfo = state.info as NetInfo;
 
-            ushort startNode = segmentBuffer[segment].m_startNode;
-            ushort endNode = segmentBuffer[segment].m_endNode;
-
-            bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-            bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-
-            Bezier3 bezier;
-            bezier.a = matrix4x.MultiplyPoint(nodeBuffer[startNode].m_position - center) + deltaPosition;
-            bezier.d = matrix4x.MultiplyPoint(nodeBuffer[endNode].m_position - center) + deltaPosition;
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
 
             if (followTerrain)
             {
-                bezier.a.y = bezier.a.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.a) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[startNode].m_position);
-                bezier.d.y = bezier.d.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.d) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[endNode].m_position);
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            Bezier3 bezier;
+            bezier.a = matrix4x.MultiplyPoint(state.startPosition - center);
+            bezier.d = matrix4x.MultiplyPoint(state.endPosition - center);
+
+            if (followTerrain)
+            {
+                bezier.a.y = bezier.a.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.a) - TerrainManager.instance.SampleOriginalRawHeightSmooth(state.startPosition);
+                bezier.d.y = bezier.d.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.d) - TerrainManager.instance.SampleOriginalRawHeightSmooth(state.endPosition);
             }
             else
             {
-                bezier.a.y = nodeBuffer[startNode].m_position.y + deltaPosition.y;
-                bezier.d.y = nodeBuffer[endNode].m_position.y + deltaPosition.y;
+                bezier.a.y = state.startPosition.y + deltaPosition.y;
+                bezier.d.y = state.endPosition.y + deltaPosition.y;
             }
 
-            Vector3 startDirection = state.position - bezier.a;
-            Vector3 endDirection = state.position - bezier.d;
+            Vector3 startDirection = newPosition - bezier.a;
+            Vector3 endDirection = newPosition - bezier.d;
 
             startDirection.y = 0;
             endDirection.y = 0;
@@ -329,40 +322,42 @@ namespace MoveIt
             NetSegment.CalculateMiddlePoints(
                 bezier.a, startDirection,
                 bezier.d, endDirection,
-                smoothStart, smoothEnd, out bezier.b, out bezier.c);
+                state.smoothStart, state.smoothEnd, out bezier.b, out bezier.c);
 
             RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, false, true);
         }
 
-        public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            ushort segment = id.NetSegment;
+            SegmentState state = instanceState as SegmentState;
 
-            NetInfo netInfo = segmentBuffer[segment].Info;
+            NetInfo netInfo = state.info as NetInfo;
 
-            ushort startNode = segmentBuffer[segment].m_startNode;
-            ushort endNode = segmentBuffer[segment].m_endNode;
-
-            bool smoothStart = ((nodeBuffer[startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-            bool smoothEnd = ((nodeBuffer[endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-
-            Bezier3 bezier;
-            bezier.a = matrix4x.MultiplyPoint(nodeBuffer[startNode].m_position - center) + deltaPosition;
-            bezier.d = matrix4x.MultiplyPoint(nodeBuffer[endNode].m_position - center) + deltaPosition;
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
 
             if (followTerrain)
             {
-                bezier.a.y = bezier.a.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.a) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[startNode].m_position);
-                bezier.d.y = bezier.d.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.d) - TerrainManager.instance.SampleOriginalRawHeightSmooth(nodeBuffer[endNode].m_position);
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            Bezier3 bezier;
+            bezier.a = matrix4x.MultiplyPoint(state.startPosition - center);
+            bezier.d = matrix4x.MultiplyPoint(state.endPosition - center);
+
+            if (followTerrain)
+            {
+                bezier.a.y = bezier.a.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.a) - TerrainManager.instance.SampleOriginalRawHeightSmooth(state.startPosition);
+                bezier.d.y = bezier.d.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(bezier.d) - TerrainManager.instance.SampleOriginalRawHeightSmooth(state.endPosition);
             }
             else
             {
-                bezier.a.y = nodeBuffer[startNode].m_position.y + deltaPosition.y;
-                bezier.d.y = nodeBuffer[endNode].m_position.y + deltaPosition.y;
+                bezier.a.y = state.startPosition.y + deltaPosition.y;
+                bezier.d.y = state.endPosition.y + deltaPosition.y;
             }
 
-            Vector3 startDirection = state.position - bezier.a;
-            Vector3 endDirection = state.position - bezier.d;
+            Vector3 startDirection = newPosition - bezier.a;
+            Vector3 endDirection = newPosition - bezier.d;
 
             startDirection.y = 0;
             endDirection.y = 0;
@@ -370,7 +365,7 @@ namespace MoveIt
             startDirection.Normalize();
             endDirection.Normalize();
             //private static void RenderSegment(NetInfo info, NetSegment.Flags flags, Vector3 startPosition, Vector3 endPosition, Vector3 startDirection, Vector3 endDirection, bool smoothStart, bool smoothEnd)
-            RenderSegment.Invoke(null, new object[] { netInfo, NetSegment.Flags.All, bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
+            RenderSegment.Invoke(null, new object[] { netInfo, NetSegment.Flags.All, bezier.a, bezier.d, startDirection, -endDirection, state.smoothStart, state.smoothEnd });
         }
 
         private Vector3 GetControlPoint(ushort segment)
@@ -392,7 +387,7 @@ namespace MoveIt
                 }
                 else
                 {
-                    DebugUtils.Log("Warning! Invalid segment directions!");
+                    DebugUtils.Warning("Invalid segment directions!");
                 }
             }
 

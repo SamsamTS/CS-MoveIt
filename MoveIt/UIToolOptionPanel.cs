@@ -10,6 +10,10 @@ namespace MoveIt
     {
         public static UIToolOptionPanel instance;
 
+        private UIButton m_group;
+        private UIButton m_save;
+        private UIButton m_load;
+
         private UIMultiStateButton m_followTerrain;
         private UIMultiStateButton m_snapping;
 
@@ -28,11 +32,72 @@ namespace MoveIt
 
             atlas = UIUtils.GetAtlas("Ingame");
             size = new Vector2(41, 41);
-            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 340, -41);
+            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 448, -41);
             name = "MoveIt_ToolOptionPanel";
 
             DebugUtils.Log("ToolOptionPanel position: " + absolutePosition);
 
+            // Group
+            m_group = AddUIComponent<UIButton>();
+            m_group.name = "MoveIt_Group";
+            m_group.group = m_tabStrip;
+            m_group.atlas = GetIconsAtlas();
+            m_group.tooltip = "Group";
+            m_group.playAudioEvents = true;
+
+            m_group.size = new Vector2(36, 36);
+
+            m_group.normalBgSprite = "OptionBase";
+            m_group.hoveredBgSprite = "OptionBaseHovered";
+            m_group.pressedBgSprite = "OptionBasePressed";
+            m_group.disabledBgSprite = "OptionBaseDisabled";
+
+            m_group.normalFgSprite = "Group";
+
+            m_group.relativePosition = Vector2.zero;
+            m_group.isVisible = false; //TODO: temporary
+
+            // Save
+            m_save = AddUIComponent<UIButton>();
+            m_save.name = "MoveIt_Save";
+            m_save.group = m_tabStrip;
+            m_save.atlas = GetIconsAtlas();
+            m_save.tooltip = "Save";
+            m_save.playAudioEvents = true;
+
+            m_save.size = new Vector2(36, 36);
+
+            m_save.normalBgSprite = "OptionBase";
+            m_save.hoveredBgSprite = "OptionBaseHovered";
+            m_save.pressedBgSprite = "OptionBasePressed";
+            m_save.disabledBgSprite = "OptionBaseDisabled";
+
+            m_save.normalFgSprite = "Save";
+
+            m_save.relativePosition = m_group.relativePosition + new Vector3(m_group.width, 0);
+            m_save.isVisible = false; //TODO: temporary
+
+            // Load
+            m_load = AddUIComponent<UIButton>();
+            m_load.name = "MoveIt_Load";
+            m_load.group = m_tabStrip;
+            m_load.atlas = GetIconsAtlas();
+            m_load.tooltip = "Load";
+            m_load.playAudioEvents = true;
+
+            m_load.size = new Vector2(36, 36);
+
+            m_load.normalBgSprite = "OptionBase";
+            m_load.hoveredBgSprite = "OptionBaseHovered";
+            m_load.pressedBgSprite = "OptionBasePressed";
+            m_load.disabledBgSprite = "OptionBaseDisabled";
+
+            m_load.normalFgSprite = "Load";
+
+            m_load.relativePosition = m_save.relativePosition + new Vector3(m_save.width, 0);
+            m_load.isVisible = false; //TODO: temporary
+
+            // Follow Terrain
             m_followTerrain = AddUIComponent<UIMultiStateButton>();
             m_followTerrain.atlas = GetFollowTerrainAtlas();
             m_followTerrain.name = "MoveIt_Snapping";
@@ -58,7 +123,7 @@ namespace MoveIt
             m_followTerrain.foregroundSprites.AddState();
             m_followTerrain.foregroundSprites[1].normal = "FollowTerrain";
 
-            m_followTerrain.relativePosition = Vector2.zero;
+            m_followTerrain.relativePosition = m_load.relativePosition + new Vector3(m_load.width + m_load.width / 2, 0);
 
             m_followTerrain.activeStateIndex = MoveItTool.followTerrain ? 1 : 0;
 
@@ -325,7 +390,7 @@ namespace MoveIt
             m_bulldoze.name = "MoveIt_Bulldoze";
             m_bulldoze.group = m_tabStrip;
             m_bulldoze.atlas = GetIconsAtlas();
-            m_bulldoze.tooltip = "Bulldoze\nWARNING: NO UNDO!";
+            m_bulldoze.tooltip = "Bulldoze";
             m_bulldoze.playAudioEvents = true;
 
             m_bulldoze.size = new Vector2(36, 36);
@@ -352,7 +417,7 @@ namespace MoveIt
         {
             if (isVisible)
             {
-                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 340, -41);
+                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 448, -41);
             }
             base.OnVisibilityChanged();
         }
@@ -436,7 +501,10 @@ namespace MoveIt
 			{
                 "AlignHeight",
 				"Copy",
-                "Bulldoze"
+                "Bulldoze",
+                "Group",
+                "Save",
+                "Load"
 			};
 
             UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Icons", spriteNames, "MoveIt.Icons.");

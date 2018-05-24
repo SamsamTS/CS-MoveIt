@@ -33,7 +33,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.0.5";
+        public const string version = "2.0.6";
 
         public void OnSettingsUI(UIHelperBase helper)
         {
@@ -42,7 +42,15 @@ namespace MoveIt
                 UIHelper group = helper.AddGroup(Name) as UIHelper;
                 UIPanel panel = group.self as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
+                {
+                    DebugUtils.hideDebugMessages.value = b;
+                });
+                checkBox.tooltip = "If checked, debug messages won't be logged.";
+
+                group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
                 {
                     MoveItTool.hideTips.value = b;
                     if (UITipsWindow.instance != null)
@@ -65,14 +73,6 @@ namespace MoveIt
                     MoveItTool.rmbCancelsCloning.value = b;
                 });
                 checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
-
-                group.AddSpace(10);
-
-                checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
-                {
-                    DebugUtils.hideDebugMessages.value = b;
-                });
-                checkBox.tooltip = "If checked, debug messages won't be logged.";
 
                 group.AddSpace(10);
 

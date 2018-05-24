@@ -112,8 +112,10 @@ namespace MoveIt
             PropManager.instance.UpdatePropRenderer(prop, true);
         }
 
-        public override Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
+            PropState state = instanceState as PropState;
+
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -125,11 +127,10 @@ namespace MoveIt
             Instance cloneInstance = null;
 
             PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
-            ushort prop = id.Prop;
 
             ushort clone;
             if (PropManager.instance.CreateProp(out clone, ref SimulationManager.instance.m_randomizer,
-                buffer[prop].Info, newPosition, buffer[prop].Angle + deltaAngle, buffer[prop].Single))
+                state.info as PropInfo, newPosition, state.angle + deltaAngle, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
                 cloneID.Prop = clone;
@@ -139,7 +140,7 @@ namespace MoveIt
             return cloneInstance;
         }
 
-        public override Instance Clone(InstanceState instanceState)
+        public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             PropState state = instanceState as PropState;
 
@@ -191,36 +192,56 @@ namespace MoveIt
             PropTool.RenderOverlay(cameraInfo, propInfo, position, scale, angle, toolColor);
         }
 
-        public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            ushort prop = id.Prop;
+            PropState state = instanceState as PropState;
 
-            PropInfo info = PropManager.instance.m_props.m_buffer[prop].Info;
-            Randomizer randomizer = new Randomizer(prop);
+            PropInfo info = state.info as PropInfo;
+            Randomizer randomizer = new Randomizer(state.instance.id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
-            PropTool.RenderOverlay(cameraInfo, info, state.position, scale, state.angle, toolColor);
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            float newAngle = state.angle + deltaAngle;
+
+            PropTool.RenderOverlay(cameraInfo, info, newPosition, scale, newAngle, toolColor);
         }
 
-        public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            ushort prop = id.Prop;
+            PropState state = instanceState as PropState;
 
-            PropInfo info = PropManager.instance.m_props.m_buffer[prop].Info;
-            Randomizer randomizer = new Randomizer(prop);
+            PropInfo info = state.info as PropInfo;
+            Randomizer randomizer = new Randomizer(state.instance.id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
+
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            float newAngle = state.angle + deltaAngle;
             
             if (info.m_requireHeightMap)
             {
                 Texture heightMap;
                 Vector4 heightMapping;
                 Vector4 surfaceMapping;
-                TerrainManager.instance.GetHeightMapping(state.position, out heightMap, out heightMapping, out surfaceMapping);
-                PropInstance.RenderInstance(cameraInfo, info, id, state.position, scale, state.angle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true, heightMap, heightMapping, surfaceMapping);
+                TerrainManager.instance.GetHeightMapping(newPosition, out heightMap, out heightMapping, out surfaceMapping);
+                PropInstance.RenderInstance(cameraInfo, info, id, newPosition, scale, newAngle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true, heightMap, heightMapping, surfaceMapping);
             }
             else
             {
-                PropInstance.RenderInstance(cameraInfo, info, id, state.position, scale, state.angle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true);
+                PropInstance.RenderInstance(cameraInfo, info, id, newPosition, scale, newAngle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true);
             }
         }
     }
