@@ -62,7 +62,7 @@ namespace MoveIt
             m_save.name = "MoveIt_Save";
             m_save.group = m_tabStrip;
             m_save.atlas = GetIconsAtlas();
-            m_save.tooltip = "Save";
+            m_save.tooltip = "Export";
             m_save.playAudioEvents = true;
 
             m_save.size = new Vector2(36, 36);
@@ -73,16 +73,21 @@ namespace MoveIt
             m_save.disabledBgSprite = "OptionBaseDisabled";
 
             m_save.normalFgSprite = "Save";
+            m_save.disabledFgSprite = "Save_disabled";
 
             m_save.relativePosition = m_group.relativePosition + new Vector3(m_group.width, 0);
-            m_save.isVisible = false; //TODO: temporary
+
+            m_save.eventClicked += (c, p) =>
+            {
+                UISaveWindow.Open();
+            };
 
             // Load
             m_load = AddUIComponent<UIButton>();
             m_load.name = "MoveIt_Load";
             m_load.group = m_tabStrip;
             m_load.atlas = GetIconsAtlas();
-            m_load.tooltip = "Load";
+            m_load.tooltip = "Import";
             m_load.playAudioEvents = true;
 
             m_load.size = new Vector2(36, 36);
@@ -95,7 +100,11 @@ namespace MoveIt
             m_load.normalFgSprite = "Load";
 
             m_load.relativePosition = m_save.relativePosition + new Vector3(m_save.width, 0);
-            m_load.isVisible = false; //TODO: temporary
+
+            m_load.eventClicked += (c, p) =>
+            {
+                UILoadWindow.Open();
+            };
 
             // Follow Terrain
             m_followTerrain = AddUIComponent<UIMultiStateButton>();
@@ -228,7 +237,7 @@ namespace MoveIt
             filtersPanel.size = new Vector2(150, 140);
             filtersPanel.isVisible = false;
 
-            MouseEventHandler OnDoubleClick = (c, p) =>
+            void OnDoubleClick(UIComponent c, UIMouseEventParameter p)
             {
                 foreach (UIComponent comp in filtersPanel.components)
                 {
@@ -237,7 +246,7 @@ namespace MoveIt
                 }
 
                 ((UICheckBox)c).isChecked = true;
-            };
+            }
 
             UICheckBox checkBox = UIUtils.CreateCheckBox(filtersPanel);
             checkBox.label.text = "Buildings";
@@ -504,6 +513,7 @@ namespace MoveIt
                 "Bulldoze",
                 "Group",
                 "Save",
+                "Save_disabled",
                 "Load"
 			};
 

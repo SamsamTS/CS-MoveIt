@@ -42,8 +42,7 @@ namespace MoveIt
 
         public override void SetState(InstanceState state)
         {
-            InstanceState treeState = state as InstanceState;
-            if (treeState == null) return;
+            if (!(state is InstanceState treeState)) return;
 
             uint tree = id.Tree;
             TreeManager.instance.MoveTree(tree, treeState.position);
@@ -121,8 +120,7 @@ namespace MoveIt
 
             TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
 
-            uint clone;
-            if (TreeManager.instance.CreateTree(out clone, ref SimulationManager.instance.m_randomizer,
+            if (TreeManager.instance.CreateTree(out uint clone, ref SimulationManager.instance.m_randomizer,
                 state.info as TreeInfo, newPosition, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
@@ -139,8 +137,7 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            uint clone;
-            if (TreeManager.instance.CreateTree(out clone, ref SimulationManager.instance.m_randomizer,
+            if (TreeManager.instance.CreateTree(out uint clone, ref SimulationManager.instance.m_randomizer,
                 state.info as TreeInfo, state.position, state.single))
             {
                 InstanceID cloneID = default(InstanceID);

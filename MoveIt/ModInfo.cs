@@ -14,7 +14,10 @@ namespace MoveIt
             try
             {
                 // Creating setting file
-                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = MoveItTool.settingsFileName } });
+                if (GameSettings.FindSettingsFileByName(MoveItTool.settingsFileName) == null)
+                {
+                    GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = MoveItTool.settingsFileName } });
+                }
             }
             catch (Exception e)
             {
@@ -33,7 +36,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.0.6";
+        public const string version = "2.1.0";
 
         public void OnSettingsUI(UIHelperBase helper)
         {

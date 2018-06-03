@@ -81,7 +81,7 @@ namespace MoveIt
         {
             if(m_head != m_current)
             {
-                DebugUtils.Log("ActionQueue Invalide(" + m_current + ", " + m_head + "): " + m_actions[m_current].GetType());
+                DebugUtils.Log("ActionQueue Invalidate(" + m_current + ", " + m_head + ")");
             }
             m_head = m_current;
         }

@@ -4,15 +4,12 @@ using System.Reflection;
 using System.Collections.Generic;
 using ColossalFramework.Math;
 
-using System.Xml.Serialization;
-
 namespace MoveIt
 {
     public class SegmentState : InstanceState
     {
         public ushort startNode;
         public ushort endNode;
-
 
         public Vector3 startPosition;
         public Vector3 endPosition;
@@ -33,25 +30,6 @@ namespace MoveIt
 
             startNode = segmentBuffer[instance.id.NetSegment].m_startNode;
             endNode = segmentBuffer[instance.id.NetSegment].m_endNode;
-        }
-
-        public SegmentState Copy()
-        {
-            SegmentState state = new SegmentState();
-            state.angle = angle;
-            state.endDirection = endDirection;
-            state.endNode = endNode;
-            state.endPosition = endPosition;
-            state.info = info;
-            state.instance = instance;
-            state.invert = invert;
-            state.position = position;
-            state.startDirection = startDirection;
-            state.startNode = startNode;
-            state.startPosition = startPosition;
-            state.terrainHeight = terrainHeight;
-
-            return state;
         }
     }
 
@@ -97,8 +75,7 @@ namespace MoveIt
 
         public override void SetState(InstanceState state)
         {
-            SegmentState segmentState = state as SegmentState;
-            if (segmentState == null) return;
+            if (!(state is SegmentState segmentState)) return;
 
             ushort segment = id.NetSegment;
 
@@ -188,8 +165,7 @@ namespace MoveIt
             startDirection.Normalize();
             endDirection.Normalize();
 
-            ushort clone;
-            if (netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
                 startNode, endNode, startDirection, endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
@@ -217,8 +193,7 @@ namespace MoveIt
             startNode = clonedNodes[startNode];
             endNode = clonedNodes[endNode];
 
-            ushort clone;
-            if (netManager.CreateSegment(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
                 startNode, endNode, state.startDirection, state.endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
@@ -375,13 +350,10 @@ namespace MoveIt
             Vector3 endPos = nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
             Vector3 endDir = segmentBuffer[segment].m_endDirection;
 
-            float num;
-            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
+            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out float num))
             {
                 float dot = startDir.x * endDir.x + startDir.z * endDir.z;
-                float u;
-                float v;
-                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
+                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out float u, out float v))
                 {
                     return startPos + startDir * u;
                 }

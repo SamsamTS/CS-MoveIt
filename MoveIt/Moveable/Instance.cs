@@ -19,6 +19,8 @@ namespace MoveIt
         public float angle;
         public float terrainHeight;
 
+        private string m_loadedName;
+
         public uint id
         {
             get
@@ -39,11 +41,20 @@ namespace MoveIt
         {
             get
             {
-                return info.name;
+                if(info != null)
+                {
+                    return info.name;
+                }
+                else
+                {
+                    return m_loadedName;
+                }
             }
 
             set
             {
+                m_loadedName = value;
+
                 switch(instance.id.Type)
                 {
                     case InstanceType.Building:
@@ -214,8 +225,7 @@ namespace MoveIt
 
         public override bool Equals(object obj)
         {
-            Instance instance = obj as Instance;
-            if (instance != null)
+            if (obj is Instance instance)
             {
                 return instance.id == id;
             }

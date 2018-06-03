@@ -22,7 +22,7 @@ namespace MoveIt
             regions = texture2D.PackTextures(textures, 2, maxSize);
 
             UITextureAtlas textureAtlas = ScriptableObject.CreateInstance<UITextureAtlas>();
-            Material material = UnityEngine.Object.Instantiate<Material>(UIView.GetAView().defaultAtlas.material);
+            Material material = Object.Instantiate(UIView.GetAView().defaultAtlas.material);
             material.mainTexture = texture2D;
             textureAtlas.material = material;
             textureAtlas.name = atlasName;

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 using System.Collections.Generic;
+using System.Xml.Serialization;
+
 using ColossalFramework.Math;
 
 
@@ -11,6 +13,7 @@ namespace MoveIt
         public NetNode.Flags flags;
         public BuildingState pillarState;
 
+        [XmlElement("segmentsSave")]
         public SegmentSave[] segmentsSave = new SegmentSave[8];
 
         public struct SegmentSave
@@ -111,8 +114,7 @@ namespace MoveIt
 
         public override void SetState(InstanceState state)
         {
-            NodeState nodeState = state as NodeState;
-            if (nodeState == null) return;
+            if (!(state is NodeState nodeState)) return;
 
             ushort node = id.NetNode;
 
@@ -251,8 +253,7 @@ namespace MoveIt
 
             if (segmentCurve.m_startNode != 0 && segmentCurve.m_endNode != 0)
             {
-                Vector3 p, tangent;
-                segmentCurve.GetClosestPositionAndDirection(position, out p, out tangent);
+                segmentCurve.GetClosestPositionAndDirection(position, out Vector3 p, out Vector3 tangent);
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -355,9 +356,8 @@ namespace MoveIt
             }
 
             Instance cloneInstance = null;
-            
-            ushort clone;
-            if (NetManager.instance.CreateNode(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+
+            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
                 newPosition, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;
@@ -369,9 +369,7 @@ namespace MoveIt
                 nodeBuffer[clone].m_flags = state.flags;
 
                 // TODO: Clone pillar instead?
-                BuildingInfo newBuilding;
-                float heightOffset;
-                nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out newBuilding, out heightOffset);
+                nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out BuildingInfo newBuilding, out float heightOffset);
                 nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
             }
 
@@ -384,8 +382,7 @@ namespace MoveIt
 
             MoveableNode cloneInstance = null;
 
-            ushort clone;
-            if (NetManager.instance.CreateNode(out clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
                 state.position, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;
@@ -397,9 +394,7 @@ namespace MoveIt
                 nodeBuffer[clone].m_flags = state.flags;
 
                 // TODO: Clone pillar instead?
-                BuildingInfo newBuilding;
-                float heightOffset;
-                nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out newBuilding, out heightOffset);
+                nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out BuildingInfo newBuilding, out float heightOffset);
                 nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
             }
 

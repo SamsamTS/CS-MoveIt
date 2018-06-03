@@ -50,8 +50,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
     <Compile Include="ActionQueue.cs" />
+    <Compile Include="Actions\Action.cs" />
+    <Compile Include="Actions\AlignHeightAction.cs" />
+    <Compile Include="Actions\BulldozeAction.cs" />
+    <Compile Include="Actions\CloneAction.cs" />
+    <Compile Include="Actions\SelectAction.cs" />
+    <Compile Include="Actions\TransformAction.cs" />
+    <Compile Include="GUI\UILoadWindow.cs" />
+    <Compile Include="Selection.cs" />
+    <Compile Include="GUI\UIFastList.cs" />
+    <Compile Include="GUI\UISaveLoadFileRow.cs" />
+    <Compile Include="GUI\UISaveWindow.cs" />
     <Compile Include="Moveable\Instance.cs" />
     <Compile Include="ModInfo.cs" />
     <Compile Include="DebugUtils.cs" />
@@ -60,15 +70,15 @@
     <Compile Include="Moveable\MoveableProp.cs" />
     <Compile Include="Moveable\MoveableSegment.cs" />
     <Compile Include="Moveable\MoveableTree.cs" />
-    <Compile Include="MoveIt.cs" />
+    <Compile Include="MoveItLoader.cs" />
     <Compile Include="MoveItTool.cs" />
     <Compile Include="OptionsKeymapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourceLoader.cs" />
-    <Compile Include="UIMoveItButton.cs" />
-    <Compile Include="UITipsWindow.cs" />
-    <Compile Include="UIToolOptionPanel.cs" />
-    <Compile Include="UIUtils.cs" />
+    <Compile Include="GUI\ResourceLoader.cs" />
+    <Compile Include="GUI\UIMoveItButton.cs" />
+    <Compile Include="GUI\UITipsWindow.cs" />
+    <Compile Include="GUI\UIToolOptionPanel.cs" />
+    <Compile Include="GUI\UIUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MoveIt.png" />
@@ -92,6 +102,9 @@
     <EmbeddedResource Include="Icons\Group.png" />
     <EmbeddedResource Include="Icons\Load.png" />
     <EmbeddedResource Include="Icons\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\Save_disabled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

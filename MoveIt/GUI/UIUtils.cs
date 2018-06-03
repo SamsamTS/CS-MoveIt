@@ -148,7 +148,7 @@ namespace SamsamTS
                 if (_colorFIeldTemplate == null) return null;
             }
 
-            UIColorField colorField = UnityEngine.Object.Instantiate<GameObject>(_colorFIeldTemplate.gameObject).GetComponent<UIColorField>();
+            UIColorField colorField = Object.Instantiate(_colorFIeldTemplate.gameObject).GetComponent<UIColorField>();
             parent.AttachUIComponent(colorField.gameObject);
 
             colorField.size = new Vector2(40f, 26f);

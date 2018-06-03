@@ -43,8 +43,7 @@ namespace MoveIt
 
         public override void SetState(InstanceState state)
         {
-            InstanceState propState = state as InstanceState;
-            if (propState == null) return;
+            if (!(state is InstanceState propState)) return;
 
             ushort prop = id.Prop;
             PropManager.instance.m_props.m_buffer[prop].Angle = propState.angle;
@@ -128,8 +127,7 @@ namespace MoveIt
 
             PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
 
-            ushort clone;
-            if (PropManager.instance.CreateProp(out clone, ref SimulationManager.instance.m_randomizer,
+            if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 state.info as PropInfo, newPosition, state.angle + deltaAngle, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
@@ -146,8 +144,7 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            ushort clone;
-            if (PropManager.instance.CreateProp(out clone, ref SimulationManager.instance.m_randomizer,
+            if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 state.info as PropInfo, state.position, state.angle, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
@@ -233,10 +230,7 @@ namespace MoveIt
             
             if (info.m_requireHeightMap)
             {
-                Texture heightMap;
-                Vector4 heightMapping;
-                Vector4 surfaceMapping;
-                TerrainManager.instance.GetHeightMapping(newPosition, out heightMap, out heightMapping, out surfaceMapping);
+                TerrainManager.instance.GetHeightMapping(newPosition, out Texture heightMap, out Vector4 heightMapping, out Vector4 surfaceMapping);
                 PropInstance.RenderInstance(cameraInfo, info, id, newPosition, scale, newAngle, info.GetColor(ref randomizer), RenderManager.DefaultColorLocation, true, heightMap, heightMapping, surfaceMapping);
             }
             else

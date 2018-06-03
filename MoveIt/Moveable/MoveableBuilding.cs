@@ -3,6 +3,7 @@
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 using ColossalFramework;
 using ColossalFramework.Math;
@@ -15,6 +16,7 @@ namespace MoveIt
         public Building.Flags flags;
         public int length;
 
+        [XmlElement("subStates")]
         public InstanceState[] subStates;
         
         public override void ReplaceInstance(Instance instance)
@@ -145,8 +147,7 @@ namespace MoveIt
 
         public override void SetState(InstanceState state)
         {
-            BuildingState buildingState = state as BuildingState;
-            if (buildingState == null) return;
+            if (!(state is BuildingState buildingState)) return;
 
             ushort building = buildingState.instance.id.Building;
 
@@ -206,11 +207,11 @@ namespace MoveIt
             // TODO: when should the flag be set?
             if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
             {
-                AddFixedHeightFlag();
+                AddFixedHeightFlag(id.Building);
             }
             else
             {
-                RemoveFixedHeightFlag();
+                RemoveFixedHeightFlag(id.Building);
             }
 
             Move(newPosition, state.angle + deltaAngle);
@@ -244,11 +245,11 @@ namespace MoveIt
             // TODO: when should the flag be set?
             if (Mathf.Abs(terrainHeight - height) > 0.01f)
             {
-                AddFixedHeightFlag();
+                AddFixedHeightFlag(id.Building);
             }
             else
             {
-                RemoveFixedHeightFlag();
+                RemoveFixedHeightFlag(id.Building);
             }
 
             foreach (Instance subInstance in subInstances)
@@ -270,17 +271,17 @@ namespace MoveIt
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
+            float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+
             if (followTerrain)
             {
-                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+                newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
-
             MoveableBuilding cloneInstance = null;
             BuildingInfo info = state.info as BuildingInfo;
 
             float newAngle = state.angle + deltaAngle;
-            ushort clone;
-            if (BuildingManager.instance.CreateBuilding(out clone, ref SimulationManager.instance.m_randomizer,
+            if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 info, newPosition, newAngle,
                 state.length, SimulationManager.instance.m_currentBuildIndex))
             {
@@ -299,18 +300,27 @@ namespace MoveIt
                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
                 }
 
+                // TODO: when should the flag be set?
+                if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
+                {
+                    AddFixedHeightFlag(clone);
+                }
+                else
+                {
+                    RemoveFixedHeightFlag(clone);
+                }
+
                 if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
                 {
                     Matrix4x4 subMatrix4x = default(Matrix4x4);
-                    subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                    subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                     for (int i = 0; i < info.m_subBuildings.Length; i++)
                     {
                         BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
                         Vector3 subPosition = subMatrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
                         float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
 
-                        ushort subClone;
-                        if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
+                        if (BuildingManager.instance.CreateBuilding(out ushort subClone, ref SimulationManager.instance.m_randomizer,
                             subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
                         {
                             SimulationManager.instance.m_currentBuildIndex++;
@@ -340,8 +350,7 @@ namespace MoveIt
             MoveableBuilding cloneInstance = null;
             BuildingInfo info = state.info as BuildingInfo;
 
-            ushort clone;
-            if (BuildingManager.instance.CreateBuilding(out clone, ref SimulationManager.instance.m_randomizer,
+            if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 info, state.position, state.angle,
                 state.length, SimulationManager.instance.m_currentBuildIndex))
             {
@@ -356,15 +365,14 @@ namespace MoveIt
                 if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
                 {
                     Matrix4x4 subMatrix4x = default(Matrix4x4);
-                    subMatrix4x.SetTRS(state.position, Quaternion.AngleAxis(state.angle * 57.29578f, Vector3.down), Vector3.one);
+                    subMatrix4x.SetTRS(state.position, Quaternion.AngleAxis(state.angle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                     for (int i = 0; i < info.m_subBuildings.Length; i++)
                     {
                         BuildingInfo subInfo = info.m_subBuildings[i].m_buildingInfo;
                         Vector3 subPosition = subMatrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
                         float subAngle = info.m_subBuildings[i].m_angle * 0.0174532924f + state.angle;
 
-                        ushort subClone;
-                        if (BuildingManager.instance.CreateBuilding(out subClone, ref SimulationManager.instance.m_randomizer,
+                        if (BuildingManager.instance.CreateBuilding(out ushort subClone, ref SimulationManager.instance.m_randomizer,
                             subInfo, subPosition, subAngle, 0, SimulationManager.instance.m_currentBuildIndex))
                         {
                             SimulationManager.instance.m_currentBuildIndex++;
@@ -392,14 +400,14 @@ namespace MoveIt
             if (isValid) BuildingManager.instance.ReleaseBuilding(id.Building);
         }
 
-        public void AddFixedHeightFlag()
+        public void AddFixedHeightFlag(ushort building)
         {
-            buildingBuffer[id.Building].m_flags = buildingBuffer[id.Building].m_flags | Building.Flags.FixedHeight;
+            buildingBuffer[building].m_flags = buildingBuffer[building].m_flags | Building.Flags.FixedHeight;
         }
 
-        public void RemoveFixedHeightFlag()
+        public void RemoveFixedHeightFlag(ushort building)
         {
-            buildingBuffer[id.Building].m_flags = buildingBuffer[id.Building].m_flags & ~Building.Flags.FixedHeight;
+            buildingBuffer[building].m_flags = buildingBuffer[building].m_flags & ~Building.Flags.FixedHeight;
         }
 
         public override Bounds GetBounds(bool ignoreSegments = true)
@@ -498,7 +506,7 @@ namespace MoveIt
             if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
             {
                 Matrix4x4 subMatrix4x = default(Matrix4x4);
-                subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
@@ -532,7 +540,7 @@ namespace MoveIt
             if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
             {
                 Matrix4x4 subMatrix4x = default(Matrix4x4);
-                subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * 57.29578f, Vector3.down), Vector3.one);
+                subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;

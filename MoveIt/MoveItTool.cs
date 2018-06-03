@@ -1,5 +1,4 @@
-﻿using ICities;
-using UnityEngine;
+﻿using UnityEngine;
 
 using System;
 using System.Diagnostics;
@@ -8,10 +7,11 @@ using System.Collections.Generic;
 using ColossalFramework;
 using ColossalFramework.Math;
 using ColossalFramework.UI;
+using ColossalFramework.IO;
 
-/*using System.IO;
-using System.Xml;
-using System.Xml.Serialization;*/
+using System.IO;
+using System.Xml.Serialization;
+using System.Linq;
 
 namespace MoveIt
 {
@@ -36,6 +36,7 @@ namespace MoveIt
         }
 
         public const string settingsFileName = "MoveItTool";
+        public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
 
         public static MoveItTool instance;
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
@@ -86,6 +87,11 @@ namespace MoveIt
             {
                 m_snapping = value;
             }
+        }
+
+        public HashSet<Instance> selection
+        {
+            get { return Action.selection; }
         }
 
         private UIMoveItButton m_button;
@@ -163,89 +169,9 @@ namespace MoveIt
                     }
                 }
 
-                /*if (OptionsKeymapping.export.IsPressed(e) && Action.selection.Count > 0)
-                {
-                    HashSet<Instance> newSelection = new HashSet<Instance>(Action.selection);
-
-                    foreach (Instance instance in Action.selection)
-                    {
-                        if (instance.isValid)
-                        {
-                            if (instance.id.Type == InstanceType.NetNode)
-                            {
-                                for (int i = 0; i < 8; i++)
-                                {
-                                    ushort segment = NetManager.instance.m_nodes.m_buffer[instance.id.NetNode].GetSegment(i);
-                                    if (segment != 0)
-                                    {
-                                        InstanceID instanceID = default(InstanceID);
-                                        instanceID.NetSegment = segment;
-
-                                        newSelection.Add((Instance)instanceID);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    InstanceState[] states = new InstanceState[newSelection.Count];
-                    int count = 0;
-
-                    foreach (Instance instance in newSelection)
-                    {
-                        states[count++] = instance.GetState();
-                    }
-
-                    using (FileStream stream = new FileStream("move_it_export.xml", FileMode.OpenOrCreate))
-                    {
-                        stream.SetLength(0); // Emptying the file !!!
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(InstanceState[]));
-                        xmlSerializer.Serialize(stream, states);
-                    }
-                }
-                if (OptionsKeymapping.import.IsPressed(e) && File.Exists("move_it_export.xml"))
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(InstanceState[]));
-                    InstanceState[] states;
-
-                    try
-                    {
-                        // Trying to Deserialize the file
-                        using (FileStream stream = new FileStream("move_it_export.xml", FileMode.Open))
-                        {
-                            states = xmlSerializer.Deserialize(stream) as InstanceState[];
-                        }
-
-                        SimulationManager.instance.AddAction(() =>
-                        {
-                            try
-                            {
-                                BulldozeAction action = new BulldozeAction(states);
-                                action.replaceInstances = false;
-                                action.Undo();
-                            }
-                            catch (Exception ex)
-                            {
-
-                                DebugUtils.Log("Couldn't clone");
-                                DebugUtils.LogException(ex);
-                            }
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        // Couldn't Deserialize (XML malformed?)
-                        DebugUtils.Log("Couldn't load file (XML malformed?)");
-                        DebugUtils.LogException(ex);
-                    }
-                }*/
-
                 if (toolState == ToolState.Cloning)
                 {
-                    Vector3 direction;
-                    float angle;
-
-                    if (ProcessMoveKeys(e, out direction, out angle))
+                    if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
                     {
                         CloneAction action = ActionQueue.instance.current as CloneAction;
 
@@ -257,13 +183,9 @@ namespace MoveIt
                 {
                     // TODO: if no selection select hovered instance
 
-                    Vector3 direction;
-                    float angle;
-
-                    if (ProcessMoveKeys(e, out direction, out angle))
+                    if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
                     {
-                        TransformAction action = ActionQueue.instance.current as TransformAction;
-                        if (action == null)
+                        if (!(ActionQueue.instance.current is TransformAction action))
                         {
                             action = new TransformAction();
                             ActionQueue.instance.Push(action);
@@ -306,11 +228,9 @@ namespace MoveIt
                 UIToolOptionPanel.instance.isVisible = true;
             }
 
-            if (!MoveItTool.hideTips && UITipsWindow.instance != null)
+            if (!hideTips && UITipsWindow.instance != null)
             {
                 UITipsWindow.instance.isVisible = true;
-                // TODO: ??? Cause crashes ???
-                //UITipsWindow.instance.NextTip();
             }
 
             InfoManager.InfoMode infoMode = InfoManager.instance.CurrentMode;
@@ -506,7 +426,7 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                 Matrix4x4 matrix4x = default(Matrix4x4);
-                matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * 57.29578f, Vector3.down), Vector3.one);
+                matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                 foreach (InstanceState state in action.savedStates)
                 {
@@ -522,7 +442,7 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                 Matrix4x4 matrix4x = default(Matrix4x4);
-                matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * 57.29578f, Vector3.down), Vector3.one);
+                matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                 foreach (InstanceState state in action.savedStates)
                 {
@@ -534,6 +454,28 @@ namespace MoveIt
         protected override void OnToolUpdate()
         {
             if (m_nextAction != ToolAction.None) return;
+
+            UIComponent pauseMenu = UIView.library.Get("PauseMenu");
+            if (pauseMenu != null && pauseMenu.isVisible)
+            {
+                if (toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
+                {
+                    // Cancel cloning
+                    ActionQueue.instance.Undo();
+                    ActionQueue.instance.Invalidate();
+                }
+
+                if (toolState == ToolState.Default)
+                {
+                    ToolsModifierControl.SetTool<DefaultTool>();
+                }
+
+                toolState = ToolState.Default;
+
+                UIView.library.Hide("PauseMenu");
+
+                return;
+            }
 
             lock (ActionQueue.instance)
             {
@@ -686,8 +628,7 @@ namespace MoveIt
 
                                 if (snapping)
                                 {
-                                    bool autoCurve;
-                                    newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out autoCurve);
+                                    newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out bool autoCurve);
                                 }
 
                                 if (action.moveDelta != newMove)
@@ -720,6 +661,7 @@ namespace MoveIt
                             }
                         case ToolState.DrawingSelection:
                             {
+                                RaycastHoverInstance(mouseRay);
                                 m_marqueeInstances = GetMarqueeList(mouseRay);
                                 break;
                             }
@@ -853,6 +795,114 @@ namespace MoveIt
             }
         }
 
+        public void Export(string filename)
+        {
+            HashSet<Instance> selection = CloneAction.GetCleanSelection(out Vector3 center);
+
+            Selection selectionState = new Selection();
+
+            selectionState.center = center;
+            selectionState.states = new InstanceState[selection.Count];
+
+            int i = 0;
+            foreach (Instance instance in selection)
+            {
+                selectionState.states[i++] = instance.GetState();
+            }
+
+            Directory.CreateDirectory(saveFolder);
+            string path = Path.Combine(saveFolder, filename + ".xml");
+
+            using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+            {
+                stream.SetLength(0); // Emptying the file !!!
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", "");
+                xmlSerializer.Serialize(stream, selectionState, ns);
+            }
+        }
+
+        public void Import(string filename)
+        {
+            lock (ActionQueue.instance)
+            {
+                if (toolState != ToolState.Default && toolState != ToolState.AligningHeights) return;
+
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
+                Selection selectionState;
+
+                try
+                {
+                    string path = Path.Combine(saveFolder, filename + ".xml");
+
+                    // Trying to Deserialize the file
+                    using (FileStream stream = new FileStream(path, FileMode.Open))
+                    {
+                        selectionState = xmlSerializer.Deserialize(stream) as Selection;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Couldn't Deserialize (XML malformed?)
+                    DebugUtils.Log("Couldn't load file (XML malformed?)");
+                    DebugUtils.LogException(ex);
+
+                    return;
+                }
+
+                if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)
+                {
+                    HashSet<string> missingPrefabs = new HashSet<string>();
+
+                    foreach (InstanceState state in selectionState.states)
+                    {
+                        if (state.info == null)
+                        {
+                            missingPrefabs.Add(state.prefabName);
+                        }
+                    }
+
+                    if (missingPrefabs.Count > 0)
+                    {
+                        DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
+
+                        // TODO: Warning popup
+                    }
+                    CloneAction action = new CloneAction(selectionState.states, selectionState.center);
+
+                    if (action.Count > 0)
+                    {
+                        ActionQueue.instance.Push(action);
+
+                        toolState = ToolState.Cloning;
+                        UIToolOptionPanel.RefreshCloneButton();
+                        UIToolOptionPanel.RefreshAlignHeightButton();
+                    }
+                }
+            }
+        }
+
+        public void Delete(string filename)
+        {
+            try
+            {
+                string path = Path.Combine(saveFolder, filename + ".xml");
+
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                DebugUtils.Log("Couldn't delete file");
+                DebugUtils.LogException(ex);
+
+                return;
+            }
+        }
+
         private void OnLeftMouseDown()
         {
             DebugUtils.Log("OnLeftMouseDown: " + toolState);
@@ -861,7 +911,6 @@ namespace MoveIt
             {
                 if (marqueeSelection && (m_hoverInstance == null || !Action.selection.Contains(m_hoverInstance)))
                 {
-
                     m_selection = default(Quad3);
                     m_marqueeInstances = null;
 
@@ -931,8 +980,7 @@ namespace MoveIt
                     (e.shift && Action.selection.IsSupersetOf(m_marqueeInstances))
                     ) return;
 
-                SelectAction action = ActionQueue.instance.current as SelectAction;
-                if (action == null)
+                if (!(ActionQueue.instance.current is SelectAction action))
                 {
                     action = new SelectAction(e.shift);
                     ActionQueue.instance.Push(action);
@@ -968,8 +1016,7 @@ namespace MoveIt
 
             if (toolState == ToolState.Default)
             {
-                SelectAction action = ActionQueue.instance.current as SelectAction;
-                if (action == null)
+                if (!(ActionQueue.instance.current is SelectAction action))
                 {
                     action = new SelectAction();
                     ActionQueue.instance.Push(action);
@@ -1003,16 +1050,14 @@ namespace MoveIt
         {
             DebugUtils.Log("OnLeftClick: " + toolState);
 
-            if (toolState == ToolState.Default || (toolState == ToolState.DrawingSelection && (m_marqueeInstances == null || m_marqueeInstances.Count == 0)))
+            if (toolState == ToolState.Default || toolState == ToolState.DrawingSelection)
             {
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
 
-                SelectAction action = ActionQueue.instance.current as SelectAction;
-                if (action == null)
+                if (!(ActionQueue.instance.current is SelectAction action))
                 {
-                    action = new SelectAction(e.shift);
-                    ActionQueue.instance.Push(action);
+                    ActionQueue.instance.Push(new SelectAction(e.shift));
                 }
                 else
                 {
@@ -1035,6 +1080,8 @@ namespace MoveIt
                     Action.selection.Clear();
                     Action.selection.Add(m_hoverInstance);
                 }
+
+                toolState = ToolState.Default;
             }
             else if (toolState == ToolState.AligningHeights)
             {
@@ -1137,89 +1184,231 @@ namespace MoveIt
 
         private void RaycastHoverInstance(Ray mouseRay)
         {
-            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-            RaycastOutput output;
-
-            input.m_netService.m_itemLayers = GetItemLayers();
-            input.m_ignoreTerrain = true;
-
-            input.m_ignoreSegmentFlags = NetSegment.Flags.None;
-            input.m_ignoreBuildingFlags = Building.Flags.None;
-            input.m_ignorePropFlags = PropInstance.Flags.None;
-            input.m_ignoreTreeFlags = TreeInstance.Flags.None;
-
             m_hoverInstance = null;
 
-            if (ToolBase.RayCast(input, out output))
+            Vector3 origin = mouseRay.origin;
+            Vector3 normalized = mouseRay.direction.normalized;
+            Vector3 vector = mouseRay.origin + normalized * Camera.main.farClipPlane;
+            Segment3 ray = new Segment3(origin, vector);
+
+            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+            PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
+            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+            TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
+
+            Vector3 location = RaycastMouseLocation(mouseRay);
+
+            // TODO: -1, +1 necessary?
+            int gridMinX = Mathf.Max((int)((location.x - 16f) / 64f + 135f) - 1, 0);
+            int gridMinZ = Mathf.Max((int)((location.z - 16f) / 64f + 135f) - 1, 0);
+            int gridMaxX = Mathf.Min((int)((location.x + 16f) / 64f + 135f) + 1, 269);
+            int gridMaxZ = Mathf.Min((int)((location.z + 16f) / 64f + 135f) + 1, 269);
+
+            InstanceID id = InstanceID.Empty;
+
+            ItemClass.Layer itemLayers = GetItemLayers();
+
+            float smallestDist = 640000f;
+
+            for (int i = gridMinZ; i <= gridMaxZ; i++)
             {
-                InstanceID id = default(InstanceID);
-
-                if (output.m_netSegment != 0)
+                for (int j = gridMinX; j <= gridMaxX; j++)
                 {
-                    NetManager netManager = NetManager.instance;
-
-                    ushort building = NetSegment.FindOwnerBuilding(output.m_netSegment, 363f);
-
-                    if (building != 0)
+                    if (!marqueeSelection || filterBuildings)
                     {
-                        id.Building = Building.FindParentBuilding(building);
-                        if (id.Building == 0) id.Building = building;
+                        ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
+                        int count = 0;
+                        while (building != 0u)
+                        {
+                            if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].m_parentBuilding <= 0 &&
+                                buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
+                            {
+                                id.Building = building;
+                                smallestDist = t;
+                            }
+                            building = buildingBuffer[building].m_nextGridBuilding;
+
+                            if (++count > 49152)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
                     }
-                    else
+
+                    if (!marqueeSelection || filterProps || filterDecals)
                     {
-                        ushort startNode = netManager.m_segments.m_buffer[output.m_netSegment].m_startNode;
-                        ushort endNode = netManager.m_segments.m_buffer[output.m_netSegment].m_endNode;
-                        float sqDist = netManager.m_segments.m_buffer[output.m_netSegment].Info.m_halfWidth;
-                        sqDist = sqDist * sqDist;
-
-                        Vector2 mousePos = VectorUtils.XZ(output.m_hitPos);
-                        Vector2 testPos = VectorUtils.XZ(netManager.m_nodes.m_buffer[startNode].m_position);
-
-                        if ((mousePos - testPos).sqrMagnitude < sqDist)
+                        ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
+                        int count = 0;
+                        while (prop != 0u)
                         {
-                            id.NetNode = startNode;
-                            m_hoverInstance = id;
-                            return;
+                            bool isDecal = IsDecal(propBuffer[prop].Info);
+                            if ((filterDecals && isDecal) || (filterProps && !isDecal))
+                            {
+                                if (propBuffer[prop].RayCast(prop, ray, out float t, out float targetSqr) && t < smallestDist)
+                                {
+                                    id.Prop = prop;
+                                    smallestDist = t;
+                                }
+                            }
+
+                            prop = propBuffer[prop].m_nextGridProp;
+
+                            if (++count > 65536)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            }
                         }
+                    }
 
-                        testPos = VectorUtils.XZ(netManager.m_nodes.m_buffer[endNode].m_position);
-
-                        if ((mousePos - testPos).sqrMagnitude < sqDist)
+                    if (!marqueeSelection || filterNodes || filterBuildings)
+                    {
+                        ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
+                        int count = 0;
+                        while (node != 0u)
                         {
-                            id.NetNode = endNode;
-                            m_hoverInstance = id;
-                            return;
-                        }
+                            if (IsNodeValid(ref nodeBuffer[node], itemLayers) &&
+                                RayCastNode(ref nodeBuffer[node], ray, -1000f, out float t, out float priority) && t < smallestDist)
+                            {
+                                ushort building = NetNode.FindOwnerBuilding(node, 363f);
 
-                        id.NetSegment = output.m_netSegment;
+                                if (building != 0)
+                                {
+                                    if (filterBuildings)
+                                    {
+                                        id.Building = Building.FindParentBuilding(building);
+                                        if (id.Building == 0) id.Building = building;
+                                        smallestDist = t;
+                                    }
+                                }
+                                else if (filterNodes)
+                                {
+                                    id.NetNode = node;
+                                    smallestDist = t;
+                                }
+                            }
+                            node = nodeBuffer[node].m_nextGridNode;
+
+                            if (++count > 32768)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            }
+                        }
+                    }
+
+                    if (!marqueeSelection || filterSegments || filterBuildings)
+                    {
+                        ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
+                        int count = 0;
+                        while (segment != 0u)
+                        {
+                            if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
+                                segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
+                            {
+                                ushort building = NetSegment.FindOwnerBuilding(segment, 363f);
+
+                                if (building != 0)
+                                {
+                                    if (!marqueeSelection || filterBuildings)
+                                    {
+                                        id.Building = Building.FindParentBuilding(building);
+                                        if (id.Building == 0) id.Building = building;
+                                        smallestDist = t;
+                                    }
+                                }
+                                else if (!marqueeSelection || filterSegments)
+                                {
+                                    if (!(!marqueeSelection || filterNodes) || (
+                                        !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority) &&
+                                        !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_endNode], ray, -1000f, out t2, out priority)))
+                                    {
+                                        id.NetSegment = segment;
+                                        smallestDist = t;
+                                    }
+                                }
+                            }
+                            segment = segmentBuffer[segment].m_nextGridSegment;
+
+                            if (++count > 36864)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            }
+                        }
                     }
                 }
-                else if (output.m_building != 0)
-                {
-                    id.Building = Building.FindParentBuilding(output.m_building);
-                    if (id.Building == 0) id.Building = output.m_building;
-                }
-                else if (output.m_propInstance != 0)
-                {
-                    id.Prop = output.m_propInstance;
-                }
-                else if (output.m_treeInstance != 0u)
-                {
-                    id.Tree = output.m_treeInstance;
-                }
-
-                m_hoverInstance = id;
             }
+
+            if (!marqueeSelection || filterTrees)
+            {
+                gridMinX = Mathf.Max((int)((location.x - 8f) / 32f + 270f), 0);
+                gridMinZ = Mathf.Max((int)((location.z - 8f) / 32f + 270f), 0);
+                gridMaxX = Mathf.Min((int)((location.x + 8f) / 32f + 270f), 539);
+                gridMaxZ = Mathf.Min((int)((location.z + 8f) / 32f + 270f), 539);
+
+                for (int i = gridMinZ; i <= gridMaxZ; i++)
+                {
+                    for (int j = gridMinX; j <= gridMaxX; j++)
+                    {
+                        uint tree = TreeManager.instance.m_treeGrid[i * 540 + j];
+                        int count = 0;
+                        while (tree != 0)
+                        {
+                            if (treeBuffer[tree].RayCast(tree, ray, out float t, out float targetSqr) && t < smallestDist)
+                            {
+                                id.Tree = tree;
+                                smallestDist = t;
+                            }
+                            tree = treeBuffer[tree].m_nextGridTree;
+
+                            if (++count > 262144)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            }
+                        }
+                    }
+                }
+            }
+
+            m_hoverInstance = id;
         }
 
         private Vector3 RaycastMouseLocation(Ray mouseRay)
         {
             RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-            RaycastOutput output;
             input.m_ignoreTerrain = false;
-            ToolBase.RayCast(input, out output);
+            RayCast(input, out RaycastOutput output);
 
             return output.m_hitPos;
+        }
+
+        private static bool RayCastNode(ref NetNode node, Segment3 ray, float snapElevation, out float t, out float priority)
+        {
+            NetInfo info = node.Info;
+            float num = (float)node.m_elevation + info.m_netAI.GetSnapElevation();
+            float t2;
+            if (info.m_netAI.IsUnderground())
+            {
+                t2 = Mathf.Clamp01(Mathf.Abs(snapElevation + num) / 12f);
+            }
+            else
+            {
+                t2 = Mathf.Clamp01(Mathf.Abs(snapElevation - num) / 12f);
+            }
+            float collisionHalfWidth = info.m_netAI.GetCollisionHalfWidth();
+            float num2 = Mathf.Lerp(info.GetMinNodeDistance(), collisionHalfWidth, t2);
+            if (Segment1.Intersect(ray.a.y, ray.b.y, node.m_position.y, out t))
+            {
+                float num3 = Vector3.Distance(ray.Position(t), node.m_position);
+                if (num3 < num2)
+                {
+                    priority = Mathf.Max(0f, num3 - collisionHalfWidth);
+                    return true;
+                }
+            }
+            t = 0f;
+            priority = 0f;
+            return false;
         }
 
         private HashSet<Instance> GetMarqueeList(Ray mouseRay)
@@ -1322,7 +1511,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (filterNodes)
+                        if (filterNodes || filterBuildings)
                         {
                             ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
                             int count = 0;
@@ -1330,8 +1519,22 @@ namespace MoveIt
                             {
                                 if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
                                 {
-                                    id.NetNode = node;
-                                    list.Add(id);
+                                    ushort building = NetNode.FindOwnerBuilding(node, 363f);
+
+                                    if (building != 0)
+                                    {
+                                        if (filterBuildings)
+                                        {
+                                            id.Building = Building.FindParentBuilding(building);
+                                            if (id.Building == 0) id.Building = building;
+                                            list.Add(id);
+                                        }
+                                    }
+                                    else if (filterNodes)
+                                    {
+                                        id.NetNode = node;
+                                        list.Add(id);
+                                    }
                                 }
                                 node = nodeBuffer[node].m_nextGridNode;
 
@@ -1342,7 +1545,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (filterSegments)
+                        if (filterSegments || filterBuildings)
                         {
                             ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
                             int count = 0;
@@ -1350,8 +1553,22 @@ namespace MoveIt
                             {
                                 if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
                                 {
-                                    id.NetSegment = segment;
-                                    list.Add(id);
+                                    ushort building = NetSegment.FindOwnerBuilding(segment, 363f);
+
+                                    if (building != 0)
+                                    {
+                                        if (filterBuildings)
+                                        {
+                                            id.Building = Building.FindParentBuilding(building);
+                                            if (id.Building == 0) id.Building = building;
+                                            list.Add(id);
+                                        }
+                                    }
+                                    else if (filterSegments)
+                                    {
+                                        id.NetSegment = segment;
+                                        list.Add(id);
+                                    }
                                 }
                                 segment = segmentBuffer[segment].m_nextGridSegment;
 
@@ -1579,20 +1796,18 @@ namespace MoveIt
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
 
             Matrix4x4 matrix4x = default(Matrix4x4);
-            matrix4x.SetTRS(center, Quaternion.AngleAxis(angleDelta * 57.29578f, Vector3.down), Vector3.one);
+            matrix4x.SetTRS(center, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             bool snap = false;
 
             HashSet<InstanceState> newStates = null;
 
-            TransformAction transformAction = ActionQueue.instance.current as TransformAction;
-            if (transformAction != null)
+            if (ActionQueue.instance.current is TransformAction transformAction)
             {
                 newStates = transformAction.CalculateStates(moveDelta, angleDelta, center, followTerrain);
             }
 
-            CloneAction cloneAction = ActionQueue.instance.current as CloneAction;
-            if (cloneAction != null)
+            if (ActionQueue.instance.current is CloneAction cloneAction)
             {
                 newStates = cloneAction.CalculateStates(moveDelta, angleDelta, center, followTerrain);
             }
@@ -1621,12 +1836,11 @@ namespace MoveIt
             HashSet<ushort> segmentList = new HashSet<ushort>();
 
             ushort[] closeSegments = new ushort[16];
-            int closeSegmentCount;
 
             // Get list of closest segments
             foreach (InstanceState state in newStates)
             {
-                netManager.GetClosestSegments(state.position, closeSegments, out closeSegmentCount);
+                netManager.GetClosestSegments(state.position, closeSegments, out int closeSegmentCount);
                 segmentList.UnionWith(closeSegments);
 
                 if (toolState != ToolState.Cloning)
@@ -1677,9 +1891,7 @@ namespace MoveIt
                             float minSqDistance = segmentBuffer[segment].Info.GetMinNodeDistance() / 2f;
                             minSqDistance *= minSqDistance;
 
-                            Vector3 testPos;
-                            Vector3 direction;
-                            segmentBuffer[segment].GetClosestPositionAndDirection(state.position, out testPos, out direction);
+                            segmentBuffer[segment].GetClosestPositionAndDirection(state.position, out Vector3 testPos, out Vector3 direction);
 
                             snap = TrySnapping(testPos, state.position, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta) || snap;
                         }
@@ -1796,7 +2008,6 @@ namespace MoveIt
 
                 distanceSq = testSqDist;
 
-                //DebugUtils.Log("-TrySnapping- testPos: " + testPos + " newPosition: " + newPosition + " minSqDistance: " + minSqDistance + " distanceSq: " + distanceSq + " moveDelta: " + moveDelta + " newMoveDelta: " + newMoveDelta);
                 return true;
             }
 
@@ -1869,13 +2080,10 @@ namespace MoveIt
                             Vector3 startDir = segmentBuffer[segmentA].m_startNode == startNode ? segmentBuffer[segmentA].m_startDirection : segmentBuffer[segmentA].m_endDirection;
                             Vector3 endDir = segmentBuffer[segmentB].m_startNode == endNode ? segmentBuffer[segmentB].m_startDirection : segmentBuffer[segmentB].m_endDirection;
 
-                            float num;
-                            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out num))
+                            if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out float num))
                             {
                                 float dot = startDir.x * endDir.x + startDir.z * endDir.z;
-                                float u;
-                                float v;
-                                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out u, out v))
+                                if (dot >= -0.999f && Line2.Intersect(VectorUtils.XZ(startPos), VectorUtils.XZ(startPos + startDir), VectorUtils.XZ(endPos), VectorUtils.XZ(endPos + endDir), out float u, out float v))
                                 {
                                     snap = TrySnapping(startPos + startDir * u, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta) || snap;
                                 }
@@ -1960,12 +2168,10 @@ namespace MoveIt
                             segment.m_startNode = segmentBuffer[segmentA].m_startNode == node ? segmentBuffer[segmentA].m_endNode : segmentBuffer[segmentA].m_startNode;
                             segment.m_endNode = segmentBuffer[segmentB].m_startNode == node ? segmentBuffer[segmentB].m_endNode : segmentBuffer[segmentB].m_startNode;
 
-                            Vector3 testPos;
-                            Vector3 direction;
                             segment.m_startDirection = (nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
                             segment.m_endDirection = -segment.m_startDirection;
 
-                            segment.GetClosestPositionAndDirection(newPosition, out testPos, out direction);
+                            segment.GetClosestPositionAndDirection(newPosition, out Vector3 testPos, out Vector3 direction);
                             // Straight
                             if (TrySnapping(testPos, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                             {
@@ -2101,7 +2307,7 @@ namespace MoveIt
                 }
             }
 
-            if(snap)
+            if (snap)
             {
                 DebugUtils.Log("Snapping " + snapType + " " + autoCurve);
             }
