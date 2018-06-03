@@ -328,9 +328,16 @@ namespace MoveIt
                     {
                         color = m_alignColor;
                     }
-                    else if (Action.selection.Contains(m_hoverInstance) && Event.current.shift)
+                    else if (Action.selection.Contains(m_hoverInstance))
                     {
-                        color = m_removeColor;
+                        if(Event.current.shift)
+                        {
+                            color = m_removeColor;
+                        }
+                        else
+                        {
+                            color = m_moveColor;
+                        }
                     }
                     m_hoverInstance.RenderOverlay(cameraInfo, color, m_despawnColor);
                 }

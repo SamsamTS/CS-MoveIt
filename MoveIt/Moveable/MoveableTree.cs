@@ -182,12 +182,13 @@ namespace MoveIt
             TreeTool.RenderOverlay(cameraInfo, treeInfo, position, scale, toolColor);
         }
 
-        public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            uint tree = id.Tree;
+            TreeState state = instanceState as TreeState;
 
-            TreeInfo info = TreeManager.instance.m_trees.m_buffer[tree].Info;
-            Randomizer randomizer = new Randomizer(tree);
+            TreeInfo info = state.info as TreeInfo;
+
+            Randomizer randomizer = new Randomizer(state.instance.id.Tree);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
             float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
@@ -202,12 +203,13 @@ namespace MoveIt
             TreeTool.RenderOverlay(cameraInfo, info, newPosition, scale, toolColor);
         }
 
-        public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            uint tree = id.Tree;
+            TreeState state = instanceState as TreeState;
 
-            TreeInfo info = TreeManager.instance.m_trees.m_buffer[tree].Info;
-            Randomizer randomizer = new Randomizer(tree);
+            TreeInfo info = state.info as TreeInfo;
+
+            Randomizer randomizer = new Randomizer(state.instance.id.Tree);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
             float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
