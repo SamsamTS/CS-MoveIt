@@ -28,6 +28,7 @@ namespace MoveIt
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
             size = new Vector2(465, 180);
+            canFocus = true;
 
             UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
             dragHandle.target = parent;
@@ -85,6 +86,7 @@ namespace MoveIt
             }
 
             BringToFront();
+            Focus();
         }
 
         public static void Open()
@@ -166,6 +168,8 @@ namespace MoveIt
 
                 fastList.DisplayAt(0);
             }
+
+            Focus();
         }
     }
 }

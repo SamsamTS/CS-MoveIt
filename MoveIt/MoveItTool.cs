@@ -1205,8 +1205,7 @@ namespace MoveIt
             TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
 
             Vector3 location = RaycastMouseLocation(mouseRay);
-
-            // TODO: -1, +1 necessary?
+            
             int gridMinX = Mathf.Max((int)((location.x - 16f) / 64f + 135f) - 1, 0);
             int gridMinZ = Mathf.Max((int)((location.z - 16f) / 64f + 135f) - 1, 0);
             int gridMaxX = Mathf.Min((int)((location.x + 16f) / 64f + 135f) + 1, 269);
@@ -1216,13 +1215,30 @@ namespace MoveIt
 
             ItemClass.Layer itemLayers = GetItemLayers();
 
+            bool selectBuilding = true;
+            bool selectProps    = true;
+            bool selectDecals   = true;
+            bool selectNodes    = true;
+            bool selectSegments = true;
+            bool selectTrees    = true;
+
+            if(marqueeSelection)
+            {
+                selectBuilding = filterBuildings;
+                selectProps    = filterProps;
+                selectDecals   = filterDecals;
+                selectNodes    = filterNodes;
+                selectSegments = filterSegments;
+                selectTrees    = filterTrees;
+            }
+
             float smallestDist = 640000f;
 
             for (int i = gridMinZ; i <= gridMaxZ; i++)
             {
                 for (int j = gridMinX; j <= gridMaxX; j++)
                 {
-                    if (!marqueeSelection || filterBuildings)
+                    if (selectBuilding)
                     {
                         ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
                         int count = 0;
@@ -1244,14 +1260,14 @@ namespace MoveIt
                         }
                     }
 
-                    if (!marqueeSelection || filterProps || filterDecals)
+                    if (selectProps || selectDecals)
                     {
                         ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
                         int count = 0;
                         while (prop != 0u)
                         {
                             bool isDecal = IsDecal(propBuffer[prop].Info);
-                            if ((filterDecals && isDecal) || (filterProps && !isDecal))
+                            if ((selectDecals && isDecal) || (selectProps && !isDecal))
                             {
                                 if (propBuffer[prop].RayCast(prop, ray, out float t, out float targetSqr) && t < smallestDist)
                                 {
@@ -1269,7 +1285,7 @@ namespace MoveIt
                         }
                     }
 
-                    if (!marqueeSelection || filterNodes || filterBuildings)
+                    if (selectNodes || selectBuilding)
                     {
                         ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
                         int count = 0;
@@ -1282,14 +1298,14 @@ namespace MoveIt
 
                                 if (building != 0)
                                 {
-                                    if (filterBuildings)
+                                    if (selectBuilding)
                                     {
                                         id.Building = Building.FindParentBuilding(building);
                                         if (id.Building == 0) id.Building = building;
                                         smallestDist = t;
                                     }
                                 }
-                                else if (filterNodes)
+                                else if (selectNodes)
                                 {
                                     id.NetNode = node;
                                     smallestDist = t;
@@ -1304,7 +1320,7 @@ namespace MoveIt
                         }
                     }
 
-                    if (!marqueeSelection || filterSegments || filterBuildings)
+                    if (selectSegments || selectBuilding)
                     {
                         ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
                         int count = 0;
@@ -1313,20 +1329,20 @@ namespace MoveIt
                             if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
                                 segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                             {
-                                ushort building = NetSegment.FindOwnerBuilding(segment, 363f);
+                                ushort building = FindOwnerBuilding(segment, 363f);
 
                                 if (building != 0)
                                 {
-                                    if (!marqueeSelection || filterBuildings)
+                                    if (selectBuilding)
                                     {
                                         id.Building = Building.FindParentBuilding(building);
                                         if (id.Building == 0) id.Building = building;
                                         smallestDist = t;
                                     }
                                 }
-                                else if (!marqueeSelection || filterSegments)
+                                else if (selectSegments)
                                 {
-                                    if (!(!marqueeSelection || filterNodes) || (
+                                    if (!selectNodes || (
                                         !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority) &&
                                         !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_endNode], ray, -1000f, out t2, out priority)))
                                     {
@@ -1346,7 +1362,7 @@ namespace MoveIt
                 }
             }
 
-            if (!marqueeSelection || filterTrees)
+            if (selectTrees)
             {
                 gridMinX = Mathf.Max((int)((location.x - 8f) / 32f + 270f), 0);
                 gridMinZ = Mathf.Max((int)((location.z - 8f) / 32f + 270f), 0);
@@ -1387,6 +1403,54 @@ namespace MoveIt
             RayCast(input, out RaycastOutput output);
 
             return output.m_hitPos;
+        }
+
+        public static ushort FindOwnerBuilding(ushort segment, float maxDistance)
+        {
+            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+            ushort[] buildingGrid = BuildingManager.instance.m_buildingGrid;
+            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+
+            ushort startNode = segmentBuffer[segment].m_startNode;
+            ushort endNode = segmentBuffer[segment].m_endNode;
+            Vector3 startPosition = nodeBuffer[startNode].m_position;
+            Vector3 endPosition = nodeBuffer[endNode].m_position;
+            Vector3 vector = Vector3.Min(startPosition, endPosition);
+            Vector3 vector2 = Vector3.Max(startPosition, endPosition);
+            int gridMinX = Mathf.Max((int)((vector.x - maxDistance) / 64f + 135f), 0);
+            int gridMinZ = Mathf.Max((int)((vector.z - maxDistance) / 64f + 135f), 0);
+            int gridMaxX = Mathf.Min((int)((vector2.x + maxDistance) / 64f + 135f), 269);
+            int gridMaxZ = Mathf.Min((int)((vector2.z + maxDistance) / 64f + 135f), 269);
+
+            ushort result = 0;
+            float maxDistSqr = maxDistance * maxDistance;
+            for (int i = gridMinZ; i <= gridMaxZ; i++)
+            {
+                for (int j = gridMinX; j <= gridMaxX; j++)
+                {
+                    ushort building = buildingGrid[i * 270 + j];
+                    int count = 0;
+                    while (building != 0)
+                    {
+                        Vector3 position2 = buildingBuffer[building].m_position;
+                        float num8 = position2.x - startPosition.x;
+                        float num9 = position2.z - startPosition.z;
+                        float num10 = num8 * num8 + num9 * num9;
+                        if (num10 < maxDistSqr && buildingBuffer[building].ContainsNode(startNode) && buildingBuffer[building].ContainsNode(endNode))
+                        {
+                            return building;
+                        }
+                        building = buildingBuffer[building].m_nextGridBuilding;
+                        if (++count >= 49152)
+                        {
+                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         private static bool RayCastNode(ref NetNode node, Segment3 ray, float snapElevation, out float t, out float priority)
@@ -1560,7 +1624,7 @@ namespace MoveIt
                             {
                                 if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
                                 {
-                                    ushort building = NetSegment.FindOwnerBuilding(segment, 363f);
+                                    ushort building = FindOwnerBuilding(segment, 363f);
 
                                     if (building != 0)
                                     {

@@ -33,6 +33,7 @@ namespace MoveIt
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
             size = new Vector2(465, 180);
+            canFocus = true;
 
             UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
             dragHandle.target = parent;
@@ -75,6 +76,21 @@ namespace MoveIt
             fileNameInput.padding.top = 7;
             fileNameInput.horizontalAlignment = UIHorizontalAlignment.Left;
             fileNameInput.relativePosition = new Vector3(8, 8);
+            fileNameInput.submitOnFocusLost = false;
+
+            fileNameInput.eventTextSubmitted += (c, p) =>
+            {
+                string filename = fileNameInput.text.Trim();
+                filename = String.Concat(filename.Split(Path.GetInvalidFileNameChars()));
+
+                if (!filename.IsNullOrWhiteSpace())
+                {
+                    Export(filename);
+                }
+
+                fileNameInput.Focus();
+                fileNameInput.SelectAll();
+            };
 
             // Save
             saveButton = UIUtils.CreateButton(savePanel);
@@ -104,6 +120,9 @@ namespace MoveIt
                 {
                     Export(filename);
                 }
+
+                fileNameInput.Focus();
+                fileNameInput.SelectAll();
             };
 
             height = fastList.relativePosition.y + fastList.height + 8;
@@ -228,6 +247,9 @@ namespace MoveIt
 
                 fastList.DisplayAt(0);
             }
+
+            fileNameInput.Focus();
+            fileNameInput.SelectAll();
         }
     }
 }
