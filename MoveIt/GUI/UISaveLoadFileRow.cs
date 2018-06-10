@@ -64,8 +64,8 @@ namespace MoveIt
                 }
                 else
                 {
-                    MoveItTool.instance.Import(fileNameLabel.text);
                     UILoadWindow.Close();
+                    MoveItTool.instance.Import(fileNameLabel.text);
                 }
             };
 

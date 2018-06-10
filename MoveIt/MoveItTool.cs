@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace MoveIt
 {
-    public class MoveItTool : TransportTool
+    public class MoveItTool : ToolBase
     {
         private enum ToolAction
         {
@@ -95,6 +95,7 @@ namespace MoveIt
         }
 
         private UIMoveItButton m_button;
+        private UIComponent m_pauseMenu;
 
         private Quad3 m_selection;
         private Instance m_hoverInstance;
@@ -233,6 +234,8 @@ namespace MoveIt
                 UITipsWindow.instance.isVisible = true;
             }
 
+            m_pauseMenu = UIView.library.Get("PauseMenu");
+
             InfoManager.InfoMode infoMode = InfoManager.instance.CurrentMode;
             InfoManager.SubInfoMode subInfoMode = InfoManager.instance.CurrentSubMode;
 
@@ -254,26 +257,6 @@ namespace MoveIt
                     // Cancel cloning
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();
-                }
-
-                if (m_toolController.NextTool != null && m_toolController.NextTool.GetType() == typeof(DefaultTool))
-                {
-                    DebugUtils.Log("Escape: " + toolState);
-
-                    // Escape pressed
-                    if (toolState != ToolState.Default && toolState != ToolState.MouseDragging)
-                    {
-                        toolState = ToolState.Default;
-
-                        SimulationManager.instance.AddAction(delegate
-                        {
-                            m_toolController.CurrentTool = instance;
-                        });
-
-                        UIToolOptionPanel.RefreshAlignHeightButton();
-                        UIToolOptionPanel.RefreshCloneButton();
-                        return;
-                    }
                 }
 
                 toolState = ToolState.Default;
@@ -462,20 +445,15 @@ namespace MoveIt
         {
             if (m_nextAction != ToolAction.None) return;
 
-            UIComponent pauseMenu = UIView.library.Get("PauseMenu");
-            if (pauseMenu != null && pauseMenu.isVisible)
+            if (m_pauseMenu != null && m_pauseMenu.isVisible)
             {
-                if (toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
-                {
-                    // Cancel cloning
-                    ActionQueue.instance.Undo();
-                    ActionQueue.instance.Invalidate();
-                }
-
-                if (toolState == ToolState.Default)
+                if (toolState == ToolState.Default || toolState == ToolState.MouseDragging || toolState == ToolState.DrawingSelection)
                 {
                     ToolsModifierControl.SetTool<DefaultTool>();
                 }
+
+                StopCloning();
+                StopAligningHeights();
 
                 toolState = ToolState.Default;
 
@@ -577,6 +555,8 @@ namespace MoveIt
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
                                 Vector3 newMove = action.moveDelta;
+                                float newAngle = action.angleDelta;
+                                float newSnapAngle = 0f;
 
                                 if (m_leftClickTime > 0)
                                 {
@@ -585,7 +565,6 @@ namespace MoveIt
                                     newMove.y = y;
                                 }
 
-                                float newAngle = action.angleDelta;
 
                                 if (m_rightClickTime > 0)
                                 {
@@ -600,7 +579,7 @@ namespace MoveIt
 
                                 if (snapping)
                                 {
-                                    newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out action.autoCurve);
+                                    newMove = GetSnapDelta(newMove, newAngle, action.center, out action.autoCurve);
 
                                     if (action.autoCurve)
                                     {
@@ -612,10 +591,11 @@ namespace MoveIt
                                     action.autoCurve = false;
                                 }
 
-                                if (action.moveDelta != newMove || action.angleDelta != newAngle)
+                                if (action.moveDelta != newMove || action.angleDelta != newAngle || action.snapAngle != newSnapAngle)
                                 {
                                     action.moveDelta = newMove;
                                     action.angleDelta = newAngle;
+                                    action.snapAngle = newSnapAngle;
                                     action.followTerrain = followTerrain;
                                     m_nextAction = ToolAction.Do;
                                 }
@@ -802,59 +782,82 @@ namespace MoveIt
             }
         }
 
-        public void Export(string filename)
+        public static bool IsExportSelectionValid()
         {
-            HashSet<Instance> selection = CloneAction.GetCleanSelection(out Vector3 center);
+            return CloneAction.GetCleanSelection(out Vector3 center).Count > 0;
+        }
 
-            Selection selectionState = new Selection();
-
-            selectionState.center = center;
-            selectionState.states = new InstanceState[selection.Count];
-
-            int i = 0;
-            foreach (Instance instance in selection)
-            {
-                selectionState.states[i++] = instance.GetState();
-            }
-
-            Directory.CreateDirectory(saveFolder);
+        public bool Export(string filename)
+        {
             string path = Path.Combine(saveFolder, filename + ".xml");
 
-            using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+            try
             {
-                stream.SetLength(0); // Emptying the file !!!
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", "");
-                xmlSerializer.Serialize(stream, selectionState, ns);
+                HashSet<Instance> selection = CloneAction.GetCleanSelection(out Vector3 center);
+
+                if (selection.Count == 0) return false;
+
+                Selection selectionState = new Selection();
+
+                selectionState.center = center;
+                selectionState.states = new InstanceState[selection.Count];
+
+                int i = 0;
+                foreach (Instance instance in selection)
+                {
+                    selectionState.states[i++] = instance.GetState();
+                }
+
+                Directory.CreateDirectory(saveFolder);
+
+                using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+                {
+                    stream.SetLength(0); // Emptying the file !!!
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
+                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                    ns.Add("", "");
+                    xmlSerializer.Serialize(stream, selectionState, ns);
+                }
             }
+            catch(Exception e)
+            {
+                DebugUtils.Log("Couldn't export selection");
+                DebugUtils.LogException(e);
+
+                UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Export failed", "The selection couldn't be exported to '" + path + "'\n\n" + e.Message, true);
+                return false;
+            }
+
+            return true;
         }
 
         public void Import(string filename)
         {
             lock (ActionQueue.instance)
             {
-                if (toolState != ToolState.Default && toolState != ToolState.AligningHeights) return;
+                StopCloning();
+                StopAligningHeights();
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                 Selection selectionState;
 
+                string path = Path.Combine(saveFolder, filename + ".xml");
+
                 try
                 {
-                    string path = Path.Combine(saveFolder, filename + ".xml");
-
                     // Trying to Deserialize the file
                     using (FileStream stream = new FileStream(path, FileMode.Open))
                     {
                         selectionState = xmlSerializer.Deserialize(stream) as Selection;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
                     // Couldn't Deserialize (XML malformed?)
-                    DebugUtils.Log("Couldn't load file (XML malformed?)");
-                    DebugUtils.LogException(ex);
+                    DebugUtils.Log("Couldn't load file");
+                    DebugUtils.LogException(e);
 
+                    UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Import failed", "Couldn't load '" + path + "'\n\n" + e.Message, true);
                     return;
                 }
 
@@ -873,8 +876,9 @@ namespace MoveIt
                     if (missingPrefabs.Count > 0)
                     {
                         DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
+                        
+                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n"+ string.Join("\n", missingPrefabs.ToArray()), false);
 
-                        // TODO: Warning popup
                     }
                     CloneAction action = new CloneAction(selectionState.states, selectionState.center);
 
@@ -1244,10 +1248,11 @@ namespace MoveIt
                         int count = 0;
                         while (building != 0u)
                         {
-                            if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].m_parentBuilding <= 0 &&
+                            if (IsBuildingValid(ref buildingBuffer[building], itemLayers) &&
                                 buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
                             {
-                                id.Building = building;
+                                id.Building = Building.FindParentBuilding(building);
+                                if (id.Building == 0) id.Building = building;
                                 smallestDist = t;
                             }
                             building = buildingBuffer[building].m_nextGridBuilding;
@@ -1542,9 +1547,10 @@ namespace MoveIt
                             int count = 0;
                             while (building != 0u)
                             {
-                                if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].m_parentBuilding <= 0 && PointInRectangle(m_selection, buildingBuffer[building].m_position))
+                                if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && PointInRectangle(m_selection, buildingBuffer[building].m_position))
                                 {
-                                    id.Building = building;
+                                    id.Building = Building.FindParentBuilding(building);
+                                    if (id.Building == 0) id.Building = building;
                                     list.Add(id);
                                 }
                                 building = buildingBuffer[building].m_nextGridBuilding;

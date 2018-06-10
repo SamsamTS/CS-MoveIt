@@ -79,7 +79,14 @@ namespace MoveIt
 
             m_save.eventClicked += (c, p) =>
             {
-                UISaveWindow.Open();
+                if (MoveItTool.IsExportSelectionValid())
+                {
+                    UISaveWindow.Open();
+                }
+                else
+                {
+                    UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Selection invalid", "The selection is empty or invalid.", false);
+                }
             };
 
             // Load

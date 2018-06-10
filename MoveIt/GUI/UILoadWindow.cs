@@ -107,13 +107,15 @@ namespace MoveIt
                 UIComponent modalEffect = instance.GetUIView().panelsLibraryModalEffect;
                 if (modalEffect != null && modalEffect.isVisible)
                 {
-                    ValueAnimator.Animate("ModalEffect", delegate (float val)
+                    modalEffect.Hide();
+
+                    /*ValueAnimator.Animate("ModalEffect", delegate (float val)
                     {
                         modalEffect.opacity = val;
                     }, new AnimatedFloat(1f, 0f, 0.7f, EasingType.CubicEaseOut), delegate
                     {
                         modalEffect.Hide();
-                    });
+                    });*/
                 }
 
                 instance.isVisible = false;

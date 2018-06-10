@@ -10,12 +10,13 @@ namespace MoveIt
         public Vector3 moveDelta;
         public Vector3 center;
         public float angleDelta;
+        public float snapAngle;
         public bool followTerrain;
 
         public bool autoCurve;
         public NetSegment segmentCurve;
 
-        private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
+        public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
 
         public TransformAction()
         {
@@ -23,7 +24,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    savedStates.Add(instance.GetState());
                 }
             }
 
@@ -35,13 +36,13 @@ namespace MoveIt
             Bounds bounds = GetTotalBounds(false);
 
             Matrix4x4 matrix4x = default(Matrix4x4);
-            matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+            matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
                 if (state.instance.isValid)
                 {
-                    state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain);
+                    state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta + snapAngle, center, followTerrain);
 
                     if (autoCurve && state.instance is MoveableNode node)
                     {
@@ -58,7 +59,7 @@ namespace MoveIt
         {
             Bounds bounds = GetTotalBounds(false);
 
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
                 state.instance.SetState(state);
             }
@@ -69,7 +70,7 @@ namespace MoveIt
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
                 if (toReplace.ContainsKey(state.instance))
                 {
@@ -86,7 +87,7 @@ namespace MoveIt
 
             HashSet<InstanceState> newStates = new HashSet<InstanceState>();
 
-            foreach (InstanceState state in m_states)
+            foreach (InstanceState state in savedStates)
             {
                 if (state.instance.isValid)
                 {

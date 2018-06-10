@@ -160,7 +160,7 @@ namespace MoveIt
 
             foreach (InstanceState state in states)
             {
-                if (state.instance != null)
+                if (state.instance != null && state.info != null)
                 {
                     savedStates.Add(state);
                 }
