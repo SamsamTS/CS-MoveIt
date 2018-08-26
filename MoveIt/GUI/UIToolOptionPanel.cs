@@ -24,6 +24,9 @@ namespace MoveIt
         private UIButton m_copy;
         private UIButton m_bulldoze;
 
+        public UIMultiStateButton grid;
+        public UIMultiStateButton underground;
+
         public UIPanel filtersPanel;
 
         public override void Start()
@@ -116,7 +119,7 @@ namespace MoveIt
             // Follow Terrain
             m_followTerrain = AddUIComponent<UIMultiStateButton>();
             m_followTerrain.atlas = GetFollowTerrainAtlas();
-            m_followTerrain.name = "MoveIt_Snapping";
+            m_followTerrain.name = "MoveIt_FollowTerrain";
             m_followTerrain.tooltip = "Follow Terrain";
             m_followTerrain.playAudioEvents = true;
 
@@ -148,6 +151,7 @@ namespace MoveIt
                 MoveItTool.followTerrain = (m_followTerrain.activeStateIndex == 1);
             };
 
+            // Snapping
             m_snapping = AddUIComponent<UIMultiStateButton>();
             m_snapping.atlas = UIUtils.GetAtlas("Ingame");
             m_snapping.name = "MoveIt_Snapping";
@@ -427,6 +431,82 @@ namespace MoveIt
                     MoveItTool.instance.StartBulldoze();
                 }
             };
+
+            // View options
+            UIPanel viewOptions = AddUIComponent<UIPanel>();
+            viewOptions.atlas = UIUtils.GetAtlas("Ingame");
+            viewOptions.backgroundSprite = "InfoPanelBack";
+            viewOptions.size = new Vector2(44f, 80f);
+
+            viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - viewOptions.width, absolutePosition.y - viewOptions.height - 8f);
+
+            grid = viewOptions.AddUIComponent<UIMultiStateButton>();
+            grid.atlas = GetIconsAtlas();
+            grid.name = "MoveIt_GridView";
+            grid.tooltip = "Toggle Grid";
+            grid.playAudioEvents = true;
+
+            grid.size = new Vector2(36, 36);
+            grid.spritePadding = new RectOffset();
+
+            grid.backgroundSprites[0].disabled = "OptionBaseDisabled";
+            grid.backgroundSprites[0].hovered = "OptionBaseHovered";
+            grid.backgroundSprites[0].normal = "OptionBase";
+            grid.backgroundSprites[0].pressed = "OptionBasePressed";
+
+            grid.backgroundSprites.AddState();
+            grid.backgroundSprites[1].disabled = "OptionBaseDisabled";
+            grid.backgroundSprites[1].hovered = "";
+            grid.backgroundSprites[1].normal = "OptionBaseFocused";
+            grid.backgroundSprites[1].pressed = "OptionBasePressed";
+
+            grid.foregroundSprites[0].normal = "Grid";
+
+            grid.foregroundSprites.AddState();
+            grid.foregroundSprites[1].normal = "GridFocused";
+
+            grid.relativePosition = new Vector3(4f, 4f);
+
+            grid.activeStateIndex = 0;
+
+            grid.eventClicked += (c, p) =>
+            {
+                MoveItTool.gridVisible = (grid.activeStateIndex == 1);
+            };
+
+            underground = viewOptions.AddUIComponent<UIMultiStateButton>();
+            underground.atlas = UIUtils.GetAtlas("Ingame");
+            underground.name = "MoveIt_UndergroundView";
+            underground.tooltip = "Toogle Underground View";
+            underground.playAudioEvents = true;
+
+            underground.size = new Vector2(36, 36);
+            underground.spritePadding = new RectOffset();
+
+            underground.backgroundSprites[0].disabled = "OptionBaseDisabled";
+            underground.backgroundSprites[0].hovered = "OptionBaseHovered";
+            underground.backgroundSprites[0].normal = "OptionBase";
+            underground.backgroundSprites[0].pressed = "OptionBasePressed";
+
+            underground.backgroundSprites.AddState();
+            underground.backgroundSprites[1].disabled = "OptionBaseDisabled";
+            underground.backgroundSprites[1].hovered = "";
+            underground.backgroundSprites[1].normal = "OptionBaseFocused";
+            underground.backgroundSprites[1].pressed = "OptionBasePressed";
+
+            underground.foregroundSprites[0].normal = "BulldozerOptionPipes";
+
+            underground.foregroundSprites.AddState();
+            underground.foregroundSprites[1].normal = "BulldozerOptionPipesFocused";
+
+            underground.relativePosition = new Vector3(4f, 40f);
+
+            underground.activeStateIndex = 0;
+
+            underground.eventClicked += (c, p) =>
+            {
+                MoveItTool.tunnelVisible = (underground.activeStateIndex == 1);
+            };
         }
 
         protected override void OnVisibilityChanged()
@@ -521,8 +601,10 @@ namespace MoveIt
                 "Group",
                 "Save",
                 "Save_disabled",
-                "Load"
-			};
+                "Load",
+                "Grid",
+                "GridFocused"
+            };
 
             UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Icons", spriteNames, "MoveIt.Icons.");
             ResourceLoader.AddTexturesInAtlas(loadedAtlas, textures);

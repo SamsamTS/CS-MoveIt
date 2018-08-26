@@ -76,20 +76,13 @@ namespace MoveIt
             fileNameInput.padding.top = 7;
             fileNameInput.horizontalAlignment = UIHorizontalAlignment.Left;
             fileNameInput.relativePosition = new Vector3(8, 8);
-            fileNameInput.submitOnFocusLost = false;
 
-            fileNameInput.eventTextSubmitted += (c, p) =>
+            fileNameInput.eventKeyDown += (c, p) =>
             {
-                string filename = fileNameInput.text.Trim();
-                filename = String.Concat(filename.Split(Path.GetInvalidFileNameChars()));
-
-                if (!filename.IsNullOrWhiteSpace())
+                if (p.keycode == KeyCode.Return)
                 {
-                    Export(filename);
+                    saveButton.SimulateClick();
                 }
-
-                fileNameInput.Focus();
-                fileNameInput.SelectAll();
             };
 
             // Save
@@ -120,9 +113,6 @@ namespace MoveIt
                 {
                     Export(filename);
                 }
-
-                fileNameInput.Focus();
-                fileNameInput.SelectAll();
             };
 
             height = fastList.relativePosition.y + fastList.height + 8;
@@ -158,6 +148,8 @@ namespace MoveIt
                     {
                         MoveItTool.instance.Export(filename);
                         instance.RefreshFileList();
+                        instance.fileNameInput.Focus();
+                        instance.fileNameInput.SelectAll();
                     }
                 });
             }
@@ -165,6 +157,8 @@ namespace MoveIt
             {
                 MoveItTool.instance.Export(filename);
                 instance.RefreshFileList();
+                instance.fileNameInput.Focus();
+                instance.fileNameInput.SelectAll();
             }
         }
 

@@ -449,7 +449,7 @@ namespace MoveIt
             float alpha = 1f;
             NetTool.CheckOverlayAlpha(netInfo, ref alpha);
             toolColor.a *= alpha;
-            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, netInfo.m_halfWidth * 2f, -1f, 1280f, false, true);
+            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
         }
 
         public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }

@@ -11,7 +11,7 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 2.1.0: It is now possible to Export a selection into a file and Import it later in game or in the editor",
+            "New in 2.2.0: Hold ALT to select a node or segment owned by a building.",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
             "Tip: While cloning, Right Click to rotate 45° clockwise",
@@ -87,7 +87,7 @@ namespace MoveIt
 
         public void RefreshPosition()
         {
-            float x = GetUIView().GetScreenResolution().x - width - 10f;
+            float x = GetUIView().GetScreenResolution().x - width - 50f;
             float y;
 
             if (UIToolOptionPanel.instance != null && MoveItTool.marqueeSelection)

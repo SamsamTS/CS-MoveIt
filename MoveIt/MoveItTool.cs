@@ -47,6 +47,12 @@ namespace MoveIt
 
         public static bool marqueeSelection = false;
 
+        public int segmentUpdateCountdown = -1;
+        public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
+
+        public int aeraUpdateCountdown = -1;
+        public HashSet<Bounds> aerasToUpdate = new HashSet<Bounds>();
+
         public static bool filterBuildings = true;
         public static bool filterProps = true;
         public static bool filterDecals = true;
@@ -89,6 +95,40 @@ namespace MoveIt
             }
         }
 
+        public static bool gridVisible
+        {
+            get
+            {
+                return TerrainManager.instance.RenderZones;
+            }
+
+            set
+            {
+                TerrainManager.instance.RenderZones = value;
+            }
+        }
+
+        public static bool tunnelVisible
+        {
+            get
+            {
+                return InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground;
+            }
+
+            set
+            {
+                if(value)
+                {
+                    m_prevInfoMode = InfoManager.instance.CurrentMode;
+                    InfoManager.instance.SetCurrentMode(InfoManager.InfoMode.Underground, InfoManager.instance.CurrentSubMode);
+                }
+                else
+                {
+                    InfoManager.instance.SetCurrentMode(m_prevInfoMode, InfoManager.instance.CurrentSubMode);
+                }
+            }
+        }
+
         public HashSet<Instance> selection
         {
             get { return Action.selection; }
@@ -112,6 +152,8 @@ namespace MoveIt
 
         private bool m_prevRenderZones;
         private ToolBase m_prevTool;
+
+        private static InfoManager.InfoMode m_prevInfoMode;
 
         private long m_keyTime;
         private long m_rightClickTime;
@@ -183,6 +225,7 @@ namespace MoveIt
                 else if (toolState == ToolState.Default && Action.selection.Count > 0)
                 {
                     // TODO: if no selection select hovered instance
+                    // Or not. Nobody asked for getting it back
 
                     if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
                     {
@@ -236,7 +279,7 @@ namespace MoveIt
 
             m_pauseMenu = UIView.library.Get("PauseMenu");
 
-            InfoManager.InfoMode infoMode = InfoManager.instance.CurrentMode;
+            m_prevInfoMode = InfoManager.instance.CurrentMode;
             InfoManager.SubInfoMode subInfoMode = InfoManager.instance.CurrentSubMode;
 
             m_prevRenderZones = TerrainManager.instance.RenderZones;
@@ -244,8 +287,13 @@ namespace MoveIt
 
             m_toolController.CurrentTool = this;
 
-            InfoManager.instance.SetCurrentMode(infoMode, subInfoMode);
-            TerrainManager.instance.RenderZones = true;
+            InfoManager.instance.SetCurrentMode(m_prevInfoMode, subInfoMode);
+
+            if (UIToolOptionPanel.instance != null && UIToolOptionPanel.instance.grid != null)
+            {
+                gridVisible = UIToolOptionPanel.instance.grid.activeStateIndex == 1;
+                tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
+            }
         }
 
         protected override void OnDisable()
@@ -272,6 +320,7 @@ namespace MoveIt
                 }
 
                 TerrainManager.instance.RenderZones = m_prevRenderZones;
+                InfoManager.instance.SetCurrentMode(m_prevInfoMode, InfoManager.instance.CurrentSubMode);
 
                 if (m_toolController.NextTool == null && m_prevTool != null && m_prevTool != this)
                 {
@@ -688,6 +737,48 @@ namespace MoveIt
                                 }
                                 break;
                             }
+                    }
+
+                    bool inputHeld = m_keyTime != 0 || m_leftClickTime != 0 || m_rightClickTime != 0;
+
+                    if (segmentUpdateCountdown == 0)
+                    {
+                        foreach (ushort segment in segmentsToUpdate)
+                        {
+                            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+                            if (segmentBuffer[segment].m_flags != NetSegment.Flags.None)
+                            {
+                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockStartLeft);
+                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockStartRight);
+                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockEndLeft);
+                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockEndRight);
+                            }
+
+                            segmentBuffer[segment].Info.m_netAI.CreateSegment(segment, ref segmentBuffer[segment]);
+                        }
+
+                        segmentsToUpdate.Clear();
+                    }
+
+                    if (!inputHeld && segmentUpdateCountdown >= 0)
+                    {
+                        segmentUpdateCountdown--;
+                    }
+
+                    if (aeraUpdateCountdown == 0)
+                    {
+                        foreach (Bounds bounds in aerasToUpdate)
+                        {
+                            bounds.Expand(64f);
+                            VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        }
+
+                        aerasToUpdate.Clear();
+                    }
+
+                    if (!inputHeld && aeraUpdateCountdown >= 0)
+                    {
+                        aeraUpdateCountdown--;
                     }
                 }
                 catch (Exception e)
@@ -1299,7 +1390,11 @@ namespace MoveIt
                             if (IsNodeValid(ref nodeBuffer[node], itemLayers) &&
                                 RayCastNode(ref nodeBuffer[node], ray, -1000f, out float t, out float priority) && t < smallestDist)
                             {
-                                ushort building = NetNode.FindOwnerBuilding(node, 363f);
+                                ushort building = 0;
+                                if(!Event.current.alt)
+                                {
+                                    building = NetNode.FindOwnerBuilding(node, 363f);
+                                }
 
                                 if (building != 0)
                                 {
@@ -1334,7 +1429,11 @@ namespace MoveIt
                             if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
                                 segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                             {
-                                ushort building = FindOwnerBuilding(segment, 363f);
+                                ushort building = 0;
+                                if (!Event.current.alt)
+                                {
+                                    building = FindOwnerBuilding(segment, 363f);
+                                }
 
                                 if (building != 0)
                                 {
@@ -1471,7 +1570,7 @@ namespace MoveIt
             {
                 t2 = Mathf.Clamp01(Mathf.Abs(snapElevation - num) / 12f);
             }
-            float collisionHalfWidth = info.m_netAI.GetCollisionHalfWidth();
+            float collisionHalfWidth = Mathf.Max(3f, info.m_netAI.GetCollisionHalfWidth());
             float num2 = Mathf.Lerp(info.GetMinNodeDistance(), collisionHalfWidth, t2);
             if (Segment1.Intersect(ray.a.y, ray.b.y, node.m_position.y, out t))
             {
@@ -1711,9 +1810,14 @@ namespace MoveIt
                 itemLayers = itemLayers | ItemClass.Layer.WaterPipes;
             }
 
-            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
             {
                 itemLayers = itemLayers | ItemClass.Layer.MetroTunnels;
+            }
+
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground)
+            {
+                itemLayers = ItemClass.Layer.MetroTunnels;
             }
 
             return itemLayers;
@@ -2390,6 +2494,15 @@ namespace MoveIt
             }
 
             return snap;
+        }
+
+        protected static void ReleaseSegmentBlock(ushort segment, ref ushort segmentBlock)
+        {
+            if (segmentBlock != 0)
+            {
+                ZoneManager.instance.ReleaseBlock(segmentBlock);
+                segmentBlock = 0;
+            }
         }
     }
 }

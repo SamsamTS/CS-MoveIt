@@ -240,25 +240,8 @@ namespace MoveIt
 
         protected static void UpdateSegmentBlocks(ushort segment, ref NetSegment data)
         {
-            // TODO: Optimize
-            if (data.m_flags != NetSegment.Flags.None)
-            {
-                ReleaseSegmentBlock(segment, ref data.m_blockStartLeft);
-                ReleaseSegmentBlock(segment, ref data.m_blockStartRight);
-                ReleaseSegmentBlock(segment, ref data.m_blockEndLeft);
-                ReleaseSegmentBlock(segment, ref data.m_blockEndRight);
-            }
-
-            data.Info.m_netAI.CreateSegment(segment, ref data);
-        }
-
-        protected static void ReleaseSegmentBlock(ushort segment, ref ushort segmentBlock)
-        {
-            if (segmentBlock != 0)
-            {
-                ZoneManager.instance.ReleaseBlock(segmentBlock);
-                segmentBlock = 0;
-            }
+            MoveItTool.instance.segmentsToUpdate.Add(segment);
+            MoveItTool.instance.segmentUpdateCountdown = 1;
         }
 
         protected static void CalculateSegmentDirections(ref NetSegment segment, ushort segmentID)
