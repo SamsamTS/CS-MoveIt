@@ -17,7 +17,7 @@ namespace MoveIt
 {
     public class MoveItTool : ToolBase
     {
-        private enum ToolAction
+        public enum ToolAction
         {
             None,
             Do,
@@ -138,7 +138,7 @@ namespace MoveIt
         private UIComponent m_pauseMenu;
 
         private Quad3 m_selection;
-        private Instance m_hoverInstance;
+        public Instance m_hoverInstance;
         private Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
@@ -159,7 +159,7 @@ namespace MoveIt
         private long m_rightClickTime;
         private long m_leftClickTime;
 
-        private ToolAction m_nextAction = ToolAction.None;
+        public ToolAction m_nextAction = ToolAction.None;
 
         protected override void Awake()
         {
@@ -443,7 +443,11 @@ namespace MoveIt
                     color = m_removeColor;
                 }
 
-                RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, -1f, 1280f, false, true);
+                //UnityEngine.Debug.Log($"a:{m_selection.a} c:{m_selection.c}");
+                if (m_selection.a != m_selection.c)
+                {
+                    RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, -1f, 1280f, false, true);
+                }
 
                 if (m_marqueeInstances != null)
                 {
@@ -1190,10 +1194,13 @@ namespace MoveIt
                 toolState = ToolState.Default;
 
                 AlignHeightAction action = new AlignHeightAction();
-                action.height = m_hoverInstance.position.y;
-                ActionQueue.instance.Push(action);
+                if (m_hoverInstance != null)
+                {
+                    action.height = m_hoverInstance.position.y;
+                    ActionQueue.instance.Push(action);
 
-                m_nextAction = ToolAction.Do;
+                    m_nextAction = ToolAction.Do;
+                }
 
                 UIToolOptionPanel.RefreshAlignHeightButton();
             }

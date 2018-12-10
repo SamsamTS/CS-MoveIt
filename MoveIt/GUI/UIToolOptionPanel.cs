@@ -17,12 +17,12 @@ namespace MoveIt
         private UIMultiStateButton m_followTerrain;
         private UIMultiStateButton m_snapping;
 
-        private UITabstrip m_tabStrip;
-        private UIButton m_single;
-        private UIButton m_marquee;
-        private UIButton m_alignHeight;
-        private UIButton m_copy;
-        private UIButton m_bulldoze;
+        public UITabstrip m_tabStrip;
+        public UIButton m_single;
+        public UIButton m_marquee;
+        public UIButton m_alignHeight;
+        public UIButton m_copy;
+        public UIButton m_bulldoze;
 
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;

@@ -1,13 +1,11 @@
 ﻿using ColossalFramework.UI;
-
 using UnityEngine;
-
 using System.IO;
 using System.Reflection;
 
 namespace MoveIt
 {
-    class ResourceLoader
+    public class ResourceLoader
     {
         public static UITextureAtlas CreateTextureAtlas(string atlasName, string[] spriteNames, string assemblyPath)
         {
