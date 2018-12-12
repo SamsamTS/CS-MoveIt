@@ -39,45 +39,41 @@ namespace MoveIt
         {
             get
             {
-                if (buildingBuffer[id.Building].m_parentBuilding == 0)
+                ushort building = buildingBuffer[id.Building].m_subBuilding;
+                int count = 0;
+                while (building != 0)
                 {
-                    ushort building = buildingBuffer[id.Building].m_subBuilding;
-                    int count = 0;
-                    while (building != 0)
+                    InstanceID buildingID = default(InstanceID);
+                    buildingID.Building = building;
+
+                    yield return new MoveableBuilding(buildingID);
+                    building = buildingBuffer[building].m_subBuilding;
+
+                    if (++count > 49152)
                     {
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        break;
+                    }
+                }
 
-                        InstanceID buildingID = default(InstanceID);
-                        buildingID.Building = building;
-
-                        yield return new MoveableBuilding(buildingID);
-                        building = buildingBuffer[building].m_subBuilding;
-
-                        if (++count > 49152)
-                        {
-                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                            break;
-                        }
+                ushort node = buildingBuffer[id.Building].m_netNode;
+                count = 0;
+                while (node != 0)
+                {
+                    ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
+                    if (layer != ItemClass.Layer.PublicTransport)
+                    {
+                        InstanceID nodeID = default(InstanceID);
+                        nodeID.NetNode = node;
+                        yield return new MoveableNode(nodeID);
                     }
 
-                    ushort node = buildingBuffer[id.Building].m_netNode;
-                    count = 0;
-                    while (node != 0)
+                    node = nodeBuffer[node].m_nextBuildingNode;
+
+                    if (++count > 32768)
                     {
-                        ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
-                        if (layer != ItemClass.Layer.PublicTransport)
-                        {
-                            InstanceID nodeID = default(InstanceID);
-                            nodeID.NetNode = node;
-                            yield return new MoveableNode(nodeID);
-                        }
-
-                        node = nodeBuffer[node].m_nextBuildingNode;
-
-                        if (++count > 32768)
-                        {
-                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                            break;
-                        }
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        break;
                     }
                 }
             }
@@ -118,16 +114,16 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
-            BuildingState state = new BuildingState();
-
-            state.instance = this;
-            state.info = info;
-
-            state.position = buildingBuffer[id.Building].m_position;
-            state.angle = buildingBuffer[id.Building].m_angle;
+            BuildingState state = new BuildingState
+            {
+                instance = this,
+                info = info,
+                position = buildingBuffer[id.Building].m_position,
+                angle = buildingBuffer[id.Building].m_angle,
+                flags = buildingBuffer[id.Building].m_flags,
+                length = buildingBuffer[id.Building].Length
+            };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
-            state.flags = buildingBuffer[id.Building].m_flags;
-            state.length = buildingBuffer[id.Building].Length;
 
             List<InstanceState> subStates = new List<InstanceState>();
 

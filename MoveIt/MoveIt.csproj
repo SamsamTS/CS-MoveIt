@@ -58,6 +58,9 @@
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
+    <Compile Include="MIT_Events.cs" />
+    <Compile Include="MIT_Filtering.cs" />
+    <Compile Include="MIT_OnToolUpdate.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="GUI\UIFastList.cs" />
     <Compile Include="GUI\UISaveLoadFileRow.cs" />
