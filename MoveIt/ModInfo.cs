@@ -36,7 +36,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.2.0";
+        public const string version = "2.3.0 [Alpha]";
 
         public void OnSettingsUI(UIHelperBase helper)
         {

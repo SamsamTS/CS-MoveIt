@@ -49,18 +49,19 @@ namespace MoveIt
         {
             ushort segment  = id.NetSegment;
 
-            SegmentState state = new SegmentState();
+            SegmentState state = new SegmentState
+            {
+                instance = this,
+                info = info,
 
-            state.instance = this;
-            state.info = info;
+                position = GetControlPoint(segment),
 
-            state.position = GetControlPoint(segment);
+                startNode = segmentBuffer[segment].m_startNode,
+                endNode = segmentBuffer[segment].m_endNode,
 
-            state.startNode = segmentBuffer[segment].m_startNode;
-            state.endNode = segmentBuffer[segment].m_endNode;
-
-            state.startDirection = segmentBuffer[segment].m_startDirection;
-            state.endDirection = segmentBuffer[segment].m_endDirection;
+                startDirection = segmentBuffer[segment].m_startDirection,
+                endDirection = segmentBuffer[segment].m_endDirection
+            };
 
             state.startPosition = nodeBuffer[state.startNode].m_position;
             state.endPosition = nodeBuffer[state.endNode].m_position;

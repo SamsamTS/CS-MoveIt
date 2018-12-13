@@ -237,8 +237,17 @@ namespace MoveIt
             Vector3 newPosition = position;
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            AddFixedHeightFlag(id.Building);
 
-            // TODO: when should the flag be set?
+            foreach (Instance subInstance in subInstances)
+            {
+                Vector3 subPosition = subInstance.position;
+                subPosition.y = subPosition.y - newPosition.y + height;
+                subInstance.Move(subPosition, subInstance.angle);
+            }
+            newPosition.y = height;
+            Move(newPosition, angle);
+
             if (Mathf.Abs(terrainHeight - height) > 0.01f)
             {
                 AddFixedHeightFlag(id.Building);
@@ -247,17 +256,7 @@ namespace MoveIt
             {
                 RemoveFixedHeightFlag(id.Building);
             }
-
-            foreach (Instance subInstance in subInstances)
-            {
-                Vector3 subPosition = subInstance.position;
-                subPosition.y = subPosition.y - newPosition.y + height;
-
-                subInstance.Move(subPosition, subInstance.angle);
-            }
-
-            newPosition.y = height;
-            Move(newPosition, angle);
+            //Debug.Log($"\nActual position:{buildingBuffer[id.Building].m_position}, m_base:{buildingBuffer[id.Building].m_baseHeight}\nHeight:{height}, newHeight:{newPosition.y}, terrainHeight:{terrainHeight}");
         }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
