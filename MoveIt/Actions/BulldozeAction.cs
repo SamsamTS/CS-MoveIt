@@ -15,7 +15,9 @@ namespace MoveIt
         public BulldozeAction()
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
+            HashSet<Instance> extraNodes = new HashSet<Instance>();
 
+            //Debug.Log("Selection: " + selection.Count);
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
@@ -36,11 +38,49 @@ namespace MoveIt
                     }
                 }
             }
+            //Debug.Log("newSelection: " + newSelection.Count);
+            foreach (Instance instance in newSelection)
+            {
+                if (instance.isValid)
+                {
+                    if (instance.id.Type == InstanceType.NetSegment)
+                    {
+                        ushort segId = instance.id.NetSegment;
+                        ushort[] nodeIds = { NetManager.instance.m_segments.m_buffer[segId].m_startNode, NetManager.instance.m_segments.m_buffer[segId].m_endNode };
+                        foreach (ushort id in nodeIds)
+                        {
+                            bool toDelete = true;
+                            NetNode node = NetManager.instance.m_nodes.m_buffer[id];
+                            for (int i = 0; i < 8; i++)
+                            {
+                                if (node.GetSegment(i) != 0 && node.GetSegment(i) != segId)
+                                {
+                                    toDelete = false;
+                                    break;
+                                }
+                            }
+                            if (toDelete)
+                            {
+                                InstanceID instanceId = default(InstanceID);
+                                instanceId.NetNode = id;
+                                if (newSelection.Contains((Instance)instanceId)) continue;
+
+                                extraNodes.Add((Instance)instanceId);
+                            }
+                        }
+                    }
+                }
+            }
 
             foreach (Instance instance in newSelection)
             {
                 m_states.Add(instance.GetState());
             }
+            foreach (Instance instance in extraNodes)
+            {
+                m_states.Add(instance.GetState());
+            }
+            //Debug.Log("m_states: " + m_states.Count);
         }
 
         public override void Do()
