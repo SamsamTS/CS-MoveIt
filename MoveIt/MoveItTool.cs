@@ -28,7 +28,11 @@ namespace MoveIt
             RightDraggingClone,
             DrawingSelection,
             Cloning,
-            AligningHeights
+            AligningHeights,
+            AligningIndividual,
+            AligningGroup,
+            AligningRandom,
+            AligningSlope
         }
 
         public const string settingsFileName = "MoveItTool";

@@ -53,10 +53,13 @@
     <Compile Include="ActionQueue.cs" />
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\AlignHeightAction.cs" />
+    <Compile Include="Actions\AlignRotationSuite.cs" />
+    <Compile Include="Actions\AlignSlopeAction.cs" />
     <Compile Include="Actions\BulldozeAction.cs" />
     <Compile Include="Actions\CloneAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
+    <Compile Include="GUI\UIAlignTools.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
     <Compile Include="MIT_Events.cs" />
     <Compile Include="MIT_Filtering.cs" />
@@ -113,6 +116,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\Grid.png" />
     <EmbeddedResource Include="Icons\GridFocused.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignGroup.png" />
+    <EmbeddedResource Include="Icons\AlignIndividual.png" />
+    <EmbeddedResource Include="Icons\AlignRandom.png" />
+    <EmbeddedResource Include="Icons\AlignTools.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
