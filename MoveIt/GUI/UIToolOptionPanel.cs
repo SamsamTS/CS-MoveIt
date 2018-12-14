@@ -340,6 +340,24 @@ namespace MoveIt
                 }
             };
 
+            m_marquee.eventDoubleClick += (UIComponent c, UIMouseEventParameter p) =>
+            {
+                bool newChecked = false;
+                foreach (UICheckBox cb in filtersPanel.GetComponentsInChildren<UICheckBox>())
+                {
+                    if (!cb.isChecked)
+                    {
+                        newChecked = true;
+                        break;
+                    }
+                }
+
+                foreach (UICheckBox cb in filtersPanel.GetComponentsInChildren<UICheckBox>())
+                {
+                    cb.isChecked = newChecked;
+                }
+            };
+
             m_alignHeight = AddUIComponent<UIButton>();
             m_alignHeight.name = "MoveIt_AlignHeight";
             m_alignHeight.group = m_tabStrip;

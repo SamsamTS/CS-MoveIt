@@ -5,14 +5,6 @@ namespace MoveIt
 {
     public partial class MoveItTool : ToolBase
     {
-        public static bool filterBuildings = true;
-        public static bool filterProps = true;
-        public static bool filterDecals = true;
-        public static bool filterTrees = true;
-        public static bool filterNodes = true;
-        public static bool filterSegments = true;
-
-
         private void OnLeftMouseDown()
         {
             DebugUtils.Log("OnLeftMouseDown: " + toolState);

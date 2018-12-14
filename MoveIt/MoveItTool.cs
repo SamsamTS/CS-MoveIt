@@ -39,6 +39,14 @@ namespace MoveIt
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
 
+        public static bool filterBuildings = true;
+        public static bool filterProps = true;
+        public static bool filterDecals = true;
+        public static bool filterTrees = true;
+        public static bool filterNodes = true;
+        public static bool filterSegments = true;
+
+
         public static bool followTerrain = true;
 
         public static bool marqueeSelection = false;
