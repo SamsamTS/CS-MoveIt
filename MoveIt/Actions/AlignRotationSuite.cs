@@ -152,8 +152,8 @@ namespace MoveIt
                 }
             }
 
-            MITE.AlignMode = MITE.AlignModes.Off;
-            UI.UpdateAlignTools();
+            MoveItTool.instance.alignMode = MoveItTool.AlignModes.Off;
+            UIAlignTools.UpdateAlignTools();
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
         }

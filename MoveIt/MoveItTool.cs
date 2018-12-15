@@ -28,18 +28,25 @@ namespace MoveIt
             RightDraggingClone,
             DrawingSelection,
             Cloning,
-            AligningHeights,
-            AligningIndividual,
-            AligningGroup,
-            AligningRandom,
-            AligningSlope
+            Aligning
+        }
+
+        public enum AlignModes
+        {
+            Off,
+            Height,
+            Individual,
+            Group,
+            Random,
+            Slope
         }
 
         public const string settingsFileName = "MoveItTool";
         public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
 
         public static MoveItTool instance;
-        public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true);
+        public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true); 
+        public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
 
@@ -76,6 +83,7 @@ namespace MoveIt
         private const float ZFACTOR = 0.263671875f;
 
         public ToolState toolState;
+        public AlignModes alignMode;
 
         private bool m_snapping = false;
         public bool snapping
@@ -203,13 +211,13 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
-                    if (toolState == ToolState.AligningHeights)
+                    if (toolState == ToolState.Aligning && alignMode == AlignModes.Height)
                     {
-                        StopAligningHeights();
+                        StopAligning();
                     }
                     else
                     {
-                        StartAligningHeights();
+                        StartAligning(AlignModes.Height);
                     }
                 }
 
@@ -336,7 +344,7 @@ namespace MoveIt
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
-            if (toolState == ToolState.Default || toolState == ToolState.AligningHeights)
+            if (toolState == ToolState.Default || toolState == ToolState.Aligning)
             {
                 if (Action.selection.Count > 0)
                 {
@@ -357,7 +365,7 @@ namespace MoveIt
                 if (m_hoverInstance != null && m_hoverInstance.isValid)
                 {
                     Color color = m_hoverColor;
-                    if (toolState == ToolState.AligningHeights)
+                    if (toolState == ToolState.Aligning)
                     {
                         color = m_alignColor;
                     }
@@ -495,6 +503,19 @@ namespace MoveIt
             }
         }
 
+        public bool DeactivateAlignTool(bool switchMode = true)
+        {
+            if (switchMode)
+            {
+               alignMode = AlignModes.Off;
+                toolState = ToolState.Default;
+            }
+
+            UIAlignTools.UpdateAlignTools();
+            Action.UpdateArea(Action.GetTotalBounds(false));
+            return false;
+        }
+
         public override void SimulationStep()
         {
             lock (ActionQueue.instance)
@@ -582,7 +603,7 @@ namespace MoveIt
             return ToolErrors.None;
         }
 
-        public void StartAligningHeights()
+        public void StartAligning(AlignModes mode)
         {
             if (toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
             {
@@ -593,26 +614,29 @@ namespace MoveIt
 
             if (Action.selection.Count > 0)
             {
-                toolState = ToolState.AligningHeights;
+                toolState = ToolState.Aligning;
+                alignMode = mode;
             }
 
-            UIToolOptionPanel.RefreshAlignHeightButton();
+            UIAlignTools.UpdateAlignTools();
         }
 
-        public void StopAligningHeights()
+        public void StopAligning()
         {
-            if (toolState == ToolState.AligningHeights)
+            Debug.Log($"tS:{toolState}, aM:{alignMode}");
+            alignMode = AlignModes.Off;
+            if (toolState == ToolState.Aligning)
             {
                 toolState = ToolState.Default;
-                UIToolOptionPanel.RefreshAlignHeightButton();
             }
+            UIAlignTools.UpdateAlignTools();
         }
 
         public void StartCloning()
         {
             lock (ActionQueue.instance)
             {
-                if (toolState != ToolState.Default && toolState != ToolState.AligningHeights) return;
+                if (toolState != ToolState.Default && toolState != ToolState.Aligning) return;
 
                 if (Action.selection.Count > 0)
                 {
@@ -713,7 +737,7 @@ namespace MoveIt
             lock (ActionQueue.instance)
             {
                 StopCloning();
-                StopAligningHeights();
+                StopAligning();
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                 Selection selectionState;

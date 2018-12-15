@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.Math;
+using System;
 using UnityEngine;
 
 namespace MoveIt
@@ -185,20 +186,72 @@ namespace MoveIt
 
                 toolState = ToolState.Default;
             }
-            else if (toolState == ToolState.AligningHeights)
+            else if (toolState == ToolState.Aligning)
             {
-                toolState = ToolState.Default;
-
-                AlignHeightAction action = new AlignHeightAction();
-                if (m_hoverInstance != null)
+                if (alignMode == AlignModes.Height)
                 {
-                    action.height = m_hoverInstance.position.y;
-                    ActionQueue.instance.Push(action);
+                    toolState = ToolState.Default;
+                    alignMode = AlignModes.Off;
 
-                    m_nextAction = ToolAction.Do;
+                    AlignHeightAction action = new AlignHeightAction();
+                    if (m_hoverInstance != null)
+                    {
+                        action.height = m_hoverInstance.position.y;
+                        ActionQueue.instance.Push(action);
+
+                        m_nextAction = ToolAction.Do;
+                    }
+
+                    UIAlignTools.UpdateAlignTools();
                 }
+                else if (alignMode == AlignModes.Individual || alignMode == AlignModes.Group)
+                {
+                    float angle;
 
-                UIToolOptionPanel.RefreshAlignHeightButton();
+                    if (m_hoverInstance is MoveableBuilding mb)
+                    {
+                        angle = BuildingManager.instance.m_buildings.m_buffer[mb.id.Building].m_angle;
+                    }
+                    else if (m_hoverInstance is MoveableProp mp)
+                    {
+                        angle = PropManager.instance.m_props.m_buffer[mp.id.Prop].Angle;
+                    }
+                    else if (m_hoverInstance is MoveableSegment ms)
+                    {
+                        NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+
+                        Vector3 startPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
+                        Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
+
+                        //Debug.Log($"Vector:{endPos.x - startPos.x},{endPos.z - startPos.z} Start:{startPos.x},{startPos.z} End:{endPos.x},{endPos.z}");
+                        angle = (float)Math.Atan2(endPos.z - startPos.z, endPos.x - startPos.x);
+                    }
+                    else
+                    {
+                        //Debug.Log($"Wrong hover asset type <{___m_hoverInstance.GetType()}>");
+                        return;
+                    }
+
+                    // Add action to queue, also enables Undo/Redo
+                    AlignRotationAction action;
+                    switch (alignMode)
+                    {
+                        case AlignModes.Group:
+                            action = new AlignGroupAction();
+                            break;
+
+                        default:
+                            action = new AlignIndividualAction();
+                            break;
+                    }
+                    action.newAngle = angle;
+                    action.followTerrain = MoveItTool.followTerrain;
+                    ActionQueue.instance.Push(action);
+                    m_nextAction = ToolAction.Do;
+
+                    //Debug.Log($"Angle:{angle}, from {___m_hoverInstance}");
+                    DeactivateAlignTool(false);
+                }
             }
         }
 

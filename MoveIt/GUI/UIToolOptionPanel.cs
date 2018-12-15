@@ -434,6 +434,7 @@ namespace MoveIt
 
             #region Align Tools
             m_alignTools = AddUIComponent<UIButton>();
+            UIAlignTools.AlignToolsBtn = m_alignTools;
             m_alignTools.name = "MoveIt_AlignToolsBtn";
             m_alignTools.group = m_tabStrip;
             m_alignTools.atlas = GetIconsAtlas();
@@ -444,14 +445,12 @@ namespace MoveIt
             m_alignTools.hoveredBgSprite = "OptionBaseHovered";
             m_alignTools.pressedBgSprite = "OptionBasePressed";
             m_alignTools.disabledBgSprite = "OptionBaseDisabled";
-
             m_alignTools.normalFgSprite = "AlignTools";
-
             m_alignTools.relativePosition = m_bulldoze.relativePosition + new Vector3(m_bulldoze.width, 0);
-            //UI.AlignToolsBtn.eventClicked += UI.AlignToolsClicked;
+            m_alignTools.eventClicked += UIAlignTools.AlignToolsClicked;
 
             alignToolsPanel = AddUIComponent<UIPanel>();
-            //UI.AlignToolsPanel = alignToolsPanel;
+            UIAlignTools.AlignToolsPanel = alignToolsPanel;
             alignToolsPanel.autoLayout = false;
             alignToolsPanel.clipChildren = true;
             alignToolsPanel.size = new Vector2(36, 166);
@@ -463,7 +462,7 @@ namespace MoveIt
             atpBackground.size = new Vector2(26, 166);
             atpBackground.clipChildren = true;
             atpBackground.relativePosition = new Vector3(5, 10);
-            atpBackground.atlas = SamsamTS.UIUtils.GetAtlas("Ingame");
+            atpBackground.atlas = UIUtils.GetAtlas("Ingame");
             atpBackground.backgroundSprite = "InfoPanelBack";
 
             UIPanel atpContainer = alignToolsPanel.AddUIComponent<UIPanel>();
@@ -472,10 +471,10 @@ namespace MoveIt
             atpContainer.autoLayout = true;
             atpContainer.relativePosition = Vector3.zero;
 
-            UI.AlignButtons.Add("AlignRandom", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignRandom = UI.AlignButtons.GetValueSafe("AlignRandom");
-            alignRandom.name = "AlignRandom";
-            alignRandom.atlas = UI.GetIconsAtlas();
+            UIAlignTools.AlignButtons.Add("AlignRandom", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignRandom = UIAlignTools.AlignButtons["AlignRandom"];
+            alignRandom.name = "MoveIt_AlignRandomBtn";
+            alignRandom.atlas = GetIconsAtlas();
             alignRandom.tooltip = "Immediate rotate valid items randomly";
             alignRandom.playAudioEvents = true;
             alignRandom.size = new Vector2(36, 36);
@@ -484,12 +483,12 @@ namespace MoveIt
             alignRandom.pressedBgSprite = "OptionBasePressed";
             alignRandom.disabledBgSprite = "OptionBaseDisabled";
             alignRandom.normalFgSprite = "AlignRandom";
-            alignRandom.eventClicked += UI.AlignToolsClicked;
+            alignRandom.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            UI.AlignButtons.Add("AlignGroup", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignGroup = UI.AlignButtons.GetValueSafe("AlignGroup");
-            alignGroup.name = "AlignGroup";
-            alignGroup.atlas = UI.GetIconsAtlas();
+            UIAlignTools.AlignButtons.Add("AlignGroup", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignGroup = UIAlignTools.AlignButtons["AlignGroup"];
+            alignGroup.name = "MoveIt_AlignGroupBtn";
+            alignGroup.atlas = GetIconsAtlas();
             alignGroup.tooltip = "Align As Group - rotate around a central point";
             alignGroup.playAudioEvents = true;
             alignGroup.size = new Vector2(36, 36);
@@ -498,12 +497,12 @@ namespace MoveIt
             alignGroup.pressedBgSprite = "OptionBasePressed";
             alignGroup.disabledBgSprite = "OptionBaseDisabled";
             alignGroup.normalFgSprite = "AlignGroup";
-            alignGroup.eventClicked += UI.AlignToolsClicked;
+            alignGroup.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            UI.AlignButtons.Add("AlignIndividual", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignIndividual = UI.AlignButtons.GetValueSafe("AlignIndividual");
-            alignIndividual.name = "AlignIndividual";
-            alignIndividual.atlas = UI.GetIconsAtlas();
+            UIAlignTools.AlignButtons.Add("AlignIndividual", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignIndividual = UIAlignTools.AlignButtons["AlignIndividual"];
+            alignIndividual.name = "MoveIt_AlignIndividualBtn";
+            alignIndividual.atlas = GetIconsAtlas();
             alignIndividual.tooltip = "Align In-Place - rotate selected items";
             alignIndividual.playAudioEvents = true;
             alignIndividual.size = new Vector2(36, 36);
@@ -512,11 +511,11 @@ namespace MoveIt
             alignIndividual.pressedBgSprite = "OptionBasePressed";
             alignIndividual.disabledBgSprite = "OptionBaseDisabled";
             alignIndividual.normalFgSprite = "AlignIndividual";
-            alignIndividual.eventClicked += UI.AlignToolsClicked;
+            alignIndividual.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            UI.AlignButtons.Add("AlignHeight", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignHeight = UI.AlignButtons.GetValueSafe("AlignHeight");
-            alignHeight.name = "AlignHeight";
+            UIAlignTools.AlignButtons.Add("AlignHeight", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignHeight = UIAlignTools.AlignButtons["AlignHeight"];
+            alignHeight.name = "MoveIt_AlignHeightBtn";
             alignHeight.atlas = GetIconsAtlas();
             alignHeight.tooltip = "Align height";
             alignHeight.playAudioEvents = true;
@@ -526,22 +525,22 @@ namespace MoveIt
             alignHeight.pressedBgSprite = "OptionBasePressed";
             alignHeight.disabledBgSprite = "OptionBaseDisabled";
             alignHeight.normalFgSprite = "AlignHeight";
-            alignHeight.eventClicked += UI.AlignToolsClicked;
+            alignHeight.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            m_alignTools.eventClicked += (c, p) =>
-            {
-                if (MoveItTool.instance != null)
-                {
-                    if (MoveItTool.instance.toolState == MoveItTool.ToolState.AligningHeights)
-                    {
-                        MoveItTool.instance.StopAligningHeights();
-                    }
-                    else
-                    {
-                        MoveItTool.instance.StartAligningHeights();
-                    }
-                }
-            };
+            //m_alignTools.eventClicked += (c, p) =>
+            //{
+            //    if (MoveItTool.instance != null)
+            //    {
+            //        if (MoveItTool.instance.toolState == MoveItTool.ToolState.Aligning)
+            //        {
+            //            MoveItTool.instance.StopAligning();
+            //        }
+            //        else
+            //        {
+            //            MoveItTool.instance.StartAligning(MoveItTool.AlignModes.Height);
+            //        }
+            //    }
+            //};
             #endregion
 
             #region View Options
@@ -643,7 +642,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_alignTools != null && MoveItTool.instance != null)
             {
-                if(MoveItTool.instance.toolState == MoveItTool.ToolState.AligningHeights)
+                if(MoveItTool.instance.toolState == MoveItTool.ToolState.Aligning)
                 {
                     instance.m_alignTools.normalBgSprite = "OptionBaseFocused";
                 }

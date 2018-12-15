@@ -221,6 +221,21 @@ namespace MoveIt
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
+
+                    if (subState is BuildingState bs)
+                    {
+                        if (bs.subStates != null)
+                        {
+                            foreach (InstanceState subSubState in bs.subStates)
+                            {
+                                Vector3 subSubPosition = subSubState.position - center;
+                                subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
+                                subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
+
+                                subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -238,16 +253,6 @@ namespace MoveIt
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
 
-            // TODO: when should the flag be set?
-            if (Mathf.Abs(terrainHeight - height) > 0.01f)
-            {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
-            {
-                RemoveFixedHeightFlag(id.Building);
-            }
-
             foreach (Instance subInstance in subInstances)
             {
                 Vector3 subPosition = subInstance.position;
@@ -258,6 +263,15 @@ namespace MoveIt
 
             newPosition.y = height;
             Move(newPosition, angle);
+
+            if (Mathf.Abs(terrainHeight - height) > 0.01f)
+            {
+                AddFixedHeightFlag(id.Building);
+            }
+            else
+            {
+                RemoveFixedHeightFlag(id.Building);
+            }
         }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)

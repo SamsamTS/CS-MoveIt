@@ -21,7 +21,7 @@ namespace MoveIt
                 }
 
                 StopCloning();
-                StopAligningHeights();
+                StopAligning();
 
                 toolState = ToolState.Default;
 
@@ -113,7 +113,7 @@ namespace MoveIt
                     switch (toolState)
                     {
                         case ToolState.Default:
-                        case ToolState.AligningHeights:
+                        case ToolState.Aligning:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 break;

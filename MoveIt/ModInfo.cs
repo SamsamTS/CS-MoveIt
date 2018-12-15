@@ -65,6 +65,18 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
+                checkBox = (UICheckBox)group.AddCheckbox("Auto-close Align Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                {
+                    MoveItTool.autoCloseAlignTools.value = b;
+                    if (UIAlignTools.AlignToolsPanel != null)
+                    {
+                        UIAlignTools.AlignToolsPanel.isVisible = false;
+                    }
+                });
+                checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";
+
+                group.AddSpace(10);
+
                 checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;

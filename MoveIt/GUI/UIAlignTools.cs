@@ -14,9 +14,11 @@ namespace MoveIt
 
         public static void AlignToolsClicked(UIComponent c, UIMouseEventParameter p)
         {
+            MoveItTool MIT = MoveItTool.instance;
+
             switch (c.name)
             {
-                case "AlignToolsBtn":
+                case "MoveIt_AlignToolsBtn":
                     if (AlignToolsPanel.isVisible)
                     {
                         AlignToolsPanel.isVisible = false;
@@ -28,85 +30,90 @@ namespace MoveIt
                     UpdateAlignTools();
                     break;
 
-                case "AlignHeight":
-                    if (MITE.AlignMode == MITE.AlignModes.Height)
+                case "MoveIt_AlignHeightBtn":
+                    if (MIT.alignMode == MoveItTool.AlignModes.Height)
                     {
-                        MITE.AlignMode = MITE.AlignModes.Off;
-                        MoveItTool.instance.toolState = MoveItTool.ToolState.Default;
+                        MIT.alignMode = MoveItTool.AlignModes.Off;
+                        MIT.toolState = MoveItTool.ToolState.Default;
                     }
                     else
                     {
-                        MoveItTool.instance.StartAligningHeights();
-                        if (MoveItTool.instance.toolState == MoveItTool.ToolState.AligningHeights)
+                        MIT.StartAligning(MoveItTool.AlignModes.Height);
+                        if (MIT.toolState == MoveItTool.ToolState.Aligning)
                         { // Change MITE's mode only if MoveIt changed to AligningHeights
-                            MITE.AlignMode = MITE.AlignModes.Height;
+                            MIT.alignMode = MoveItTool.AlignModes.Height;
                         }
                     }
-                    if (MITE.Settings.AutoCollapseAlignTools) AlignToolsPanel.isVisible = false;
+                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
                     UpdateAlignTools();
                     break;
 
-                case "AlignIndividual":
-                    if (MITE.AlignMode == MITE.AlignModes.Individual)
+                case "MoveIt_AlignIndividualBtn":
+                    if (MIT.alignMode == MoveItTool.AlignModes.Individual)
                     {
-                        MITE.AlignMode = MITE.AlignModes.Off;
-                        MoveItTool.instance.toolState = MoveItTool.ToolState.Default;
+                        MIT.alignMode = MoveItTool.AlignModes.Off;
+                        MIT.toolState = MoveItTool.ToolState.Default;
                     }
                     else
                     {
-                        if (MoveItTool.instance.toolState == MoveItTool.ToolState.Cloning || MoveItTool.instance.toolState == MoveItTool.ToolState.RightDraggingClone)
+                        if (MIT.toolState == MoveItTool.ToolState.Cloning || MIT.toolState == MoveItTool.ToolState.RightDraggingClone)
                         {
-                            MoveItTool.instance.StopCloning();
+                            MIT.StopCloning();
                         }
-                        MoveItTool.instance.toolState = MoveItTool.ToolState.AligningHeights;
 
                         if (Action.selection.Count > 0)
                         {
-                            MITE.AlignMode = MITE.AlignModes.Individual;
+                            MIT.toolState = MoveItTool.ToolState.Aligning;
+                            MIT.alignMode = MoveItTool.AlignModes.Individual;
                         }
                     }
-                    if (MITE.Settings.AutoCollapseAlignTools) AlignToolsPanel.isVisible = false;
+                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
                     UpdateAlignTools();
                     break;
 
-                case "AlignGroup":
-                    if (MITE.AlignMode == MITE.AlignModes.Group)
+                case "MoveIt_AlignGroupBtn":
+                    if (MIT.alignMode == MoveItTool.AlignModes.Group)
                     {
-                        MITE.AlignMode = MITE.AlignModes.Off;
-                        MoveItTool.instance.toolState = MoveItTool.ToolState.Default;
+                        MIT.alignMode = MoveItTool.AlignModes.Off;
+                        MIT.toolState = MoveItTool.ToolState.Default;
                     }
                     else
                     {
-                        if (MoveItTool.instance.toolState == MoveItTool.ToolState.Cloning || MoveItTool.instance.toolState == MoveItTool.ToolState.RightDraggingClone)
+                        if (MIT.toolState == MoveItTool.ToolState.Cloning || MIT.toolState == MoveItTool.ToolState.RightDraggingClone)
                         {
-                            MoveItTool.instance.StopCloning();
+                            MIT.StopCloning();
                         }
-                        MoveItTool.instance.toolState = MoveItTool.ToolState.AligningHeights;
+                        MIT.toolState = MoveItTool.ToolState.Aligning;
 
                         if (Action.selection.Count > 0)
                         {
-                            MITE.AlignMode = MITE.AlignModes.Group;
+                            MIT.toolState = MoveItTool.ToolState.Aligning;
+                            MIT.alignMode = MoveItTool.AlignModes.Group;
                         }
                     }
-                    if (MITE.Settings.AutoCollapseAlignTools) AlignToolsPanel.isVisible = false;
+                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
                     UpdateAlignTools();
                     break;
 
-                case "AlignRandom":
-                    MITE.AlignMode = MITE.AlignModes.Random;
+                case "MoveIt_AlignRandomBtn":
+                    MIT.alignMode = MoveItTool.AlignModes.Random;
 
-                    if (MoveItTool.instance.toolState == MoveItTool.ToolState.Cloning || MoveItTool.instance.toolState == MoveItTool.ToolState.RightDraggingClone)
+                    if (MIT.toolState == MoveItTool.ToolState.Cloning || MIT.toolState == MoveItTool.ToolState.RightDraggingClone)
                     {
-                        MoveItTool.instance.StopCloning();
+                        MIT.StopCloning();
                     }
 
                     AlignRotationAction action = new AlignRandomAction();
                     action.followTerrain = MoveItTool.followTerrain;
                     ActionQueue.instance.Push(action);
                     ActionQueue.instance.Do();
-                    MITE.DeactivateAlignTool();
-                    if (MITE.Settings.AutoCollapseAlignTools) AlignToolsPanel.isVisible = false;
+                    MoveItTool.instance.DeactivateAlignTool();
+                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
                     UpdateAlignTools();
+                    break;
+
+                default:
+                    Debug.Log($"Invalid Align Tools call ({c.name})");
                     break;
             }
             //Debug.Log($"{c.name} clicked, mode is {MITE.AlignMode}");
@@ -115,37 +122,37 @@ namespace MoveIt
 
         public static void UpdateAlignTools()
         {
-            AlignToolsBtn.atlas = AlignButtons.GetValueSafe("AlignGroup").atlas;
+            AlignToolsBtn.atlas = AlignButtons["AlignGroup"].atlas;
             AlignToolsBtn.normalFgSprite = "AlignTools";
             foreach (UIButton btn in AlignButtons.Values)
             {
                 btn.normalBgSprite = "OptionBase";
             }
 
-            switch (MITE.AlignMode)
+            switch (MoveItTool.instance.alignMode)
             {
-                case MITE.AlignModes.Height:
+                case MoveItTool.AlignModes.Height:
                     if (!AlignToolsPanel.isVisible)
                     {
-                        AlignToolsBtn.atlas = AlignButtons.GetValueSafe("AlignHeight").atlas;
+                        AlignToolsBtn.atlas = AlignButtons["AlignHeight"].atlas;
                         AlignToolsBtn.normalFgSprite = "AlignHeight";
                     }
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons.GetValueSafe("AlignHeight").normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["AlignHeight"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                case MITE.AlignModes.Individual:
-                    AlignToolsBtn.atlas = AlignButtons.GetValueSafe("AlignIndividual").atlas;
+                case MoveItTool.AlignModes.Individual:
+                    AlignToolsBtn.atlas = AlignButtons["AlignIndividual"].atlas;
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignIndividual";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons.GetValueSafe("AlignIndividual").normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["AlignIndividual"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                case MITE.AlignModes.Group:
-                    AlignToolsBtn.atlas = AlignButtons.GetValueSafe("AlignGroup").atlas;
+                case MoveItTool.AlignModes.Group:
+                    AlignToolsBtn.atlas = AlignButtons["AlignGroup"].atlas;
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignGroup";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons.GetValueSafe("AlignGroup").normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["AlignGroup"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 // Random mode is instant, button isn't relevant
