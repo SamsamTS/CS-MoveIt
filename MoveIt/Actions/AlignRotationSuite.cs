@@ -35,37 +35,38 @@ namespace MoveIt
         }
 
 
-        public static Bounds GetTotalBounds()
-        {
-            Bounds totalBounds = default(Bounds);
+        // Limited to buildings and props
+        //public static Bounds GetTotalBounds()
+        //{
+        //    Bounds totalBounds = default(Bounds);
 
-            bool init = false;
+        //    bool init = false;
 
-            foreach (Instance instance in selection)
-            {
-                if (instance.id.Building > 0 || instance.id.Prop > 0)
-                {
-                    if (init)
-                    {
-                        totalBounds.Encapsulate(instance.GetBounds(true));
-                    }
-                    else
-                    {
-                        totalBounds = instance.GetBounds(true);
-                        init = true;
-                    }
-                }
-            }
+        //    foreach (Instance instance in selection)
+        //    {
+        //        if (instance.id.Building > 0 || instance.id.Prop > 0)
+        //        {
+        //            if (!init)
+        //            {
+        //                totalBounds = instance.GetBounds(true);
+        //                init = true;
+        //            }
+        //            else
+        //            {
+        //                totalBounds.Encapsulate(instance.GetBounds(true));
+        //            }
+        //        }
+        //    }
 
-            return totalBounds;
-        }
+        //    return totalBounds;
+        //}
 
 
         public override void Do()
         {
             Vector3 PoR;
             Matrix4x4 matrix = default(Matrix4x4);
-            Bounds bounds = GetTotalBounds();
+            Bounds bounds = GetTotalBounds(true, true);
             float angleDelta, firstValidAngle = 0;
             System.Random random = new System.Random();
 
@@ -123,6 +124,7 @@ namespace MoveIt
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
+                            Debug.Log("PARKING (ATA.Do)");
                             BuildingManager.instance.UpdateParkingSpaces(id, ref building);
                         }
 

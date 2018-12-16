@@ -339,6 +339,5 @@ namespace MoveIt
                 toolState = ToolState.Cloning;
             }
         }
-
     }
 }

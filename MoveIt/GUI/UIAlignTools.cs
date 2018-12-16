@@ -10,11 +10,11 @@ namespace MoveIt
         public static UIButton AlignToolsBtn;
         public static UIPanel AlignToolsPanel;
         public static Dictionary<string, UIButton> AlignButtons = new Dictionary<string, UIButton>();
+        private static MoveItTool MIT = MoveItTool.instance;
 
 
         public static void AlignToolsClicked(UIComponent c, UIMouseEventParameter p)
         {
-            MoveItTool MIT = MoveItTool.instance;
 
             switch (c.name)
             {
@@ -31,68 +31,15 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignHeightBtn":
-                    if (MIT.alignMode == MoveItTool.AlignModes.Height)
-                    {
-                        MIT.alignMode = MoveItTool.AlignModes.Off;
-                        MIT.toolState = MoveItTool.ToolState.Default;
-                    }
-                    else
-                    {
-                        MIT.StartAligning(MoveItTool.AlignModes.Height);
-                        if (MIT.toolState == MoveItTool.ToolState.Aligning)
-                        { // Change MITE's mode only if MoveIt changed to AligningHeights
-                            MIT.alignMode = MoveItTool.AlignModes.Height;
-                        }
-                    }
-                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                    UpdateAlignTools();
+                    MIT.ProcessAligning(MoveItTool.AlignModes.Height);
                     break;
 
                 case "MoveIt_AlignIndividualBtn":
-                    if (MIT.alignMode == MoveItTool.AlignModes.Individual)
-                    {
-                        MIT.alignMode = MoveItTool.AlignModes.Off;
-                        MIT.toolState = MoveItTool.ToolState.Default;
-                    }
-                    else
-                    {
-                        if (MIT.toolState == MoveItTool.ToolState.Cloning || MIT.toolState == MoveItTool.ToolState.RightDraggingClone)
-                        {
-                            MIT.StopCloning();
-                        }
-
-                        if (Action.selection.Count > 0)
-                        {
-                            MIT.toolState = MoveItTool.ToolState.Aligning;
-                            MIT.alignMode = MoveItTool.AlignModes.Individual;
-                        }
-                    }
-                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                    UpdateAlignTools();
+                    MIT.ProcessAligning(MoveItTool.AlignModes.Individual);
                     break;
 
                 case "MoveIt_AlignGroupBtn":
-                    if (MIT.alignMode == MoveItTool.AlignModes.Group)
-                    {
-                        MIT.alignMode = MoveItTool.AlignModes.Off;
-                        MIT.toolState = MoveItTool.ToolState.Default;
-                    }
-                    else
-                    {
-                        if (MIT.toolState == MoveItTool.ToolState.Cloning || MIT.toolState == MoveItTool.ToolState.RightDraggingClone)
-                        {
-                            MIT.StopCloning();
-                        }
-                        MIT.toolState = MoveItTool.ToolState.Aligning;
-
-                        if (Action.selection.Count > 0)
-                        {
-                            MIT.toolState = MoveItTool.ToolState.Aligning;
-                            MIT.alignMode = MoveItTool.AlignModes.Group;
-                        }
-                    }
-                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                    UpdateAlignTools();
+                    MIT.ProcessAligning(MoveItTool.AlignModes.Group);
                     break;
 
                 case "MoveIt_AlignRandomBtn":
@@ -120,39 +67,33 @@ namespace MoveIt
         }
 
 
+        // Updates the UI based on the current state
         public static void UpdateAlignTools()
         {
-            AlignToolsBtn.atlas = AlignButtons["AlignGroup"].atlas;
             AlignToolsBtn.normalFgSprite = "AlignTools";
             foreach (UIButton btn in AlignButtons.Values)
             {
                 btn.normalBgSprite = "OptionBase";
             }
 
-            switch (MoveItTool.instance.alignMode)
+            switch (MIT.alignMode)
             {
                 case MoveItTool.AlignModes.Height:
-                    if (!AlignToolsPanel.isVisible)
-                    {
-                        AlignToolsBtn.atlas = AlignButtons["AlignHeight"].atlas;
-                        AlignToolsBtn.normalFgSprite = "AlignHeight";
-                    }
+                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["AlignHeight"].normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.Individual:
-                    AlignToolsBtn.atlas = AlignButtons["AlignIndividual"].atlas;
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignIndividual";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["AlignIndividual"].normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["MoveIt_AlignIndividualBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.Group:
-                    AlignToolsBtn.atlas = AlignButtons["AlignGroup"].atlas;
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignGroup";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["AlignGroup"].normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["MoveIt_AlignGroupBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 // Random mode is instant, button isn't relevant

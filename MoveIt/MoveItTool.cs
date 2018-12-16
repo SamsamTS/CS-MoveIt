@@ -598,9 +598,21 @@ namespace MoveIt
             }
         }
 
-        public override ToolBase.ToolErrors GetErrors()
+        public override ToolErrors GetErrors()
         {
             return ToolErrors.None;
+        }
+
+        public void ProcessAligning(AlignModes mode)
+        {
+            if (alignMode == mode)
+            {
+                StopAligning();
+            }
+            else
+            {
+                StartAligning(mode);
+            }
         }
 
         public void StartAligning(AlignModes mode)

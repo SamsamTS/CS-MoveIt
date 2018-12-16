@@ -26,7 +26,7 @@ namespace MoveIt
             return GetTotalBounds().center;
         }
 
-        public static Bounds GetTotalBounds(bool ignoreSegments = true)
+        public static Bounds GetTotalBounds(bool ignoreSegments = true, bool hasAngleOnly = false)
         {
             Bounds totalBounds = default(Bounds);
 
@@ -34,14 +34,17 @@ namespace MoveIt
 
             foreach (Instance instance in Action.selection)
             {
-                if (init)
+                if (!hasAngleOnly || (instance.id.Building > 0 || instance.id.Prop > 0))
                 {
-                    totalBounds.Encapsulate(instance.GetBounds(ignoreSegments));
-                }
-                else
-                {
-                    totalBounds = instance.GetBounds(ignoreSegments);
-                    init = true;
+                    if (!init)
+                    {
+                        totalBounds = instance.GetBounds(ignoreSegments);
+                        init = true;
+                    }
+                    else
+                    {
+                        totalBounds.Encapsulate(instance.GetBounds(ignoreSegments));
+                    }
                 }
             }
 
