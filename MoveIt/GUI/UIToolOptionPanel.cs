@@ -258,87 +258,88 @@ namespace MoveIt
 
             filtersPanel.size = new Vector2(150, 140);
             filtersPanel.isVisible = false;
+            UIFilters.FilterPanel = filtersPanel;
 
             void OnDoubleClick(UIComponent c, UIMouseEventParameter p)
             {
-                foreach (UIComponent comp in filtersPanel.components)
+                foreach (UICheckBox cb in UIFilters.FilterCBs)
                 {
-                    UICheckBox box = comp as UICheckBox;
-                    if (box != null && box != c) box.isChecked = false;
+                    cb.isChecked = false;
+                    Filters.SetFilter(cb.name, false);
                 }
-
                 ((UICheckBox)c).isChecked = true;
+                Filters.SetFilter(c.name, true);
+
+                UIFilters.RefreshFilters();
             }
 
-            UICheckBox checkBox = UIUtils.CreateCheckBox(filtersPanel);
-            checkBox.label.text = "Buildings";
-            checkBox.isChecked = true;
-            checkBox.eventCheckChanged += (c, p) =>
-            {
-                MoveItTool.filterBuildings = p;
-            };
-
-            checkBox.eventDoubleClick += OnDoubleClick;
-            
-
-            checkBox = UIUtils.CreateCheckBox(filtersPanel);
-            checkBox.label.text = "Props";
-            checkBox.isChecked = true;
-            checkBox.eventCheckChanged += (c, p) =>
-            {
-                MoveItTool.filterProps = p;
-            };
-
+            #region Standard Filters
+            UICheckBox checkBox = UIFilters.CreateFilterCB(filtersPanel, "Buildings");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIUtils.CreateCheckBox(filtersPanel);
-            checkBox.label.text = "Decals";
-            checkBox.isChecked = true;
-            checkBox.eventCheckChanged += (c, p) =>
-            {
-                MoveItTool.filterDecals = p;
-            };
-
+            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Props");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIUtils.CreateCheckBox(filtersPanel);
-            checkBox.label.text = "Trees";
-            checkBox.isChecked = true;
-            checkBox.eventCheckChanged += (c, p) =>
-            {
-                MoveItTool.filterTrees = p;
-            };
-
-            checkBox.eventDoubleClick += OnDoubleClick;
-            
-            checkBox = UIUtils.CreateCheckBox(filtersPanel);
-            checkBox.label.text = "Nodes";
-            checkBox.isChecked = true;
-            checkBox.eventCheckChanged += (c, p) =>
-            {
-                MoveItTool.filterNodes = p;
-            };
-
+            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Decals");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIUtils.CreateCheckBox(filtersPanel);
-            checkBox.label.text = "Segments";
-            checkBox.isChecked = true;
-            checkBox.eventCheckChanged += (c, p) =>
-            {
-                MoveItTool.filterSegments = p;
-            };
-
+            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Surfaces");
             checkBox.eventDoubleClick += OnDoubleClick;
+
+            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Trees");
+            checkBox.eventDoubleClick += OnDoubleClick;
+
+            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Nodes");
+            checkBox.eventDoubleClick += OnDoubleClick;
+
+            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Segments");
+            checkBox.eventDoubleClick += OnDoubleClick;
+            #endregion
+
+
+            #region Network Filters
+            UIButton btnNetworks = UIFilters.CreateToggleNFBtn();
+            void OnDoubleClickNetworkFilter(UIComponent c, UIMouseEventParameter p)
+            {
+                foreach (UICheckBox cb in UIFilters.NetworkCBs)
+                {
+                    cb.isChecked = false;
+                    Filters.SetNetworkFilter(cb.name, false);
+                }
+                ((UICheckBox)c).isChecked = true;
+                Filters.SetNetworkFilter(c.name, true);
+
+                UIFilters.RefreshFilters();
+            }
+
+            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Roads");
+            checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
+
+            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Tracks");
+            checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
+
+            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Paths");
+            checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
+
+            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Fences");
+            checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
+
+            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Powerlines");
+            checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
+
+            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Others");
+            checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
+
+            UIFilters.RefreshFilters();
+            #endregion
+
 
             filtersPanel.padding = new RectOffset(10, 10, 10, 10);
             filtersPanel.autoLayoutDirection = LayoutDirection.Vertical;
             filtersPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 5);
             filtersPanel.autoLayout = true;
-
-            filtersPanel.height = 160;
-
-            filtersPanel.absolutePosition = m_marquee.absolutePosition - new Vector3(57, filtersPanel.height + 5);
+            filtersPanel.height = 210;
+            filtersPanel.absolutePosition = m_marquee.absolutePosition + new Vector3(-47, -5 - filtersPanel.height);
             #endregion
 
             m_marquee.eventButtonStateChanged += (c, p) =>

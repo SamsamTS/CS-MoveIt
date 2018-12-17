@@ -43,6 +43,7 @@ namespace MoveIt
 
         public const string settingsFileName = "MoveItTool";
         public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
+        public const int UI_Filter_CB_Height = 25;
 
         public static MoveItTool instance;
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true); 
@@ -56,10 +57,11 @@ namespace MoveIt
         public static bool filterBuildings = true;
         public static bool filterProps = true;
         public static bool filterDecals = true;
-        //public static bool filterSurfaces = true;
+        public static bool filterSurfaces = true;
         public static bool filterTrees = true;
         public static bool filterNodes = true;
         public static bool filterSegments = true;
+        public static bool filterNetworks = false;
 
 
         public static bool followTerrain = true;
