@@ -53,6 +53,7 @@ namespace MoveIt
         public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
         public static SavedBool brushesAsSurfaces = new SavedBool("brushesAsSurfaces", settingsFileName, false, true);
         public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
+        public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
 
         public static bool filterBuildings = true;
         public static bool filterProps = true;
@@ -66,8 +67,9 @@ namespace MoveIt
         public static bool followTerrain = true;
 
         public static bool marqueeSelection = false;
-        
+
         public static StepOver stepOver;
+        public static DebugPanel debugPanel;
 
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();

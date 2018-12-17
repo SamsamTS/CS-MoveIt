@@ -605,6 +605,8 @@ namespace MoveIt
                 MoveItTool.tunnelVisible = (underground.activeStateIndex == 1);
             };
             #endregion
+
+            MoveItTool.debugPanel = new DebugPanel();
         }
 
         protected override void OnVisibilityChanged()

@@ -123,6 +123,18 @@ namespace MoveIt
                 panel.gameObject.AddComponent<OptionsKeymapping>();
 
                 group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n(Affects performance, do not enable unless you have a specific reason)", MoveItTool.showDebugPanel.value, (b) =>
+                {
+                    MoveItTool.showDebugPanel.value = b;
+                    if (MoveItTool.debugPanel != null)
+                    {
+                        MoveItTool.debugPanel.Visible(b);
+                    }
+                });
+                checkBox.name = "MoveIt_DebugPanel";
+
+                group.AddSpace(10);
             }
             catch (Exception e)
             {

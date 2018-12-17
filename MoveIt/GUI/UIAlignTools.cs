@@ -62,7 +62,7 @@ namespace MoveIt
                     Debug.Log($"Invalid Align Tools call ({c.name})");
                     break;
             }
-            //Debug.Log($"{c.name} clicked, mode is {MITE.AlignMode}");
+            //Debug.Log($"{c.name} clicked, mode is {MoveItTool.alignMode}");
         }
 
 
