@@ -69,7 +69,7 @@ namespace MoveIt
                             int count = 0;
                             while (building != 0u)
                             {
-                                if (/*MITE.StepOver.isValidB(building) && */IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
+                                if (stepOver.isValidB(building) && IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
                                 {
                                     //Debug.Log($"Building:{building}");
 
@@ -96,7 +96,7 @@ namespace MoveIt
                             int count = 0;
                             while (prop != 0u)
                             {
-                                if (/*MITE.StepOver.isValidP(prop) && */Filters.Filter(propBuffer[prop].Info))
+                                if (stepOver.isValidP(prop) && Filters.Filter(propBuffer[prop].Info))
                                 {
                                     //Debug.Log($"Prop:{prop}");
                                     if (propBuffer[prop].RayCast(prop, ray, out float t, out float targetSqr) && t < smallestDist)
@@ -121,7 +121,7 @@ namespace MoveIt
                             int count = 0;
                             while (node != 0u)
                             {
-                                if (/*MITE.StepOver.isValidN(node) && */IsNodeValid(ref nodeBuffer[node], itemLayers) && RayCastNode(ref nodeBuffer[node], ray, -1000f, out float t, out float priority) && t < smallestDist)
+                                if (stepOver.isValidN(node) && IsNodeValid(ref nodeBuffer[node], itemLayers) && RayCastNode(ref nodeBuffer[node], ray, -1000f, out float t, out float priority) && t < smallestDist)
                                 {
                                     //Debug.Log($"Node:{node}");
                                     ushort building = 0;
@@ -163,7 +163,7 @@ namespace MoveIt
                             int count = 0;
                             while (segment != 0u)
                             {
-                                if (/*MITE.StepOver.isValidS(segment) && */IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
+                                if (stepOver.isValidS(segment) && IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
                                     segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                                 {
                                     //Debug.Log($"Segment:{segment}");
@@ -223,7 +223,7 @@ namespace MoveIt
                             int count = 0;
                             while (tree != 0)
                             {
-                                if (/*MITE.StepOver.isValidT(tree) && */treeBuffer[tree].RayCast(tree, ray, out float t, out float targetSqr) && t < smallestDist)
+                                if (stepOver.isValidT(tree) && treeBuffer[tree].RayCast(tree, ray, out float t, out float targetSqr) && t < smallestDist)
                                 {
                                     id.Tree = tree;
                                     smallestDist = t;
@@ -241,16 +241,16 @@ namespace MoveIt
 
                 _repeatSearch = false;
 
-                //if (MITE.Settings.keyStepOver.isPressed())
-                //{
-                //    if (!_stepProcessed)
-                //    {
-                //        _stepProcessed = true;
-                //        _repeatSearch = true;
-                //        MITE.StepOver.Add(id);
-                //    }
-                //}
-                //else
+                if (OptionsKeymapping.stepOverKey.IsPressed())
+                {
+                    if (!_stepProcessed)
+                    {
+                        _stepProcessed = true;
+                        _repeatSearch = true;
+                        stepOver.Add(id);
+                    }
+                }
+                else
                 {
                     _stepProcessed = false;
                 }

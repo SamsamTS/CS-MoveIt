@@ -13,6 +13,8 @@ namespace MoveIt
                 ToolController toolController = GameObject.FindObjectOfType<ToolController>();
 
                 MoveItTool.instance = toolController.gameObject.AddComponent<MoveItTool>();
+
+                MoveItTool.stepOver = new StepOver();
             }
         }
 

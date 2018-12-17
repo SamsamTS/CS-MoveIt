@@ -88,6 +88,7 @@
     <Compile Include="GUI\UIToolOptionPanel.cs" />
     <Compile Include="GUI\UIUtils.cs" />
     <Compile Include="Statistics.cs" />
+    <Compile Include="StepOver.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MoveIt.png" />

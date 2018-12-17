@@ -63,10 +63,11 @@ namespace MoveIt
         public static bool filterSegments = true;
         public static bool filterNetworks = false;
 
-
         public static bool followTerrain = true;
 
         public static bool marqueeSelection = false;
+        
+        public static StepOver stepOver;
 
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
