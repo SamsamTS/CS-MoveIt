@@ -35,7 +35,7 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignIndividualBtn":
-                    MIT.ProcessAligning(MoveItTool.AlignModes.Individual);
+                    MIT.ProcessAligning(MoveItTool.AlignModes.Inplace);
                     break;
 
                 case "MoveIt_AlignGroupBtn":
@@ -50,13 +50,12 @@ namespace MoveIt
                         MIT.StopCloning();
                     }
 
-                    AlignRotationAction action = new AlignRandomAction();
+                    AlignRandomAction action = new AlignRandomAction();
                     action.followTerrain = MoveItTool.followTerrain;
                     ActionQueue.instance.Push(action);
                     ActionQueue.instance.Do();
-                    MoveItTool.instance.DeactivateAlignTool();
                     if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                    UpdateAlignTools();
+                    MoveItTool.instance.DeactivateAlignTool();
                     break;
 
                 default:
@@ -84,7 +83,7 @@ namespace MoveIt
                     AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                case MoveItTool.AlignModes.Individual:
+                case MoveItTool.AlignModes.Inplace:
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignIndividual";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
                     AlignButtons["MoveIt_AlignIndividualBtn"].normalBgSprite = "OptionBaseFocused";

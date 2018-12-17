@@ -471,8 +471,8 @@ namespace MoveIt
             atpContainer.autoLayout = true;
             atpContainer.relativePosition = Vector3.zero;
 
-            UIAlignTools.AlignButtons.Add("AlignRandom", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignRandom = UIAlignTools.AlignButtons["AlignRandom"];
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignRandomBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignRandom = UIAlignTools.AlignButtons["MoveIt_AlignRandomBtn"];
             alignRandom.name = "MoveIt_AlignRandomBtn";
             alignRandom.atlas = GetIconsAtlas();
             alignRandom.tooltip = "Immediate rotate valid items randomly";
@@ -485,11 +485,11 @@ namespace MoveIt
             alignRandom.normalFgSprite = "AlignRandom";
             alignRandom.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            UIAlignTools.AlignButtons.Add("AlignGroup", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignGroup = UIAlignTools.AlignButtons["AlignGroup"];
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignGroupBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignGroup = UIAlignTools.AlignButtons["MoveIt_AlignGroupBtn"];
             alignGroup.name = "MoveIt_AlignGroupBtn";
             alignGroup.atlas = GetIconsAtlas();
-            alignGroup.tooltip = "Align As Group - rotate around a central point";
+            alignGroup.tooltip = "Align as Group - rotate around a central point";
             alignGroup.playAudioEvents = true;
             alignGroup.size = new Vector2(36, 36);
             alignGroup.normalBgSprite = "OptionBase";
@@ -499,8 +499,8 @@ namespace MoveIt
             alignGroup.normalFgSprite = "AlignGroup";
             alignGroup.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            UIAlignTools.AlignButtons.Add("AlignIndividual", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignIndividual = UIAlignTools.AlignButtons["AlignIndividual"];
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignIndividualBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignIndividual = UIAlignTools.AlignButtons["MoveIt_AlignIndividualBtn"];
             alignIndividual.name = "MoveIt_AlignIndividualBtn";
             alignIndividual.atlas = GetIconsAtlas();
             alignIndividual.tooltip = "Align In-Place - rotate selected items";
@@ -513,11 +513,11 @@ namespace MoveIt
             alignIndividual.normalFgSprite = "AlignIndividual";
             alignIndividual.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            UIAlignTools.AlignButtons.Add("AlignHeight", atpContainer.AddUIComponent<UIButton>());
-            UIButton alignHeight = UIAlignTools.AlignButtons["AlignHeight"];
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignHeightBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignHeight = UIAlignTools.AlignButtons["MoveIt_AlignHeightBtn"];
             alignHeight.name = "MoveIt_AlignHeightBtn";
             alignHeight.atlas = GetIconsAtlas();
-            alignHeight.tooltip = "Align height";
+            alignHeight.tooltip = "Align Height";
             alignHeight.playAudioEvents = true;
             alignHeight.size = new Vector2(36, 36);
             alignHeight.normalBgSprite = "OptionBase";
@@ -526,21 +526,6 @@ namespace MoveIt
             alignHeight.disabledBgSprite = "OptionBaseDisabled";
             alignHeight.normalFgSprite = "AlignHeight";
             alignHeight.eventClicked += UIAlignTools.AlignToolsClicked;
-
-            //m_alignTools.eventClicked += (c, p) =>
-            //{
-            //    if (MoveItTool.instance != null)
-            //    {
-            //        if (MoveItTool.instance.toolState == MoveItTool.ToolState.Aligning)
-            //        {
-            //            MoveItTool.instance.StopAligning();
-            //        }
-            //        else
-            //        {
-            //            MoveItTool.instance.StartAligning(MoveItTool.AlignModes.Height);
-            //        }
-            //    }
-            //};
             #endregion
 
             #region View Options

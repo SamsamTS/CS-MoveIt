@@ -204,7 +204,7 @@ namespace MoveIt
 
                     UIAlignTools.UpdateAlignTools();
                 }
-                else if (alignMode == AlignModes.Individual || alignMode == AlignModes.Group)
+                else if (alignMode == AlignModes.Inplace || alignMode == AlignModes.Group)
                 {
                     float angle;
 

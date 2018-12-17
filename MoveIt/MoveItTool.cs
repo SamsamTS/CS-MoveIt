@@ -35,7 +35,7 @@ namespace MoveIt
         {
             Off,
             Height,
-            Individual,
+            Inplace,
             Group,
             Random,
             Slope
@@ -49,10 +49,14 @@ namespace MoveIt
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
+        public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
+        public static SavedBool brushesAsSurfaces = new SavedBool("brushesAsSurfaces", settingsFileName, false, true);
+        public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
 
         public static bool filterBuildings = true;
         public static bool filterProps = true;
         public static bool filterDecals = true;
+        //public static bool filterSurfaces = true;
         public static bool filterTrees = true;
         public static bool filterNodes = true;
         public static bool filterSegments = true;
@@ -211,14 +215,30 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
-                    if (toolState == ToolState.Aligning && alignMode == AlignModes.Height)
+                    ProcessAligning(AlignModes.Height);
+                }
+                else if (OptionsKeymapping.alignInplace.IsPressed(e))
+                {
+                    ProcessAligning(AlignModes.Inplace);
+                }
+                else if (OptionsKeymapping.alignGroup.IsPressed(e))
+                {
+                    ProcessAligning(AlignModes.Group);
+                }
+                else if (OptionsKeymapping.alignRandom.IsPressed(e))
+                {
+                    alignMode = AlignModes.Random;
+
+                    if (toolState == ToolState.Cloning || toolState == ToolState.RightDraggingClone)
                     {
-                        StopAligning();
+                        StopCloning();
                     }
-                    else
-                    {
-                        StartAligning(AlignModes.Height);
-                    }
+
+                    AlignRandomAction action = new AlignRandomAction();
+                    action.followTerrain = followTerrain;
+                    ActionQueue.instance.Push(action);
+                    ActionQueue.instance.Do();
+                    DeactivateAlignTool();
                 }
 
                 if (toolState == ToolState.Cloning)
@@ -507,7 +527,7 @@ namespace MoveIt
         {
             if (switchMode)
             {
-               alignMode = AlignModes.Off;
+                alignMode = AlignModes.Off;
                 toolState = ToolState.Default;
             }
 
@@ -605,7 +625,7 @@ namespace MoveIt
 
         public void ProcessAligning(AlignModes mode)
         {
-            if (alignMode == mode)
+            if (toolState == ToolState.Aligning && alignMode == mode)
             {
                 StopAligning();
             }

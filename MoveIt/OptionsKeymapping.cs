@@ -35,6 +35,9 @@ namespace MoveIt
         public static readonly SavedInputKey copy = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
 
         public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
+        public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
 
         /*public static readonly SavedInputKey export = new SavedInputKey("export", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.X, true, false, false), false);
         public static readonly SavedInputKey import = new SavedInputKey("import", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.V, true, false, false), false);
@@ -57,6 +60,9 @@ namespace MoveIt
             AddKeymapping("Redo", redo);
             AddKeymapping("Copy", copy);
             AddKeymapping("Align Heights", alignHeights);
+            AddKeymapping("Align In-Place", alignInplace);
+            AddKeymapping("Align As Group", alignGroup);
+            AddKeymapping("Align Randomly", alignRandom);
         }
 
         private void AddKeymapping(string label, SavedInputKey savedInputKey)

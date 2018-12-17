@@ -50,9 +50,6 @@ namespace MoveIt
                     DebugUtils.hideDebugMessages.value = b;
                 });
                 checkBox.tooltip = "If checked, debug messages won't be logged.";
-
-                group.AddSpace(10);
-
                 checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
                 {
                     MoveItTool.hideTips.value = b;
@@ -74,6 +71,18 @@ namespace MoveIt
                     }
                 });
                 checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";
+
+                group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: [RWB] FxUK's Brushes", MoveItTool.brushesAsSurfaces.value, (b) =>
+                {
+                    MoveItTool.brushesAsSurfaces.value = b;
+                });
+                checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: Extras", MoveItTool.extraAsSurfaces.value, (b) =>
+                {
+                    MoveItTool.extraAsSurfaces.value = b;
+                });
+                checkBox.tooltip = "Ploppable Asphalt Decals, Ronyx69's Docks, Deczaah's Surfaces";
 
                 group.AddSpace(10);
 

@@ -555,7 +555,7 @@ namespace MoveIt
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
                     Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
-                    float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
+                    float angle = buildingInfo.m_subBuildings[i].m_angle * Mathf.Deg2Rad + newAngle;
                     buildingInfo2.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
                     BuildingTool.RenderGeometry(cameraInfo, buildingInfo2, 0, position, angle, true, color);
                 }
