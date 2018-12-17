@@ -244,7 +244,7 @@ namespace MoveIt
             btn.textScale = 0.7f;
             btn.tooltip = "Open in ModTools Scene Explorer";
             btn.size = new Vector2(20, 20);
-            btn.textPadding = new RectOffset(1, 0, 4, 2);
+            btn.textPadding = new RectOffset(1, 0, 5, 1);
             btn.relativePosition = new Vector3(parent.width - 24, parent.height - 24);
             btn.eventClicked += _toModTools;
 

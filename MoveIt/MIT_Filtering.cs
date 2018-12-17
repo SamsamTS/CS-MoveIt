@@ -279,11 +279,8 @@ namespace MoveIt
             m_selection.a = m_mouseStartPosition;
             m_selection.c = RaycastMouseLocation(mouseRay);
 
-            Debug.Log("Hello World!");
-
             if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)
             {
-                Debug.Log($"A.x:{m_selection.a.x}, A.z:{m_selection.a.z}");
                 m_selection = default(Quad3);
             }
             else
@@ -317,7 +314,6 @@ namespace MoveIt
 
                 InstanceID id = new InstanceID();
                 ItemClass.Layer itemLayers = GetItemLayers();
-                Debug.Log("Greetz!");
 
                 for (int i = gridMinZ; i <= gridMaxZ; i++)
                 {
@@ -380,7 +376,7 @@ namespace MoveIt
                             int count = 0;
                             while (node != 0u)
                             {
-                                Debug.Log($"Node:{node}");
+                                //Debug.Log($"Node:{node}");
                                 if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
                                 {
                                     ushort building = NetNode.FindOwnerBuilding(node, 363f);
@@ -487,156 +483,6 @@ namespace MoveIt
             }
 
             return list;
-
-
-            //            if (filterBuildings)
-            //            {
-            //                ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
-            //                int count = 0;
-            //                while (building != 0u)
-            //                {
-            //                    if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && PointInRectangle(m_selection, buildingBuffer[building].m_position))
-            //                    {
-            //                        id.Building = Building.FindParentBuilding(building);
-            //                        if (id.Building == 0) id.Building = building;
-            //                        list.Add(id);
-            //                    }
-            //                    building = buildingBuffer[building].m_nextGridBuilding;
-
-            //                    if (++count > 49152)
-            //                    {
-            //                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-            //                        break;
-            //                    }
-            //                }
-            //            }
-
-            //            if (filterProps || filterDecals)
-            //            {
-            //                ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
-            //                int count = 0;
-            //                while (prop != 0u)
-            //                {
-            //                    bool isDecal = IsDecal(propBuffer[prop].Info);
-            //                    if ((filterDecals && isDecal) || (filterProps && !isDecal))
-            //                    {
-            //                        if (PointInRectangle(m_selection, propBuffer[prop].Position))
-            //                        {
-            //                            id.Prop = prop;
-            //                            list.Add(id);
-            //                        }
-            //                    }
-
-            //                    prop = propBuffer[prop].m_nextGridProp;
-
-            //                    if (++count > 65536)
-            //                    {
-            //                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-            //                    }
-            //                }
-            //            }
-
-            //            if (filterNodes || filterBuildings)
-            //            {
-            //                ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
-            //                int count = 0;
-            //                while (node != 0u)
-            //                {
-            //                    if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
-            //                    {
-            //                        ushort building = NetNode.FindOwnerBuilding(node, 363f);
-
-            //                        if (building != 0)
-            //                        {
-            //                            if (filterBuildings)
-            //                            {
-            //                                id.Building = Building.FindParentBuilding(building);
-            //                                if (id.Building == 0) id.Building = building;
-            //                                list.Add(id);
-            //                            }
-            //                        }
-            //                        else if (filterNodes)
-            //                        {
-            //                            id.NetNode = node;
-            //                            list.Add(id);
-            //                        }
-            //                    }
-            //                    node = nodeBuffer[node].m_nextGridNode;
-
-            //                    if (++count > 32768)
-            //                    {
-            //                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-            //                    }
-            //                }
-            //            }
-
-            //            if (filterSegments || filterBuildings)
-            //            {
-            //                ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
-            //                int count = 0;
-            //                while (segment != 0u)
-            //                {
-            //                    if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
-            //                    {
-            //                        ushort building = FindOwnerBuilding(segment, 363f);
-
-            //                        if (building != 0)
-            //                        {
-            //                            if (filterBuildings)
-            //                            {
-            //                                id.Building = Building.FindParentBuilding(building);
-            //                                if (id.Building == 0) id.Building = building;
-            //                                list.Add(id);
-            //                            }
-            //                        }
-            //                        else if (filterSegments)
-            //                        {
-            //                            id.NetSegment = segment;
-            //                            list.Add(id);
-            //                        }
-            //                    }
-            //                    segment = segmentBuffer[segment].m_nextGridSegment;
-
-            //                    if (++count > 36864)
-            //                    {
-            //                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-
-            //    if (filterTrees)
-            //    {
-            //        gridMinX = Mathf.Max((int)((min.x - 8f) / 32f + 270f), 0);
-            //        gridMinZ = Mathf.Max((int)((min.z - 8f) / 32f + 270f), 0);
-            //        gridMaxX = Mathf.Min((int)((max.x + 8f) / 32f + 270f), 539);
-            //        gridMaxZ = Mathf.Min((int)((max.z + 8f) / 32f + 270f), 539);
-
-            //        for (int i = gridMinZ; i <= gridMaxZ; i++)
-            //        {
-            //            for (int j = gridMinX; j <= gridMaxX; j++)
-            //            {
-            //                uint tree = TreeManager.instance.m_treeGrid[i * 540 + j];
-            //                int count = 0;
-            //                while (tree != 0)
-            //                {
-            //                    if (PointInRectangle(m_selection, treeBuffer[tree].Position))
-            //                    {
-            //                        id.Tree = tree;
-            //                        list.Add(id);
-            //                    }
-            //                    tree = treeBuffer[tree].m_nextGridTree;
-
-            //                    if (++count > 262144)
-            //                    {
-            //                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
         }
 
 

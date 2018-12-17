@@ -116,6 +116,8 @@ namespace MoveIt
                     Instance clone = state.instance.Clone(state, null);
                     toReplace.Add(state.instance, clone);
                     clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
+                    ActionQueue.instance.UpdateNodeIdInStateHistory(state.instance.id.NetNode, clone.id.NetNode);
+                    //Debug.Log($"Cloned N:{state.instance.id.NetNode}->{clone.id.NetNode}");
                 }
             }
 
@@ -160,6 +162,28 @@ namespace MoveIt
                 ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
                 selection = m_oldSelection;
+            }
+        }
+
+        public override void UpdateNodeIdInState(ushort oldId, ushort newId)
+        {
+            foreach (InstanceState state in m_states)
+            {
+                if (state.instance.id.Type == InstanceType.NetSegment)
+                {
+                    SegmentState segState = state as SegmentState;
+                    
+                    if (segState.startNode == oldId)
+                    {
+                        segState.startNode = newId;
+                        //Debug.Log($"SWITCHED (start) Segment #{state.instance.id.NetSegment} {segState.startNode}-{segState.endNode} (old:{oldId}, new:{newId})");
+                    }
+                    if (segState.endNode == oldId)
+                    {
+                        segState.endNode = newId;
+                        //Debug.Log($"SWITCHED (end) Segment #{state.instance.id.NetSegment} {segState.startNode}-{segState.endNode} (old:{oldId}, new:{newId})");
+                    }
+                }
             }
         }
 
