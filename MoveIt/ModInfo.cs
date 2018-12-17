@@ -1,9 +1,10 @@
-﻿using ICities;
-
-using System;
-
-using ColossalFramework;
+﻿using ColossalFramework;
+using ColossalFramework.IO;
 using ColossalFramework.UI;
+using ICities;
+using System;
+using System.IO;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -37,6 +38,25 @@ namespace MoveIt
         }
 
         public const string version = "2.3.0 [Alpha]";
+
+        private static bool debugInitialised = false;
+        public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
+
+        public static void DebugLine(string line, bool newLine = true)
+        {
+            if (!debugInitialised)
+            {
+                File.WriteAllText(debugPath, $"Move It debug log:\n");
+                debugInitialised = true;
+            }
+
+            Debug.Log(line);
+            File.AppendAllText(debugPath, line);
+            if (newLine)
+            {
+                File.AppendAllText(debugPath, "\n");
+            }
+        }
 
         public void OnSettingsUI(UIHelperBase helper)
         {

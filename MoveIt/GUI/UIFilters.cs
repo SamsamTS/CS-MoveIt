@@ -35,7 +35,7 @@ namespace MoveIt
                 "NFCollapseHover"
             };
 
-            UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MITE", spriteNames, "MITE.Icons.");
+            UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_NFBtn", spriteNames, "MoveIt.Icons.");
             ResourceLoader.AddTexturesInAtlas(loadedAtlas, textures);
 
             return loadedAtlas;

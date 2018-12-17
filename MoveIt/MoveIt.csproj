@@ -125,6 +125,12 @@
     <EmbeddedResource Include="Icons\AlignRandom.png" />
     <EmbeddedResource Include="Icons\AlignTools.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NFCollapse.png" />
+    <EmbeddedResource Include="Icons\NFCollapseHover.png" />
+    <EmbeddedResource Include="Icons\NFExpand.png" />
+    <EmbeddedResource Include="Icons\NFExpandHover.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"
