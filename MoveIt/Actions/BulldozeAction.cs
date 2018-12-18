@@ -176,12 +176,12 @@ namespace MoveIt
                     if (segState.startNode == oldId)
                     {
                         segState.startNode = newId;
-                        //Debug.Log($"SWITCHED (start) Segment #{state.instance.id.NetSegment} {segState.startNode}-{segState.endNode} (old:{oldId}, new:{newId})");
+                        //Debug.Log($"SWITCHED (start) Segment #{state.instance.id.NetSegment} N:{segState.startNode}-N:{segState.endNode}\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                     if (segState.endNode == oldId)
                     {
                         segState.endNode = newId;
-                        //Debug.Log($"SWITCHED (end) Segment #{state.instance.id.NetSegment} {segState.startNode}-{segState.endNode} (old:{oldId}, new:{newId})");
+                        //Debug.Log($"SWITCHED (end) Segment #{state.instance.id.NetSegment} N:{segState.startNode}-N:{segState.endNode}\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                 }
             }

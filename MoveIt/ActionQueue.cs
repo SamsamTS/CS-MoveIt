@@ -24,10 +24,10 @@ namespace MoveIt
 
         private IEnumerable<Action> _getPreviousAction()
         {
-            int tail = m_tail;
-            if (tail > m_head) tail -= m_actions.Length;
+            int tail = (m_tail > m_head) ? m_tail - m_actions.Length : m_tail;
+            int curr = (m_current > m_head) ? m_current - m_actions.Length : m_current;
 
-            for (int i = m_current; i >= tail; i--)
+            for (int i = curr - 1; i >= tail; i--)
             {
                 if (i < 0)
                 {
