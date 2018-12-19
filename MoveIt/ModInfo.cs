@@ -94,6 +94,13 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
+                checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
+                {
+                    MoveItTool.altSelectNodeBuildings.value = b;
+                });
+
+                group.AddSpace(10);
+
                 checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: [RWB] FxUK's Brushes", MoveItTool.brushesAsSurfaces.value, (b) =>
                 {
                     MoveItTool.brushesAsSurfaces.value = b;

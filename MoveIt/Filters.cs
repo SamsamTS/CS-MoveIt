@@ -36,15 +36,15 @@ namespace MoveIt
             "418188427.", "418188861.", "418415108.", // Tiled
             "418187791.", "418188652.", "418414886." // Marble
         };
-        //static readonly string[] PillarClassNames = new string[]
-        //{
-        //    "Highway", "Pedestrian Path", "Train Track", "Monorail Track", "CableCar Facility"
-        //};
-        //static readonly Type[] PylonAITypes = new Type[]
-        //{
-        //    typeof(PowerPoleAI)
-        //    //"Electricity Wire", "Electricity Facility"
-        //};
+        static readonly string[] PillarClassNames = new string[]
+        {
+            "Highway", "Pedestrian Path", "Train Track", "Monorail Track", "CableCar Facility"
+        };
+        static readonly Type[] PylonAITypes = new Type[]
+        {
+            typeof(PowerPoleAI)
+            //"Electricity Wire", "Electricity Facility"
+        };
 
 
         public static Dictionary<string, NetworkFilter> NetworkFilters = new Dictionary<string, NetworkFilter>
@@ -219,33 +219,31 @@ namespace MoveIt
         {
             if (isHover)
             {
-                // Select P&P on hover with Alt
-                //if (MITE.Settings.PillarsAsNotBuildings)
-                //{
-                //    //Debug.Log($"SINGLE-Pi m_class.name:{info.m_class.name}");
-                //    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
-                //    {
-                //        if (Event.current.alt)
-                //        {
-                //            //Debug.Log("Alt");
-                //            return true;
-                //        }
-                //        return false;
-                //    }
-                //}
-                //if (MITE.Settings.PylonsAsNotBuildings)
-                //{
-                //    //Debug.Log($"SINGLE-Py AI type:{info.GetAI().GetType()}");
-                //    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
-                //    {
-                //        if (Event.current.alt)
-                //        {
-                //            //Debug.Log("Alt");
-                //            return true;
-                //        }
-                //        return false;
-                //    }
-                //}
+                //Select P&P on hover with Alt
+                if (MoveItTool.altSelectNodeBuildings)
+                {
+                    //Debug.Log($"SINGLE-Pi m_class.name:{info.m_class.name}");
+                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
+                    {
+                        if (Event.current.alt)
+                        {
+                            //Debug.Log("Alt");
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    //Debug.Log($"SINGLE-Py AI type:{info.GetAI().GetType()}");
+                    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
+                    {
+                        if (Event.current.alt)
+                        {
+                            //Debug.Log("Alt");
+                            return true;
+                        }
+                        return false;
+                    }
+                }
 
                 if (!MoveItTool.marqueeSelection)
                 {
@@ -261,22 +259,20 @@ namespace MoveIt
 
             if (MoveItTool.filterBuildings)
             {
-                // Filter pillars and pylons out of select
-                //if (MITE.Settings.PillarsAsNotBuildings)
-                //{
-                //    //Debug.Log($"MARQUEE m_class.name:{info.m_class.name}");
-                //    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
-                //    {
-                //        return false;
-                //    }
-                //}
-                //if (MITE.Settings.PylonsAsNotBuildings)
-                //{
-                //    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
-                //    {
-                //        return false;
-                //    }
-                //}
+                //Filter pillars and pylons out of select
+                if (MoveItTool.altSelectNodeBuildings)
+                {
+                    //Debug.Log($"MARQUEE m_class.name:{info.m_class.name}");
+                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
+                    {
+                        return false;
+                    }
+
+                    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
+                    {
+                        return false;
+                    }
+                }
                 return true;
             }
             return false;

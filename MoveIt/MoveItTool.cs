@@ -53,6 +53,7 @@ namespace MoveIt
         public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
         public static SavedBool brushesAsSurfaces = new SavedBool("brushesAsSurfaces", settingsFileName, false, true);
         public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
+        public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, true, true);
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
 
         public static bool filterBuildings = true;
