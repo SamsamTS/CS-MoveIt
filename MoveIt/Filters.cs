@@ -58,6 +58,19 @@ namespace MoveIt
         };
 
 
+        public static void SetAnyFilter(string name, bool active)
+        {
+            if (NetworkFilters.ContainsKey(name))
+            {
+                SetNetworkFilter(name, active);
+            }
+            else
+            {
+                SetFilter(name, active);
+            }
+        }
+
+
         public static void SetFilter(string name, bool active)
         {
             switch (name)
@@ -126,30 +139,11 @@ namespace MoveIt
                 default:
                     throw new Exception();
             }
-
-            //UI.RefreshFilters();
         }
 
         public static void ToggleNetworkFilter(string name)
         {
             NetworkFilters[name].enabled = !NetworkFilters[name].enabled;
-            //UI.RefreshFilters();
-
-            /*string msg = $"Toggling '{name}' ";
-            foreach (KeyValuePair<string, NetworkFilter> pair in Filters.NetworkFilters)
-            {
-                msg = msg + $"{pair.Key}:({pair.Value.aiType},{pair.Value.enabled}),box:";
-                foreach (UICheckBox cb in UI.NetworkCBs)
-                {
-                    if (cb.name == pair.Key)
-                    {
-                        msg = msg + $" {cb.name}:{cb.isChecked}";
-                        break;
-                    }
-                }
-                msg = msg + "\n";
-            }
-            Debug.Log(msg);*/
         }
 
 

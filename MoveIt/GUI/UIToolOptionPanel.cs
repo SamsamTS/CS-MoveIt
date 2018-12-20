@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 using ColossalFramework.UI;
-
+using System.Collections.Generic;
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
@@ -367,7 +367,9 @@ namespace MoveIt
                 foreach (UICheckBox cb in filtersPanel.GetComponentsInChildren<UICheckBox>())
                 {
                     cb.isChecked = newChecked;
+                    Filters.SetAnyFilter(cb.label.text, newChecked);
                 }
+
             };
 
             #region Copy
