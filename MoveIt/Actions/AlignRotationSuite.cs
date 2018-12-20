@@ -20,7 +20,7 @@ namespace MoveIt
     {
         public float newAngle;
         public bool followTerrain;
-        public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
+        public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
         protected static Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
 
         public AlignRotationAction()
@@ -29,7 +29,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    savedStates.Add(instance.GetState());
+                    m_states.Add(instance.GetState());
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace MoveIt
             float angleDelta, firstValidAngle = 0;
             System.Random random = new System.Random();
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {
@@ -85,7 +85,7 @@ namespace MoveIt
             PoR = bounds.center;
             //Debug.Log($"Ready, mode is {Mod.mode},{GetType()} - All delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}");
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {
@@ -154,8 +154,8 @@ namespace MoveIt
                 }
             }
 
-            MoveItTool.instance.alignMode = MoveItTool.AlignModes.Off;
-            MoveItTool.instance.toolState = MoveItTool.ToolState.Default;
+            MoveItTool.instance.m_alignMode = MoveItTool.AlignModes.Off;
+            MoveItTool.instance.m_toolState = MoveItTool.ToolState.Default;
             UIAlignTools.UpdateAlignTools();
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
@@ -166,7 +166,7 @@ namespace MoveIt
         {
             Bounds bounds = GetTotalBounds(false);
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 state.instance.SetState(state);
             }
@@ -178,7 +178,7 @@ namespace MoveIt
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (toReplace.ContainsKey(state.instance))
                 {

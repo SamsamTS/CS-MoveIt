@@ -323,7 +323,7 @@ namespace MoveIt
 
         public static bool Filter(NetNode node)
         {
-            if (MoveItTool.instance.alignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.alignMode == MoveItTool.AlignModes.Inplace)
+            if (MoveItTool.instance.m_alignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.m_alignMode == MoveItTool.AlignModes.Inplace)
             {
                 return false;
             }

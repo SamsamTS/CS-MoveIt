@@ -98,6 +98,10 @@ namespace MoveIt
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
                 });
+                //checkBox = (UICheckBox)group.AddCheckbox("Alt+Click on segment to select nodes", MoveItTool.altSelectSegmentNodes.value, (b) =>
+                //{
+                //    MoveItTool.altSelectSegmentNodes.value = b;
+                //});
 
                 group.AddSpace(10);
 

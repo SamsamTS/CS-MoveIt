@@ -43,9 +43,9 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignRandomBtn":
-                    MIT.alignMode = MoveItTool.AlignModes.Random;
+                    MIT.m_alignMode = MoveItTool.AlignModes.Random;
 
-                    if (MIT.toolState == MoveItTool.ToolState.Cloning || MIT.toolState == MoveItTool.ToolState.RightDraggingClone)
+                    if (MIT.m_toolState == MoveItTool.ToolState.Cloning || MIT.m_toolState == MoveItTool.ToolState.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }
@@ -75,7 +75,7 @@ namespace MoveIt
                 btn.normalBgSprite = "OptionBase";
             }
 
-            switch (MIT.alignMode)
+            switch (MIT.m_alignMode)
             {
                 case MoveItTool.AlignModes.Height:
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
@@ -96,6 +96,7 @@ namespace MoveIt
                     break;
 
                 // Random mode is instant, button isn't relevant
+
                 default:
                     if (AlignToolsPanel.isVisible)
                     {

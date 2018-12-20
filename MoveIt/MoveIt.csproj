@@ -54,6 +54,7 @@
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\AlignHeightAction.cs" />
     <Compile Include="Actions\AlignRotationSuite.cs" />
+    <Compile Include="Actions\AlignSlope.cs" />
     <Compile Include="Actions\AlignSlopeAction.cs" />
     <Compile Include="Actions\BulldozeAction.cs" />
     <Compile Include="Actions\CloneAction.cs" />
