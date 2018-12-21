@@ -34,6 +34,11 @@ namespace MoveIt
                     MIT.ProcessAligning(MoveItTool.AlignModes.Height);
                     break;
 
+                case "MoveIt_AlignSlopeBtn":
+                    MIT.m_alignToolPhase = 0;
+                    MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
+                    break;
+
                 case "MoveIt_AlignIndividualBtn":
                     MIT.ProcessAligning(MoveItTool.AlignModes.Inplace);
                     break;
@@ -81,6 +86,12 @@ namespace MoveIt
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
                     AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
+                    break;
+
+                case MoveItTool.AlignModes.Slope:
+                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlope";
+                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["MoveIt_AlignSlopeBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.Inplace:

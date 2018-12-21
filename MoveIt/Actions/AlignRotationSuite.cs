@@ -35,33 +35,6 @@ namespace MoveIt
         }
 
 
-        // Limited to buildings and props
-        //public static Bounds GetTotalBounds()
-        //{
-        //    Bounds totalBounds = default(Bounds);
-
-        //    bool init = false;
-
-        //    foreach (Instance instance in selection)
-        //    {
-        //        if (instance.id.Building > 0 || instance.id.Prop > 0)
-        //        {
-        //            if (!init)
-        //            {
-        //                totalBounds = instance.GetBounds(true);
-        //                init = true;
-        //            }
-        //            else
-        //            {
-        //                totalBounds.Encapsulate(instance.GetBounds(true));
-        //            }
-        //        }
-        //    }
-
-        //    return totalBounds;
-        //}
-
-
         public override void Do()
         {
             Vector3 PoR;

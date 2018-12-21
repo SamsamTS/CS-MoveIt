@@ -54,7 +54,6 @@
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\AlignHeightAction.cs" />
     <Compile Include="Actions\AlignRotationSuite.cs" />
-    <Compile Include="Actions\AlignSlope.cs" />
     <Compile Include="Actions\AlignSlopeAction.cs" />
     <Compile Include="Actions\BulldozeAction.cs" />
     <Compile Include="Actions\CloneAction.cs" />
@@ -133,6 +132,9 @@
     <EmbeddedResource Include="Icons\NFCollapseHover.png" />
     <EmbeddedResource Include="Icons\NFExpand.png" />
     <EmbeddedResource Include="Icons\NFExpandHover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignSlope.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

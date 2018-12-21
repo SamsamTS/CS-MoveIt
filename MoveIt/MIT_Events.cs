@@ -254,15 +254,24 @@ namespace MoveIt
                 }
                 else if (m_alignMode == AlignModes.Slope)
                 {
+                    AlignSlopeAction action;
                     switch (m_alignToolPhase)
                     {
-                        case 0: // Tool selected, prepare for Point A selection
+                        case 0: // Point A selected, prepare for Point B
+                            m_alignToolPhase++;
+                            action = new AlignSlopeAction();
+                            action.PointA = m_hoverInstance;
+                            action.PointA.RenderOverlay(RenderManager.instance.CurrentCameraInfo, m_alignColor, m_despawnColor);
+                            ActionQueue.instance.Push(action);
                             break;
 
-                        case 1: // Point A selected, prepare for Point B
-                            break;
-
-                        case 2: // Point B selected, fire action
+                        case 1: // Point B selected, fire action
+                            m_alignToolPhase++;
+                            action = ActionQueue.instance.current as AlignSlopeAction;
+                            action.PointB = m_hoverInstance;
+                            action.followTerrain = followTerrain;
+                            m_nextAction = ToolAction.Do;
+                            DeactivateAlignTool();
                             break;
                     }
                 }

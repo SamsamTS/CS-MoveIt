@@ -537,6 +537,7 @@ namespace MoveIt
             {
                 m_alignMode = AlignModes.Off;
                 m_toolState = ToolState.Default;
+                m_alignToolPhase = 0;
             }
 
             UIAlignTools.UpdateAlignTools();

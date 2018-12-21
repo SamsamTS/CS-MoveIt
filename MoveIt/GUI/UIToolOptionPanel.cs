@@ -456,13 +456,13 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = alignToolsPanel;
             alignToolsPanel.autoLayout = false;
             alignToolsPanel.clipChildren = true;
-            alignToolsPanel.size = new Vector2(36, 166);
+            alignToolsPanel.size = new Vector2(36, 202);
             alignToolsPanel.isVisible = false;
             alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - alignToolsPanel.height);
             m_alignTools.zOrder = alignToolsPanel.zOrder + 10;
 
             UIPanel atpBackground = alignToolsPanel.AddUIComponent<UIPanel>();
-            atpBackground.size = new Vector2(26, 166);
+            atpBackground.size = new Vector2(26, 202);
             atpBackground.clipChildren = true;
             atpBackground.relativePosition = new Vector3(5, 10);
             atpBackground.atlas = UIUtils.GetAtlas("Ingame");
@@ -515,6 +515,20 @@ namespace MoveIt
             alignIndividual.disabledBgSprite = "OptionBaseDisabled";
             alignIndividual.normalFgSprite = "AlignIndividual";
             alignIndividual.eventClicked += UIAlignTools.AlignToolsClicked;
+
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignSlopeBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignSlope = UIAlignTools.AlignButtons["MoveIt_AlignSlopeBtn"];
+            alignSlope.name = "MoveIt_AlignSlopeBtn";
+            alignSlope.atlas = GetIconsAtlas();
+            alignSlope.tooltip = "Align Slope";
+            alignSlope.playAudioEvents = true;
+            alignSlope.size = new Vector2(36, 36);
+            alignSlope.normalBgSprite = "OptionBase";
+            alignSlope.hoveredBgSprite = "OptionBaseHovered";
+            alignSlope.pressedBgSprite = "OptionBasePressed";
+            alignSlope.disabledBgSprite = "OptionBaseDisabled";
+            alignSlope.normalFgSprite = "AlignSlope";
+            alignSlope.eventClicked += UIAlignTools.AlignToolsClicked;
 
             UIAlignTools.AlignButtons.Add("MoveIt_AlignHeightBtn", atpContainer.AddUIComponent<UIButton>());
             UIButton alignHeight = UIAlignTools.AlignButtons["MoveIt_AlignHeightBtn"];
@@ -701,6 +715,7 @@ namespace MoveIt
                 "AlignIndividual",
                 "AlignGroup",
                 "AlignRandom",
+                "AlignSlope",
                 "AlignHeight",
 				"Copy",
                 "Bulldoze",
