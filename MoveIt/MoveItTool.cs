@@ -383,6 +383,11 @@ namespace MoveIt
                             instance.RenderOverlay(cameraInfo, m_selectedColor, m_despawnColor);
                         }
                     }
+                    if (m_toolState == ToolState.Aligning && m_alignMode == AlignModes.Slope && m_alignToolPhase == 2)
+                    {
+                        AlignSlopeAction action = ActionQueue.instance.current as AlignSlopeAction;
+                        action.PointA.RenderOverlay(cameraInfo, m_alignColor, m_despawnColor);
+                    }
 
                     Vector3 center = Action.GetCenter();
                     center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
@@ -533,6 +538,7 @@ namespace MoveIt
 
         public bool DeactivateAlignTool(bool switchMode = true)
         {
+            //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
             if (switchMode)
             {
                 m_alignMode = AlignModes.Off;
@@ -657,6 +663,7 @@ namespace MoveIt
             {
                 m_toolState = ToolState.Aligning;
                 m_alignMode = mode;
+                m_alignToolPhase = 1;
             }
 
             UIAlignTools.UpdateAlignTools();
@@ -666,6 +673,7 @@ namespace MoveIt
         {
             Debug.Log($"tS:{m_toolState}, aM:{m_alignMode}");
             m_alignMode = AlignModes.Off;
+            m_alignToolPhase = 0;
             if (m_toolState == ToolState.Aligning)
             {
                 m_toolState = ToolState.Default;

@@ -52,6 +52,7 @@ namespace MoveIt
             }
         }
 
+
         public override void Do()
         {
             float angleDelta;
@@ -66,35 +67,21 @@ namespace MoveIt
             string msg = $"\nA:{PointA.position}, B:{PointB.position}\nAng:{angleDelta} ({angleDelta * Mathf.Rad2Deg}) - H:{heightDelta} - D:{distance}";
             foreach (InstanceState state in m_states)
             {
-                string name = state.instance.info.name.Length > 20 ? state.instance.info.name.Substring(0, 20) : state.instance.info.name.PadLeft(20);
+                string name = state.instance.info.name.Length > 15 ? state.instance.info.name.Substring(0, 15) : state.instance.info.name.PadLeft(15);
                 msg += $"\n{name} <{state.instance.GetType().ToString().Substring(15)}> {state.position}: ";
 
                 float distanceOffset, heightOffset;
-                //float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
-                //MoveableBuilding.AddFixedHeightFlag(state.instance.id.Building);
 
                 matrix.SetTRS(PointA.position, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
                 heightOffset = distanceOffset / distance * heightDelta;
                 state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 4000f));
 
-                //if (state.instance.GetType() == typeof(MoveableBuilding))
-                //{
-                //    if (Mathf.Abs(terrainHeight - state.instance.position.y) > 0.01f)
-                //    {
-                //        MoveableBuilding.AddFixedHeightFlag(state.instance.id.Building);
-                //    }
-                //    else
-                //    {
-                //        MoveableBuilding.RemoveFixedHeightFlag(state.instance.id.Building);
-                //    }
-                //}
-
-                //state.instance.Transform(state, ref matrix, 0f, angleDelta, PointA.position, followTerrain);
                 msg += $"offset:{distanceOffset} hOffset:{heightOffset}";
             }
             Debug.Log(msg);
         }
+
 
         public override void Undo()
         {
@@ -118,19 +105,5 @@ namespace MoveIt
                 }
             }
         }
-
-
-        //protected Vector3 GetKeyPosition(int i)
-        //{
-        //    InstanceID id = keyInstance[i].id;
-        //    if (id.Building > 0) return buildingBuffer[id.Building].m_position;
-        //    if (id.Prop > 0) return propBuffer[id.Prop].Position;
-        //    if (id.Tree > 0) return treeBuffer[id.Tree].Position;
-        //    if (id.NetNode > 0) return nodeBuffer[id.NetNode].m_position;
-        //    if (id.NetSegment > 0) return nodeBuffer[id.NetSegment].m_position;
-
-        //    Debug.Log($"Index {i} fell through - {id.RawData}");
-        //    return Vector3.zero;
-        //}
     }
 }

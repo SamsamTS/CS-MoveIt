@@ -716,6 +716,8 @@ namespace MoveIt
                 "AlignGroup",
                 "AlignRandom",
                 "AlignSlope",
+                "AlignSlopeA",
+                "AlignSlopeB",
                 "AlignHeight",
 				"Copy",
                 "Bulldoze",

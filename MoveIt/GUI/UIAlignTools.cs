@@ -35,7 +35,6 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
-                    MIT.m_alignToolPhase = 0;
                     MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
                     break;
 
@@ -75,6 +74,8 @@ namespace MoveIt
         public static void UpdateAlignTools()
         {
             AlignToolsBtn.normalFgSprite = "AlignTools";
+            AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlope";
+
             foreach (UIButton btn in AlignButtons.Values)
             {
                 btn.normalBgSprite = "OptionBase";
@@ -89,9 +90,23 @@ namespace MoveIt
                     break;
 
                 case MoveItTool.AlignModes.Slope:
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlope";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
                     AlignButtons["MoveIt_AlignSlopeBtn"].normalBgSprite = "OptionBaseFocused";
+
+                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlope";
+
+                    switch (MoveItTool.instance.m_alignToolPhase)
+                    {
+                        case 1:
+                            AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeA";
+                            if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlopeA";
+                            break;
+
+                        case 2:
+                            AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeB";
+                            if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlopeB";
+                            break;
+                    }
                     break;
 
                 case MoveItTool.AlignModes.Inplace:
