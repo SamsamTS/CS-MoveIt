@@ -254,6 +254,8 @@ namespace MoveIt
                 }
                 else if (m_alignMode == AlignModes.Slope)
                 {
+                    if (m_hoverInstance == null) return;
+
                     AlignSlopeAction action;
                     switch (m_alignToolPhase)
                     {

@@ -148,6 +148,7 @@ namespace MoveIt
             ushort building = buildingState.instance.id.Building;
 
             buildingBuffer[building].m_flags = buildingState.flags;
+            AddFixedHeightFlag(building);
             RelocateBuilding(building, ref buildingBuffer[building], buildingState.position, buildingState.angle);
 
             if (buildingState.subStates != null)
@@ -157,6 +158,7 @@ namespace MoveIt
                     subState.instance.SetState(subState);
                 }
             }
+            buildingBuffer[building].m_flags = buildingState.flags;
         }
 
         public override Vector3 position
@@ -252,6 +254,7 @@ namespace MoveIt
             Vector3 newPosition = position;
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            AddFixedHeightFlag(id.Building);
 
             foreach (Instance subInstance in subInstances)
             {

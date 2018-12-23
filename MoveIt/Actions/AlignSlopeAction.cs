@@ -63,8 +63,6 @@ namespace MoveIt
             heightDelta = PointB.position.y - PointA.position.y;
             distance = (float)Math.Sqrt(Math.Pow(PointB.position.z - PointA.position.z, 2) + Math.Pow(PointB.position.x - PointA.position.x, 2));
 
-            //Dictionary<InstanceState, Vector3> virtualInstances = new Dictionary<InstanceState, Vector3>();
-
             string msg = $"\nA:{PointA.position}, B:{PointB.position}\nAng:{angleDelta} ({angleDelta * Mathf.Rad2Deg}) - H:{heightDelta} - D:{distance}";
             foreach (InstanceState state in m_states)
             {
@@ -72,12 +70,26 @@ namespace MoveIt
                 msg += $"\n{name} <{state.instance.GetType().ToString().Substring(15)}> {state.position}: ";
 
                 float distanceOffset, heightOffset;
+                //float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
+                //MoveableBuilding.AddFixedHeightFlag(state.instance.id.Building);
 
                 matrix.SetTRS(PointA.position, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
                 heightOffset = distanceOffset / distance * heightDelta;
-                state.instance.SetHeight(PointA.position.y + heightOffset);
-                
+                state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 4000f));
+
+                //if (state.instance.GetType() == typeof(MoveableBuilding))
+                //{
+                //    if (Mathf.Abs(terrainHeight - state.instance.position.y) > 0.01f)
+                //    {
+                //        MoveableBuilding.AddFixedHeightFlag(state.instance.id.Building);
+                //    }
+                //    else
+                //    {
+                //        MoveableBuilding.RemoveFixedHeightFlag(state.instance.id.Building);
+                //    }
+                //}
+
                 //state.instance.Transform(state, ref matrix, 0f, angleDelta, PointA.position, followTerrain);
                 msg += $"offset:{distanceOffset} hOffset:{heightOffset}";
             }
