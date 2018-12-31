@@ -5,6 +5,12 @@ namespace MoveIt
 {
     public class MoveItLoader : LoadingExtensionBase
     {
+        private static bool isGameLoaded = false;
+        public static bool IsGameLoaded {
+            get => isGameLoaded;
+            private set => isGameLoaded = value;
+        }
+
         public override void OnLevelLoaded(LoadMode mode)
         {
             if (MoveItTool.instance == null)
@@ -16,6 +22,8 @@ namespace MoveIt
 
                 MoveItTool.stepOver = new StepOver();
             }
+
+            IsGameLoaded = true;
         }
 
         public override void OnLevelUnloading()
@@ -24,6 +32,8 @@ namespace MoveIt
             {
                 MoveItTool.instance.enabled = false;
             }
+
+            IsGameLoaded = false;
         }
     }
 }

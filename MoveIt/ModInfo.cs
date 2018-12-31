@@ -135,6 +135,11 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
+                UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", _cleanGhostNodes);
+                button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
+
+                group.AddSpace(10);
+
                 checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n(Affects performance, do not enable unless you have a specific reason)", MoveItTool.showDebugPanel.value, (b) =>
                 {
                     MoveItTool.showDebugPanel.value = b;
@@ -154,5 +159,52 @@ namespace MoveIt
             }
         }
 
+        private void _cleanGhostNodes()
+        {
+            if (!MoveItLoader.IsGameLoaded)
+            {
+                ExceptionPanel notLoaded = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                notLoaded.SetMessage("Not In-Game", "Use this button when in-game to remove ghost nodes (nodes with no segments attached, which were previously created by Move It)", false);
+                return;
+            }
+
+            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+            string message;
+            int count = 0;
+
+            for (ushort nodeId = 0; nodeId < NetManager.instance.m_nodes.m_buffer.Length; nodeId++)
+            {
+                NetNode node = NetManager.instance.m_nodes.m_buffer[nodeId];
+                if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.None) continue;
+                if ((node.m_flags & NetNode.Flags.Untouchable) != NetNode.Flags.None) continue;
+                bool hasSegments = false;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if (node.GetSegment(i) > 0)
+                    {
+                        hasSegments = true;
+                        break;
+                    }
+                }
+
+                if (!hasSegments)
+                {
+                    count++;
+                    Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
+                    //NetManager.instance.ReleaseNode(nodeId);
+                }
+            }
+            if (count > 0)
+            {
+                ActionQueue.instance.Clear();
+                message = $"Removed {count} ghost node{(count == 1 ? "" : "s")}!";
+            }
+            else
+            {
+                message = "No ghost nodes found, nothing has been changed.";
+            }
+            panel.SetMessage("Removing Ghost Nodes", message, false);
+        }
     }
 }

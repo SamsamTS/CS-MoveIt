@@ -119,6 +119,13 @@ namespace MoveIt
             m_head = m_current;
         }
 
+        public void Clear()
+        {
+            m_current = 0;
+            m_head = 0;
+            m_tail = 0;
+        }
+
         public void ReplaceInstancesForward(Dictionary<Instance, Instance> toReplace)
         {
             int action = m_current;
