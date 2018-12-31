@@ -38,7 +38,8 @@ namespace MoveIt
             Inplace,
             Group,
             Random,
-            Slope
+            Slope,
+            SlopeNode
         }
 
         public const string settingsFileName = "MoveItTool";
@@ -224,6 +225,27 @@ namespace MoveIt
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
                     ProcessAligning(AlignModes.Height);
+                }
+                else if (OptionsKeymapping.alignSlope.IsPressed(e))
+                {
+                    ProcessAligning(AlignModes.Slope);
+                }
+                else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
+                {
+                    m_alignMode = AlignModes.SlopeNode;
+
+                    if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+                    {
+                        StopCloning();
+                    }
+
+                    AlignSlopeAction asa = new AlignSlopeAction();
+                    asa.followTerrain = followTerrain;
+                    asa.IsQuick = true;
+                    ActionQueue.instance.Push(asa);
+                    ActionQueue.instance.Do();
+                    if (autoCloseAlignTools) UIAlignTools.AlignToolsPanel.isVisible = false;
+                    DeactivateAlignTool();
                 }
                 else if (OptionsKeymapping.alignInplace.IsPressed(e))
                 {

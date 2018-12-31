@@ -12,6 +12,8 @@ namespace MoveIt
         protected static NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
 
+        public bool IsQuick = false;
+
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
         private Instance[] keyInstance = new Instance[2];
@@ -59,6 +61,43 @@ namespace MoveIt
             float heightDelta;
             float distance;
             Matrix4x4 matrix = default(Matrix4x4);
+
+            if (IsQuick)
+            {
+                if (selection.Count != 1) return;
+                foreach (Instance instance in selection)// Is this really the best way to get the value of selction[0]?
+                {
+                    if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
+
+                    NetNode node = nodeBuffer[nodeInstance.id.NetNode];
+
+                    int c = 0;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        ushort segId = 0;
+                        if ((segId = node.GetSegment(i)) > 0)
+                        {
+                            if (c > 1) return; // More than 2 segments found
+
+                            NetSegment segment = segmentBuffer[segId];
+                            if (segment.m_startNode == nodeInstance.id.NetNode)
+                            {
+                                InstanceID instanceID = default(InstanceID);
+                                instanceID.NetNode = segment.m_endNode;
+                                keyInstance[c] = new MoveableNode(instanceID);
+                            }
+                            else
+                            {
+                                InstanceID instanceID = default(InstanceID);
+                                instanceID.NetNode = segment.m_startNode;
+                                keyInstance[c] = new MoveableNode(instanceID);
+                            }
+                            c++;
+                        }
+                    }
+                    if (c != 2) return;
+                }
+            }
 
             angleDelta = 0 - (float)Math.Atan2(PointB.position.z - PointA.position.z, PointB.position.x - PointA.position.x);
             heightDelta = PointB.position.y - PointA.position.y;

@@ -35,6 +35,24 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
+                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                    {
+                        MIT.m_alignMode = MoveItTool.AlignModes.SlopeNode;
+
+                        if (MIT.m_toolState == MoveItTool.ToolState.Cloning || MIT.m_toolState == MoveItTool.ToolState.RightDraggingClone)
+                        {
+                            MIT.StopCloning();
+                        }
+
+                        AlignSlopeAction asa = new AlignSlopeAction();
+                        asa.followTerrain = MoveItTool.followTerrain;
+                        asa.IsQuick = true;
+                        ActionQueue.instance.Push(asa);
+                        ActionQueue.instance.Do();
+                        if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
+                        MIT.DeactivateAlignTool();
+                        break;
+                    }
                     MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
                     break;
 
@@ -54,9 +72,9 @@ namespace MoveIt
                         MIT.StopCloning();
                     }
 
-                    AlignRandomAction action = new AlignRandomAction();
-                    action.followTerrain = MoveItTool.followTerrain;
-                    ActionQueue.instance.Push(action);
+                    AlignRandomAction ara = new AlignRandomAction();
+                    ara.followTerrain = MoveItTool.followTerrain;
+                    ActionQueue.instance.Push(ara);
                     ActionQueue.instance.Do();
                     if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
                     MoveItTool.instance.DeactivateAlignTool();

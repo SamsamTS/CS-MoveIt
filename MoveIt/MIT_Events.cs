@@ -143,6 +143,10 @@ namespace MoveIt
                     action.angleDelta -= Mathf.PI / 4;
                 }
             }
+            else if (m_toolState == ToolState.Aligning)
+            {
+                DeactivateAlignTool();
+            }
             else if (m_toolState != ToolState.MouseDragging)
             {
                 m_toolState = ToolState.Default;
