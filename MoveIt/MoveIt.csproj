@@ -43,6 +43,9 @@
     <Reference Include="ICities">
       <HintPath>C:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
     </Reference>
+    <Reference Include="ProceduralObjects">
+      <HintPath>C:\Users\Rob\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\PO 1094334744\ProceduralObjects.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
@@ -67,6 +70,7 @@
     <Compile Include="MIT_Events.cs" />
     <Compile Include="MIT_Filtering.cs" />
     <Compile Include="MIT_OnToolUpdate.cs" />
+    <Compile Include="Moveable\MoveableProc.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="GUI\UIFastList.cs" />
     <Compile Include="GUI\UISaveLoadFileRow.cs" />

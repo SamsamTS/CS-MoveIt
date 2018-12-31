@@ -219,6 +219,8 @@ namespace MoveIt
                     return new MoveableProp(id);
                 case InstanceType.Tree:
                     return new MoveableTree(id);
+                case InstanceType.NetLane:
+                    return new MoveableProc(id);
             }
             return null;
         }
