@@ -35,7 +35,7 @@ namespace MoveIt
 
             foreach (Instance instance in Action.selection)
             {
-                if (!hasAngleOnly || (instance.id.Building > 0 || instance.id.Prop > 0))
+                if (!hasAngleOnly || (instance.id.Building > 0 || instance.id.Prop > 0 || instance.id.NetLane > 0))
                 {
                     if (!init)
                     {

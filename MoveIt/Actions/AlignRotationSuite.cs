@@ -124,6 +124,23 @@ namespace MoveIt
 
                         //state.instance.Move(state.instance.position, angle);
                     }
+                    else if (state.instance is MoveableProc mpo)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - mpo.angle + newAngle;
+                            PoR = state.position;
+                            //Debug.Log($"PO:Each ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}, bounds Size:{bounds.size}");
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - mpo.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                            //Debug.Log($"PO:Random ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}");
+                        }
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        mpo.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
                 }
             }
 

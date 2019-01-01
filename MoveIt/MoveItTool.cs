@@ -353,6 +353,65 @@ namespace MoveIt
                 gridVisible = UIToolOptionPanel.instance.grid.activeStateIndex == 1;
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
+
+            // Update selected POs
+            int oldSelectionCount = Action.selection.Count;
+            bool isChanged = false;
+            foreach (ProceduralObjects.Classes.ProceduralObject obj in PO_Utils.GetPOLogic().pObjSelection)
+            {
+                bool exists = false;
+                foreach (Instance instance in Action.selection)
+                {
+                    if (instance.id.NetLane == (obj.id + 1))
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists)
+                {
+                    InstanceID instanceId = default(InstanceID);
+                    instanceId.NetLane = (uint)obj.id + 1;
+                    MoveableProc proc = new MoveableProc(instanceId);
+                    Action.selection.Add(proc);
+                    isChanged = true;
+                }
+            }
+            List<Instance> toRemove = new List<Instance>();
+            foreach (Instance instance in Action.selection)
+            {
+                if (instance.id.NetLane > 0)
+                {
+                    bool exists = false;
+                    foreach (ProceduralObjects.Classes.ProceduralObject obj in PO_Utils.GetPOLogic().pObjSelection)
+                    {
+                        if ((obj.id + 1) == instance.id.NetLane)
+                        {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists)
+                    {
+                        toRemove.Add(instance);
+                        isChanged = true;
+                    }
+                }
+            }
+            foreach (Instance instance in toRemove)
+            {
+                Action.selection.Remove(instance);
+            }
+            if (isChanged)
+            {
+                ActionQueue.instance.Push(new TransformAction());
+            }
+            string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
+            foreach (Instance i in Action.selection)
+            {
+                msg += $"{i.GetType()} id:{i.id.NetLane}\n";
+            }
+            Debug.Log(msg);
         }
 
         protected override void OnDisable()
@@ -558,21 +617,6 @@ namespace MoveIt
             }
         }
 
-        public bool DeactivateAlignTool(bool switchMode = true)
-        {
-            //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
-            if (switchMode)
-            {
-                m_alignMode = AlignModes.Off;
-                m_toolState = ToolState.Default;
-                m_alignToolPhase = 0;
-            }
-
-            UIAlignTools.UpdateAlignTools();
-            Action.UpdateArea(Action.GetTotalBounds(false));
-            return false;
-        }
-
         public override void SimulationStep()
         {
             lock (ActionQueue.instance)
@@ -701,6 +745,21 @@ namespace MoveIt
                 m_toolState = ToolState.Default;
             }
             UIAlignTools.UpdateAlignTools();
+        }
+
+        public bool DeactivateAlignTool(bool switchMode = true)
+        {
+            //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
+            if (switchMode)
+            {
+                m_alignMode = AlignModes.Off;
+                m_toolState = ToolState.Default;
+                m_alignToolPhase = 0;
+            }
+
+            UIAlignTools.UpdateAlignTools();
+            Action.UpdateArea(Action.GetTotalBounds(false));
+            return false;
         }
 
         public void StartCloning()
@@ -902,6 +961,17 @@ namespace MoveIt
                 ZoneManager.instance.ReleaseBlock(segmentBlock);
                 segmentBlock = 0;
             }
+        }
+
+        public static string InstanceIDDebug(InstanceID id)
+        {
+            return $"(B{id.Building},P:{id.Prop},T:{id.Tree},N:{id.NetNode},S:{id.NetSegment},L:{id.NetLane})";
+        }
+
+        public static string InstanceIDDebug(Instance instance)
+        {
+            if (instance == null) return "(null instance)";
+            return $"(B{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
         }
     }
 }

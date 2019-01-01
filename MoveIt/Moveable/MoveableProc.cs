@@ -7,15 +7,15 @@ using System.Linq;
 
 namespace MoveIt
 {
-    public class PObjState : InstanceState
+    public class ProcState : InstanceState
     {
         public bool single;
     }
 
     public class MoveableProc : Instance
     {
-        public ProceduralObjectsLogic procLogic;
-        public ProceduralObjects.Classes.ProceduralObject ProcObj;
+        public ProceduralObjectsLogic m_procLogic;
+        public ProceduralObjects.Classes.ProceduralObject m_procObj;
 
         public override HashSet<ushort> segmentList
         {
@@ -25,49 +25,41 @@ namespace MoveIt
             }
         }
 
-        private bool isWithinRange = false;
-
-        private int procId;
-        public int ProcId {
-            get => (int)id.NetLane;
-            set {
-                if (value < 2147483647)
-                {
-                    procId = value;
-                    isWithinRange = true;
-                }
-                else
-                {
-                    procId = 0;
-                }
-            }
-        }
-
+        public int ProcId { get => (int)id.NetLane - 1; }
+        
         public MoveableProc(InstanceID instanceID) : base(instanceID)
         {
-            procLogic = Object.FindObjectOfType<ProceduralObjectsLogic>();
-            ProcObj = PObjUtils._getObjectWithId(procLogic.pObjSelection, ProcId);
+            m_procLogic = PO_Utils.GetPOLogic();
+            m_procObj = m_procLogic.pObjSelection.GetProcWithId(ProcId);
         }
 
 
         public override InstanceState GetState()
         {
-            PObjState state = new PObjState();
+            ProcState state = new ProcState();
+            state.instance = this;
+
+            state.position = m_procObj.m_position;
+            state.angle = m_procObj.m_rotation.y;
 
             return state;
         }
 
 
         public override void SetState(InstanceState state)
-        {}
+        {
+            m_procObj.m_position = state.position;
+            m_procObj.m_rotation.y = state.angle;
+        }
 
 
         public override Vector3 position
         {
             get
             {
-                if (id.IsEmpty || !isWithinRange) return Vector3.zero;
-                return ProcObj.m_position;
+                //if (!isValid) return Vector3.zero;
+                Debug.Log($"Position:{m_procObj.m_position} {MoveItTool.InstanceIDDebug(id)}");
+                return m_procObj.m_position;
             }
         }
 
@@ -75,8 +67,9 @@ namespace MoveIt
         {
             get
             {
-                if (id.IsEmpty || !isWithinRange) return 0f;
-                return ProcObj.m_rotation.y;
+                //if (!isValid) return 0f;
+                Debug.Log($"RotationY:{m_procObj.m_rotation.y} {MoveItTool.InstanceIDDebug(id)}");
+                return m_procObj.m_rotation.y;
             }
         }
 
@@ -85,25 +78,43 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return false;
-                if (!isWithinRange) return false;
                 return true;
             }
         }
 
 
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
-        { }
+        {
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaHeight;
+
+            if (followTerrain)
+            {
+                //newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+            }
+
+            Move(newPosition, state.angle + deltaAngle);
+        }
 
 
         public override void Move(Vector3 location, float angle)
-        { }
+        {
+            m_procObj.m_rotation.ToAngleAxis(out float initialAngle, out Vector3 devNull);
+            angle *= Mathf.Rad2Deg;
+            while (angle < 0f) angle += 360f;
+            while (angle >= 360f) angle -= 360f;
+
+            Debug.Log($"Proc {m_procObj.id} from {m_procObj.m_position} to {location}\nRotating from {initialAngle} to {angle} - (delta:{initialAngle - angle})\n" +
+                $"w:{m_procObj.m_rotation.w} x:{m_procObj.m_rotation.x} y:{m_procObj.m_rotation.y} z:{m_procObj.m_rotation.z}\n");
+            m_procObj.m_position = location;
+            m_procObj.m_rotation = m_procObj.m_rotation.Rotate(0, initialAngle - angle, 0);
+        }
 
 
         public override void SetHeight(float height)
         {
             if (!isValid) return;
-
-            ProcObj.m_position.y = height;
+            m_procObj.m_position.y = height;
         }
 
 
@@ -111,6 +122,7 @@ namespace MoveIt
         {
             return instanceState.instance;
         }
+
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             return instanceState.instance;
@@ -121,12 +133,13 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
-            return new Bounds(Vector3.zero, Vector3.zero);
+            return new Bounds(m_procObj.m_position, new Vector3(10, 0, 10));
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            PO_Utils.RenderOverlay(cameraInfo, m_procObj.m_position, 1f, 0f, new Color32(180, 30, 240, 170));
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
@@ -134,17 +147,5 @@ namespace MoveIt
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         { }
-    }
-
-    public static class PObjUtils
-    {
-        public static ProceduralObjects.Classes.ProceduralObject _getObjectWithId(this List<ProceduralObjects.Classes.ProceduralObject> list, int id)
-        {
-            if (list.Any(po => po.id == id))
-            {
-                return list.FirstOrDefault(po => po.id == id);
-            }
-            return null;
-        }
     }
 }
