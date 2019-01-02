@@ -80,12 +80,15 @@ namespace MoveIt
         public int aeraUpdateCountdown = -1;
         public HashSet<Bounds> aerasToUpdate = new HashSet<Bounds>();
 
-        private static Color m_hoverColor = new Color32(0, 181, 255, 255);
-        private static Color m_selectedColor = new Color32(95, 166, 0, 244);
-        private static Color m_moveColor = new Color32(125, 196, 30, 244);
-        private static Color m_removeColor = new Color32(255, 160, 47, 191);
-        private static Color m_despawnColor = new Color32(255, 160, 47, 191);
-        private static Color m_alignColor = new Color32(255, 255, 255, 244);
+        internal static Color m_hoverColor = new Color32(0, 181, 255, 255);
+        internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
+        internal static Color m_moveColor = new Color32(125, 196, 30, 244);
+        internal static Color m_removeColor = new Color32(255, 160, 47, 191);
+        internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
+        internal static Color m_alignColor = new Color32(255, 255, 255, 244);
+        internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
+        internal static Color m_POselectedColor = new Color32(240, 140, 255, 140); //(190, 60, 255, 150)
+        internal static Color m_POdisabledColor = new Color32(210, 120, 245, 140);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
@@ -413,7 +416,7 @@ namespace MoveIt
                 msg += $"{i.GetType()} {InstanceIDDebug(i)}\n";
                 if (i is MoveableProc mpo)
                 {
-                    msg += $"    {mpo.m_procObj.id}:{mpo.m_procObj.m_rotation.w},{mpo.m_procObj.m_rotation.x},{mpo.m_procObj.m_rotation.y},{mpo.m_procObj.m_rotation.z}\n";
+                    msg += $"    {mpo.m_procObj.DebugQuaternion()}\n";
                 }
             }
             msg += "Queue: " + ActionQueue.instance.DebugQueue();
@@ -461,6 +464,11 @@ namespace MoveIt
         {
             if (m_toolState == ToolState.Default || m_toolState == ToolState.Aligning)
             {
+                //TODOforeach (ProceduralObjects.Classes.ProceduralObject procObj in procLogic.proceduralObjects)
+                //{
+                //    PO_Utils.RenderOverlay(cameraInfo, procObj.m_position, 1f, 0, m_POdisabledColor);
+                //}
+
                 if (Action.selection.Count > 0)
                 {
                     foreach (Instance instance in Action.selection)

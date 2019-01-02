@@ -36,8 +36,9 @@ namespace MoveIt
             bool selectNodes = true;
             bool selectSegments = true;
             bool selectTrees = true;
+            bool selectProc = true;
 
-            bool _repeatSearch = false;
+            bool repeatSearch = false;
 
             if (marqueeSelection)
             {
@@ -208,6 +209,10 @@ namespace MoveIt
                     }
                 }
 
+                if (selectProc)
+                {
+                }
+
                 if (selectTrees)
                 {
                     gridMinX = Mathf.Max((int)((location.x - 8f) / 32f + 270f), 0);
@@ -239,14 +244,13 @@ namespace MoveIt
                     }
                 }
 
-                _repeatSearch = false;
-
+                repeatSearch = false;
                 if (OptionsKeymapping.stepOverKey.IsPressed())
                 {
                     if (!_stepProcessed)
                     {
                         _stepProcessed = true;
-                        _repeatSearch = true;
+                        repeatSearch = true;
                         stepOver.Add(id);
                     }
                 }
@@ -255,7 +259,7 @@ namespace MoveIt
                     _stepProcessed = false;
                 }
             }
-            while (_repeatSearch);
+            while (repeatSearch);
 
             //Debug.Log($"ID=({id.Building},{id.Prop},{id.NetNode},{id.NetSegment},{id.Tree})");
             if (debugPanel != null)

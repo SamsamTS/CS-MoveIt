@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using ColossalFramework.Math;
-using ProceduralObjects;
 using System.Linq;
-
 
 namespace MoveIt
 {
@@ -14,8 +12,7 @@ namespace MoveIt
 
     public class MoveableProc : Instance
     {
-        public ProceduralObjectsLogic m_procLogic;
-        public ProceduralObjects.Classes.ProceduralObject m_procObj;
+        internal PO_Object m_procObj;
 
         public override HashSet<ushort> segmentList
         {
@@ -29,8 +26,7 @@ namespace MoveIt
         
         public MoveableProc(InstanceID instanceID) : base(instanceID)
         {
-            m_procLogic = PO_Utils.GetPOLogic();
-            m_procObj = m_procLogic.pObjSelection.GetProcWithId(ProcId);
+            m_procObj = PO_Logic.GetProcObj(instanceID.NetLane);
         }
 
 
@@ -39,8 +35,8 @@ namespace MoveIt
             ProcState state = new ProcState();
             state.instance = this;
 
-            state.position = m_procObj.m_position;
-            m_procObj.m_rotation.ToAngleAxis(out state.angle, out Vector3 devNull);
+            state.position = m_procObj.Position;
+            state.angle = m_procObj.GetAngleRadY();
 
             return state;
         }
@@ -48,8 +44,8 @@ namespace MoveIt
 
         public override void SetState(InstanceState state)
         {
-            m_procObj.m_position = state.position;
-            m_procObj.m_rotation = m_procObj.m_rotation.Rotate(0, state.angle, 0);
+            m_procObj.Position = state.position;
+            m_procObj.SetAngleDeltaRadY(state.angle);
         }
 
 
@@ -58,8 +54,8 @@ namespace MoveIt
             get
             {
                 //if (!isValid) return Vector3.zero;
-                Debug.Log($"Position:{m_procObj.m_position} {MoveItTool.InstanceIDDebug(id)}");
-                return m_procObj.m_position;
+                Debug.Log($"Position:{m_procObj.Position} {MoveItTool.InstanceIDDebug(id)}");
+                return m_procObj.Position;
             }
         }
 
@@ -68,8 +64,7 @@ namespace MoveIt
             get
             {
                 //if (!isValid) return 0f;
-                Debug.Log($"RotationY:{m_procObj.m_rotation.y} {MoveItTool.InstanceIDDebug(id)}");
-                return m_procObj.m_rotation.y;
+                return m_procObj.GetAngleRadY();
             }
         }
 
@@ -85,7 +80,7 @@ namespace MoveIt
 
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain)
         {
-            float deltaAngleDeg = deltaAngleRad * Mathf.Rad2Deg;
+            //float deltaAngleDeg = deltaAngleRad * Mathf.Rad2Deg;
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -93,29 +88,27 @@ namespace MoveIt
             {
                 //newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
-            //Debug.Log($"{state.angle} + {deltaAngleDeg} = {state.angle + deltaAngleDeg}");
-            Move(newPosition, (state.angle * Mathf.Deg2Rad) + deltaAngleRad);
+            Debug.Log($"{state.angle} + {deltaAngleRad} = {state.angle + deltaAngleRad}");
+            Move(newPosition, state.angle + deltaAngleRad);
         }
 
 
         public override void Move(Vector3 location, float angleRad)
         {
-            m_procObj.m_rotation.ToAngleAxis(out float initialAngle, out Vector3 devNull);
-            float angleDeg = angleRad * Mathf.Rad2Deg;
-            while (angleDeg < 0f) angleDeg += 360f;
-            while (angleDeg >= 360f) angleDeg -= 360f;
+            float initialAngle = m_procObj.GetAngleRadY();
 
-            Debug.Log($"\nMove {m_procObj.m_position} -> {location}\nRotate {initialAngle} -> {angleDeg} - (delta:{initialAngle - angleDeg})\n" +
-                $"    {m_procObj.id}:{m_procObj.m_rotation.w},{m_procObj.m_rotation.x},{m_procObj.m_rotation.y},{m_procObj.m_rotation.z}\n");
-            m_procObj.m_position = location;
-            m_procObj.m_rotation = m_procObj.m_rotation.Rotate(0, initialAngle - angleDeg, 0);
+            Debug.Log($"\nRotate {initialAngle} - {angleRad} = {initialAngle - angleRad}\nRotate {initialAngle * Mathf.Rad2Deg} - {angleRad * Mathf.Rad2Deg} = {initialAngle * Mathf.Rad2Deg - angleRad * Mathf.Rad2Deg}\n" +
+                $"    {m_procObj.DebugQuaternion()}\n");
+            m_procObj.Position = location;
+            m_procObj.SetAngleRadY(angleRad);
+            //m_procObj.Rotation = m_procObj.Rotation.Rotate(0, initialAngle - angleDeg, 0);
         }
 
 
         public override void SetHeight(float height)
         {
             if (!isValid) return;
-            m_procObj.m_position.y = height;
+            m_procObj.SetPositionY(height);
         }
 
 
@@ -134,13 +127,13 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
-            return new Bounds(m_procObj.m_position, new Vector3(10, 0, 10));
+            return new Bounds(m_procObj.Position, new Vector3(8, 0, 8));
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            PO_Utils.RenderOverlay(cameraInfo, m_procObj.m_position, 1f, 0f, new Color32(190, 60, 255, 150));
+            PO_Utils.RenderOverlay(cameraInfo, m_procObj.Position, 2f, 0f, MoveItTool.m_POselectedColor); 
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
