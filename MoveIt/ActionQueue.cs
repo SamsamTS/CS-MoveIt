@@ -177,5 +177,10 @@ namespace MoveIt
                 return m_actions[m_current];
             }
         }
+
+        public string DebugQueue()
+        {
+            return $"{m_current} ({m_tail}/{m_head}) - <{current.GetType()}";
+        }
     }
 }

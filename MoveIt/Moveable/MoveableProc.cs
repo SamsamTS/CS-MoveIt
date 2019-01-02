@@ -40,7 +40,7 @@ namespace MoveIt
             state.instance = this;
 
             state.position = m_procObj.m_position;
-            state.angle = m_procObj.m_rotation.y;
+            m_procObj.m_rotation.ToAngleAxis(out state.angle, out Vector3 devNull);
 
             return state;
         }
@@ -49,7 +49,7 @@ namespace MoveIt
         public override void SetState(InstanceState state)
         {
             m_procObj.m_position = state.position;
-            m_procObj.m_rotation.y = state.angle;
+            m_procObj.m_rotation = m_procObj.m_rotation.Rotate(0, state.angle, 0);
         }
 
 
@@ -83,8 +83,9 @@ namespace MoveIt
         }
 
 
-        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
+        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain)
         {
+            float deltaAngleDeg = deltaAngleRad * Mathf.Rad2Deg;
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -92,22 +93,22 @@ namespace MoveIt
             {
                 //newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
-
-            Move(newPosition, state.angle + deltaAngle);
+            //Debug.Log($"{state.angle} + {deltaAngleDeg} = {state.angle + deltaAngleDeg}");
+            Move(newPosition, (state.angle * Mathf.Deg2Rad) + deltaAngleRad);
         }
 
 
-        public override void Move(Vector3 location, float angle)
+        public override void Move(Vector3 location, float angleRad)
         {
             m_procObj.m_rotation.ToAngleAxis(out float initialAngle, out Vector3 devNull);
-            angle *= Mathf.Rad2Deg;
-            while (angle < 0f) angle += 360f;
-            while (angle >= 360f) angle -= 360f;
+            float angleDeg = angleRad * Mathf.Rad2Deg;
+            while (angleDeg < 0f) angleDeg += 360f;
+            while (angleDeg >= 360f) angleDeg -= 360f;
 
-            Debug.Log($"Proc {m_procObj.id} from {m_procObj.m_position} to {location}\nRotating from {initialAngle} to {angle} - (delta:{initialAngle - angle})\n" +
-                $"w:{m_procObj.m_rotation.w} x:{m_procObj.m_rotation.x} y:{m_procObj.m_rotation.y} z:{m_procObj.m_rotation.z}\n");
+            Debug.Log($"\nMove {m_procObj.m_position} -> {location}\nRotate {initialAngle} -> {angleDeg} - (delta:{initialAngle - angleDeg})\n" +
+                $"    {m_procObj.id}:{m_procObj.m_rotation.w},{m_procObj.m_rotation.x},{m_procObj.m_rotation.y},{m_procObj.m_rotation.z}\n");
             m_procObj.m_position = location;
-            m_procObj.m_rotation = m_procObj.m_rotation.Rotate(0, initialAngle - angle, 0);
+            m_procObj.m_rotation = m_procObj.m_rotation.Rotate(0, initialAngle - angleDeg, 0);
         }
 
 
@@ -139,7 +140,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            PO_Utils.RenderOverlay(cameraInfo, m_procObj.m_position, 1f, 0f, new Color32(180, 30, 240, 170));
+            PO_Utils.RenderOverlay(cameraInfo, m_procObj.m_position, 1f, 0f, new Color32(190, 60, 255, 150));
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)

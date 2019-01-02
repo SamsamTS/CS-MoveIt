@@ -406,11 +406,17 @@ namespace MoveIt
             {
                 ActionQueue.instance.Push(new TransformAction());
             }
+
             string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
             foreach (Instance i in Action.selection)
             {
-                msg += $"{i.GetType()} id:{i.id.NetLane}\n";
+                msg += $"{i.GetType()} {InstanceIDDebug(i)}\n";
+                if (i is MoveableProc mpo)
+                {
+                    msg += $"    {mpo.m_procObj.id}:{mpo.m_procObj.m_rotation.w},{mpo.m_procObj.m_rotation.x},{mpo.m_procObj.m_rotation.y},{mpo.m_procObj.m_rotation.z}\n";
+                }
             }
+            msg += "Queue: " + ActionQueue.instance.DebugQueue();
             Debug.Log(msg);
         }
 
@@ -971,7 +977,7 @@ namespace MoveIt
         public static string InstanceIDDebug(Instance instance)
         {
             if (instance == null) return "(null instance)";
-            return $"(B{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
+            return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
         }
     }
 }
