@@ -360,12 +360,12 @@ namespace MoveIt
             // Update selected POs
             int oldSelectionCount = Action.selection.Count;
             bool isChanged = false;
-            foreach (ProceduralObjects.Classes.ProceduralObject obj in PO_Utils.GetPOLogic().pObjSelection)
+            foreach (PO_Object obj in PO_Logic.Objects)
             {
                 bool exists = false;
                 foreach (Instance instance in Action.selection)
                 {
-                    if (instance.id.NetLane == (obj.id + 1))
+                    if (instance.id.NetLane == obj.Id)
                     {
                         exists = true;
                         break;
@@ -374,7 +374,7 @@ namespace MoveIt
                 if (!exists)
                 {
                     InstanceID instanceId = default(InstanceID);
-                    instanceId.NetLane = (uint)obj.id + 1;
+                    instanceId.NetLane = obj.Id;
                     MoveableProc proc = new MoveableProc(instanceId);
                     Action.selection.Add(proc);
                     isChanged = true;
@@ -386,9 +386,9 @@ namespace MoveIt
                 if (instance.id.NetLane > 0)
                 {
                     bool exists = false;
-                    foreach (ProceduralObjects.Classes.ProceduralObject obj in PO_Utils.GetPOLogic().pObjSelection)
+                    foreach (PO_Object obj in PO_Logic.Objects)
                     {
-                        if ((obj.id + 1) == instance.id.NetLane)
+                        if (obj.Id == instance.id.NetLane)
                         {
                             exists = true;
                             break;
@@ -464,7 +464,7 @@ namespace MoveIt
         {
             if (m_toolState == ToolState.Default || m_toolState == ToolState.Aligning)
             {
-                //TODOforeach (ProceduralObjects.Classes.ProceduralObject procObj in procLogic.proceduralObjects)
+                //foreach (ProceduralObjects.Classes.ProceduralObject procObj in procLogic.proceduralObjects)
                 //{
                 //    PO_Utils.RenderOverlay(cameraInfo, procObj.m_position, 1f, 0, m_POdisabledColor);
                 //}

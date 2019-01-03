@@ -45,7 +45,7 @@ namespace MoveIt
         public override void SetState(InstanceState state)
         {
             m_procObj.Position = state.position;
-            m_procObj.SetAngleDeltaRadY(state.angle);
+            m_procObj.Angle = state.angle;
         }
 
 
@@ -54,7 +54,6 @@ namespace MoveIt
             get
             {
                 //if (!isValid) return Vector3.zero;
-                Debug.Log($"Position:{m_procObj.Position} {MoveItTool.InstanceIDDebug(id)}");
                 return m_procObj.Position;
             }
         }
@@ -95,7 +94,8 @@ namespace MoveIt
         // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
-            //Debug.Log($"\nRotate {angleRad} ({angleRad * Mathf.Rad2Deg})\n    {m_procObj.DebugQuaternion()}\n");
+            Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {angleRad} => {m_procObj.Angle}\n" +
+                $"Degrees {angleRad * Mathf.Rad2Deg} - {m_procObj.Angle * Mathf.Rad2Deg}\n");
             m_procObj.Position = location;
             m_procObj.Angle = angleRad;
         }
@@ -129,7 +129,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            PO_Utils.RenderOverlay(cameraInfo, m_procObj.Position, 2f, 0f, MoveItTool.m_POselectedColor); 
+            m_procObj.RenderOverlay(cameraInfo, MoveItTool.m_POselectedColor); 
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
