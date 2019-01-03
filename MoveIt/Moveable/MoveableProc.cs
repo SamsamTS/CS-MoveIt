@@ -36,7 +36,7 @@ namespace MoveIt
             state.instance = this;
 
             state.position = m_procObj.Position;
-            state.angle = m_procObj.GetAngleRadY();
+            state.angle = m_procObj.Angle;
 
             return state;
         }
@@ -64,7 +64,7 @@ namespace MoveIt
             get
             {
                 //if (!isValid) return 0f;
-                return m_procObj.GetAngleRadY();
+                return m_procObj.Angle;
             }
         }
 
@@ -78,9 +78,9 @@ namespace MoveIt
         }
 
 
+        // deltaAngleRad is clumulative delta since Transform Action started, CCW
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain)
         {
-            //float deltaAngleDeg = deltaAngleRad * Mathf.Rad2Deg;
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
@@ -88,20 +88,16 @@ namespace MoveIt
             {
                 //newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
-            Debug.Log($"{state.angle} + {deltaAngleRad} = {state.angle + deltaAngleRad}");
+            //Debug.Log($"POBJ {state.angle} + {deltaAngleRad} = {state.angle + deltaAngleRad}");
             Move(newPosition, state.angle + deltaAngleRad);
         }
 
-
+        // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
-            float initialAngle = m_procObj.GetAngleRadY();
-
-            Debug.Log($"\nRotate {initialAngle} - {angleRad} = {initialAngle - angleRad}\nRotate {initialAngle * Mathf.Rad2Deg} - {angleRad * Mathf.Rad2Deg} = {initialAngle * Mathf.Rad2Deg - angleRad * Mathf.Rad2Deg}\n" +
-                $"    {m_procObj.DebugQuaternion()}\n");
+            //Debug.Log($"\nRotate {angleRad} ({angleRad * Mathf.Rad2Deg})\n    {m_procObj.DebugQuaternion()}\n");
             m_procObj.Position = location;
-            m_procObj.SetAngleRadY(angleRad);
-            //m_procObj.Rotation = m_procObj.Rotation.Rotate(0, initialAngle - angleDeg, 0);
+            m_procObj.Angle = angleRad;
         }
 
 

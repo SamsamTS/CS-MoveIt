@@ -42,6 +42,25 @@ namespace MoveIt
         public uint Id { get => id; set => id = value; }
         private int ProcId { get => (int)id - 1; set => id = (uint)value + 1; }
 
+        public float Angle
+        {
+            get
+            {
+                Rotation.ToAngleAxis(out float a, out Vector3 axis);
+                //Debug.Log($"Angle: {a * Mathf.Deg2Rad} ({a})");
+                return -a * Mathf.Deg2Rad * axis.y;
+            }
+
+            set
+            {
+                //string msg = $"\n{Angle}->{value} ({value - Angle}) - {Angle * Mathf.Rad2Deg}->{value * Mathf.Rad2Deg} ({(value - Angle) * Mathf.Rad2Deg})\n";
+                //msg += $"From: {Angle} ({Angle * Mathf.Rad2Deg})\n";
+                SetAngleDeltaRadY(value - Angle);
+                //msg += $"  To: {Angle} ({Angle * Mathf.Rad2Deg})\n";
+                //Debug.Log(msg);
+            }
+        }
+
         public PO_Object(ProceduralObjects.Classes.ProceduralObject obj)
         {
             procObj = obj;
@@ -51,23 +70,16 @@ namespace MoveIt
         public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
         private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
 
-        public float GetAngleRadY()
-        {
-            Rotation.ToAngleAxis(out float a, out Vector3 devNull);
-            return a * Mathf.Deg2Rad;
-        }
-
         public void SetAngleDeltaRadY(float a)
         {
-            a *= Mathf.Rad2Deg;
-            while (a < 0f) a += 360f;
-            while (a >= 360f) a -= 360f;
-            Rotation = Rotation.Rotate(0, a, 0);
-        }
-
-        public void SetAngleRadY(float a)
-        {
-            SetAngleDeltaRadY(a - GetAngleRadY());
+            string msg = a.ToString();
+            a = (a * Mathf.Rad2Deg) % 360f;
+            //if (a < 0) a += 360f;
+            //msg += $" ({a}) - {-a}\n";
+            //msg += $"Before: {Angle} ({Angle * Mathf.Rad2Deg})\n";
+            Rotation = Rotation.Rotate(0, -a, 0);
+            //msg += $" After: {Angle} ({Angle * Mathf.Rad2Deg})\n";
+            //Debug.Log(msg);
         }
 
         public void SetPositionY(float h)
@@ -101,7 +113,7 @@ namespace MoveIt
         {
             var gObj = new GameObject("temp_obj");
             gObj.transform.rotation = rot;
-            gObj.transform.Rotate(x, y, z);
+            gObj.transform.Rotate(x, y, z); //TODO relativeTo Space.World?
             var newRot = gObj.transform.rotation;
             Object.Destroy(gObj);
             return newRot;
@@ -109,7 +121,7 @@ namespace MoveIt
 
         public static void RenderOverlay(RenderManager.CameraInfo cameraInfo, Vector3 position, float scale, float angle, Color color)
         {
-            float size = 8f * scale;// Mathf.Max(8, 8) * scale;
+            float size = 4f * scale;
             Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, size, position.y - 100f, position.y + 100f, renderLimits: false, alphaBlend: true);
             
