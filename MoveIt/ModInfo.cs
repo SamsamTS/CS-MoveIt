@@ -37,7 +37,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.3.0 [Alpha]";
+        public const string version = "2.3.0";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -98,10 +98,6 @@ namespace MoveIt
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
                 });
-                //checkBox = (UICheckBox)group.AddCheckbox("Alt+Click on segment to select nodes", MoveItTool.altSelectSegmentNodes.value, (b) =>
-                //{
-                //    MoveItTool.altSelectSegmentNodes.value = b;
-                //});
 
                 group.AddSpace(10);
 
@@ -133,12 +129,12 @@ namespace MoveIt
 
                 panel.gameObject.AddComponent<OptionsKeymapping>();
 
-                group.AddSpace(10);
+                group.AddSpace(20);
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", _cleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
 
-                group.AddSpace(10);
+                group.AddSpace(20);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n(Affects performance, do not enable unless you have a specific reason)", MoveItTool.showDebugPanel.value, (b) =>
                 {
@@ -192,7 +188,7 @@ namespace MoveIt
                 {
                     count++;
                     Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
-                    //NetManager.instance.ReleaseNode(nodeId);
+                    NetManager.instance.ReleaseNode(nodeId);
                 }
             }
             if (count > 0)
