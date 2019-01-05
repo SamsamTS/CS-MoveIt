@@ -615,7 +615,7 @@ namespace MoveIt
             RemoveFromGrid(building, ref data);
             if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
             {
-                Debug.Log("PARKING (RB)");
+                Debug.Log($"PARKING (RB)\n#{building}:{info.name}");
                 BuildingManager.instance.UpdateParkingSpaces(building, ref data);
             }
 

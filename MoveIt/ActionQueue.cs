@@ -180,7 +180,8 @@ namespace MoveIt
 
         public string DebugQueue()
         {
-            return $"{m_current} ({m_tail}/{m_head}) - <{current.GetType()}";
+            string t = (current == null ? "null" : current.GetType().ToString());
+            return $"{m_current} ({m_tail}/{m_head}) - <{t}>";
         }
     }
 }

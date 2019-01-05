@@ -20,19 +20,6 @@ namespace MoveIt
                 return logic;
             }
         }
-       
-        public static PO_Object GetProcObj(uint id)
-        {
-            foreach (ProceduralObjects.Classes.ProceduralObject obj in Logic.proceduralObjects)
-            {
-                if (obj.id == id - 1)
-                {
-                    return new PO_Object(obj);
-                }
-            }
-
-            throw new System.Exception($"Id {id} (actual:{id-1}) not found!");
-        }
 
         public static List<PO_Object> Objects
         {
@@ -45,6 +32,19 @@ namespace MoveIt
                 }
                 return list;
             }
+        }
+       
+        public static PO_Object GetProcObj(uint id)
+        {
+            foreach (ProceduralObjects.Classes.ProceduralObject obj in Logic.proceduralObjects)
+            {
+                if (obj.id == id - 1)
+                {
+                    return new PO_Object(obj);
+                }
+            }
+
+            throw new System.Exception($"Id {id} (actual:{id-1}) not found!");
         }
     }
 

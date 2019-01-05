@@ -665,8 +665,10 @@ namespace MoveIt
 
                     if (segmentUpdateCountdown == 0)
                     {
+                        string msg = "Segments Updating: ";
                         foreach (ushort segment in segmentsToUpdate)
                         {
+                            msg += $"{segment}, ";
                             NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
                             if (segmentBuffer[segment].m_flags != NetSegment.Flags.None)
                             {
@@ -678,7 +680,7 @@ namespace MoveIt
 
                             segmentBuffer[segment].Info.m_netAI.CreateSegment(segment, ref segmentBuffer[segment]);
                         }
-
+                        Debug.Log(msg);
                         segmentsToUpdate.Clear();
                     }
 
@@ -691,6 +693,7 @@ namespace MoveIt
                     {
                         foreach (Bounds bounds in aerasToUpdate)
                         {
+                            Debug.Log($"PARKING (SS)\n{bounds}");
                             bounds.Expand(64f);
                             VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                         }
