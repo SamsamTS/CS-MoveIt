@@ -154,6 +154,7 @@ namespace MoveIt
             m_followTerrain.eventClicked += (c, p) =>
             {
                 MoveItTool.followTerrain = (m_followTerrain.activeStateIndex == 1);
+                MoveItTool.followTerrainModeEnabled.value = (m_followTerrain.activeStateIndex == 1);
             };
             #endregion
 

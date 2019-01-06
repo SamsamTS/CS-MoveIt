@@ -56,6 +56,7 @@ namespace MoveIt
         public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, true, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
+        public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
 
         public static bool filterBuildings = true;
@@ -194,6 +195,8 @@ namespace MoveIt
             enabled = false;
 
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
+
+            followTerrain = followTerrainModeEnabled;
         }
 
         protected override void OnToolGUI(Event e)
