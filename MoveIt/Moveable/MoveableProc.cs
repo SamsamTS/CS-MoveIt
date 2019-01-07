@@ -91,11 +91,12 @@ namespace MoveIt
             Move(newPosition, state.angle + deltaAngleRad);
         }
 
+
         // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
-            Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {angleRad} => {m_procObj.Angle}\n" +
-                $"Degrees {angleRad * Mathf.Rad2Deg} - {m_procObj.Angle * Mathf.Rad2Deg}\n");
+            Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
+                $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");
             m_procObj.Position = location;
             m_procObj.Angle = angleRad;
         }

@@ -51,9 +51,9 @@ namespace MoveIt
     internal class PO_Object
     {
         private ProceduralObjects.Classes.ProceduralObject procObj;
-        private uint id; // The NetLane value, object.id+1
-        public uint Id { get => id; set => id = value; }
-        private int ProcId { get => (int)id - 1; set => id = (uint)value + 1; }
+        public uint Id { get; set; } // The InstanceID.NetLane value
+        private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
+        //private const float PIx2 = Mathf.PI * 2;
 
         public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
         private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
@@ -62,13 +62,18 @@ namespace MoveIt
         {
             get
             {
-                Rotation.ToAngleAxis(out float a, out Vector3 axis);
-                return -a * Mathf.Deg2Rad * axis.y;
+                float a = -Rotation.eulerAngles.y * Mathf.Deg2Rad;
+                //Debug.Log($"Getting:{a} ({a * Mathf.Rad2Deg})");
+                return a;
             }
 
             set
             {
-                SetAngleDeltaRadY(value - Angle);
+                float a = -(value * Mathf.Rad2Deg) % 360f;
+                if (a < 0) a += 360f;
+                if (a >= 360f) a -= 360f;
+                //Debug.Log($"Setting:{a * Mathf.Deg2Rad} ({a})");
+                procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
             }
         }
 
@@ -79,11 +84,13 @@ namespace MoveIt
         }
 
 
-        public void SetAngleDeltaRadY(float a)
-        {
-            a = (a * Mathf.Rad2Deg) % 360f;
-            Rotation = Rotation.Rotate(0, -a, 0);
-        }
+        //public void SetAngleDeltaRadY(float a)
+        //{
+        //    a = -a % PIx2;
+        //    if (a <= -Mathf.PI) a += PIx2;
+        //    if (a > Mathf.PI) a -= PIx2;
+        //    Rotation = Rotation.Rotate(0, a * Mathf.Rad2Deg, 0);
+        //}
 
         public void SetPositionY(float h)
         {
@@ -114,14 +121,14 @@ namespace MoveIt
             return null;
         }
 
-        public static Quaternion Rotate(this Quaternion rot, float x, float y, float z)
-        {
-            var gObj = new GameObject("temp_obj");
-            gObj.transform.rotation = rot;
-            gObj.transform.Rotate(x, y, z); //TODO relativeTo Space.World?
-            var newRot = gObj.transform.rotation;
-            Object.Destroy(gObj);
-            return newRot;
-        }
+        //public static Quaternion Rotate(this Quaternion rot, float x, float y, float z)
+        //{
+        //    var gObj = new GameObject("temp_obj");
+        //    gObj.transform.rotation = rot;
+        //    gObj.transform.Rotate(x, y, z, Space.World);
+        //    var newRot = gObj.transform.rotation;
+        //    Object.Destroy(gObj);
+        //    return newRot;
+        //}
     }
 }
