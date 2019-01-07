@@ -57,7 +57,7 @@ namespace MoveIt
                 return;
             }
 
-            ToolStatus.text = $"{MoveItTool.instance.m_toolState} (align:{MoveItTool.instance.m_alignMode}.{MoveItTool.instance.m_alignToolPhase})";
+            ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase})";
 
             // End with updating the hovered item
             if (id == null)

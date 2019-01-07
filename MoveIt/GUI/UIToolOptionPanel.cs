@@ -396,7 +396,7 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    if (MoveItTool.instance.m_toolState == MoveItTool.ToolStates.Cloning)
+                    if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
                     {
                         MoveItTool.instance.StopCloning();
                     }
@@ -647,7 +647,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_alignTools != null && MoveItTool.instance != null)
             {
-                if(MoveItTool.instance.m_toolState == MoveItTool.ToolStates.Aligning)
+                if(MoveItTool.instance.ToolState == MoveItTool.ToolStates.Aligning)
                 {
                     instance.m_alignTools.normalBgSprite = "OptionBaseFocused";
                 }
@@ -662,7 +662,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_copy != null && MoveItTool.instance != null)
             {
-                if (MoveItTool.instance.m_toolState == MoveItTool.ToolStates.Cloning || MoveItTool.instance.m_toolState == MoveItTool.ToolStates.RightDraggingClone)
+                if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.instance.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                 {
                     instance.m_copy.normalBgSprite = "OptionBaseFocused";
                 }

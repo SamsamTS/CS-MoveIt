@@ -15,7 +15,7 @@ namespace MoveIt
 
             if (m_pauseMenu != null && m_pauseMenu.isVisible)
             {
-                if (m_toolState == ToolStates.Default || m_toolState == ToolStates.MouseDragging || m_toolState == ToolStates.DrawingSelection)
+                if (ToolState == ToolStates.Default || ToolState == ToolStates.MouseDragging || ToolState == ToolStates.DrawingSelection)
                 {
                     ToolsModifierControl.SetTool<DefaultTool>();
                 }
@@ -23,7 +23,7 @@ namespace MoveIt
                 StopCloning();
                 StopAligning();
 
-                m_toolState = ToolStates.Default;
+                ToolState = ToolStates.Default;
 
                 UIView.library.Hide("PauseMenu");
 
@@ -110,7 +110,7 @@ namespace MoveIt
                     m_marqueeInstances = null;
                     m_segmentGuide = default(NetSegment);
 
-                    switch (m_toolState)
+                    switch (ToolState)
                     {
                         case ToolStates.Default:
                         case ToolStates.Aligning:
@@ -388,7 +388,7 @@ namespace MoveIt
                 netManager.GetClosestSegments(state.position, closeSegments, out int closeSegmentCount);
                 segmentList.UnionWith(closeSegments);
 
-                if (m_toolState != ToolStates.Cloning)
+                if (ToolState != ToolStates.Cloning)
                 {
                     ingnoreSegments.UnionWith(state.instance.segmentList);
                 }

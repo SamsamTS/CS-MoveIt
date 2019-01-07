@@ -37,9 +37,9 @@ namespace MoveIt
                 case "MoveIt_AlignSlopeBtn":
                     if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
                     {
-                        MIT.m_alignMode = MoveItTool.AlignModes.SlopeNode;
+                        MIT.AlignMode = MoveItTool.AlignModes.SlopeNode;
 
-                        if (MIT.m_toolState == MoveItTool.ToolStates.Cloning || MIT.m_toolState == MoveItTool.ToolStates.RightDraggingClone)
+                        if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                         {
                             MIT.StopCloning();
                         }
@@ -65,9 +65,9 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignRandomBtn":
-                    MIT.m_alignMode = MoveItTool.AlignModes.Random;
+                    MIT.AlignMode = MoveItTool.AlignModes.Random;
 
-                    if (MIT.m_toolState == MoveItTool.ToolStates.Cloning || MIT.m_toolState == MoveItTool.ToolStates.RightDraggingClone)
+                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }
@@ -99,7 +99,7 @@ namespace MoveIt
                 btn.normalBgSprite = "OptionBase";
             }
 
-            switch (MIT.m_alignMode)
+            switch (MIT.AlignMode)
             {
                 case MoveItTool.AlignModes.Height:
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
@@ -113,7 +113,7 @@ namespace MoveIt
 
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlope";
 
-                    switch (MoveItTool.instance.m_alignToolPhase)
+                    switch (MoveItTool.instance.AlignToolPhase)
                     {
                         case 1:
                             AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeA";

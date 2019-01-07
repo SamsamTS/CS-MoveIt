@@ -317,7 +317,7 @@ namespace MoveIt
 
         public static bool Filter(NetNode node)
         {
-            if (MoveItTool.instance.m_alignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.m_alignMode == MoveItTool.AlignModes.Inplace)
+            if (MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Inplace)
             {
                 return false;
             }
