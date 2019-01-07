@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using ColossalFramework.Math;
-using System.Linq;
 
 namespace MoveIt
 {
@@ -37,6 +35,7 @@ namespace MoveIt
 
             state.position = m_procObj.Position;
             state.angle = m_procObj.Angle;
+            state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
             return state;
         }
@@ -53,7 +52,7 @@ namespace MoveIt
         {
             get
             {
-                //if (!isValid) return Vector3.zero;
+                if (!isValid) return Vector3.zero;
                 return m_procObj.Position;
             }
         }
@@ -62,7 +61,7 @@ namespace MoveIt
         {
             get
             {
-                //if (!isValid) return 0f;
+                if (!isValid) return 0f;
                 return m_procObj.Angle;
             }
         }
@@ -85,9 +84,8 @@ namespace MoveIt
 
             if (followTerrain)
             {
-                //newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
-            //Debug.Log($"POBJ {state.angle} + {deltaAngleRad} = {state.angle + deltaAngleRad}");
             Move(newPosition, state.angle + deltaAngleRad);
         }
 
@@ -95,8 +93,8 @@ namespace MoveIt
         // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
-            Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
-                $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");
+            //Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
+            //    $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");
             m_procObj.Position = location;
             m_procObj.Angle = angleRad;
         }

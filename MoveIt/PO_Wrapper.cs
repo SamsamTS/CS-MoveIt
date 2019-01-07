@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace MoveIt
 {
     internal static class PO_Logic
@@ -53,7 +52,6 @@ namespace MoveIt
         private ProceduralObjects.Classes.ProceduralObject procObj;
         public uint Id { get; set; } // The InstanceID.NetLane value
         private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
-        //private const float PIx2 = Mathf.PI * 2;
 
         public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
         private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
@@ -84,14 +82,6 @@ namespace MoveIt
         }
 
 
-        //public void SetAngleDeltaRadY(float a)
-        //{
-        //    a = -a % PIx2;
-        //    if (a <= -Mathf.PI) a += PIx2;
-        //    if (a > Mathf.PI) a -= PIx2;
-        //    Rotation = Rotation.Rotate(0, a * Mathf.Rad2Deg, 0);
-        //}
-
         public void SetPositionY(float h)
         {
             procObj.m_position.y = h;
@@ -120,15 +110,5 @@ namespace MoveIt
             }
             return null;
         }
-
-        //public static Quaternion Rotate(this Quaternion rot, float x, float y, float z)
-        //{
-        //    var gObj = new GameObject("temp_obj");
-        //    gObj.transform.rotation = rot;
-        //    gObj.transform.Rotate(x, y, z, Space.World);
-        //    var newRot = gObj.transform.rotation;
-        //    Object.Destroy(gObj);
-        //    return newRot;
-        //}
     }
 }
