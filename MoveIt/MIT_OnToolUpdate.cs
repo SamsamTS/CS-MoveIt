@@ -15,7 +15,7 @@ namespace MoveIt
 
             if (m_pauseMenu != null && m_pauseMenu.isVisible)
             {
-                if (m_toolState == ToolState.Default || m_toolState == ToolState.MouseDragging || m_toolState == ToolState.DrawingSelection)
+                if (m_toolState == ToolStates.Default || m_toolState == ToolStates.MouseDragging || m_toolState == ToolStates.DrawingSelection)
                 {
                     ToolsModifierControl.SetTool<DefaultTool>();
                 }
@@ -23,7 +23,7 @@ namespace MoveIt
                 StopCloning();
                 StopAligning();
 
-                m_toolState = ToolState.Default;
+                m_toolState = ToolStates.Default;
 
                 UIView.library.Hide("PauseMenu");
 
@@ -112,13 +112,13 @@ namespace MoveIt
 
                     switch (m_toolState)
                     {
-                        case ToolState.Default:
-                        case ToolState.Aligning:
+                        case ToolStates.Default:
+                        case ToolStates.Aligning:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 break;
                             }
-                        case ToolState.MouseDragging:
+                        case ToolStates.MouseDragging:
                             {
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
@@ -171,7 +171,7 @@ namespace MoveIt
                                 UIToolOptionPanel.RefreshSnapButton();
                                 break;
                             }
-                        case ToolState.Cloning:
+                        case ToolStates.Cloning:
                             {
                                 if (m_rightClickTime != 0) break;
 
@@ -194,7 +194,7 @@ namespace MoveIt
                                 UIToolOptionPanel.RefreshSnapButton();
                                 break;
                             }
-                        case ToolState.RightDraggingClone:
+                        case ToolStates.RightDraggingClone:
                             {
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
@@ -214,7 +214,7 @@ namespace MoveIt
                                 UIToolOptionPanel.RefreshSnapButton();
                                 break;
                             }
-                        case ToolState.DrawingSelection:
+                        case ToolStates.DrawingSelection:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 m_marqueeInstances = GetMarqueeList(mouseRay);
@@ -388,7 +388,7 @@ namespace MoveIt
                 netManager.GetClosestSegments(state.position, closeSegments, out int closeSegmentCount);
                 segmentList.UnionWith(closeSegments);
 
-                if (m_toolState != ToolState.Cloning)
+                if (m_toolState != ToolStates.Cloning)
                 {
                     ingnoreSegments.UnionWith(state.instance.segmentList);
                 }

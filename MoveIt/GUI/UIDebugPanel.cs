@@ -11,7 +11,7 @@ namespace MoveIt
     {
         public UIPanel Panel;
         public DebugPanel_ModTools ModTools = null;
-        private UILabel HoverLarge, HoverSmall;
+        private UILabel HoverLarge, HoverSmall, ToolStatus;
         private InstanceID id, lastId;
 
         public DebugPanel()
@@ -47,11 +47,19 @@ namespace MoveIt
         public void Update(InstanceID instanceId)
         {
             id = instanceId;
+            Update();
+        }
+
+        public void Update()
+        { 
             if (!MoveItTool.showDebugPanel)
             {
                 return;
             }
 
+            ToolStatus.text = $"{MoveItTool.instance.m_toolState} (align:{MoveItTool.instance.m_alignMode}.{MoveItTool.instance.m_alignToolPhase})";
+
+            // End with updating the hovered item
             if (id == null)
             {
                 return;
@@ -125,7 +133,7 @@ namespace MoveIt
             Panel.name = "MoveIt_DebugPanel";
             Panel.atlas = ResourceLoader.GetAtlas("Ingame");
             Panel.backgroundSprite = "SubcategoriesPanel";
-            Panel.size = new Vector2(260, 62);
+            Panel.size = new Vector2(260, 78);
             Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 330, 3);
             Panel.clipChildren = true;
             Panel.isVisible = MoveItTool.showDebugPanel;
@@ -147,6 +155,15 @@ namespace MoveIt
             HoverSmall.clipChildren = true;
             HoverSmall.useDropShadow = true;
             HoverSmall.dropShadowOffset = new Vector2(1, -1);
+
+            ToolStatus = Panel.AddUIComponent<UILabel>();
+            ToolStatus.textScale = 0.65f;
+            ToolStatus.text = "";
+            ToolStatus.relativePosition = new Vector3(5, 64);
+            ToolStatus.width = HoverSmall.parent.width - 20;
+            ToolStatus.clipChildren = true;
+            ToolStatus.useDropShadow = true;
+            ToolStatus.dropShadowOffset = new Vector2(1, -1);
         }
     }
 
@@ -245,7 +262,7 @@ namespace MoveIt
             btn.tooltip = "Open in ModTools Scene Explorer";
             btn.size = new Vector2(20, 20);
             btn.textPadding = new RectOffset(1, 0, 5, 1);
-            btn.relativePosition = new Vector3(parent.width - 24, parent.height - 24);
+            btn.relativePosition = new Vector3(parent.width - 24, 22);
             btn.eventClicked += _toModTools;
 
             btn.atlas = ResourceLoader.GetAtlas("Ingame");

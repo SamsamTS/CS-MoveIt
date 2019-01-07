@@ -51,6 +51,7 @@ namespace MoveIt
     {
         private ProceduralObjects.Classes.ProceduralObject procObj;
         public uint Id { get; set; } // The InstanceID.NetLane value
+        public bool Selected { get; set; }
         private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
         public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
@@ -69,7 +70,7 @@ namespace MoveIt
             {
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
-                if (a >= 360f) a -= 360f;
+                //if (a >= 360f) a -= 360f;
                 //Debug.Log($"Setting:{a * Mathf.Deg2Rad} ({a})");
                 procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
             }
@@ -85,6 +86,11 @@ namespace MoveIt
         public void SetPositionY(float h)
         {
             procObj.m_position.y = h;
+        }
+
+        public float GetDistance(Vector3 location)
+        {
+            return Vector3.Distance(Position, location);
         }
 
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)

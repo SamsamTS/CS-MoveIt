@@ -39,7 +39,7 @@ namespace MoveIt
                     {
                         MIT.m_alignMode = MoveItTool.AlignModes.SlopeNode;
 
-                        if (MIT.m_toolState == MoveItTool.ToolState.Cloning || MIT.m_toolState == MoveItTool.ToolState.RightDraggingClone)
+                        if (MIT.m_toolState == MoveItTool.ToolStates.Cloning || MIT.m_toolState == MoveItTool.ToolStates.RightDraggingClone)
                         {
                             MIT.StopCloning();
                         }
@@ -67,7 +67,7 @@ namespace MoveIt
                 case "MoveIt_AlignRandomBtn":
                     MIT.m_alignMode = MoveItTool.AlignModes.Random;
 
-                    if (MIT.m_toolState == MoveItTool.ToolState.Cloning || MIT.m_toolState == MoveItTool.ToolState.RightDraggingClone)
+                    if (MIT.m_toolState == MoveItTool.ToolStates.Cloning || MIT.m_toolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }

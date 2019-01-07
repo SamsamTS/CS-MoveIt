@@ -211,6 +211,17 @@ namespace MoveIt
 
                 if (selectProc)
                 {
+                    foreach (PO_Object obj in PO_Logic.Objects)
+                    {
+                        float distance = obj.GetDistance(location);
+                        //Debug.Log($"Distance #{obj.Id}: {distance}");
+                        bool inXBounds = obj.Position.x > (location.x - 16f) && obj.Position.x < (location.x + 16f);
+                        bool inZBounds = obj.Position.z > (location.z - 16f) && obj.Position.z < (location.z + 16f);
+                        if (inXBounds && inZBounds)
+                        {
+                            //Debug.Log($"Object:{obj.Id}");
+                        }
+                    }
                 }
 
                 if (selectTrees)
