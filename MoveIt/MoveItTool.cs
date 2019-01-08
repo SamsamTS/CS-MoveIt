@@ -67,6 +67,7 @@ namespace MoveIt
         public static bool filterNodes = true;
         public static bool filterSegments = true;
         public static bool filterNetworks = false;
+        public static bool filterProcs = true;
 
         public static bool followTerrain = true;
 
@@ -88,8 +89,8 @@ namespace MoveIt
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
-        internal static Color m_POselectedColor = new Color32(240, 140, 255, 140); //(190, 60, 255, 150)
-        internal static Color m_POdisabledColor = new Color32(120, 70, 127, 120);
+        internal static Color m_POselectedColor = new Color32(240, 140, 255, 140);
+        internal static Color m_POdisabledColor = new Color32(150, 100, 160, 100);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
@@ -101,7 +102,7 @@ namespace MoveIt
         private ToolStates m_toolState;
         public ToolStates ToolState
         {
-            get { return m_toolState; }
+            get => m_toolState;
             set
             {
                 m_toolState = value;
@@ -1012,7 +1013,7 @@ namespace MoveIt
 
         public static string InstanceIDDebug(InstanceID id)
         {
-            return $"(B{id.Building},P:{id.Prop},T:{id.Tree},N:{id.NetNode},S:{id.NetSegment},L:{id.NetLane})";
+            return $"(B:{id.Building},P:{id.Prop},T:{id.Tree},N:{id.NetNode},S:{id.NetSegment},L:{id.NetLane})";
         }
 
         public static string InstanceIDDebug(Instance instance)

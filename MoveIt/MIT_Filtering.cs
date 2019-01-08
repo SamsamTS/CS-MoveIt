@@ -211,17 +211,25 @@ namespace MoveIt
 
                 if (selectProc)
                 {
+                    string msg = "";
                     foreach (PO_Object obj in PO_Logic.Objects)
                     {
-                        float distance = obj.GetDistance(location);
+                        msg += $"{obj.Id},";
+                        float t = obj.GetDistance(location);
                         //Debug.Log($"Distance #{obj.Id}: {distance}");
-                        bool inXBounds = obj.Position.x > (location.x - 16f) && obj.Position.x < (location.x + 16f);
-                        bool inZBounds = obj.Position.z > (location.z - 16f) && obj.Position.z < (location.z + 16f);
+                        bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
+                        bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
                         if (inXBounds && inZBounds)
                         {
-                            //Debug.Log($"Object:{obj.Id}");
+                            Debug.Log($"Object {obj.Id}: {t}m");
+                            if (t < smallestDist)
+                            {
+                                id.NetLane = obj.Id;
+                                smallestDist = t;
+                            }
                         }
                     }
+                    //Debug.Log(msg);
                 }
 
                 if (selectTrees)
@@ -272,11 +280,9 @@ namespace MoveIt
             }
             while (repeatSearch);
 
-            //Debug.Log($"ID=({id.Building},{id.Prop},{id.NetNode},{id.NetSegment},{id.Tree})");
-            if (debugPanel != null)
-            {
-                debugPanel.Update(id);
-            }
+            Debug.Log($"Id={InstanceIDDebug(id)}");
+            debugPanel.Update(id);
+
             m_hoverInstance = id;
         }
 
@@ -462,6 +468,21 @@ namespace MoveIt
                             }
                         }
                     }
+                }
+
+                if (filterProcs)
+                {
+                    string msg = "";
+                    foreach (PO_Object obj in PO_Logic.Objects)
+                    {
+                        if (PointInRectangle(m_selection, obj.Position))
+                        {
+                            msg += $"{obj.Id},";
+                            id.NetLane = obj.Id;
+                            list.Add(id);
+                        }
+                    }
+                    Debug.Log(msg);
                 }
 
                 if (filterTrees)
