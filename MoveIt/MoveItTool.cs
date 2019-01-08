@@ -95,6 +95,8 @@ namespace MoveIt
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
+        public static PO_Logic PO;
+
         private const float XFACTOR = 0.263671875f;
         private const float YFACTOR = 0.015625f;
         private const float ZFACTOR = 0.263671875f;
@@ -225,6 +227,7 @@ namespace MoveIt
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
 
             followTerrain = followTerrainModeEnabled;
+            PO = new PO_Logic();
         }
 
         protected override void OnToolGUI(Event e)
@@ -389,69 +392,24 @@ namespace MoveIt
             }
 
             // Update selected POs
-            int oldSelectionCount = Action.selection.Count;
-            bool isChanged = false;
-            foreach (PO_Object obj in PO_Logic.Objects)
-            {
-                bool exists = false;
-                foreach (Instance instance in Action.selection)
-                {
-                    if (instance.id.NetLane == obj.Id)
-                    {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists)
-                {
-                    InstanceID instanceId = default(InstanceID);
-                    instanceId.NetLane = obj.Id;
-                    MoveableProc proc = new MoveableProc(instanceId);
-                    Action.selection.Add(proc);
-                    isChanged = true;
-                }
-            }
-            List<Instance> toRemove = new List<Instance>();
-            foreach (Instance instance in Action.selection)
-            {
-                if (instance.id.NetLane > 0)
-                {
-                    bool exists = false;
-                    foreach (PO_Object obj in PO_Logic.Objects)
-                    {
-                        if (obj.Id == instance.id.NetLane)
-                        {
-                            exists = true;
-                            break;
-                        }
-                    }
-                    if (!exists)
-                    {
-                        toRemove.Add(instance);
-                        isChanged = true;
-                    }
-                }
-            }
-            foreach (Instance instance in toRemove)
-            {
-                Action.selection.Remove(instance);
-            }
+            //int oldSelectionCount = Action.selection.Count;
+            bool isChanged = PO.ToolEnabled();
             if (isChanged)
             {
                 ActionQueue.instance.Push(new TransformAction());
             }
 
-            string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
-            foreach (Instance i in Action.selection)
-            {
-                msg += $"{i.GetType()} {InstanceIDDebug(i)}\n";
-                if (i is MoveableProc mpo)
-                {
-                    msg += $"    {mpo.m_procObj.DebugQuaternion()}\n";
-                }
-            }
-            msg += "Queue: " + ActionQueue.instance.DebugQueue();
-            Debug.Log(msg);
+            //string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
+            //foreach (Instance i in Action.selection)
+            //{
+            //    msg += $"{i.GetType()} {InstanceIDDebug(i)}\n";
+            //    if (i is MoveableProc mpo)
+            //    {
+            //        msg += $"    {mpo.m_procObj.DebugQuaternion()}\n";
+            //    }
+            //}
+            //msg += "Queue: " + ActionQueue.instance.DebugQueue();
+            //Debug.Log(msg);
         }
 
         protected override void OnDisable()
@@ -496,7 +454,7 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
                 // Highlight all PO
-                foreach (PO_Object obj in PO_Logic.Objects)
+                foreach (PO_Object obj in PO.Objects)
                 {
                     obj.RenderOverlay(cameraInfo, m_POdisabledColor);
                 }
@@ -725,7 +683,7 @@ namespace MoveIt
                     {
                         foreach (Bounds bounds in aerasToUpdate)
                         {
-                            Debug.Log($"PARKING (SS)\n{bounds}");
+                            //Debug.Log($"PARKING (SS)\n{bounds}");
                             bounds.Expand(64f);
                             VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                         }

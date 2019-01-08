@@ -24,7 +24,7 @@ namespace MoveIt
         
         public MoveableProc(InstanceID instanceID) : base(instanceID)
         {
-            m_procObj = PO_Logic.GetProcObj(instanceID.NetLane);
+            m_procObj = MoveItTool.PO.GetProcObj(instanceID.NetLane);
         }
 
 

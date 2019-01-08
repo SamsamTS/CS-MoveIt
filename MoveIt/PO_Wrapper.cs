@@ -6,11 +6,10 @@ using System.Linq;
 
 namespace MoveIt
 {
-    internal static class PO_Logic
+    public class PO_Logic
     {
-        private static ProceduralObjectsLogic logic = null;
-
-        private static ProceduralObjectsLogic Logic
+        private ProceduralObjectsLogic logic = null;
+        private ProceduralObjectsLogic Logic
         {
             get
             {
@@ -20,34 +19,84 @@ namespace MoveIt
             }
         }
 
-        public static List<PO_Object> Objects
+        private HashSet<uint> visibleIds = new HashSet<uint>();
+        private HashSet<uint> selectedIds = new HashSet<uint>();
+        private Dictionary<uint, PO_Object> visibleObjects = new Dictionary<uint, PO_Object>();
+
+        public List<PO_Object> Objects => new List<PO_Object>(visibleObjects.Values);
+        public PO_Object GetProcObj(uint id) => visibleObjects[id];
+
+        public bool ToolEnabled()
         {
-            get
+            Dictionary<uint, PO_Object> newVisible = new Dictionary<uint, PO_Object>();
+            HashSet<uint> newIds = new HashSet<uint>();
+
+            foreach (ProceduralObjects.Classes.ProceduralObject obj in Logic.pObjSelection)
             {
-                List<PO_Object> list = new List<PO_Object>();
-                foreach (ProceduralObjects.Classes.ProceduralObject obj in Logic.pObjSelection)
-                {
-                    list.Add(new PO_Object(obj));
-                }
-                return list;
-            }
-        }
-       
-        public static PO_Object GetProcObj(uint id)
-        {
-            foreach (ProceduralObjects.Classes.ProceduralObject obj in Logic.proceduralObjects)
-            {
-                if (obj.id == id - 1)
-                {
-                    return new PO_Object(obj);
-                }
+                newVisible.Add((uint)obj.id + 1, new PO_Object(obj));
+                newIds.Add((uint)obj.id + 1);
             }
 
-            throw new System.Exception($"Id {id} (actual:{id-1}) not found!");
+            HashSet<uint> removed = new HashSet<uint>(visibleIds);
+            removed.ExceptWith(newIds);
+            HashSet<uint> added = new HashSet<uint>(newIds);
+            added.ExceptWith(visibleIds);
+            HashSet<uint> newSelectedIds = new HashSet<uint>(selectedIds);
+            newSelectedIds.IntersectWith(newIds);
+
+            List<Instance> toRemove = new List<Instance>();
+            foreach (Instance instance in Action.selection)
+            {
+                Debug.Log(instance);
+                uint id = instance.id.NetLane;
+                if (id > 0)
+                {
+                    if (removed.Contains(id))
+                    {
+                        toRemove.Add(instance);
+                    }
+                }
+            }
+            foreach (Instance instance in toRemove)
+            {
+                Action.selection.Remove(instance);
+            }
+
+            Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\n" +
+                $"Selected from:{selectedIds.Count} to:{newSelectedIds.Count}");
+
+            visibleObjects = newVisible;
+            visibleIds = newIds;
+            selectedIds = newSelectedIds;
+
+            // Has anything changed?
+            if (added.Count > 0 || removed.Count > 0)
+                return true;
+
+            return false;
+        }
+
+        public void SelectionAdd(Instance instance)
+        {
+            if (instance.id.NetLane <= 0) return;
+
+            selectedIds.Add(instance.id.NetLane);
+        }
+
+        public void SelectionRemove(Instance instance)
+        {
+            if (instance.id.NetLane <= 0) return;
+
+            selectedIds.Remove(instance.id.NetLane);
+        }
+
+        public void SelectionClear()
+        {
+            selectedIds.Clear();
         }
     }
 
-    internal class PO_Object
+    public class PO_Object
     {
         private ProceduralObjects.Classes.ProceduralObject procObj;
         public uint Id { get; set; } // The InstanceID.NetLane value
@@ -70,7 +119,6 @@ namespace MoveIt
             {
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
-                //if (a >= 360f) a -= 360f;
                 //Debug.Log($"Setting:{a * Mathf.Deg2Rad} ({a})");
                 procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
             }

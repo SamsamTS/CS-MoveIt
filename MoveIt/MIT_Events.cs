@@ -176,16 +176,20 @@ namespace MoveIt
                     if (Action.selection.Contains(m_hoverInstance))
                     {
                         Action.selection.Remove(m_hoverInstance);
+                        PO.SelectionRemove(m_hoverInstance);
                     }
                     else
                     {
                         Action.selection.Add(m_hoverInstance);
+                        PO.SelectionAdd(m_hoverInstance);
                     }
                 }
                 else
                 {
                     Action.selection.Clear();
+                    PO.SelectionClear();
                     Action.selection.Add(m_hoverInstance);
+                    PO.SelectionAdd(m_hoverInstance);
                 }
 
                 ToolState = ToolStates.Default;
@@ -307,6 +311,7 @@ namespace MoveIt
                 {
                     ActionQueue.instance.Push(new SelectAction());
                     Action.selection.Add(m_lastInstance);
+                    PO.SelectionAdd(m_lastInstance);
 
                     action = new TransformAction();
                     ActionQueue.instance.Push(action);

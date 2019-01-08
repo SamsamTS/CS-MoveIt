@@ -212,16 +212,15 @@ namespace MoveIt
                 if (selectProc)
                 {
                     string msg = "";
-                    foreach (PO_Object obj in PO_Logic.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         msg += $"{obj.Id},";
-                        float t = obj.GetDistance(location);
-                        //Debug.Log($"Distance #{obj.Id}: {distance}");
                         bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
                         bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
                         if (inXBounds && inZBounds)
                         {
-                            Debug.Log($"Object {obj.Id}: {t}m");
+                            float t = obj.GetDistance(location);
+                            //Debug.Log($"Object {obj.Id}: {t}m");
                             if (t < smallestDist)
                             {
                                 id.NetLane = obj.Id;
@@ -280,8 +279,8 @@ namespace MoveIt
             }
             while (repeatSearch);
 
-            Debug.Log($"Id={InstanceIDDebug(id)}");
-            debugPanel.Update(id);
+            //Debug.Log($"Id={InstanceIDDebug(id)}");
+            if (debugPanel != null) debugPanel.Update(id);
 
             m_hoverInstance = id;
         }
@@ -473,7 +472,7 @@ namespace MoveIt
                 if (filterProcs)
                 {
                     string msg = "";
-                    foreach (PO_Object obj in PO_Logic.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         if (PointInRectangle(m_selection, obj.Position))
                         {
@@ -482,7 +481,7 @@ namespace MoveIt
                             list.Add(id);
                         }
                     }
-                    Debug.Log(msg);
+                    //Debug.Log(msg);
                 }
 
                 if (filterTrees)
