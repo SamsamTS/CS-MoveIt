@@ -11,10 +11,10 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 2.2.0: Hold ALT to select a node or segment owned by a building.",
+            "New in 2.3.0: Hold Alt to select pylons or pillars.",
+            "Tip: Hold Alt to select a node or segment owned by a building.",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
-            "Tip: While cloning, Right Click to rotate 45° clockwise",
             "Tip: Hold Ctrl while rotating to snap to 45° angles",
             "Tip: Hold Shift to select multiple objects to move at once",
             "Tip: Use Left Click to drag objects around",
@@ -24,7 +24,7 @@ namespace MoveIt
             "Tip: Use Shift for faster movements with the keyboard",
             "Tip: When Follow Terrain is disabled, objects will keep their height when moved",
             "Tip: Right Click to clear the selection",
-            "Tip: Buildings, Trees, Props and Nodes can all be moved",
+            "Tip: Buildings, Trees, Props, Decals, Surfaces and Networks can all be moved",
             "Tip: Movable objects are highlighted when hovered",
             "Tip: Hover various things to discover what can be moved",
             "Tip: Look for the tiny green circle\nThat's the center of rotation",
@@ -87,24 +87,17 @@ namespace MoveIt
 
         public void RefreshPosition()
         {
-            float x = GetUIView().GetScreenResolution().x - width - 50f;
+            float x = GetUIView().GetScreenResolution().x - width - 270f;
             float y;
 
-            if (UIToolOptionPanel.instance != null && MoveItTool.marqueeSelection)
+            UIComponent thumbnailBar = GetUIView().FindUIComponent<UIComponent>("ThumbnailBar");
+            if (thumbnailBar != null)
             {
-                y = UIToolOptionPanel.instance.filtersPanel.absolutePosition.y - height - 10f;
+                y = thumbnailBar.absolutePosition.y - height - 25f;
             }
             else
             {
-                UIComponent thumbnailBar = GetUIView().FindUIComponent<UIComponent>("ThumbnailBar");
-                if (thumbnailBar != null)
-                {
-                    y = thumbnailBar.absolutePosition.y - height - 30f;
-                }
-                else
-                {
-                    y = Screen.height - height - 200;
-                }
+                y = Screen.height - height - 365;
             }
 
             absolutePosition = new Vector3(x, y);

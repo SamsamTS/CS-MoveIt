@@ -97,7 +97,6 @@ namespace MoveIt
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
-                            Debug.Log("PARKING (ATA.Do)");
                             BuildingManager.instance.UpdateParkingSpaces(id, ref building);
                         }
 

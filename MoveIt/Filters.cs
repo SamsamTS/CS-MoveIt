@@ -43,7 +43,6 @@ namespace MoveIt
         static readonly Type[] PylonAITypes = new Type[]
         {
             typeof(PowerPoleAI)
-            //"Electricity Wire", "Electricity Facility"
         };
 
 
@@ -100,14 +99,11 @@ namespace MoveIt
                 default:
                     throw new Exception();
             }
-
-            //UI.RefreshFilters();
         }
 
         public static void SetNetworkFilter(string name, bool active)
         {
             NetworkFilters[name].enabled = active;
-            //UI.RefreshFilters();
         }
 
         public static void ToggleFilter(string name)
@@ -216,23 +212,19 @@ namespace MoveIt
                 //Select P&P on hover with Alt
                 if (MoveItTool.altSelectNodeBuildings)
                 {
-                    //Debug.Log($"SINGLE-Pi m_class.name:{info.m_class.name}");
                     if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
                     {
                         if (Event.current.alt)
                         {
-                            //Debug.Log("Alt");
                             return true;
                         }
                         return false;
                     }
 
-                    //Debug.Log($"SINGLE-Py AI type:{info.GetAI().GetType()}");
                     if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
                     {
                         if (Event.current.alt)
                         {
-                            //Debug.Log("Alt");
                             return true;
                         }
                         return false;
@@ -256,7 +248,6 @@ namespace MoveIt
                 //Filter pillars and pylons out of select
                 if (MoveItTool.altSelectNodeBuildings)
                 {
-                    //Debug.Log($"MARQUEE m_class.name:{info.m_class.name}");
                     if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
                     {
                         return false;
@@ -331,7 +322,6 @@ namespace MoveIt
 
         private static bool _networkFilter(NetInfo info)
         {
-            //Debug.Log($"{info.name}");
             if (!MoveItTool.marqueeSelection) return true;
             if (!MoveItTool.filterNetworks) return true;
 

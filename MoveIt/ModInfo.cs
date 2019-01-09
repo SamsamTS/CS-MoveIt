@@ -29,7 +29,7 @@ namespace MoveIt
 
         public string Name
         {
-            get { return "Move It! " + version; }
+            get { return "Move It " + version; }
         }
 
         public string Description
