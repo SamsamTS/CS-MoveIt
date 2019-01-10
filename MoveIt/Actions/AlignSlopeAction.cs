@@ -118,7 +118,7 @@ namespace MoveIt
 
                 msg += $"offset:{distanceOffset} hOffset:{heightOffset}";
             }
-            Debug.Log(msg);
+            //Debug.Log(msg);
         }
 
 
