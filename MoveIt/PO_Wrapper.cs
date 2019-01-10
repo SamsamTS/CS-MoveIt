@@ -76,11 +76,27 @@ namespace MoveIt
             return false;
         }
 
+        public void SelectionAdd(HashSet<Instance> instances)
+        {
+            foreach (Instance i in instances)
+            {
+                SelectionAdd(i);
+            }
+        }
+
         public void SelectionAdd(Instance instance)
         {
             if (instance.id.NetLane <= 0) return;
 
             selectedIds.Add(instance.id.NetLane);
+        }
+
+        public void SelectionRemove(HashSet<Instance> instances)
+        {
+            foreach (Instance i in instances)
+            {
+                SelectionRemove(i);
+            }
         }
 
         public void SelectionRemove(Instance instance)
@@ -152,6 +168,11 @@ namespace MoveIt
         {
             return $"{Id}:{Rotation.w},{Rotation.x},{Rotation.y},{Rotation.z}";
         }
+    }
+
+    public class PO_ProcInfo : PrefabInfo
+    {
+        new public string name;
     }
 
     static class PO_Utils

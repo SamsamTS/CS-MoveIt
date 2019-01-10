@@ -65,7 +65,7 @@ namespace MoveIt
             if (IsQuick)
             {
                 if (selection.Count != 1) return;
-                foreach (Instance instance in selection)// Is this really the best way to get the value of selction[0]?
+                foreach (Instance instance in selection)// Is this really the best way to get the value of selection[0]?
                 {
                     if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
 
@@ -103,22 +103,23 @@ namespace MoveIt
             heightDelta = PointB.position.y - PointA.position.y;
             distance = (float)Math.Sqrt(Math.Pow(PointB.position.z - PointA.position.z, 2) + Math.Pow(PointB.position.x - PointA.position.x, 2));
 
-            string msg = $"\nA:{PointA.position}, B:{PointB.position}\nAng:{angleDelta} ({angleDelta * Mathf.Rad2Deg}) - H:{heightDelta} - D:{distance}";
+            //string msg = $"\nA:{PointA.position}, B:{PointB.position}\nAng:{angleDelta} ({angleDelta * Mathf.Rad2Deg}) - H:{heightDelta} - D:{distance}";
             foreach (InstanceState state in m_states)
             {
-                string name = state.instance.info.name.Length > 15 ? state.instance.info.name.Substring(0, 15) : state.instance.info.name.PadLeft(15);
-                msg += $"\n{name} <{state.instance.GetType().ToString().Substring(15)}> {state.position}: ";
+                //string name = state.instance.info.name.Length > 15 ? state.instance.info.name.Substring(0, 15) : state.instance.info.name.PadLeft(15);
+                //msg += $"\n{name} <{state.instance.GetType().ToString().Substring(15)}> {state.position}: ";
 
                 float distanceOffset, heightOffset;
 
                 matrix.SetTRS(PointA.position, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
                 heightOffset = distanceOffset / distance * heightDelta;
+
                 state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 4000f));
 
-                msg += $"offset:{distanceOffset} hOffset:{heightOffset}";
+                //msg += $"offset:{distanceOffset} hOffset:{heightOffset}";
             }
-            Debug.Log(msg);
+            //Debug.Log(msg);
         }
 
 

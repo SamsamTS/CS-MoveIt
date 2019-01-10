@@ -24,7 +24,7 @@ namespace MoveIt
             "Tip: Use Shift for faster movements with the keyboard",
             "Tip: When Follow Terrain is disabled, objects will keep their height when moved",
             "Tip: Right Click to clear the selection",
-            "Tip: Buildings, Trees, Props and Nodes can all be moved",
+            "Tip: Buildings, Trees, Props, Decals, Surfaces and Networks can all be moved",
             "Tip: Movable objects are highlighted when hovered",
             "Tip: Hover various things to discover what can be moved",
             "Tip: Look for the tiny green circle\nThat's the center of rotation",

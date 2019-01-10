@@ -43,7 +43,6 @@ namespace MoveIt
         static readonly Type[] PylonAITypes = new Type[]
         {
             typeof(PowerPoleAI)
-            //"Electricity Wire", "Electricity Facility"
         };
 
 

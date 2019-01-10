@@ -5,7 +5,6 @@ namespace MoveIt
 {
     public class ProcState : InstanceState
     {
-        public bool single;
     }
 
     public class MoveableProc : Instance
@@ -32,7 +31,6 @@ namespace MoveIt
         {
             ProcState state = new ProcState();
             state.instance = this;
-
             state.position = m_procObj.Position;
             state.angle = m_procObj.Angle;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);

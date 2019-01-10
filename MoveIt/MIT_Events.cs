@@ -96,6 +96,7 @@ namespace MoveIt
                 if (e.alt)
                 {
                     Action.selection.ExceptWith(m_marqueeInstances);
+                    PO.SelectionRemove(m_marqueeInstances);
                 }
                 else
                 {
@@ -104,6 +105,7 @@ namespace MoveIt
                         Action.selection.Clear();
                     }
                     Action.selection.UnionWith(m_marqueeInstances);
+                    PO.SelectionAdd(m_marqueeInstances);
                 }
 
                 m_marqueeInstances = null;
@@ -112,46 +114,6 @@ namespace MoveIt
 
         private void OnRightMouseUp()
         { }
-
-        private void OnRightClick()
-        {
-            DebugUtils.Log("OnRightClick: " + ToolState);
-
-            if (ToolState == ToolStates.Default)
-            {
-                if (!(ActionQueue.instance.current is SelectAction action))
-                {
-                    action = new SelectAction();
-                    ActionQueue.instance.Push(action);
-                }
-                else
-                {
-                    Action.selection.Clear();
-                    ActionQueue.instance.Invalidate();
-                }
-            }
-            else if (ToolState == ToolStates.Cloning)
-            {
-                if (rmbCancelsCloning.value)
-                {
-                    StopCloning();
-                }
-                else
-                {
-                    // Rotate 45° clockwise
-                    CloneAction action = ActionQueue.instance.current as CloneAction;
-                    action.angleDelta -= Mathf.PI / 4;
-                }
-            }
-            else if (ToolState == ToolStates.Aligning)
-            {
-                DeactivateAlignTool();
-            }
-            else if (ToolState != ToolStates.MouseDragging)
-            {
-                ToolState = ToolStates.Default;
-            }
-        }
 
         private void OnLeftClick()
         {
@@ -286,6 +248,46 @@ namespace MoveIt
                             break;
                     }
                 }
+            }
+        }
+
+        private void OnRightClick()
+        {
+            DebugUtils.Log("OnRightClick: " + ToolState);
+
+            if (ToolState == ToolStates.Default)
+            {
+                if (!(ActionQueue.instance.current is SelectAction action))
+                {
+                    action = new SelectAction();
+                    ActionQueue.instance.Push(action);
+                }
+                else
+                {
+                    Action.selection.Clear();
+                    ActionQueue.instance.Invalidate();
+                }
+            }
+            else if (ToolState == ToolStates.Cloning)
+            {
+                if (rmbCancelsCloning.value)
+                {
+                    StopCloning();
+                }
+                else
+                {
+                    // Rotate 45° clockwise
+                    CloneAction action = ActionQueue.instance.current as CloneAction;
+                    action.angleDelta -= Mathf.PI / 4;
+                }
+            }
+            else if (ToolState == ToolStates.Aligning)
+            {
+                DeactivateAlignTool();
+            }
+            else if (ToolState != ToolStates.MouseDragging)
+            {
+                ToolState = ToolStates.Default;
             }
         }
 

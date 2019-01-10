@@ -34,10 +34,10 @@ namespace MoveIt
 
         public string Description
         {
-            get { return "Move things"; }
+            get { return "Move things [Alpha Prodecural Objects Option]"; }
         }
 
-        public const string version = "2.3.0 [Alpha]";
+        public const string version = "2.4.0 [APOO]";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");

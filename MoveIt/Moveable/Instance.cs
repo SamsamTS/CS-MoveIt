@@ -186,6 +186,10 @@ namespace MoveIt
                         {
                             return NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
                         }
+                    //case InstanceType.NetLane:
+                    //    {
+                    //        return MoveItTool.PO.GetProcObj(id.NetLane).Info;
+                    //    }
                 }
 
                 return null;
