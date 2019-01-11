@@ -47,7 +47,7 @@ namespace MoveIt
             {
                 if (state.instance.isValid)
                 {
-                    if (state.instance is MoveableBuilding || state.instance is MoveableProp)
+                    if (state.instance is MoveableBuilding || state.instance is MoveableProp || state.instance is MoveableProc)
                     {
                         firstValidAngle = state.angle;
                         break;
@@ -56,7 +56,7 @@ namespace MoveIt
             }
             angleDelta = 0 - firstValidAngle + newAngle;
             PoR = bounds.center;
-            //Debug.Log($"Ready, mode is {Mod.mode},{GetType()} - All delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}");
+            Debug.Log($"{GetType()}\nAll delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}\n0 - {firstValidAngle} + {newAngle} = {angleDelta}");
 
             foreach (InstanceState state in m_states)
             {
@@ -97,7 +97,7 @@ namespace MoveIt
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
-                            Debug.Log("PARKING (ATA.Do)");
+                            //Debug.Log("PARKING (ATA.Do)");
                             BuildingManager.instance.UpdateParkingSpaces(id, ref building);
                         }
 

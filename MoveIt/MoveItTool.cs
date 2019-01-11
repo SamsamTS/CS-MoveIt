@@ -49,6 +49,8 @@ namespace MoveIt
         public static MoveItTool instance;
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true); 
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
+        public static SavedBool POOnlySelectedAreVisible = new SavedBool("POOnlySelectedAreVisible", settingsFileName, true, true);
+        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
         public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
@@ -90,7 +92,7 @@ namespace MoveIt
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
         internal static Color m_POselectedColor = new Color32(240, 140, 255, 140);
-        internal static Color m_POdisabledColor = new Color32(150, 100, 160, 100);
+        internal static Color m_POdisabledColor = new Color32(150, 100, 160, 80);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
@@ -393,7 +395,8 @@ namespace MoveIt
 
             // Update selected POs
             //int oldSelectionCount = Action.selection.Count;
-            bool isChanged = PO.ToolEnabled();
+            bool isChanged = true;
+            PO.ToolEnabled();
             if (isChanged)
             {
                 ActionQueue.instance.Push(new TransformAction());
@@ -454,9 +457,12 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
                 // Highlight all PO
-                foreach (PO_Object obj in PO.Objects)
+                if (POHighlightUnselected)
                 {
-                    obj.RenderOverlay(cameraInfo, m_POdisabledColor);
+                    foreach (PO_Object obj in PO.Objects)
+                    {
+                        obj.RenderOverlay(cameraInfo, m_POdisabledColor);
+                    }
                 }
 
                 if (Action.selection.Count > 0)

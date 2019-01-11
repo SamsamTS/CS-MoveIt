@@ -30,8 +30,14 @@ namespace MoveIt
         {
             Dictionary<uint, PO_Object> newVisible = new Dictionary<uint, PO_Object>();
             HashSet<uint> newIds = new HashSet<uint>();
+            
+            List<ProceduralObjects.Classes.ProceduralObject> objectList = Logic.proceduralObjects;
+            if (MoveItTool.POOnlySelectedAreVisible)
+            {
+                objectList = Logic.pObjSelection;
+            }
 
-            foreach (ProceduralObjects.Classes.ProceduralObject obj in Logic.pObjSelection)
+            foreach (ProceduralObjects.Classes.ProceduralObject obj in objectList)
             {
                 newVisible.Add((uint)obj.id + 1, new PO_Object(obj));
                 newIds.Add((uint)obj.id + 1);
@@ -126,17 +132,19 @@ namespace MoveIt
         {
             get
             {
-                float a = -Rotation.eulerAngles.y * Mathf.Deg2Rad;
-                //Debug.Log($"Getting:{a} ({a * Mathf.Rad2Deg})");
-                return a;
+                float a = -Rotation.eulerAngles.y % 360f;
+                if (a < 0) a += 360f;
+                //Debug.Log($"Getting:{a * Mathf.Deg2Rad} ({a})\nRaw:{Rotation.eulerAngles.y},{-Rotation.eulerAngles.y % 360f}");
+                return a * Mathf.Deg2Rad;
             }
 
             set
             {
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
-                //Debug.Log($"Setting:{a * Mathf.Deg2Rad} ({a})");
                 procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
+                float b = Mathf.Abs(a - 360f);
+                //Debug.Log($"Setting:{b * Mathf.Deg2Rad} ({b})\n - actual:{a} => {Rotation.eulerAngles.y}");
             }
         }
 

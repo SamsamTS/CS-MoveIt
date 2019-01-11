@@ -94,6 +94,22 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
+                checkBox = (UICheckBox)group.AddCheckbox("Only see PO objects that are selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                {
+                    MoveItTool.POOnlySelectedAreVisible.value = b;
+                    MoveItTool.PO.ToolEnabled();
+                });
+                checkBox.tooltip = "If you have a lot (250 or more) of PO objects, this is recommended.";
+
+                checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
+                {
+                    MoveItTool.POHighlightUnselected.value = b;
+                    MoveItTool.PO.ToolEnabled();
+                });
+                checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
+
+                group.AddSpace(10);
+
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;

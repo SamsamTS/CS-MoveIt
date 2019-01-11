@@ -84,15 +84,18 @@ namespace MoveIt
             {
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
-            Move(newPosition, state.angle + deltaAngleRad);
+
+            float a = state.angle + deltaAngleRad;
+            //Debug.Log($"{state.angle} + {deltaAngleRad} = {a} ({a % (Mathf.PI * 2)})");
+            Move(newPosition, a % (Mathf.PI * 2));
         }
 
 
         // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
-            //Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
-            //    $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");
+            Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
+                $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");
             m_procObj.Position = location;
             m_procObj.Angle = angleRad;
         }
