@@ -9,42 +9,62 @@ using System.Reflection;
 
 namespace MoveIt
 {
-    public class PO_Logic
+    internal class PO_Logic
     {
-        private PO_WrapperBase Lower;
+        internal static IPO_Wrapper Lower;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         private HashSet<uint> selectedIds = new HashSet<uint>();
         private Dictionary<uint, PO_ObjectBase> visibleObjects = new Dictionary<uint, PO_ObjectBase>();
 
-        public List<PO_ObjectBase> Objects => new List<PO_ObjectBase>(visibleObjects.Values);
-        public PO_ObjectBase GetProcObj(uint id) => visibleObjects[id];
+        internal List<PO_ObjectBase> Objects => new List<PO_ObjectBase>(visibleObjects.Values);
+        internal PO_ObjectBase GetProcObj(uint id) => visibleObjects[id];
 
         //public Type tPOLogic, tPOObject;
 
-        public PO_Logic()
+        internal PO_Logic()
         {
-            if (isPOEnabled())
-            {
-                Lower = new PO.PO_WrapperEnabled();
-            }
-            else
-            {
-                Lower = new PO_WrapperDisabled();
-            }
+            PO_LayerChooser.LowerLayer();
+            //try
+            //{
+            //    InitialiseLogic();
+            //}
+            //catch (TypeLoadException ex)
+            //{
+            //    ModInfo.DebugLine(ex.ToString());
+            //    Lower = new PO_WrapperDisabled();
+            //}
         }
 
-        public bool ToolEnabled()
+
+        //private void InitialiseLogic()
+        //{ 
+        //    bool x = false;
+        //    if (x)
+        //    {
+        //        Debug.Log($"ENABLED!");
+        //        Lower = new PO_WrapperEnabled();
+        //    }
+        //    else
+        //    {
+        //        Debug.Log($"DISABLED!");
+        //        Lower = new PO_WrapperDisabled();
+        //    }
+        //}
+
+        internal bool ToolEnabled()
         {
             Dictionary<uint, PO_ObjectBase> newVisible = new Dictionary<uint, PO_ObjectBase>();
             HashSet<uint> newIds = new HashSet<uint>();
 
+            Debug.Log($"A");
             foreach (PO_ObjectBase obj in Lower.Objects)
             {
                 newVisible.Add(obj.Id, obj);
                 newIds.Add(obj.Id);
             }
 
+            Debug.Log($"B");
             HashSet<uint> removed = new HashSet<uint>(visibleIds);
             removed.ExceptWith(newIds);
             HashSet<uint> added = new HashSet<uint>(newIds);
@@ -52,6 +72,7 @@ namespace MoveIt
             HashSet<uint> newSelectedIds = new HashSet<uint>(selectedIds);
             newSelectedIds.IntersectWith(newIds);
 
+            Debug.Log($"C");
             List<Instance> toRemove = new List<Instance>();
             foreach (Instance instance in Action.selection)
             {
@@ -65,6 +86,7 @@ namespace MoveIt
                     }
                 }
             }
+            Debug.Log($"D");
             foreach (Instance instance in toRemove)
             {
                 Action.selection.Remove(instance);
@@ -84,7 +106,7 @@ namespace MoveIt
             return false;
         }
 
-        public void SelectionAdd(HashSet<Instance> instances)
+        internal void SelectionAdd(HashSet<Instance> instances)
         {
             foreach (Instance i in instances)
             {
@@ -92,14 +114,14 @@ namespace MoveIt
             }
         }
 
-        public void SelectionAdd(Instance instance)
+        internal void SelectionAdd(Instance instance)
         {
             if (instance.id.NetLane <= 0) return;
 
             selectedIds.Add(instance.id.NetLane);
         }
 
-        public void SelectionRemove(HashSet<Instance> instances)
+        internal void SelectionRemove(HashSet<Instance> instances)
         {
             foreach (Instance i in instances)
             {
@@ -107,104 +129,73 @@ namespace MoveIt
             }
         }
 
-        public void SelectionRemove(Instance instance)
+        internal void SelectionRemove(Instance instance)
         {
             if (instance.id.NetLane <= 0) return;
 
             selectedIds.Remove(instance.id.NetLane);
         }
 
-        public void SelectionClear()
+        internal void SelectionClear()
         {
             selectedIds.Clear();
         }
+    }
 
 
-        public static bool isPOEnabled()
+    internal static class PO_LayerChooser
+    {
+
+        internal static void LowerLayer()
         {
-            //string msg = "\n";
-            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
-            //{
-            //    msg += $"{pi.name} #{pi.publishedFileID}\n";
-            //}
-            //ModInfo.DebugLine(msg);
-
-            return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
+            if (isPOEnabled())
+            {
+                Debug.Log($"ENABLED!");
+                PO_Logic.Lower = new PO_WrapperEnabled();
+            }
+            else
+            {
+                Debug.Log($"DISABLED!");
+                PO_Logic.Lower = new PO_WrapperDisabled();
+            }
         }
 
 
-        //private bool Initialise()
-        //{
-        //    try
-        //    {
-        //        Assembly poAssembly = null;
-        //        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-        //        {
-        //            ModInfo.DebugLine(assembly.FullName);
-        //            if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "ProceduralOb")
-        //            {
-        //                poAssembly = assembly;
-        //                break;
-        //            }
-        //        }
-        //        ModInfo.DebugLine(poAssembly.ToString());
-        //        if (poAssembly == null)
-        //        {
-        //            ModInfo.DebugLine("Assemble is NULL");
-        //            return false;
-        //        }
+        internal static bool isPOEnabled()
+        {
+            Debug.Log(PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled).ToString());
 
-        //        tPOLogic = poAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
-        //        tPOObject = poAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+            string msg = "\n";
+            foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            {
+                msg += $"{pi.name} #{pi.publishedFileID}\n";
+            }
+            ModInfo.DebugLine(msg);
 
-        //        ModInfo.DebugLine(tPOLogic.ToString());
-        //        ModInfo.DebugLine(tPOObject.ToString());
-        //    }
-        //    catch (ReflectionTypeLoadException)
-        //    {
-        //        ModInfo.DebugLine($"MoveIt failed to integrate PO (ReflectionTypeLoadException)");
-        //        return false;
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        ModInfo.DebugLine($"MoveIt failed to integrate PO (NullReferenceException)");
-        //        return false;
-        //    }
+            ModInfo.DebugLine(PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled).ToString());
 
-        //    return true;
-        //}
+            return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
+        }
     }
-
-    //public class PO_ProcInfo : PrefabInfo
-    //{
-    //    new public string name;
-    //}
-
-    //static class PO_Utils
-    //{
-    //    public static ProceduralObjects.Classes.ProceduralObject GetProcWithId(this List<ProceduralObjects.Classes.ProceduralObject> list, int id)
-    //    {
-    //        if (list.Any(po => po.id == id))
-    //        {
-    //            return list.FirstOrDefault(po => po.id == id);
-    //        }
-    //        return null;
-    //    }
-    //}
 
     // PO Logic
-    public abstract class PO_WrapperBase
+    internal interface IPO_Wrapper
     {
-        public virtual List<PO_ObjectBase> Objects => new List<PO_ObjectBase>();
+        List<PO_ObjectBase> Objects { get; }
     }
 
-    public class PO_WrapperDisabled : PO_WrapperBase
+    //internal abstract class PO_WrapperBase
+    //{
+    //    public virtual List<PO_ObjectBase> Objects => new List<PO_ObjectBase>();
+    //}
+
+    internal class PO_WrapperDisabled : IPO_Wrapper
     {
-        public override List<PO_ObjectBase> Objects
+        public List<PO_ObjectBase> Objects
         {
             get
             {
-                Debug.Log($"Inactive");
+                Debug.Log($"PO List: Inactive");
                 return new List<PO_ObjectBase>();
             }
         }
@@ -212,7 +203,7 @@ namespace MoveIt
 
 
     // PO Object
-    public abstract class PO_ObjectBase
+    internal abstract class PO_ObjectBase
     {
         public uint Id { get; set; } // The InstanceID.NetLane value
         public abstract Vector3 Position { get; set; }
@@ -223,7 +214,7 @@ namespace MoveIt
         public abstract string DebugQuaternion();
     }
 
-    public class PO_ObjectInactive : PO_ObjectBase
+    internal class PO_ObjectInactive : PO_ObjectBase
     {
         public override Vector3 Position
         {
@@ -254,3 +245,70 @@ namespace MoveIt
     }
 }
 
+
+
+
+
+
+
+//private bool Initialise()
+//{
+//    try
+//    {
+//        Assembly poAssembly = null;
+//        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+//        {
+//            ModInfo.DebugLine(assembly.FullName);
+//            if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "ProceduralOb")
+//            {
+//                poAssembly = assembly;
+//                break;
+//            }
+//        }
+//        ModInfo.DebugLine(poAssembly.ToString());
+//        if (poAssembly == null)
+//        {
+//            ModInfo.DebugLine("Assemble is NULL");
+//            return false;
+//        }
+
+//        tPOLogic = poAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
+//        tPOObject = poAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+
+//        ModInfo.DebugLine(tPOLogic.ToString());
+//        ModInfo.DebugLine(tPOObject.ToString());
+//    }
+//    catch (ReflectionTypeLoadException)
+//    {
+//        ModInfo.DebugLine($"MoveIt failed to integrate PO (ReflectionTypeLoadException)");
+//        return false;
+//    }
+//    catch (NullReferenceException)
+//    {
+//        ModInfo.DebugLine($"MoveIt failed to integrate PO (NullReferenceException)");
+//        return false;
+//    }
+
+//    return true;
+//}
+
+
+
+
+
+//public class PO_ProcInfo : PrefabInfo
+//{
+//    new public string name;
+//}
+
+//static class PO_Utils
+//{
+//    public static ProceduralObjects.Classes.ProceduralObject GetProcWithId(this List<ProceduralObjects.Classes.ProceduralObject> list, int id)
+//    {
+//        if (list.Any(po => po.id == id))
+//        {
+//            return list.FirstOrDefault(po => po.id == id);
+//        }
+//        return null;
+//    }
+//}

@@ -1,13 +1,14 @@
 ﻿using ProceduralObjects;
+using ProceduralObjects.Classes;
 using ColossalFramework;
 using UnityEngine;
 using System.Collections.Generic;
 
 // Low level PO wrapper, only accessed by high level
 
-namespace MoveIt.PO
+namespace MoveIt
 {
-    public class PO_WrapperEnabled : PO_WrapperBase
+    internal class PO_WrapperEnabled : IPO_Wrapper
     {
         private ProceduralObjectsLogic logic = null;
         public ProceduralObjectsLogic Logic
@@ -20,18 +21,18 @@ namespace MoveIt.PO
             }
         }
 
-        public override List<PO_ObjectBase> Objects
+        public List<PO_ObjectBase> Objects
         {
             get
             {
-                Debug.Log($"Active");
-                List<ProceduralObjects.Classes.ProceduralObject> objectList = Logic.proceduralObjects;
+                Debug.Log($"PO List: Active");
+                List<ProceduralObject> objectList = Logic.proceduralObjects;
                 if (MoveItTool.POOnlySelectedAreVisible)
                 {
                     objectList = Logic.pObjSelection;
                 }
                 List<PO_ObjectBase> objects = new List<PO_ObjectBase>();
-                foreach (ProceduralObjects.Classes.ProceduralObject obj in objectList)
+                foreach (ProceduralObject obj in objectList)
                 {
                     PO_ObjectBase o = new PO_ObjectEnabled(obj);
                     objects.Add(o);
@@ -42,9 +43,9 @@ namespace MoveIt.PO
     }
 
 
-    public class PO_ObjectEnabled : PO_ObjectBase
+    internal class PO_ObjectEnabled : PO_ObjectBase
     {
-        private ProceduralObjects.Classes.ProceduralObject procObj;
+        private ProceduralObject procObj;
         public bool Selected { get; set; }
         private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
@@ -57,7 +58,6 @@ namespace MoveIt.PO
             {
                 float a = -Rotation.eulerAngles.y % 360f;
                 if (a < 0) a += 360f;
-                //Debug.Log($"Getting:{a * Mathf.Deg2Rad} ({a})\nRaw:{Rotation.eulerAngles.y},{-Rotation.eulerAngles.y % 360f}");
                 return a * Mathf.Deg2Rad;
             }
 
@@ -66,12 +66,10 @@ namespace MoveIt.PO
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
                 procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
-                //float b = Mathf.Abs(a - 360f);
-                //Debug.Log($"Setting:{b * Mathf.Deg2Rad} ({b})\n - actual:{a} => {Rotation.eulerAngles.y}");
             }
         }
 
-        public PO_ObjectEnabled(ProceduralObjects.Classes.ProceduralObject obj)
+        public PO_ObjectEnabled(ProceduralObject obj)
         {
             procObj = obj;
             ProcId = obj.id;

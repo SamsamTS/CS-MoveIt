@@ -1,7 +1,8 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
-using ColossalFramework.UI;
 using ColossalFramework.IO;
+using ColossalFramework.Plugins;
+using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -97,7 +98,7 @@ namespace MoveIt
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
-        public static PO_Logic PO;
+        internal static PO_Logic PO;
 
         private const float XFACTOR = 0.263671875f;
         private const float YFACTOR = 0.015625f;
@@ -232,6 +233,16 @@ namespace MoveIt
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
 
             followTerrain = followTerrainModeEnabled;
+
+
+            string msg = "\n";
+            foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            {
+                msg += $"{pi.name} #{pi.publishedFileID}\n";
+            }
+            ModInfo.DebugLine(msg + "\n----------------------");
+            ModInfo.DebugLine(PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled).ToString());
+
             PO = new PO_Logic();
         }
 
