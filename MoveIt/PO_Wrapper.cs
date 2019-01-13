@@ -1,46 +1,48 @@
-﻿using ProceduralObjects;
-using ColossalFramework;
+﻿using ColossalFramework.Plugins;
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+
+// High level PO wrapper, always available
 
 namespace MoveIt
 {
     public class PO_Logic
     {
-        private ProceduralObjectsLogic logic = null;
-        private ProceduralObjectsLogic Logic
-        {
-            get
-            {
-                if (logic == null)
-                    logic = Object.FindObjectOfType<ProceduralObjectsLogic>();
-                return logic;
-            }
-        }
+        private PO_WrapperBase Lower;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         private HashSet<uint> selectedIds = new HashSet<uint>();
-        private Dictionary<uint, PO_Object> visibleObjects = new Dictionary<uint, PO_Object>();
+        private Dictionary<uint, PO_ObjectBase> visibleObjects = new Dictionary<uint, PO_ObjectBase>();
 
-        public List<PO_Object> Objects => new List<PO_Object>(visibleObjects.Values);
-        public PO_Object GetProcObj(uint id) => visibleObjects[id];
+        public List<PO_ObjectBase> Objects => new List<PO_ObjectBase>(visibleObjects.Values);
+        public PO_ObjectBase GetProcObj(uint id) => visibleObjects[id];
+
+        //public Type tPOLogic, tPOObject;
+
+        public PO_Logic()
+        {
+            if (isPOEnabled())
+            {
+                Lower = new PO.PO_WrapperEnabled();
+            }
+            else
+            {
+                Lower = new PO_WrapperDisabled();
+            }
+        }
 
         public bool ToolEnabled()
         {
-            Dictionary<uint, PO_Object> newVisible = new Dictionary<uint, PO_Object>();
+            Dictionary<uint, PO_ObjectBase> newVisible = new Dictionary<uint, PO_ObjectBase>();
             HashSet<uint> newIds = new HashSet<uint>();
-            
-            List<ProceduralObjects.Classes.ProceduralObject> objectList = Logic.proceduralObjects;
-            if (MoveItTool.POOnlySelectedAreVisible)
-            {
-                objectList = Logic.pObjSelection;
-            }
 
-            foreach (ProceduralObjects.Classes.ProceduralObject obj in objectList)
+            foreach (PO_ObjectBase obj in Lower.Objects)
             {
-                newVisible.Add((uint)obj.id + 1, new PO_Object(obj));
-                newIds.Add((uint)obj.id + 1);
+                newVisible.Add(obj.Id, obj);
+                newIds.Add(obj.Id);
             }
 
             HashSet<uint> removed = new HashSet<uint>(visibleIds);
@@ -116,82 +118,139 @@ namespace MoveIt
         {
             selectedIds.Clear();
         }
+
+
+        public static bool isPOEnabled()
+        {
+            //string msg = "\n";
+            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            //{
+            //    msg += $"{pi.name} #{pi.publishedFileID}\n";
+            //}
+            //ModInfo.DebugLine(msg);
+
+            return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
+        }
+
+
+        //private bool Initialise()
+        //{
+        //    try
+        //    {
+        //        Assembly poAssembly = null;
+        //        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        //        {
+        //            ModInfo.DebugLine(assembly.FullName);
+        //            if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "ProceduralOb")
+        //            {
+        //                poAssembly = assembly;
+        //                break;
+        //            }
+        //        }
+        //        ModInfo.DebugLine(poAssembly.ToString());
+        //        if (poAssembly == null)
+        //        {
+        //            ModInfo.DebugLine("Assemble is NULL");
+        //            return false;
+        //        }
+
+        //        tPOLogic = poAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
+        //        tPOObject = poAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+
+        //        ModInfo.DebugLine(tPOLogic.ToString());
+        //        ModInfo.DebugLine(tPOObject.ToString());
+        //    }
+        //    catch (ReflectionTypeLoadException)
+        //    {
+        //        ModInfo.DebugLine($"MoveIt failed to integrate PO (ReflectionTypeLoadException)");
+        //        return false;
+        //    }
+        //    catch (NullReferenceException)
+        //    {
+        //        ModInfo.DebugLine($"MoveIt failed to integrate PO (NullReferenceException)");
+        //        return false;
+        //    }
+
+        //    return true;
+        //}
     }
 
-    public class PO_Object
+    //public class PO_ProcInfo : PrefabInfo
+    //{
+    //    new public string name;
+    //}
+
+    //static class PO_Utils
+    //{
+    //    public static ProceduralObjects.Classes.ProceduralObject GetProcWithId(this List<ProceduralObjects.Classes.ProceduralObject> list, int id)
+    //    {
+    //        if (list.Any(po => po.id == id))
+    //        {
+    //            return list.FirstOrDefault(po => po.id == id);
+    //        }
+    //        return null;
+    //    }
+    //}
+
+    // PO Logic
+    public abstract class PO_WrapperBase
     {
-        private ProceduralObjects.Classes.ProceduralObject procObj;
-        public uint Id { get; set; } // The InstanceID.NetLane value
-        public bool Selected { get; set; }
-        private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
+        public virtual List<PO_ObjectBase> Objects => new List<PO_ObjectBase>();
+    }
 
-        public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
-        private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
-
-        public float Angle
+    public class PO_WrapperDisabled : PO_WrapperBase
+    {
+        public override List<PO_ObjectBase> Objects
         {
             get
             {
-                float a = -Rotation.eulerAngles.y % 360f;
-                if (a < 0) a += 360f;
-                //Debug.Log($"Getting:{a * Mathf.Deg2Rad} ({a})\nRaw:{Rotation.eulerAngles.y},{-Rotation.eulerAngles.y % 360f}");
-                return a * Mathf.Deg2Rad;
+                Debug.Log($"Inactive");
+                return new List<PO_ObjectBase>();
             }
-
-            set
-            {
-                float a = -(value * Mathf.Rad2Deg) % 360f;
-                if (a < 0) a += 360f;
-                procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
-                float b = Mathf.Abs(a - 360f);
-                //Debug.Log($"Setting:{b * Mathf.Deg2Rad} ({b})\n - actual:{a} => {Rotation.eulerAngles.y}");
-            }
-        }
-
-        public PO_Object(ProceduralObjects.Classes.ProceduralObject obj)
-        {
-            procObj = obj;
-            ProcId = obj.id;
-        }
-
-
-        public void SetPositionY(float h)
-        {
-            procObj.m_position.y = h;
-        }
-
-        public float GetDistance(Vector3 location)
-        {
-            return Vector3.Distance(Position, location);
-        }
-
-        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
-        {
-            float size = 4f;
-            Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
-            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, Position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
-        }
-
-        public string DebugQuaternion()
-        {
-            return $"{Id}:{Rotation.w},{Rotation.x},{Rotation.y},{Rotation.z}";
         }
     }
 
-    public class PO_ProcInfo : PrefabInfo
+
+    // PO Object
+    public abstract class PO_ObjectBase
     {
-        new public string name;
+        public uint Id { get; set; } // The InstanceID.NetLane value
+        public abstract Vector3 Position { get; set; }
+        public abstract float Angle { get; set; }
+        public abstract void SetPositionY(float h);
+        public abstract float GetDistance(Vector3 location);
+        public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
+        public abstract string DebugQuaternion();
     }
 
-    static class PO_Utils
+    public class PO_ObjectInactive : PO_ObjectBase
     {
-        public static ProceduralObjects.Classes.ProceduralObject GetProcWithId(this List<ProceduralObjects.Classes.ProceduralObject> list, int id)
+        public override Vector3 Position
         {
-            if (list.Any(po => po.id == id))
-            {
-                return list.FirstOrDefault(po => po.id == id);
-            }
-            return null;
+            get => Vector3.zero;
+            set { }
+        }
+
+        public override float Angle
+        {
+            get => 0f;
+            set { }
+        }
+
+        public override void SetPositionY(float h)
+        {
+            return;
+        }
+
+        public override float GetDistance(Vector3 location) => 0f;
+
+        public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
+        { }
+
+        public override string DebugQuaternion()
+        {
+            return "";
         }
     }
 }
+

@@ -212,7 +212,7 @@ namespace MoveIt
                 if (selectProc)
                 {
                     string msg = "";
-                    foreach (PO_Object obj in PO.Objects)
+                    foreach (PO_ObjectBase obj in PO.Objects)
                     {
                         msg += $"{obj.Id},";
                         bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
@@ -472,7 +472,7 @@ namespace MoveIt
                 if (filterProcs)
                 {
                     string msg = "";
-                    foreach (PO_Object obj in PO.Objects)
+                    foreach (PO_ObjectBase obj in PO.Objects)
                     {
                         if (PointInRectangle(m_selection, obj.Position))
                         {

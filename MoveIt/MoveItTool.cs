@@ -91,7 +91,7 @@ namespace MoveIt
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
-        internal static Color m_POselectedColor = new Color32(240, 140, 255, 140);
+        internal static Color m_POselectedColor = new Color32(230, 130, 245, 140);
         internal static Color m_POdisabledColor = new Color32(150, 100, 160, 80);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
@@ -110,7 +110,10 @@ namespace MoveIt
             set
             {
                 m_toolState = value;
-                debugPanel.Update();
+                if (debugPanel != null)
+                {
+                    debugPanel.Update();
+                }
             }
         }
         private AlignModes m_alignMode;
@@ -459,7 +462,7 @@ namespace MoveIt
                 // Highlight all PO
                 if (POHighlightUnselected)
                 {
-                    foreach (PO_Object obj in PO.Objects)
+                    foreach (PO_ObjectBase obj in PO.Objects)
                     {
                         obj.RenderOverlay(cameraInfo, m_POdisabledColor);
                     }
