@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace MoveIt
 {
-    internal class PO_WrapperEnabled : IPO_Wrapper
+    internal class PO_LogicEnabled : IPO_Logic
     {
         private ProceduralObjectsLogic logic = null;
         public ProceduralObjectsLogic Logic
@@ -21,7 +21,7 @@ namespace MoveIt
             }
         }
 
-        public List<PO_ObjectBase> Objects
+        public List<IPO_Object> Objects
         {
             get
             {
@@ -31,10 +31,10 @@ namespace MoveIt
                 {
                     objectList = Logic.pObjSelection;
                 }
-                List<PO_ObjectBase> objects = new List<PO_ObjectBase>();
+                List<IPO_Object> objects = new List<IPO_Object>();
                 foreach (ProceduralObject obj in objectList)
                 {
-                    PO_ObjectBase o = new PO_ObjectEnabled(obj);
+                    IPO_Object o = new PO_ObjectEnabled(obj);
                     objects.Add(o);
                 }
                 return objects;
@@ -43,16 +43,18 @@ namespace MoveIt
     }
 
 
-    internal class PO_ObjectEnabled : PO_ObjectBase
+    internal class PO_ObjectEnabled : IPO_Object
     {
         private ProceduralObject procObj;
+
+        public uint Id { get; set; } // The InstanceID.NetLane value
         public bool Selected { get; set; }
         private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
-        public override Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
+        public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
         private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
 
-        public override float Angle
+        public float Angle
         {
             get
             {
@@ -75,24 +77,24 @@ namespace MoveIt
             ProcId = obj.id;
         }
 
-        public override void SetPositionY(float h)
+        public void SetPositionY(float h)
         {
             procObj.m_position.y = h;
         }
 
-        public override float GetDistance(Vector3 location)
+        public float GetDistance(Vector3 location)
         {
             return Vector3.Distance(Position, location);
         }
 
-        public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
+        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
         {
             float size = 4f;
             Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, Position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
         }
 
-        public override string DebugQuaternion()
+        public string DebugQuaternion()
         {
             return $"{Id}:{Rotation.w},{Rotation.x},{Rotation.y},{Rotation.z}";
         }

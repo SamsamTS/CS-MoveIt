@@ -3,68 +3,57 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 // High level PO wrapper, always available
 
 namespace MoveIt
 {
-    internal class PO_Logic
+    internal class PO_Manager
     {
-        internal static IPO_Wrapper Lower;
+        private IPO_Logic Lower;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         private HashSet<uint> selectedIds = new HashSet<uint>();
-        private Dictionary<uint, PO_ObjectBase> visibleObjects = new Dictionary<uint, PO_ObjectBase>();
+        private Dictionary<uint, IPO_Object> visibleObjects = new Dictionary<uint, IPO_Object>();
 
-        internal List<PO_ObjectBase> Objects => new List<PO_ObjectBase>(visibleObjects.Values);
-        internal PO_ObjectBase GetProcObj(uint id) => visibleObjects[id];
+        internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
+        internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
-        //public Type tPOLogic, tPOObject;
-
-        internal PO_Logic()
+        internal PO_Manager()
         {
-            PO_LayerChooser.LowerLayer();
-            //try
-            //{
-            //    InitialiseLogic();
-            //}
-            //catch (TypeLoadException ex)
-            //{
-            //    ModInfo.DebugLine(ex.ToString());
-            //    Lower = new PO_WrapperDisabled();
-            //}
+            try
+            {
+                InitialiseLogic();
+            }
+            catch (TypeLoadException ex)
+            {
+                Lower = new PO_LogicDisabled();
+            }
         }
 
-
-        //private void InitialiseLogic()
-        //{ 
-        //    bool x = false;
-        //    if (x)
-        //    {
-        //        Debug.Log($"ENABLED!");
-        //        Lower = new PO_WrapperEnabled();
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"DISABLED!");
-        //        Lower = new PO_WrapperDisabled();
-        //    }
-        //}
+        private void InitialiseLogic()
+        {
+            if (isPOEnabled())
+            {
+                Lower = new PO_LogicEnabled();
+            }
+            else
+            {
+                Lower = new PO_LogicDisabled();
+            }
+        }
 
         internal bool ToolEnabled()
         {
-            Dictionary<uint, PO_ObjectBase> newVisible = new Dictionary<uint, PO_ObjectBase>();
+            Dictionary<uint, IPO_Object> newVisible = new Dictionary<uint, IPO_Object>();
             HashSet<uint> newIds = new HashSet<uint>();
 
-            Debug.Log($"A");
-            foreach (PO_ObjectBase obj in Lower.Objects)
+            foreach (IPO_Object obj in Lower.Objects)
             {
                 newVisible.Add(obj.Id, obj);
                 newIds.Add(obj.Id);
             }
 
-            Debug.Log($"B");
             HashSet<uint> removed = new HashSet<uint>(visibleIds);
             removed.ExceptWith(newIds);
             HashSet<uint> added = new HashSet<uint>(newIds);
@@ -72,7 +61,6 @@ namespace MoveIt
             HashSet<uint> newSelectedIds = new HashSet<uint>(selectedIds);
             newSelectedIds.IntersectWith(newIds);
 
-            Debug.Log($"C");
             List<Instance> toRemove = new List<Instance>();
             foreach (Instance instance in Action.selection)
             {
@@ -86,7 +74,6 @@ namespace MoveIt
                     }
                 }
             }
-            Debug.Log($"D");
             foreach (Instance instance in toRemove)
             {
                 Action.selection.Remove(instance);
@@ -140,25 +127,6 @@ namespace MoveIt
         {
             selectedIds.Clear();
         }
-    }
-
-
-    internal static class PO_LayerChooser
-    {
-
-        internal static void LowerLayer()
-        {
-            if (isPOEnabled())
-            {
-                Debug.Log($"ENABLED!");
-                PO_Logic.Lower = new PO_WrapperEnabled();
-            }
-            else
-            {
-                Debug.Log($"DISABLED!");
-                PO_Logic.Lower = new PO_WrapperDisabled();
-            }
-        }
 
 
         internal static bool isPOEnabled()
@@ -178,137 +146,67 @@ namespace MoveIt
         }
     }
 
+
     // PO Logic
-    internal interface IPO_Wrapper
+    internal interface IPO_Logic
     {
-        List<PO_ObjectBase> Objects { get; }
+        List<IPO_Object> Objects { get; }
     }
 
-    //internal abstract class PO_WrapperBase
-    //{
-    //    public virtual List<PO_ObjectBase> Objects => new List<PO_ObjectBase>();
-    //}
-
-    internal class PO_WrapperDisabled : IPO_Wrapper
+    internal class PO_LogicDisabled : IPO_Logic
     {
-        public List<PO_ObjectBase> Objects
+        public List<IPO_Object> Objects
         {
             get
             {
                 Debug.Log($"PO List: Inactive");
-                return new List<PO_ObjectBase>();
+                return new List<IPO_Object>();
             }
         }
     }
 
 
     // PO Object
-    internal abstract class PO_ObjectBase
+    internal interface IPO_Object
     {
-        public uint Id { get; set; } // The InstanceID.NetLane value
-        public abstract Vector3 Position { get; set; }
-        public abstract float Angle { get; set; }
-        public abstract void SetPositionY(float h);
-        public abstract float GetDistance(Vector3 location);
-        public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
-        public abstract string DebugQuaternion();
+        uint Id { get; set; } // The InstanceID.NetLane value
+        Vector3 Position { get; set; }
+        float Angle { get; set; }
+        void SetPositionY(float h);
+        float GetDistance(Vector3 location);
+        void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
+        string DebugQuaternion();
     }
 
-    internal class PO_ObjectInactive : PO_ObjectBase
+    internal class PO_ObjectInactive : IPO_Object
     {
-        public override Vector3 Position
+        public uint Id { get; set; } // The InstanceID.NetLane value
+
+        public Vector3 Position
         {
             get => Vector3.zero;
             set { }
         }
 
-        public override float Angle
+        public float Angle
         {
             get => 0f;
             set { }
         }
 
-        public override void SetPositionY(float h)
+        public void SetPositionY(float h)
         {
             return;
         }
 
-        public override float GetDistance(Vector3 location) => 0f;
+        public float GetDistance(Vector3 location) => 0f;
 
-        public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
+        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
         { }
 
-        public override string DebugQuaternion()
+        public string DebugQuaternion()
         {
             return "";
         }
     }
 }
-
-
-
-
-
-
-
-//private bool Initialise()
-//{
-//    try
-//    {
-//        Assembly poAssembly = null;
-//        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-//        {
-//            ModInfo.DebugLine(assembly.FullName);
-//            if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "ProceduralOb")
-//            {
-//                poAssembly = assembly;
-//                break;
-//            }
-//        }
-//        ModInfo.DebugLine(poAssembly.ToString());
-//        if (poAssembly == null)
-//        {
-//            ModInfo.DebugLine("Assemble is NULL");
-//            return false;
-//        }
-
-//        tPOLogic = poAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
-//        tPOObject = poAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
-
-//        ModInfo.DebugLine(tPOLogic.ToString());
-//        ModInfo.DebugLine(tPOObject.ToString());
-//    }
-//    catch (ReflectionTypeLoadException)
-//    {
-//        ModInfo.DebugLine($"MoveIt failed to integrate PO (ReflectionTypeLoadException)");
-//        return false;
-//    }
-//    catch (NullReferenceException)
-//    {
-//        ModInfo.DebugLine($"MoveIt failed to integrate PO (NullReferenceException)");
-//        return false;
-//    }
-
-//    return true;
-//}
-
-
-
-
-
-//public class PO_ProcInfo : PrefabInfo
-//{
-//    new public string name;
-//}
-
-//static class PO_Utils
-//{
-//    public static ProceduralObjects.Classes.ProceduralObject GetProcWithId(this List<ProceduralObjects.Classes.ProceduralObject> list, int id)
-//    {
-//        if (list.Any(po => po.id == id))
-//        {
-//            return list.FirstOrDefault(po => po.id == id);
-//        }
-//        return null;
-//    }
-//}

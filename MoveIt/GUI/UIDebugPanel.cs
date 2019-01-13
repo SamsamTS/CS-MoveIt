@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    public class DebugPanel
+    internal class DebugPanel
     {
-        public UIPanel Panel;
-        public DebugPanel_ModTools ModTools = null;
+        internal UIPanel Panel;
+        internal DebugPanel_ModTools ModTools = null;
         private UILabel HoverLarge, HoverSmall, ToolStatus;
         private InstanceID id, lastId;
 
-        public DebugPanel()
+        internal DebugPanel()
         {
             _initialise();
 
@@ -25,13 +25,13 @@ namespace MoveIt
         }
 
 
-        public void Visible(bool show)
+        internal void Visible(bool show)
         {
             Panel.isVisible = show;
         }
 
 
-        public void UpdateVisible()
+        internal void UpdateVisible()
         {
             if (MoveItTool.showDebugPanel)
             {
@@ -44,13 +44,13 @@ namespace MoveIt
         }
 
 
-        public void Update(InstanceID instanceId)
+        internal void Update(InstanceID instanceId)
         {
             id = instanceId;
             Update();
         }
 
-        public void Update()
+        internal void Update()
         { 
             if (!MoveItTool.showDebugPanel)
             {
@@ -121,7 +121,7 @@ namespace MoveIt
         }
 
 
-        public static bool isModToolsEnabled()
+        internal static bool isModToolsEnabled()
         {
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 450877484uL || mod.name.Contains("ModTools")) && mod.isEnabled);
         }
@@ -168,17 +168,17 @@ namespace MoveIt
     }
 
 
-    public class DebugPanel_ModTools
+    internal class DebugPanel_ModTools
     {
-        public InstanceID Id { get; set; }
-        public UIPanel Parent { get; set; }
-        public UIButton btn;
+        internal InstanceID Id { get; set; }
+        internal UIPanel Parent { get; set; }
+        internal UIButton btn;
         private readonly object ModTools, SceneExplorer;
         private readonly Type tModTools, tSceneExplorer, tReferenceChain;
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
         private readonly object rcBuildings, rcProps, rcTrees, rcNodes, rcSegments;
 
-        public DebugPanel_ModTools(UIPanel parent)
+        internal DebugPanel_ModTools(UIPanel parent)
         {
             try
             {

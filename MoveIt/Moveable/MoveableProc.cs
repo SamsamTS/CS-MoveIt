@@ -9,7 +9,7 @@ namespace MoveIt
 
     public class MoveableProc : Instance
     {
-        internal PO_ObjectBase m_procObj;
+        internal IPO_Object m_procObj;
 
         public override HashSet<ushort> segmentList
         {
