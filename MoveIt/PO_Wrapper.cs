@@ -10,7 +10,7 @@ namespace MoveIt
 {
     internal class PO_Manager
     {
-        private IPO_Logic Lower;
+        private IPO_Logic Logic;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         private HashSet<uint> selectedIds = new HashSet<uint>();
@@ -46,7 +46,7 @@ namespace MoveIt
             catch (TypeLoadException ex)
             {
                 Enabled = false;
-                Lower = new PO_LogicDisabled();
+                Logic = new PO_LogicDisabled();
             }
         }
 
@@ -55,12 +55,12 @@ namespace MoveIt
             if (isPOEnabled())
             {
                 Enabled = true;
-                Lower = new PO_LogicEnabled();
+                Logic = new PO_LogicEnabled();
             }
             else
             {
                 Enabled = false;
-                Lower = new PO_LogicDisabled();
+                Logic = new PO_LogicDisabled();
             }
         }
 
@@ -69,7 +69,7 @@ namespace MoveIt
             Dictionary<uint, IPO_Object> newVisible = new Dictionary<uint, IPO_Object>();
             HashSet<uint> newIds = new HashSet<uint>();
 
-            foreach (IPO_Object obj in Lower.Objects)
+            foreach (IPO_Object obj in Logic.Objects)
             {
                 newVisible.Add(obj.Id, obj);
                 newIds.Add(obj.Id);
@@ -161,6 +161,12 @@ namespace MoveIt
 
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
         }
+
+
+        //internal object GetReferenceChain(Type tChain)
+        //{
+        //    return Logic.GetReferenceChain(tChain);
+        //}
     }
 
 
@@ -168,6 +174,7 @@ namespace MoveIt
     internal interface IPO_Logic
     {
         List<IPO_Object> Objects { get; }
+        //object GetReferenceChain(Type tChain);
     }
 
     internal class PO_LogicDisabled : IPO_Logic
@@ -179,6 +186,11 @@ namespace MoveIt
                 return new List<IPO_Object>();
             }
         }
+
+        //public object GetReferenceChain(Type tChain)
+        //{
+        //    return new object();
+        //}
     }
 
 

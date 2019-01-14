@@ -39,6 +39,32 @@ namespace MoveIt
                 return objects;
             }
         }
+
+        //public object GetReferenceChain(Type tChain)
+        //{
+        //    BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+        //    object chain = null;
+
+        //    if (MoveItTool.PO.Enabled)
+        //    {
+        //        object[] field;
+        //        MethodInfo method;
+        //        chain = Activator.CreateInstance(tChain);
+        //        chain = tChain.GetMethod("Add", flags, null, new Type[] { typeof(GameObject) }, null).Invoke(chain, new object[] { Logic.gameObject });
+        //        Debug.Log($"A {chain}");
+        //        chain = tChain.GetMethod("Add", flags, null, new Type[] { typeof(ProceduralObjectsLogic) }, null).Invoke(chain, new object[] { Logic });
+        //        Debug.Log($"B {chain}");
+        //        method = tChain.GetMethod("Add", flags, null, new Type[] { typeof(List<ProceduralObject>) }, null);
+        //        Debug.Log($"C {method}:{method.Name}");
+        //        field = new object[] { typeof(ProceduralObjectsLogic).GetField("proceduralObjects") };
+        //        Debug.Log($"D {field}");
+        //        chain = method.Invoke(chain, field);
+        //        Debug.Log($"E {chain}");
+        //        //chain = tChain.GetMethod("Add", flags, null, new Type[] { typeof(FieldInfo) }, null).Invoke(chain, new object[] { typeof(Array32<TreeInstance>).GetField("m_buffer") });
+        //        Debug.Log($"\n************************************************\nPO Chain:{chain}\n***********************************************");
+        //    }
+        //    return chain;
+        //}
     }
 
 

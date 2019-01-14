@@ -236,6 +236,8 @@ namespace MoveIt
                 rcNodes = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(FieldInfo) }, null).Invoke(rcNodes, new object[] { typeof(NetManager).GetField("m_nodes") });
                 rcNodes = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(FieldInfo) }, null).Invoke(rcNodes, new object[] { typeof(Array16<NetNode>).GetField("m_buffer") });
                 //Debug.Log($"rcNodes:{rcNodes}\nrcSegments:{rcSegments}");
+
+                //rcPO = MoveItTool.PO.GetReferenceChain(tReferenceChain);
             }
             catch (ReflectionTypeLoadException)
             {

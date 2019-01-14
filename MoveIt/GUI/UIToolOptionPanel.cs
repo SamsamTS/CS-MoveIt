@@ -562,7 +562,7 @@ namespace MoveIt
             UIPanel viewOptions = AddUIComponent<UIPanel>();
             viewOptions.atlas = UIUtils.GetAtlas("Ingame");
             viewOptions.backgroundSprite = "InfoPanelBack";
-            viewOptions.size = new Vector2(44f, (MoveItTool.PO.Enabled ? 116f : 80f));
+            viewOptions.size = new Vector2(44f, 80f);
 
             viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - viewOptions.width, absolutePosition.y - viewOptions.height - 8f);
 
@@ -637,9 +637,10 @@ namespace MoveIt
             };
 
 
-
             if (MoveItTool.PO.Enabled)
             {
+                viewOptions.height += 36;
+
                 PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
                 PO_button.atlas = GetIconsAtlas();
                 PO_button.name = "MoveIt_PO_button";

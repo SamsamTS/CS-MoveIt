@@ -34,7 +34,7 @@ namespace MoveIt
 
         public string Description
         {
-            get { return "Move things [Alpha Prodecural Objects Option]"; }
+            get { return "[Alpha Prodecural Objects Option]"; }
         }
 
         public const string version = "2.4.0 [APOO]";
