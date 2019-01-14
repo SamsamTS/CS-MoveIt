@@ -151,16 +151,13 @@ namespace MoveIt
 
         internal static bool isPOEnabled()
         {
-            Debug.Log(PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled).ToString());
-
-            string msg = "\n";
-            foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
-            {
-                msg += $"{pi.name} #{pi.publishedFileID}\n";
-            }
-            ModInfo.DebugLine(msg);
-
-            ModInfo.DebugLine(PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled).ToString());
+            //string msg = "\n";
+            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            //{
+            //    msg += $"{pi.name} #{pi.publishedFileID}\n";
+            //}
+            //ModInfo.DebugLine(msg);
+            //ModInfo.DebugLine(PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled).ToString());
 
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
         }
