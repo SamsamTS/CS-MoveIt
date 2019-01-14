@@ -36,7 +36,7 @@ namespace MoveIt
             bool selectNodes = true;
             bool selectSegments = true;
             bool selectTrees = true;
-            bool selectProc = true;
+            bool selectProc = PO.Active;
 
             bool repeatSearch = false;
 
@@ -49,6 +49,7 @@ namespace MoveIt
                 selectNodes = filterNodes;
                 selectSegments = filterSegments;
                 selectTrees = filterTrees;
+                selectProc = PO.Active ? filterProcs : false;
             }
 
             float smallestDist = 640000f;
@@ -209,7 +210,7 @@ namespace MoveIt
                     }
                 }
 
-                if (selectProc)
+                if (PO.Active && selectProc)
                 {
                     string msg = "";
                     foreach (IPO_Object obj in PO.Objects)
@@ -469,7 +470,7 @@ namespace MoveIt
                     }
                 }
 
-                if (filterProcs)
+                if (PO.Active && filterProcs)
                 {
                     string msg = "";
                     foreach (IPO_Object obj in PO.Objects)

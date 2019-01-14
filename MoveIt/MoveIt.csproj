@@ -147,6 +147,10 @@
     <EmbeddedResource Include="Icons\AlignSlopeA.png" />
     <EmbeddedResource Include="Icons\AlignSlopeB.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PO.png" />
+    <EmbeddedResource Include="Icons\POFocused.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"

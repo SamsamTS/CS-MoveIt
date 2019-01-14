@@ -85,15 +85,15 @@ namespace MoveIt
         public int aeraUpdateCountdown = -1;
         public HashSet<Bounds> aerasToUpdate = new HashSet<Bounds>();
 
-        public static Color m_hoverColor = new Color32(0, 181, 255, 255);
-        public static Color m_selectedColor = new Color32(95, 166, 0, 244);
-        public static Color m_moveColor = new Color32(125, 196, 30, 244);
-        public static Color m_removeColor = new Color32(255, 160, 47, 191);
-        public static Color m_despawnColor = new Color32(255, 160, 47, 191);
-        public static Color m_alignColor = new Color32(255, 255, 255, 244);
-        public static Color m_POhoverColor = new Color32(240, 140, 255, 240);
-        public static Color m_POselectedColor = new Color32(230, 130, 245, 140);
-        public static Color m_POdisabledColor = new Color32(150, 100, 160, 80);
+        internal static Color m_hoverColor = new Color32(0, 181, 255, 255);
+        internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
+        internal static Color m_moveColor = new Color32(125, 196, 30, 244);
+        internal static Color m_removeColor = new Color32(255, 160, 47, 191);
+        internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
+        internal static Color m_alignColor = new Color32(255, 255, 255, 244);
+        internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
+        internal static Color m_POselectedColor = new Color32(230, 130, 245, 140);
+        internal static Color m_POdisabledColor = new Color32(150, 100, 160, 80);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
@@ -399,8 +399,11 @@ namespace MoveIt
             }
 
             // Update selected POs
-            PO.ToolEnabled();
-            ActionQueue.instance.Push(new TransformAction());
+            if (PO.Active)
+            {
+                PO.ToolEnabled();
+                ActionQueue.instance.Push(new TransformAction());
+            }
 
             //string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
             //foreach (Instance i in Action.selection)
@@ -457,7 +460,7 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
                 // Highlight all PO
-                if (POHighlightUnselected)
+                if (PO.Active && POHighlightUnselected)
                 {
                     foreach (IPO_Object obj in PO.Objects)
                     {

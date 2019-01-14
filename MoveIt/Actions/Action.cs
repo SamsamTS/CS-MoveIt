@@ -27,6 +27,24 @@ namespace MoveIt
             return GetTotalBounds().center;
         }
 
+        public static void ClearPOFromSelection()
+        {
+            if (!MoveItTool.PO.Enabled) return;
+
+            HashSet<Instance> toRemove = new HashSet<Instance>();
+            foreach (Instance i in selection)
+            {
+                if (i is MoveableProc)
+                {
+                    toRemove.Add(i);
+                }
+            }
+            foreach (Instance i in toRemove)
+            {
+                selection.Remove(i);
+            }
+        }
+
         public static Bounds GetTotalBounds(bool ignoreSegments = true, bool hasAngleOnly = false)
         {
             Bounds totalBounds = default(Bounds);

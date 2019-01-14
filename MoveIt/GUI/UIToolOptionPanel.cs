@@ -19,11 +19,12 @@ namespace MoveIt
 
         private UITabstrip m_tabStrip;
         private UIButton m_single;
-        public UIButton m_marquee;
+        private UIButton m_marquee;
         private UIButton m_copy;
         private UIButton m_bulldoze;
         private UIButton m_alignTools;
 
+        public UIMultiStateButton PO_button;
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;
 
@@ -550,9 +551,10 @@ namespace MoveIt
             UIPanel viewOptions = AddUIComponent<UIPanel>();
             viewOptions.atlas = UIUtils.GetAtlas("Ingame");
             viewOptions.backgroundSprite = "InfoPanelBack";
-            viewOptions.size = new Vector2(44f, 80f);
+            viewOptions.size = new Vector2(44f, (MoveItTool.PO.Enabled ? 116f : 80f));
 
             viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - viewOptions.width, absolutePosition.y - viewOptions.height - 8f);
+
 
             grid = viewOptions.AddUIComponent<UIMultiStateButton>();
             grid.atlas = GetIconsAtlas();
@@ -588,6 +590,7 @@ namespace MoveIt
                 MoveItTool.gridVisible = (grid.activeStateIndex == 1);
             };
 
+
             underground = viewOptions.AddUIComponent<UIMultiStateButton>();
             underground.atlas = UIUtils.GetAtlas("Ingame");
             underground.name = "MoveIt_UndergroundView";
@@ -621,6 +624,55 @@ namespace MoveIt
             {
                 MoveItTool.tunnelVisible = (underground.activeStateIndex == 1);
             };
+
+
+
+            if (MoveItTool.PO.Enabled)
+            {
+                PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
+                PO_button.atlas = GetIconsAtlas();
+                PO_button.name = "MoveIt_PO_button";
+                PO_button.tooltip = "Toggle Procedural Objects";
+                PO_button.playAudioEvents = true;
+
+                PO_button.size = new Vector2(36, 36);
+                PO_button.spritePadding = new RectOffset();
+
+                PO_button.backgroundSprites[0].disabled = "OptionBaseDisabled";
+                PO_button.backgroundSprites[0].hovered = "OptionBaseHovered";
+                PO_button.backgroundSprites[0].normal = "OptionBase";
+                PO_button.backgroundSprites[0].pressed = "OptionBasePressed";
+
+                PO_button.backgroundSprites.AddState();
+                PO_button.backgroundSprites[1].disabled = "OptionBaseDisabled";
+                PO_button.backgroundSprites[1].hovered = "";
+                PO_button.backgroundSprites[1].normal = "OptionBaseFocused";
+                PO_button.backgroundSprites[1].pressed = "OptionBasePressed";
+
+                PO_button.foregroundSprites[0].normal = "PO";
+
+                PO_button.foregroundSprites.AddState();
+                PO_button.foregroundSprites[1].normal = "POFocused";
+
+                PO_button.relativePosition = new Vector3(4f, 76f);
+
+                PO_button.activeStateIndex = 0;
+
+                PO_button.eventClicked += (c, p) =>
+                {
+                    MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
+                    if (MoveItTool.PO.Active)
+                    {
+                        MoveItTool.PO.ToolEnabled();
+                        ActionQueue.instance.Push(new TransformAction());
+                    }
+                    else
+                    {
+                        Action.ClearPOFromSelection();
+                    }
+                };
+            }
+
             #endregion
 
             MoveItTool.debugPanel = new DebugPanel();
@@ -727,7 +779,9 @@ namespace MoveIt
                 "Save_disabled",
                 "Load",
                 "Grid",
-                "GridFocused"
+                "GridFocused",
+                "PO",
+                "POFocused"
             };
 
             UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Icons", spriteNames, "MoveIt.Icons.");

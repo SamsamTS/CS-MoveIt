@@ -19,6 +19,26 @@ namespace MoveIt
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
+        internal bool Enabled = false;
+        private bool _active = false;
+        public bool Active
+        {
+            get
+            {
+                Debug.Log($"PO Active: {_active}, Enabled: {Enabled}");
+                if (!Enabled)
+                    return false;
+                return _active;
+            }
+            set
+            {
+                Debug.Log($"PO Active: {value}, Enabled: {Enabled}");
+                if (!Enabled)
+                    _active = false;
+                _active = value;
+            }
+        }
+
         internal PO_Manager()
         {
             try
@@ -27,6 +47,7 @@ namespace MoveIt
             }
             catch (TypeLoadException ex)
             {
+                Enabled = false;
                 Lower = new PO_LogicDisabled();
             }
         }
@@ -35,10 +56,12 @@ namespace MoveIt
         {
             if (isPOEnabled())
             {
+                Enabled = true;
                 Lower = new PO_LogicEnabled();
             }
             else
             {
+                Enabled = false;
                 Lower = new PO_LogicDisabled();
             }
         }
