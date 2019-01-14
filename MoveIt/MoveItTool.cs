@@ -398,7 +398,6 @@ namespace MoveIt
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
 
-            // Update selected POs
             if (PO.Active)
             {
                 PO.ToolEnabled();

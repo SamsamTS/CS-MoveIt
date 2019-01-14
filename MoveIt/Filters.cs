@@ -89,6 +89,9 @@ namespace MoveIt
                 case "Trees":
                     MoveItTool.filterTrees = active;
                     break;
+                case "PO":
+                    MoveItTool.filterProcs = active;
+                    break;
                 case "Nodes":
                     MoveItTool.filterNodes = active;
                     break;
@@ -127,6 +130,9 @@ namespace MoveIt
                     break;
                 case "Trees":
                     MoveItTool.filterTrees = !MoveItTool.filterTrees;
+                    break;
+                case "PO":
+                    MoveItTool.filterProcs = !MoveItTool.filterProcs;
                     break;
                 case "Nodes":
                     MoveItTool.filterNodes = !MoveItTool.filterNodes;

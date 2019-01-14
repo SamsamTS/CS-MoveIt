@@ -291,6 +291,17 @@ namespace MoveIt
             checkBox = UIFilters.CreateFilterCB(filtersPanel, "Trees");
             checkBox.eventDoubleClick += OnDoubleClick;
 
+            if (MoveItTool.PO.Enabled)
+            {
+                if (MoveItTool.PO.Active)
+                {
+                    filtersPanel.height += 20f;
+                }
+                checkBox = UIFilters.CreateFilterCB(filtersPanel, "PO");
+                checkBox.eventDoubleClick += OnDoubleClick;
+                checkBox.isVisible = MoveItTool.PO.Active;
+            }
+
             checkBox = UIFilters.CreateFilterCB(filtersPanel, "Nodes");
             checkBox.eventDoubleClick += OnDoubleClick;
 
@@ -670,6 +681,7 @@ namespace MoveIt
                     {
                         Action.ClearPOFromSelection();
                     }
+                    UIFilters.POToggled();
                 };
             }
 

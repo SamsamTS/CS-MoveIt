@@ -25,7 +25,6 @@ namespace MoveIt
         {
             get
             {
-                Debug.Log($"PO List: Active");
                 List<ProceduralObject> objectList = Logic.proceduralObjects;
                 if (MoveItTool.POOnlySelectedAreVisible)
                 {

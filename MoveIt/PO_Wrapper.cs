@@ -25,14 +25,12 @@ namespace MoveIt
         {
             get
             {
-                Debug.Log($"PO Active: {_active}, Enabled: {Enabled}");
                 if (!Enabled)
                     return false;
                 return _active;
             }
             set
             {
-                Debug.Log($"PO Active: {value}, Enabled: {Enabled}");
                 if (!Enabled)
                     _active = false;
                 _active = value;
@@ -87,7 +85,6 @@ namespace MoveIt
             List<Instance> toRemove = new List<Instance>();
             foreach (Instance instance in Action.selection)
             {
-                Debug.Log(instance);
                 uint id = instance.id.NetLane;
                 if (id > 0)
                 {
@@ -182,7 +179,6 @@ namespace MoveIt
         {
             get
             {
-                Debug.Log($"PO List: Inactive");
                 return new List<IPO_Object>();
             }
         }

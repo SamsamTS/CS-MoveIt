@@ -153,7 +153,7 @@ namespace MoveIt
             checkBox.eventClicked += (c, p) =>
             {
                 Filters.ToggleNetworkFilter(name);
-                UIFilters.RefreshFilters();
+                RefreshFilters();
             };
             NetworkCBs.Add(checkBox);
             return checkBox;
@@ -170,10 +170,32 @@ namespace MoveIt
         }
 
 
+        internal static void POToggled()
+        {
+            UICheckBox cbProcedural = FilterPanel.Find<UICheckBox>("PO");
+
+            if (MoveItTool.PO.Active)
+            {
+                FilterPanel.height += MoveItTool.UI_Filter_CB_Height;
+                FilterPanel.absolutePosition += new Vector3(0f, 0 - MoveItTool.UI_Filter_CB_Height);
+                cbProcedural.isVisible = true;
+            }
+            else
+            {
+                FilterPanel.height -= MoveItTool.UI_Filter_CB_Height;
+                FilterPanel.absolutePosition -= new Vector3(0f, 0 - MoveItTool.UI_Filter_CB_Height);
+                cbProcedural.isVisible = false;
+            }
+
+            RefreshFilters();
+        }
+
+
         public static void RefreshFilters()
         {
             UICheckBox cbNodes = FilterPanel.Find<UICheckBox>("Nodes");
             UICheckBox cbSegments = FilterPanel.Find<UICheckBox>("Segments");
+
 
             if (MoveItTool.filterNodes || MoveItTool.filterSegments)
             {

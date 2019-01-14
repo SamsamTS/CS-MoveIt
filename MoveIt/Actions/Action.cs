@@ -43,6 +43,8 @@ namespace MoveIt
             {
                 selection.Remove(i);
             }
+
+            MoveItTool.PO.SelectionClear();
         }
 
         public static Bounds GetTotalBounds(bool ignoreSegments = true, bool hasAngleOnly = false)
