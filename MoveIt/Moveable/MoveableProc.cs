@@ -24,6 +24,7 @@ namespace MoveIt
         public MoveableProc(InstanceID instanceID) : base(instanceID)
         {
             m_procObj = MoveItTool.PO.GetProcObj(instanceID.NetLane);
+            Info = m_procObj.Info;
         }
 
 
@@ -31,6 +32,7 @@ namespace MoveIt
         {
             ProcState state = new ProcState();
             state.instance = this;
+            state.Info = Info;
             state.position = m_procObj.Position;
             state.angle = m_procObj.Angle;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
@@ -110,7 +112,25 @@ namespace MoveIt
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {
-            return instanceState.instance;
+            ProcState state = instanceState as ProcState;
+
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaHeight;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+            }
+
+            Instance cloneInstance = null;
+            //uint clone = MoveItTool.PO.Clone(m_procObj.Id, newPosition);
+            //Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone}");
+
+            //InstanceID cloneID = default(InstanceID);
+            //cloneID.NetLane = clone;
+            //cloneInstance = new MoveableProc(cloneID);
+            
+            return cloneInstance;
         }
 
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)

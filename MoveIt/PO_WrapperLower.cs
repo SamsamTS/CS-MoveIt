@@ -3,6 +3,7 @@ using ProceduralObjects.Classes;
 using ColossalFramework;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 // Low level PO wrapper, only accessed by high level
 
@@ -40,31 +41,24 @@ namespace MoveIt
             }
         }
 
-        //public object GetReferenceChain(Type tChain)
-        //{
-        //    BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-        //    object chain = null;
+        public uint Clone(uint originalId, Vector3 position)
+        {
+            int id = (int)originalId - 1;
+            var cache = new CacheProceduralObject(Logic.proceduralObjects[id]);
 
-        //    if (MoveItTool.PO.Enabled)
-        //    {
-        //        object[] field;
-        //        MethodInfo method;
-        //        chain = Activator.CreateInstance(tChain);
-        //        chain = tChain.GetMethod("Add", flags, null, new Type[] { typeof(GameObject) }, null).Invoke(chain, new object[] { Logic.gameObject });
-        //        Debug.Log($"A {chain}");
-        //        chain = tChain.GetMethod("Add", flags, null, new Type[] { typeof(ProceduralObjectsLogic) }, null).Invoke(chain, new object[] { Logic });
-        //        Debug.Log($"B {chain}");
-        //        method = tChain.GetMethod("Add", flags, null, new Type[] { typeof(List<ProceduralObject>) }, null);
-        //        Debug.Log($"C {method}:{method.Name}");
-        //        field = new object[] { typeof(ProceduralObjectsLogic).GetField("proceduralObjects") };
-        //        Debug.Log($"D {field}");
-        //        chain = method.Invoke(chain, field);
-        //        Debug.Log($"E {chain}");
-        //        //chain = tChain.GetMethod("Add", flags, null, new Type[] { typeof(FieldInfo) }, null).Invoke(chain, new object[] { typeof(Array32<TreeInstance>).GetField("m_buffer") });
-        //        Debug.Log($"\n************************************************\nPO Chain:{chain}\n***********************************************");
-        //    }
-        //    return chain;
-        //}
+            int newId = Logic.proceduralObjects.GetNextUnusedId();
+            Debug.Log($"Cloning {originalId} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
+
+            //PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
+            //Debug.Log($"{propInfo.m_material.color}, {propInfo.m_material.mainTexture}, {propInfo.m_material.shader}");
+
+            //var obj = Logic.PlaceCacheObject(cache, false);
+            //ProceduralObject obj = new ProceduralObject(cache, newId, position);
+            //Logic.proceduralObjects.Add(obj);
+
+            //return (uint)obj.id + 1;
+            return 0;
+        }
     }
 
 
@@ -78,6 +72,17 @@ namespace MoveIt
 
         public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
         private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
+
+        public string Name
+        {
+            get
+            {
+                if (procObj.basePrefabName.Length < 35)
+                    return "[PO]" + procObj.basePrefabName;
+                return "[PO]" + procObj.basePrefabName.Substring(0, 35);
+            }
+            set { }
+        }
 
         public float Angle
         {
@@ -94,6 +99,19 @@ namespace MoveIt
                 if (a < 0) a += 360f;
                 procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
             }
+        }
+
+        private Info_POEnabled _info = null;
+        public IInfo Info
+        {
+            get
+            {
+                if (_info == null)
+                    _info = new Info_POEnabled(this);
+
+                return _info;
+            }
+            set => _info = (Info_POEnabled)value;
         }
 
         public PO_ObjectEnabled(ProceduralObject obj)
@@ -123,5 +141,20 @@ namespace MoveIt
         {
             return $"{Id}:{Rotation.w},{Rotation.x},{Rotation.y},{Rotation.z}";
         }
+    }
+
+
+    public class Info_POEnabled : IInfo
+    {
+        private PO_ObjectEnabled _obj = null;
+
+        public Info_POEnabled(object i)
+        {
+            _obj = (PO_ObjectEnabled)i;
+        }
+
+        public string Name => _obj.Name;
+
+        public PrefabInfo Prefab { get; set; } = null;
     }
 }

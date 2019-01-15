@@ -93,7 +93,7 @@ namespace MoveIt
                 {
                     InstanceState newState = new InstanceState();
                     newState.instance = state.instance;
-                    newState.info = state.info;
+                    newState.Info = state.Info;
 
                     newState.position = matrix4x.MultiplyPoint(state.position - center);
                     newState.position.y = state.position.y + deltaPosition.y;

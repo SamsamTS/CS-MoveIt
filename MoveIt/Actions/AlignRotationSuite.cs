@@ -91,7 +91,7 @@ namespace MoveIt
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mb.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
 
-                        BuildingInfo prefab = (BuildingInfo)state.info;
+                        BuildingInfo prefab = (BuildingInfo)state.Info.Prefab;
                         ushort id = mb.id.Building;
                         Building building = BuildingManager.instance.m_buildings.m_buffer[id];
 

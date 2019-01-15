@@ -912,7 +912,7 @@ namespace MoveIt
 
                     foreach (InstanceState state in selectionState.states)
                     {
-                        if (state.info == null)
+                        if (state.Info == null)
                         {
                             missingPrefabs.Add(state.prefabName);
                         }

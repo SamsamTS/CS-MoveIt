@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -77,7 +77,14 @@ namespace MoveIt
             }
         }
 
-        public MoveableNode(InstanceID instanceID) : base(instanceID) { }
+        public MoveableNode(InstanceID instanceID) : base(instanceID)
+        {
+            if ((NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].m_flags & NetNode.Flags.Created) == NetNode.Flags.None)
+            {
+                throw new Exception($"Node #{instanceID.NetNode} not found!");
+            }
+            Info = new Info_Prefab(NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -86,7 +93,7 @@ namespace MoveIt
             NodeState state = new NodeState();
 
             state.instance = this;
-            state.info = info;
+            state.Info = Info;
 
             state.position = nodeBuffer[node].m_position;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
@@ -357,7 +364,7 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 newPosition, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;
@@ -382,7 +389,7 @@ namespace MoveIt
 
             MoveableNode cloneInstance = null;
 
-            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 state.position, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;

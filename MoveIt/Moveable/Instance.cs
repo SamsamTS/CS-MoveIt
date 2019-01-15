@@ -13,7 +13,7 @@ namespace MoveIt
         public Instance instance;
 
         [XmlIgnore]
-        public PrefabInfo info;
+        public IInfo Info;
 
         public Vector3 position;
         public float angle;
@@ -41,9 +41,9 @@ namespace MoveIt
         {
             get
             {
-                if(info != null)
+                if(Info != null)
                 {
-                    return info.name;
+                    return Info.Name;
                 }
                 else
                 {
@@ -59,23 +59,23 @@ namespace MoveIt
                 {
                     case InstanceType.Building:
                         {
-                            info = PrefabCollection<BuildingInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<BuildingInfo>.FindLoaded(value);
                             break;
                         }
                     case InstanceType.Prop:
                         {
-                            info = PrefabCollection<PropInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<PropInfo>.FindLoaded(value);
                             break;
                         }
                     case InstanceType.Tree:
                         {
-                            info = PrefabCollection<TreeInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<TreeInfo>.FindLoaded(value);
                             break;
                         }
                     case InstanceType.NetNode:
                     case InstanceType.NetSegment:
                         {
-                            info = PrefabCollection<NetInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<NetInfo>.FindLoaded(value);
                             break;
                         }
                 }
@@ -91,11 +91,26 @@ namespace MoveIt
                 DebugUtils.Warning("Mismatching instances type ('" + newInstance.id.Type + "' -> '" + newInstance.id.Type + "').");
             }
 
-            if (newInstance.info != info)
+            if (newInstance.Info != Info)
             {
-                DebugUtils.Warning("Mismatching instances info ('" + info.name + "' -> '" + newInstance.info.name + "').");
+                DebugUtils.Warning("Mismatching instances info ('" + Info.Name + "' -> '" + newInstance.Info.Name + "').");
             }
         }
+    }
+
+    public interface IInfo
+    {
+        string Name { get; }
+        PrefabInfo Prefab { get; set; }
+    }
+
+    public class Info_Prefab : IInfo
+    {
+        public Info_Prefab(object i) => Prefab = (PrefabInfo)i;
+
+        public string Name => Prefab.name;
+
+        public PrefabInfo Prefab { get; set; } = null;
     }
 
     public abstract class Instance
@@ -160,41 +175,45 @@ namespace MoveIt
             }
         }
 
-        public PrefabInfo info
-        {
-            get
-            {
-                switch (id.Type)
-                {
-                    case InstanceType.Building:
-                        {
-                            return BuildingManager.instance.m_buildings.m_buffer[id.Building].Info;
-                        }
-                    case InstanceType.Prop:
-                        {
-                            return PropManager.instance.m_props.m_buffer[id.Prop].Info;
-                        }
-                    case InstanceType.Tree:
-                        {
-                            return TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
-                        }
-                    case InstanceType.NetNode:
-                        {
-                            return NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
-                        }
-                    case InstanceType.NetSegment:
-                        {
-                            return NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
-                        }
-                    //case InstanceType.NetLane:
-                    //    {
-                    //        return MoveItTool.PO.GetProcObj(id.NetLane).Info;
-                    //    }
-                }
+        private IInfo info;
+        public IInfo Info { get => info; set => info = value; }
 
-                return null;
-            }
-        }
+
+        //public Info_Wrapper Info
+        //{
+        //    get
+        //    {
+        //        switch (id.Type)
+        //        {
+        //            case InstanceType.Building:
+        //                {
+        //                    return BuildingManager.instance.m_buildings.m_buffer[id.Building].Info;
+        //                }
+        //            case InstanceType.Prop:
+        //                {
+        //                    return PropManager.instance.m_props.m_buffer[id.Prop].Info;
+        //                }
+        //            case InstanceType.Tree:
+        //                {
+        //                    return TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
+        //                }
+        //            case InstanceType.NetNode:
+        //                {
+        //                    return NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
+        //                }
+        //            case InstanceType.NetSegment:
+        //                {
+        //                    return NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
+        //                }
+        //                //case InstanceType.NetLane:
+        //                //    {
+        //                //        return MoveItTool.PO.GetProcObj(id.NetLane).Info;
+        //                //    }
+        //        }
+
+        //        return null;
+        //    }
+        //}
 
         public abstract InstanceState GetState();
         public abstract void SetState(InstanceState state);

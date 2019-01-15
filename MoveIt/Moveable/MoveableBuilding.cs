@@ -110,14 +110,21 @@ namespace MoveIt
             }
         }
 
-        public MoveableBuilding(InstanceID instanceID) : base(instanceID) { }
+        public MoveableBuilding(InstanceID instanceID) : base(instanceID)
+        {
+            if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
+            {
+                throw new Exception($"Building #{instanceID.Building} not found!");
+            }
+            Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
+        }
 
         public override InstanceState GetState()
         {
             BuildingState state = new BuildingState
             {
                 instance = this,
-                info = info,
+                Info = Info,
                 position = buildingBuffer[id.Building].m_position,
                 angle = buildingBuffer[id.Building].m_angle,
                 flags = buildingBuffer[id.Building].m_flags,
@@ -291,7 +298,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
             MoveableBuilding cloneInstance = null;
-            BuildingInfo info = state.info as BuildingInfo;
+            BuildingInfo info = state.Info.Prefab as BuildingInfo;
 
             float newAngle = state.angle + deltaAngle;
             if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
@@ -361,7 +368,7 @@ namespace MoveIt
             BuildingState state = instanceState as BuildingState;
 
             MoveableBuilding cloneInstance = null;
-            BuildingInfo info = state.info as BuildingInfo;
+            BuildingInfo info = state.Info.Prefab as BuildingInfo;
 
             if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 info, state.position, state.angle,
@@ -502,7 +509,7 @@ namespace MoveIt
         {
             BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = state.info as BuildingInfo;
+            BuildingInfo buildingInfo = state.Info.Prefab as BuildingInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;
@@ -535,7 +542,7 @@ namespace MoveIt
         {
             BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = state.info as BuildingInfo;
+            BuildingInfo buildingInfo = state.Info.Prefab as BuildingInfo;
             Color color = GetColor(state.instance.id.Building, buildingInfo);
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);

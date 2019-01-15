@@ -117,7 +117,7 @@ namespace MoveIt
                 state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 4000f));
 
                 msg += $"\nx-offset:{distanceOffset} h-offset:{heightOffset}";
-                Debug.Log($"{state.instance.info}");
+                Debug.Log($"{state.instance.Info}");
             }
             Debug.Log(msg);
         }

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System;
 using System.Collections.Generic;
 using ColossalFramework.Math;
 
@@ -21,7 +21,14 @@ namespace MoveIt
             }
         }
 
-        public MoveableTree(InstanceID instanceID) : base(instanceID) { }
+        public MoveableTree(InstanceID instanceID) : base(instanceID)
+        {
+            if (((TreeInstance.Flags)TreeManager.instance.m_trees.m_buffer[instanceID.Tree].m_flags & TreeInstance.Flags.Created) == TreeInstance.Flags.None)
+            {
+                throw new Exception($"Tree #{instanceID.Tree} not found!");
+            }
+            Info = new Info_Prefab(TreeManager.instance.m_trees.m_buffer[instanceID.Tree].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -30,7 +37,7 @@ namespace MoveIt
             state.instance = this;
 
             uint tree = id.Tree;
-            state.info = info;
+            state.Info = Info;
 
             state.position = TreeManager.instance.m_trees.m_buffer[tree].Position;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
@@ -121,7 +128,7 @@ namespace MoveIt
             TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
 
             if (TreeManager.instance.CreateTree(out uint clone, ref SimulationManager.instance.m_randomizer,
-                state.info as TreeInfo, newPosition, state.single))
+                state.Info.Prefab as TreeInfo, newPosition, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
                 cloneID.Tree = clone;
@@ -138,7 +145,7 @@ namespace MoveIt
             Instance cloneInstance = null;
 
             if (TreeManager.instance.CreateTree(out uint clone, ref SimulationManager.instance.m_randomizer,
-                state.info as TreeInfo, state.position, state.single))
+                state.Info.Prefab as TreeInfo, state.position, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
                 cloneID.Tree = clone;
@@ -186,7 +193,7 @@ namespace MoveIt
         {
             TreeState state = instanceState as TreeState;
 
-            TreeInfo info = state.info as TreeInfo;
+            TreeInfo info = state.Info.Prefab as TreeInfo;
 
             Randomizer randomizer = new Randomizer(state.instance.id.Tree);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
@@ -207,7 +214,7 @@ namespace MoveIt
         {
             TreeState state = instanceState as TreeState;
 
-            TreeInfo info = state.info as TreeInfo;
+            TreeInfo info = state.Info.Prefab as TreeInfo;
 
             Randomizer randomizer = new Randomizer(state.instance.id.Tree);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;

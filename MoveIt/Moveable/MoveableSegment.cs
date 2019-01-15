@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System;
 using System.Reflection;
 using System.Collections.Generic;
 using ColossalFramework.Math;
@@ -43,7 +43,14 @@ namespace MoveIt
             }
         }
 
-        public MoveableSegment(InstanceID instanceID) : base(instanceID) { }
+        public MoveableSegment(InstanceID instanceID) : base(instanceID)
+        {
+            if ((NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].m_flags & NetSegment.Flags.Created) == NetSegment.Flags.None)
+            {
+                throw new Exception($"Segment #{instanceID.NetSegment} not found!");
+            }
+            Info = new Info_Prefab(NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -52,7 +59,7 @@ namespace MoveIt
             SegmentState state = new SegmentState
             {
                 instance = this,
-                info = info,
+                Info = Info,
 
                 position = GetControlPoint(segment),
 
@@ -166,7 +173,7 @@ namespace MoveIt
             startDirection.Normalize();
             endDirection.Normalize();
 
-            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 startNode, endNode, startDirection, endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
@@ -194,7 +201,7 @@ namespace MoveIt
             startNode = clonedNodes[startNode];
             endNode = clonedNodes[endNode];
 
-            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 startNode, endNode, state.startDirection, state.endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
@@ -261,7 +268,7 @@ namespace MoveIt
         {
             SegmentState state = instanceState as SegmentState;
 
-            NetInfo netInfo = state.info as NetInfo;
+            NetInfo netInfo = state.Info.Prefab as NetInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;
@@ -307,7 +314,7 @@ namespace MoveIt
         {
             SegmentState state = instanceState as SegmentState;
 
-            NetInfo netInfo = state.info as NetInfo;
+            NetInfo netInfo = state.Info.Prefab as NetInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;

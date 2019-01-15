@@ -43,7 +43,7 @@ namespace MoveIt
             {
                 InitialiseLogic();
             }
-            catch (TypeLoadException ex)
+            catch (TypeLoadException)
             {
                 Enabled = false;
                 Logic = new PO_LogicDisabled();
@@ -62,6 +62,11 @@ namespace MoveIt
                 Enabled = false;
                 Logic = new PO_LogicDisabled();
             }
+        }
+
+        internal uint Clone(uint originalId, Vector3 position)
+        {
+            return Logic.Clone(originalId, position);
         }
 
         internal bool ToolEnabled()
@@ -161,12 +166,6 @@ namespace MoveIt
 
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
         }
-
-
-        //internal object GetReferenceChain(Type tChain)
-        //{
-        //    return Logic.GetReferenceChain(tChain);
-        //}
     }
 
 
@@ -174,7 +173,7 @@ namespace MoveIt
     internal interface IPO_Logic
     {
         List<IPO_Object> Objects { get; }
-        //object GetReferenceChain(Type tChain);
+        uint Clone(uint originalId, Vector3 position);
     }
 
     internal class PO_LogicDisabled : IPO_Logic
@@ -187,10 +186,10 @@ namespace MoveIt
             }
         }
 
-        //public object GetReferenceChain(Type tChain)
-        //{
-        //    return new object();
-        //}
+        public uint Clone(uint originalId, Vector3 position)
+        {
+            throw new NotImplementedException($"Trying to clone {originalId} despite no PO!");
+        }
     }
 
 
@@ -200,13 +199,14 @@ namespace MoveIt
         uint Id { get; set; } // The InstanceID.NetLane value
         Vector3 Position { get; set; }
         float Angle { get; set; }
+        IInfo Info { get; set; }
         void SetPositionY(float h);
         float GetDistance(Vector3 location);
         void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
         string DebugQuaternion();
     }
 
-    internal class PO_ObjectInactive : IPO_Object
+    internal class PO_ObjectDisabled : IPO_Object
     {
         public uint Id { get; set; } // The InstanceID.NetLane value
 
@@ -222,6 +222,13 @@ namespace MoveIt
             set { }
         }
 
+        private Info_PODisabled _info = new Info_PODisabled();
+        public IInfo Info
+        {
+            get => _info;
+            set => _info = (Info_PODisabled)value;
+        }
+
         public void SetPositionY(float h)
         {
             return;
@@ -232,9 +239,16 @@ namespace MoveIt
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
         { }
 
+
         public string DebugQuaternion()
         {
             return "";
         }
+    }
+
+    public class Info_PODisabled : IInfo
+    {
+        public string Name => "";
+        public PrefabInfo Prefab { get; set; } = null;
     }
 }
