@@ -193,8 +193,8 @@ namespace MoveIt
 
         public static void RefreshFilters()
         {
-            UICheckBox cbNodes = FilterPanel.Find<UICheckBox>("Nodes");
-            UICheckBox cbSegments = FilterPanel.Find<UICheckBox>("Segments");
+            UICheckBox cbNodes = FilterCBs.Find(cb => cb.name == "Nodes"); //FilterPanel.Find<UICheckBox>("Nodes");
+            UICheckBox cbSegments = FilterCBs.Find(cb => cb.name == "Segments"); //FilterPanel.Find<UICheckBox>("Segments");
 
 
             if (MoveItTool.filterNodes || MoveItTool.filterSegments)

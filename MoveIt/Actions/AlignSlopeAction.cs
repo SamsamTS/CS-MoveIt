@@ -106,9 +106,6 @@ namespace MoveIt
             string msg = $"\nA:{PointA.position}, B:{PointB.position}\nAng:{angleDelta} ({angleDelta * Mathf.Rad2Deg}) - H:{heightDelta} - D:{distance}";
             foreach (InstanceState state in m_states)
             {
-                //string name = state.instance.info.name.Length > 15 ? state.instance.info.name.Substring(0, 15) : state.instance.info.name.PadLeft(15);
-                //msg += $"\n{name} <{state.instance.GetType().ToString().Substring(15)}> {state.position}: ";
-
                 float distanceOffset, heightOffset;
                 matrix.SetTRS(PointA.position, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
@@ -117,7 +114,6 @@ namespace MoveIt
                 state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 4000f));
 
                 msg += $"\nx-offset:{distanceOffset} h-offset:{heightOffset}";
-                Debug.Log($"{state.instance.Info}");
             }
             Debug.Log(msg);
         }

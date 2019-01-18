@@ -186,6 +186,10 @@ namespace MoveIt
                     {
                         angle = PropManager.instance.m_props.m_buffer[mp.id.Prop].Angle;
                     }
+                    else if (m_hoverInstance is MoveableProc mpo)
+                    {
+                        angle = PO.GetProcObj(mpo.id.NetLane).Angle;
+                    }
                     else if (m_hoverInstance is MoveableSegment ms)
                     {
                         NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;

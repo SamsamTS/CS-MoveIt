@@ -86,7 +86,7 @@ namespace MoveIt
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}\n({info.m_class.m_service}.{info.m_class.m_subService})";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.Prop > 0)
+            else if (id.Prop > 0)
             {
                 string type = "P";
                 PropInfo info = PropManager.instance.m_props.m_buffer[id.Prop].Info;
@@ -95,21 +95,28 @@ namespace MoveIt
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.Tree > 0)
+            else if (id.NetLane > 0)
+            {
+                IInfo info = MoveItTool.PO.GetProcObj(id.NetLane).Info;
+                HoverLarge.text = $"{id.NetLane}: {info.Name}";
+                HoverSmall.text = $"\n";
+                if (isModToolsEnabled()) ModTools.Id = id;
+            }
+            else if (id.Tree > 0)
             {
                 TreeInfo info = TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
                 HoverLarge.text = $"T:{id.Tree}  {info.name}";
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.NetNode > 0)
+            else if (id.NetNode > 0)
             {
                 NetInfo info = NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
                 HoverLarge.text = $"N:{id.NetNode}  {info.name}";
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.NetSegment > 0)
+            else if (id.NetSegment > 0)
             {
                 NetInfo info = NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
                 HoverLarge.text = $"S:{id.NetSegment}  {info.name}";
@@ -120,12 +127,10 @@ namespace MoveIt
             lastId = id;
         }
 
-
         internal static bool isModToolsEnabled()
         {
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 450877484uL || mod.name.Contains("ModTools")) && mod.isEnabled);
         }
-
 
         private void _initialise()
         {

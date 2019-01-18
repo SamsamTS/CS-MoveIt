@@ -56,7 +56,7 @@ namespace MoveIt
             }
             angleDelta = 0 - firstValidAngle + newAngle;
             PoR = bounds.center;
-            Debug.Log($"{GetType()}\nAll delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}\n0 - {firstValidAngle} + {newAngle} = {angleDelta}");
+            //Debug.Log($"{GetType()}\nAll delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}\n0 - {firstValidAngle} + {newAngle} = {angleDelta}");
 
             foreach (InstanceState state in m_states)
             {

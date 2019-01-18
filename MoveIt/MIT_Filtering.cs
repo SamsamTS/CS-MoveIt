@@ -56,6 +56,32 @@ namespace MoveIt
 
             do
             {
+
+                if (PO.Active && selectProc)
+                {
+                    //string msg = "";
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (stepOver.isValidPO(obj.Id))
+                        {
+                            //msg += $"{obj.Id},";
+                            bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
+                            bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
+                            if (inXBounds && inZBounds)
+                            {
+                                float t = obj.GetDistance(location);
+                                //Debug.Log($"Object {obj.Id}: {t}m");
+                                if (t < smallestDist)
+                                {
+                                    id.NetLane = obj.Id;
+                                    smallestDist = t;
+                                }
+                            }
+                        }
+                    }
+                    //Debug.Log(msg);
+                }
+
                 int gridMinX = Mathf.Max((int)((location.x - 16f) / 64f + 135f) - 1, 0);
                 int gridMinZ = Mathf.Max((int)((location.z - 16f) / 64f + 135f) - 1, 0);
                 int gridMaxX = Mathf.Min((int)((location.x + 16f) / 64f + 135f) + 1, 269);
@@ -73,8 +99,6 @@ namespace MoveIt
                             {
                                 if (stepOver.isValidB(building) && IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
                                 {
-                                    //Debug.Log($"Building:{building}");
-
                                     if (Filters.Filter(buildingBuffer[building].Info, true))
                                     {
                                         id.Building = Building.FindParentBuilding(building);
@@ -210,28 +234,6 @@ namespace MoveIt
                     }
                 }
 
-                if (PO.Active && selectProc)
-                {
-                    string msg = "";
-                    foreach (IPO_Object obj in PO.Objects)
-                    {
-                        msg += $"{obj.Id},";
-                        bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
-                        bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
-                        if (inXBounds && inZBounds)
-                        {
-                            float t = obj.GetDistance(location);
-                            //Debug.Log($"Object {obj.Id}: {t}m");
-                            if (t < smallestDist)
-                            {
-                                id.NetLane = obj.Id;
-                                smallestDist = t;
-                            }
-                        }
-                    }
-                    //Debug.Log(msg);
-                }
-
                 if (selectTrees)
                 {
                     gridMinX = Mathf.Max((int)((location.x - 8f) / 32f + 270f), 0);
@@ -335,6 +337,21 @@ namespace MoveIt
 
                 InstanceID id = new InstanceID();
                 ItemClass.Layer itemLayers = GetItemLayers();
+
+                if (PO.Active && filterProcs)
+                {
+                    //string msg = "";
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (PointInRectangle(m_selection, obj.Position))
+                        {
+                            //msg += $"{obj.Id},";
+                            id.NetLane = obj.Id;
+                            list.Add(id);
+                        }
+                    }
+                    //Debug.Log(msg);
+                }
 
                 for (int i = gridMinZ; i <= gridMaxZ; i++)
                 {
@@ -468,21 +485,6 @@ namespace MoveIt
                             }
                         }
                     }
-                }
-
-                if (PO.Active && filterProcs)
-                {
-                    string msg = "";
-                    foreach (IPO_Object obj in PO.Objects)
-                    {
-                        if (PointInRectangle(m_selection, obj.Position))
-                        {
-                            msg += $"{obj.Id},";
-                            id.NetLane = obj.Id;
-                            list.Add(id);
-                        }
-                    }
-                    //Debug.Log(msg);
                 }
 
                 if (filterTrees)
