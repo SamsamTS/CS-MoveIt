@@ -353,7 +353,6 @@ namespace MoveIt
         {
             foreach (NetworkFilter nf in Filters.NetworkFilters.Values)
             {
-                //Debug.Log($"ai:{ai}, count:{(nf.aiType == null ? 0 : nf.aiType.Count)}");
                 if (nf.aiTypes != null)
                 {
                     foreach (Type t in nf.aiTypes)

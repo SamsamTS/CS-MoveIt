@@ -296,7 +296,6 @@ namespace MoveIt
             checkBox.eventDoubleClick += OnDoubleClick;
             #endregion
 
-
             #region Network Filters
             UIButton btnNetworks = UIFilters.CreateToggleNFBtn();
             void OnDoubleClickNetworkFilter(UIComponent c, UIMouseEventParameter p)
@@ -332,8 +331,7 @@ namespace MoveIt
 
             UIFilters.RefreshFilters();
             #endregion
-
-
+            
             filtersPanel.padding = new RectOffset(10, 10, 10, 10);
             filtersPanel.autoLayoutDirection = LayoutDirection.Vertical;
             filtersPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 5);
@@ -371,7 +369,7 @@ namespace MoveIt
                 }
 
             };
-
+            
             #region Copy
             m_copy = AddUIComponent<UIButton>();
             m_copy.name = "MoveIt_Copy";
@@ -474,6 +472,7 @@ namespace MoveIt
             atpContainer.autoLayout = true;
             atpContainer.relativePosition = Vector3.zero;
 
+            UIAlignTools.AlignButtons.Clear();
             UIAlignTools.AlignButtons.Add("MoveIt_AlignRandomBtn", atpContainer.AddUIComponent<UIButton>());
             UIButton alignRandom = UIAlignTools.AlignButtons["MoveIt_AlignRandomBtn"];
             alignRandom.name = "MoveIt_AlignRandomBtn";

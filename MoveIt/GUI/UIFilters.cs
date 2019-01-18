@@ -10,11 +10,9 @@ namespace MoveIt
         public static List<UICheckBox> FilterCBs = new List<UICheckBox>();
         public static UIButton ToggleNF;
         public static UIPanel FilterPanel;
-        //public static DebugPanel DbgPanel;
         public static Color32 TextColor = new Color32(175, 216, 235, 255);
         public static Color32 ActiveLabelColor = new Color32(255, 255, 255, 255);
         public static Color32 InactiveLabelColor = new Color32(170, 170, 175, 255);
-
 
         public static UITextureAtlas GetIconsAtlas()
         {
@@ -40,7 +38,6 @@ namespace MoveIt
 
             return loadedAtlas;
         }
-
 
         public static UIButton CreateToggleNFBtn()
         {
@@ -86,7 +83,6 @@ namespace MoveIt
             }
         }
 
-
         public static void ToggleNetworkFiltersPanel()
         {
             MoveItTool.filterNetworks = !MoveItTool.filterNetworks;
@@ -131,7 +127,6 @@ namespace MoveIt
 
             RefreshFilters();
         }
-
 
         public static UICheckBox CreateFilterCB(UIComponent parent, string name, string label = null)
         {

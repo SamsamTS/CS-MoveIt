@@ -33,7 +33,7 @@ namespace SamsamTS
             checkBox.width = 300f;
             checkBox.height = 20f;
             checkBox.clipChildren = true;
-
+            
             UISprite sprite = checkBox.AddUIComponent<UISprite>();
             sprite.atlas = GetAtlas("Ingame");
             sprite.spriteName = "ToggleBase";

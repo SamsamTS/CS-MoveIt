@@ -692,7 +692,6 @@ namespace MoveIt
 
         public void StopAligning()
         {
-            Debug.Log($"tS:{m_toolState}, aM:{m_alignMode}");
             m_alignMode = AlignModes.Off;
             m_alignToolPhase = 0;
             if (m_toolState == ToolState.Aligning)
