@@ -47,17 +47,17 @@ namespace MoveIt
             var cache = new CacheProceduralObject(Logic.proceduralObjects[id]);
 
             int newId = Logic.proceduralObjects.GetNextUnusedId();
-            Debug.Log($"Cloning {originalId} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
+            Debug.Log($"Cloning {originalId - 1} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
 
             //PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
             //Debug.Log($"{propInfo.m_material.color}, {propInfo.m_material.mainTexture}, {propInfo.m_material.shader}");
 
-            //var obj = Logic.PlaceCacheObject(cache, false);
+            var obj = Logic.PlaceCacheObject(cache, false);
             //ProceduralObject obj = new ProceduralObject(cache, newId, position);
             //Logic.proceduralObjects.Add(obj);
 
-            //return (uint)obj.id + 1;
-            return 0;
+            return (uint)obj.id + 1;
+            //return 0;
         }
     }
 

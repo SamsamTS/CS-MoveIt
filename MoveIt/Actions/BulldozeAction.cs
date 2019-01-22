@@ -16,12 +16,17 @@ namespace MoveIt
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
             HashSet<Instance> extraNodes = new HashSet<Instance>();
+            HashSet<ushort> segments = new HashSet<ushort>(); // Segments to be removed
 
             //Debug.Log("Selection: " + selection.Count);
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
+                    if (instance.id.Type == InstanceType.NetSegment)
+                    {
+                        segments.Add(instance.id.NetSegment);
+                    }
                     if (instance.id.Type == InstanceType.NetNode)
                     {
                         for (int i = 0; i < 8; i++)
@@ -32,13 +37,17 @@ namespace MoveIt
                                 InstanceID instanceID = default(InstanceID);
                                 instanceID.NetSegment = segment;
 
+                                if (selection.Contains(instanceID)) continue;
+
                                 newSelection.Add((Instance)instanceID);
+                                segments.Add(segment);
                             }
                         }
                     }
                 }
             }
-            //Debug.Log("newSelection: " + newSelection.Count);
+            //Debug.Log($"newSelection: {newSelection.Count}, Segments found: {segments.Count}");
+
             foreach (Instance instance in newSelection)
             {
                 if (instance.isValid)
@@ -53,7 +62,7 @@ namespace MoveIt
                             NetNode node = NetManager.instance.m_nodes.m_buffer[id];
                             for (int i = 0; i < 8; i++)
                             {
-                                if (node.GetSegment(i) != 0 && node.GetSegment(i) != segId)
+                                if (node.GetSegment(i) != 0 && !segments.Contains(node.GetSegment(i)))
                                 {
                                     toDelete = false;
                                     break;
@@ -176,12 +185,12 @@ namespace MoveIt
                     if (segState.startNode == oldId)
                     {
                         segState.startNode = newId;
-                        //Debug.Log($"SWITCHED (start) Segment #{state.instance.id.NetSegment} N:{segState.startNode}-N:{segState.endNode}\nOld node Id:{oldId}, new node Id:{newId}");
+                        //Debug.Log($"SWITCHED (start)\nSegment #{state.instance.id.NetSegment} ({segState.startNode}-{segState.endNode})\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                     if (segState.endNode == oldId)
                     {
                         segState.endNode = newId;
-                        //Debug.Log($"SWITCHED (end) Segment #{state.instance.id.NetSegment} N:{segState.startNode}-N:{segState.endNode}\nOld node Id:{oldId}, new node Id:{newId}");
+                        //Debug.Log($"SWITCHED (end)\nSegment #{state.instance.id.NetSegment} ({segState.startNode}-{segState.endNode})\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                 }
             }

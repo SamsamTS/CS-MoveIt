@@ -124,10 +124,11 @@ namespace MoveIt
 
             Instance cloneInstance = null;
             //uint clone = MoveItTool.PO.Clone(m_procObj.Id, newPosition);
-            //Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone}");
+            uint clone = 999;
+            Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone}");
 
-            //InstanceID cloneID = default(InstanceID);
-            //cloneID.NetLane = clone;
+            InstanceID cloneID = default(InstanceID);
+            cloneID.NetLane = clone;
             //cloneInstance = new MoveableProc(cloneID);
             
             return cloneInstance;
