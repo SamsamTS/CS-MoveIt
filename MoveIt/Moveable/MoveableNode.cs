@@ -162,11 +162,17 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return nodeBuffer[id.NetNode].m_position;
             }
+            set
+            {
+                if (id.IsEmpty) nodeBuffer[id.NetNode].m_position = Vector3.zero;
+                else nodeBuffer[id.NetNode].m_position = value;
+            }
         }
 
         public override float angle
         {
             get { return 0f; }
+            set { }
         }
 
         public override bool isValid

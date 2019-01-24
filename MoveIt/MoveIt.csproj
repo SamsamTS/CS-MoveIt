@@ -61,6 +61,7 @@
     <Compile Include="Actions\AlignSlopeAction.cs" />
     <Compile Include="Actions\BulldozeAction.cs" />
     <Compile Include="Actions\CloneAction.cs" />
+    <Compile Include="Actions\ConvertToPOAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />

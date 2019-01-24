@@ -55,6 +55,11 @@ namespace MoveIt
                 if (!isValid) return Vector3.zero;
                 return m_procObj.Position;
             }
+            set
+            {
+                if (!isValid) return;
+                m_procObj.Position = value;
+            }
         }
 
         public override float angle
@@ -63,6 +68,11 @@ namespace MoveIt
             {
                 if (!isValid) return 0f;
                 return m_procObj.Angle;
+            }
+            set
+            {
+                if (!isValid) return;
+                m_procObj.Angle = value;
             }
         }
 

@@ -175,6 +175,11 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return buildingBuffer[id.Building].m_position;
             }
+            set
+            {
+                if (id.IsEmpty) return;
+                buildingBuffer[id.Building].m_position = value;
+            }
         }
 
         public override float angle
@@ -183,6 +188,11 @@ namespace MoveIt
             {
                 if (id.IsEmpty) return 0f;
                 return buildingBuffer[id.Building].m_angle;
+            }
+            set
+            {
+                if (id.IsEmpty) return;
+                buildingBuffer[id.Building].m_angle = value;
             }
         }
 

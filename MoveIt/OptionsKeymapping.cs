@@ -33,6 +33,8 @@ namespace MoveIt
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
 
         public static readonly SavedInputKey copy = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
+        public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, false, false, true), true);
+        public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, true, true, false), true);
 
         public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);
 
@@ -63,6 +65,8 @@ namespace MoveIt
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
             AddKeymapping("Copy", copy);
+            AddKeymapping("Bulldoze", bulldoze);
+            AddKeymapping("Convert to PO", convertToPO);
             AddKeymapping("Step Over", stepOverKey);
             AddKeymapping("Align Heights", alignHeights);
             AddKeymapping("Align Slope", alignSlope);

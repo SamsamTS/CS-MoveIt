@@ -1,4 +1,5 @@
-﻿using ProceduralObjects;
+﻿using ColossalFramework.UI;
+using ProceduralObjects;
 using ProceduralObjects.Classes;
 using ColossalFramework;
 using UnityEngine;
@@ -58,6 +59,89 @@ namespace MoveIt
 
             return (uint)obj.id + 1;
             //return 0;
+        }
+
+
+        public IPO_Object ConvertToPO(Instance instance)
+        {
+            // Most code lifted from PO
+
+            if (Logic.availableProceduralInfos == null)
+                Logic.availableProceduralInfos = ProceduralUtils.CreateProceduralInfosList();
+            if (Logic.availableProceduralInfos.Count == 0)
+                Logic.availableProceduralInfos = ProceduralUtils.CreateProceduralInfosList();
+
+            if (instance is MoveableProp mp)
+            {
+                ProceduralInfo info = Logic.availableProceduralInfos.Where(pInf => pInf.propPrefab != null).FirstOrDefault(pInf => pInf.propPrefab == (PropInfo)instance.Info.Prefab);
+                if (info.isBasicShape && Logic.basicTextures.Count > 0)
+                {
+                    Logic.editingVertex = false;
+                    Logic.editingVertexIndex.Clear();
+                    Logic.editingWholeModel = false;
+                    Logic.proceduralTool = false;
+                    Logic.currentlyEditingObject = null;
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<DefaultTool>();
+                    ProceduralObjects.Gizmos.DestroyGizmo();
+                    Logic.xLine = null;
+                    Logic.yLine = null;
+                    Logic.zLine = null;
+                    Logic.chosenProceduralInfo = info;
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
+                }
+                else
+                {
+                    Logic.editingVertex = false;
+                    Logic.editingVertexIndex.Clear();
+                    Logic.editingWholeModel = false;
+                    Logic.proceduralTool = false;
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<DefaultTool>();
+                    ProceduralObjects.Gizmos.DestroyGizmo();
+                    Logic.xLine = null;
+                    Logic.yLine = null;
+                    Logic.zLine = null;
+                    Logic.SpawnObject(info);
+                    Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
+                    Logic.proceduralTool = false;
+                    Logic.movingWholeModel = false;
+                    Logic.placingSelection = false;
+                    Logic.editingVertex = false;
+                }
+
+            }
+            else if (instance is MoveableBuilding mb)
+            {
+                ProceduralInfo info = Logic.availableProceduralInfos.Where(pInf => pInf.buildingPrefab != null).FirstOrDefault(pInf => pInf.buildingPrefab == (BuildingInfo)instance.Info.Prefab);
+                if (info.isBasicShape && Logic.basicTextures.Count > 0)
+                {
+                    Logic.chosenProceduralInfo = info;
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
+                }
+                else
+                {
+                    Logic.editingVertex = false;
+                    Logic.editingVertexIndex.Clear();
+                    Logic.editingWholeModel = false;
+                    Logic.proceduralTool = false;
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<DefaultTool>();
+                    ProceduralObjects.Gizmos.DestroyGizmo();
+                    Logic.xLine = null;
+                    Logic.yLine = null;
+                    Logic.zLine = null;
+                    Logic.SpawnObject(info);
+                    Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
+                    //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
+                    Logic.proceduralTool = false;
+                    Logic.movingWholeModel = false;
+                    Logic.placingSelection = false;
+                    Logic.editingVertex = false;
+                }
+            }
+
+            ProceduralObject poObj = Logic.currentlyEditingObject;
+            Logic.pObjSelection.Add(poObj);
+            return new PO_ObjectEnabled(poObj);
         }
     }
 

@@ -137,9 +137,9 @@ namespace MoveIt
             get;
         }
 
-        public abstract Vector3 position { get; }
+        public abstract Vector3 position { get; set; }
 
-        public abstract float angle { get; }
+        public abstract float angle { get; set; }
 
         public abstract bool isValid { get; }
 

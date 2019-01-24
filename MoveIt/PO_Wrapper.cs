@@ -14,7 +14,7 @@ namespace MoveIt
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         private HashSet<uint> selectedIds = new HashSet<uint>();
-        private Dictionary<uint, IPO_Object> visibleObjects = new Dictionary<uint, IPO_Object>();
+        internal Dictionary<uint, IPO_Object> visibleObjects = new Dictionary<uint, IPO_Object>();
 
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
@@ -153,6 +153,10 @@ namespace MoveIt
             selectedIds.Clear();
         }
 
+        internal IPO_Object ConvertToPO(Instance instance)
+        {
+            return Logic.ConvertToPO(instance);
+        }
 
         internal static bool isPOEnabled()
         {
@@ -166,6 +170,7 @@ namespace MoveIt
     {
         List<IPO_Object> Objects { get; }
         uint Clone(uint originalId, Vector3 position);
+        IPO_Object ConvertToPO(Instance instance);
     }
 
     internal class PO_LogicDisabled : IPO_Logic
@@ -181,6 +186,11 @@ namespace MoveIt
         public uint Clone(uint originalId, Vector3 position)
         {
             throw new NotImplementedException($"Trying to clone {originalId} despite no PO!");
+        }
+
+        public IPO_Object ConvertToPO(Instance instance)
+        {
+            throw new NotImplementedException($"Trying to convert {instance} despite no PO!");
         }
     }
 

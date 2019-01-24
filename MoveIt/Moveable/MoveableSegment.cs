@@ -103,6 +103,7 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return GetControlPoint(id.NetSegment);
             }
+            set { }
         }
 
         public override float angle
@@ -111,6 +112,7 @@ namespace MoveIt
             {
                 return 0f;
             }
+            set { }
         }
 
         public override bool isValid

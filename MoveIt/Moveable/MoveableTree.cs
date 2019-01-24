@@ -63,11 +63,17 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return TreeManager.instance.m_trees.m_buffer[id.Tree].Position;
             }
+            set
+            {
+                if (id.IsEmpty) TreeManager.instance.m_trees.m_buffer[id.Tree].Position = Vector3.zero;
+                else TreeManager.instance.m_trees.m_buffer[id.Tree].Position = value;
+            }
         }
 
         public override float angle
         {
             get { return 0f; }
+            set { }
         }
 
         public override bool isValid

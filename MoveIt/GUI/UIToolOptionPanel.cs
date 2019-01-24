@@ -382,7 +382,6 @@ namespace MoveIt
                     cb.isChecked = newChecked;
                     Filters.SetAnyFilter(cb.label.text, newChecked);
                 }
-
             };
 
             #region Copy

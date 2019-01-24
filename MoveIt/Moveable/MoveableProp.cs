@@ -65,6 +65,11 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return PropManager.instance.m_props.m_buffer[id.Prop].Position;
             }
+            set
+            {
+                if (id.IsEmpty) PropManager.instance.m_props.m_buffer[id.Prop].Position = Vector3.zero;
+                else PropManager.instance.m_props.m_buffer[id.Prop].Position = value;
+            }
         }
 
         public override float angle
@@ -73,6 +78,11 @@ namespace MoveIt
             {
                 if (id.IsEmpty) return 0f;
                 return PropManager.instance.m_props.m_buffer[id.Prop].Angle;
+            }
+            set
+            {
+                if (id.IsEmpty) return;
+                PropManager.instance.m_props.m_buffer[id.Prop].Angle = value;
             }
         }
 

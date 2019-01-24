@@ -266,6 +266,19 @@ namespace MoveIt
                         StartCloning();
                     }
                 }
+                else if (OptionsKeymapping.bulldoze.IsPressed(e))
+                {
+                    StartBulldoze();
+                }
+                else if (OptionsKeymapping.convertToPO.IsPressed(e))
+                {
+                    if (PO.Active)
+                    {
+                        ConvertToPOAction ca = new ConvertToPOAction();
+                        ActionQueue.instance.Push(ca);
+                        ActionQueue.instance.Do();
+                    }
+                }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
                     ProcessAligning(AlignModes.Height);
