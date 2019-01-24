@@ -26,16 +26,13 @@ namespace MoveIt
             if (newSelection.Count == 0) return;
 
             // Save states
-            string msg = $"Selected: {newSelection.Count}\n";
             foreach (Instance instance in newSelection)
             {
                 if (instance.isValid)
                 {
-                    msg += $"{instance.Info.Name}:{instance}\n";
                     savedStates.Add(instance.GetState());
                 }
             }
-            //Debug.Log(msg);
         }
 
         public static HashSet<Instance> GetCleanSelection(out Vector3 center)

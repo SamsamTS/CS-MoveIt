@@ -150,7 +150,9 @@ namespace MoveIt
         }
 
         public override void Delete()
-        { }
+        {
+            MoveItTool.PO.Delete(m_procObj);
+        }
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {

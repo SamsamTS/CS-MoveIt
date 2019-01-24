@@ -153,6 +153,11 @@ namespace MoveIt
             selectedIds.Clear();
         }
 
+        internal void Delete(IPO_Object obj)
+        {
+            Logic.Delete(obj);
+        }
+
         internal IPO_Object ConvertToPO(Instance instance)
         {
             return Logic.ConvertToPO(instance);
@@ -171,6 +176,7 @@ namespace MoveIt
         List<IPO_Object> Objects { get; }
         uint Clone(uint originalId, Vector3 position);
         IPO_Object ConvertToPO(Instance instance);
+        void Delete(IPO_Object obj);
     }
 
     internal class PO_LogicDisabled : IPO_Logic
@@ -192,6 +198,11 @@ namespace MoveIt
         {
             throw new NotImplementedException($"Trying to convert {instance} despite no PO!");
         }
+
+        public void Delete(IPO_Object obj)
+        {
+            throw new NotImplementedException($"Trying to delete {obj} despite no PO!");
+        }
     }
 
 
@@ -202,6 +213,7 @@ namespace MoveIt
         Vector3 Position { get; set; }
         float Angle { get; set; }
         IInfo Info { get; set; }
+        object GetProceduralObject();
         void SetPositionY(float h);
         float GetDistance(Vector3 location);
         void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
@@ -232,8 +244,11 @@ namespace MoveIt
         }
 
         public void SetPositionY(float h)
+        { }
+
+        public object GetProceduralObject()
         {
-            return;
+            return null;
         }
 
         public float GetDistance(Vector3 location) => 0f;
