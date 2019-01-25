@@ -84,6 +84,7 @@ namespace MoveIt
 
         public virtual void ReplaceInstance(Instance newInstance)
         {
+            //Debug.Log($"ReplaceInstance\n{instance.id.Prop}:{instance.Info.Name} <{instance.GetType()}>\n{newInstance.id.Prop}:{newInstance.Info.Name} <{newInstance.GetType()}>\n{Info.Name} <{Info.Prefab.GetType()}>");
             instance = newInstance;
 
             if (newInstance.id.Type != instance.id.Type)
@@ -91,9 +92,9 @@ namespace MoveIt
                 DebugUtils.Warning("Mismatching instances type ('" + newInstance.id.Type + "' -> '" + newInstance.id.Type + "').");
             }
 
-            if (newInstance.Info != Info)
+            if (newInstance.Info.Prefab != Info.Prefab)
             {
-                DebugUtils.Warning("Mismatching instances info ('" + Info.Name + "' -> '" + newInstance.Info.Name + "').");
+                DebugUtils.Warning($"Mismatching instances info:\n{Info.Prefab.name} <{Info.GetHashCode()}>\n{newInstance.Info.Prefab.name} <{newInstance.Info.GetHashCode()}>\n");
             }
         }
     }

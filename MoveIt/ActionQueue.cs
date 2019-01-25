@@ -18,7 +18,7 @@ namespace MoveIt
             {
                 if (action == null) continue;
                 //Debug.Log($"{action.GetType()}");
-                action.UpdateNodeIdInState(oldId, newId);
+                action.UpdateNodeIdInSegmentState(oldId, newId);
             }
         }
 

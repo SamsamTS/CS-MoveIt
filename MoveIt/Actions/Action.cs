@@ -12,7 +12,7 @@ namespace MoveIt
         public abstract void Undo();
         public abstract void ReplaceInstances(Dictionary<Instance, Instance> toReplace);
 
-        public virtual void UpdateNodeIdInState(ushort oldId, ushort newId) { }
+        public virtual void UpdateNodeIdInSegmentState(ushort oldId, ushort newId) { }
 
         public static bool IsSegmentSelected(ushort segment)
         {

@@ -66,6 +66,7 @@ namespace MoveIt
         public void Delete(IPO_Object obj)
         {
             Logic.proceduralObjects.Remove((ProceduralObject)obj.GetProceduralObject());
+            Logic.pObjSelection.Remove((ProceduralObject)obj.GetProceduralObject());
         }
 
 
@@ -78,6 +79,8 @@ namespace MoveIt
             if (Logic.availableProceduralInfos.Count == 0)
                 Logic.availableProceduralInfos = ProceduralUtils.CreateProceduralInfosList();
 
+            //Debug.Log($"ConvertToPO:\n{instance.Info.Prefab.name} <{instance.Info.Prefab.GetType()}>");
+
             try
             {
                 if (instance is MoveableProp mp)
@@ -85,37 +88,13 @@ namespace MoveIt
                     ProceduralInfo info = Logic.availableProceduralInfos.Where(pInf => pInf.propPrefab != null).FirstOrDefault(pInf => pInf.propPrefab == (PropInfo)instance.Info.Prefab);
                     if (info.isBasicShape && Logic.basicTextures.Count > 0)
                     {
-                        //Logic.editingVertex = false;
-                        //Logic.editingVertexIndex.Clear();
-                        //Logic.editingWholeModel = false;
-                        //Logic.proceduralTool = false;
                         Logic.currentlyEditingObject = null;
-                        //ProceduralObjects.Tools.ToolHelper.FullySetTool<DefaultTool>();
-                        //ProceduralObjects.Gizmos.DestroyGizmo();
-                        //Logic.xLine = null;
-                        //Logic.yLine = null;
-                        //Logic.zLine = null;
                         Logic.chosenProceduralInfo = info;
-                        //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
                     }
                     else
                     {
-                        //Logic.editingVertex = false;
-                        //Logic.editingVertexIndex.Clear();
-                        //Logic.editingWholeModel = false;
-                        //Logic.proceduralTool = false;
-                        ////ProceduralObjects.Tools.ToolHelper.FullySetTool<DefaultTool>();
-                        //ProceduralObjects.Gizmos.DestroyGizmo();
-                        //Logic.xLine = null;
-                        //Logic.yLine = null;
-                        //Logic.zLine = null;
                         Logic.SpawnObject(info);
                         Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
-                        //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
-                        //Logic.proceduralTool = false;
-                        //Logic.movingWholeModel = false;
-                        //Logic.placingSelection = false;
-                        //Logic.editingVertex = false;
                     }
 
                 }
@@ -125,26 +104,11 @@ namespace MoveIt
                     if (info.isBasicShape && Logic.basicTextures.Count > 0)
                     {
                         Logic.chosenProceduralInfo = info;
-                        //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
                     }
                     else
                     {
-                        //Logic.editingVertex = false;
-                        //Logic.editingVertexIndex.Clear();
-                        //Logic.editingWholeModel = false;
-                        //Logic.proceduralTool = false;
-                        ////ProceduralObjects.Tools.ToolHelper.FullySetTool<DefaultTool>();
-                        //ProceduralObjects.Gizmos.DestroyGizmo();
-                        //Logic.xLine = null;
-                        //Logic.yLine = null;
-                        //Logic.zLine = null;
                         Logic.SpawnObject(info);
                         Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
-                        //ProceduralObjects.Tools.ToolHelper.FullySetTool<ProceduralObjects.Tools.ProceduralTool>();
-                        //Logic.proceduralTool = false;
-                        //Logic.movingWholeModel = false;
-                        //Logic.placingSelection = false;
-                        //Logic.editingVertex = false;
                     }
                 }
 

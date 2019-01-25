@@ -8,8 +8,7 @@ namespace MoveIt
         private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
         private HashSet<Instance> m_clones = new HashSet<Instance>();
         private HashSet<Instance> m_oldSelection;
-
-        public bool replaceInstances = true;
+        private bool firstRun = true;
 
         public ConvertToPOAction()
         {
@@ -24,14 +23,25 @@ namespace MoveIt
 
         public override void Do()
         {
+            if (!firstRun) return;
+            m_clones.Clear();
             m_oldSelection = new HashSet<Instance>(selection);
 
-            foreach (Instance instance in m_oldSelection)
+            string msg = "Selection\n";
+            foreach (Instance i in m_oldSelection)
             {
-                if (!((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid))
-                {
-                    continue;
-                }
+                msg += $"{i.id.Prop}:{i.Info.Name}\n";
+            }
+            Debug.Log(msg);
+
+            foreach (InstanceState instanceState in m_states)
+            {
+                Instance instance = instanceState.instance;
+
+                //if (!((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid))
+                //{
+                //    continue;
+                //}
 
                 IPO_Object obj = MoveItTool.PO.ConvertToPO(instance);
                 if (obj == null)
@@ -57,6 +67,7 @@ namespace MoveIt
 
         public override void Undo()
         {
+            firstRun = false;
             if (m_states == null) return;
 
             Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
@@ -66,18 +77,29 @@ namespace MoveIt
                 clone.Delete();
             }
 
-            foreach (InstanceState state in m_states)
-            {
-                Instance clone = state.instance.Clone(state, null);
-                toReplace.Add(state.instance, clone);
-            }
+
+            //string msg = "Clones:\n";
+            //foreach (Instance c in m_clones)
+            //{
+            //    msg += $"{c.id.NetLane}:{c.Info.Name}\n";
+            //}
+
+
+            //msg += "Cloned ids\n";
+            //foreach (InstanceState state in m_states)
+            //{
+            //    Instance clone = state.instance.Clone(state, null);
+            //    toReplace.Add(state.instance, clone);
+            //    msg += $"{clone.id.Prop}:{state.instance.GetType()},{clone.GetType()},{clone.Info.Name}\n";
+            //}
+            //Debug.Log(msg);
 
             ReplaceInstances(toReplace);
             ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
             selection = m_oldSelection;
 
-            //string msg = "old Selection\n";
+            //msg = "\"old\" Selection\n";
             //foreach (Instance i in m_oldSelection)
             //{
             //    msg += $"{i.id.Prop}:{i.Info.Name}\n";
