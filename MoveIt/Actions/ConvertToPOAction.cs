@@ -27,12 +27,12 @@ namespace MoveIt
             m_clones.Clear();
             m_oldSelection = new HashSet<Instance>(selection);
 
-            string msg = "Selection\n";
-            foreach (Instance i in m_oldSelection)
-            {
-                msg += $"{i.id.Prop}:{i.Info.Name}\n";
-            }
-            Debug.Log(msg);
+            //string msg = "Selection\n";
+            //foreach (Instance i in m_oldSelection)
+            //{
+            //    msg += $"{i.id.Prop}:{i.Info.Name}\n";
+            //}
+            //Debug.Log(msg);
 
             foreach (InstanceState instanceState in m_states)
             {
@@ -77,21 +77,19 @@ namespace MoveIt
                 clone.Delete();
             }
 
-
             //string msg = "Clones:\n";
             //foreach (Instance c in m_clones)
             //{
             //    msg += $"{c.id.NetLane}:{c.Info.Name}\n";
             //}
 
-
             //msg += "Cloned ids\n";
-            //foreach (InstanceState state in m_states)
-            //{
-            //    Instance clone = state.instance.Clone(state, null);
-            //    toReplace.Add(state.instance, clone);
+            foreach (InstanceState state in m_states)
+            {
+                Instance clone = state.instance.Clone(state, null);
+                toReplace.Add(state.instance, clone);
             //    msg += $"{clone.id.Prop}:{state.instance.GetType()},{clone.GetType()},{clone.Info.Name}\n";
-            //}
+            }
             //Debug.Log(msg);
 
             ReplaceInstances(toReplace);
