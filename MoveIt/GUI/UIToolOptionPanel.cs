@@ -468,13 +468,13 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = alignToolsPanel;
             alignToolsPanel.autoLayout = false;
             alignToolsPanel.clipChildren = true;
-            alignToolsPanel.size = new Vector2(36, 202);
+            alignToolsPanel.size = new Vector2(36, 238);
             alignToolsPanel.isVisible = false;
             alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - alignToolsPanel.height);
             m_alignTools.zOrder = alignToolsPanel.zOrder + 10;
 
             UIPanel atpBackground = alignToolsPanel.AddUIComponent<UIPanel>();
-            atpBackground.size = new Vector2(26, 202);
+            atpBackground.size = new Vector2(26, 236);
             atpBackground.clipChildren = true;
             atpBackground.relativePosition = new Vector3(5, 10);
             atpBackground.atlas = UIUtils.GetAtlas("Ingame");
@@ -541,6 +541,20 @@ namespace MoveIt
             alignSlope.disabledBgSprite = "OptionBaseDisabled";
             alignSlope.normalFgSprite = "AlignSlope";
             alignSlope.eventClicked += UIAlignTools.AlignToolsClicked;
+
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignTerrainHeightBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignTerrainHeight = UIAlignTools.AlignButtons["MoveIt_AlignTerrainHeightBtn"];
+            alignTerrainHeight.name = "MoveIt_AlignTerrainHeightBtn";
+            alignTerrainHeight.atlas = GetIconsAtlas();
+            alignTerrainHeight.tooltip = "Align Terrain Height";
+            alignTerrainHeight.playAudioEvents = true;
+            alignTerrainHeight.size = new Vector2(36, 36);
+            alignTerrainHeight.normalBgSprite = "OptionBase";
+            alignTerrainHeight.hoveredBgSprite = "OptionBaseHovered";
+            alignTerrainHeight.pressedBgSprite = "OptionBasePressed";
+            alignTerrainHeight.disabledBgSprite = "OptionBaseDisabled";
+            alignTerrainHeight.normalFgSprite = "AlignTerrainHeight";
+            alignTerrainHeight.eventClicked += UIAlignTools.AlignToolsClicked;
 
             UIAlignTools.AlignButtons.Add("MoveIt_AlignHeightBtn", atpContainer.AddUIComponent<UIButton>());
             UIButton alignHeight = UIAlignTools.AlignButtons["MoveIt_AlignHeightBtn"];
@@ -784,7 +798,8 @@ namespace MoveIt
                 "AlignSlopeA",
                 "AlignSlopeB",
                 "AlignHeight",
-				"Copy",
+                "AlignTerrainHeight",
+                "Copy",
                 "Bulldoze",
                 "Group",
                 "Save",

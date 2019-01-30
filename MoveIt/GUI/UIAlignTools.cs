@@ -34,6 +34,21 @@ namespace MoveIt
                     MIT.ProcessAligning(MoveItTool.AlignModes.Height);
                     break;
 
+                case "MoveIt_AlignTerrainHeightBtn":
+                    MIT.AlignMode = MoveItTool.AlignModes.TerrainHeight;
+
+                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    {
+                        MIT.StopCloning();
+                    }
+
+                    AlignTerrainHeightAction atha = new AlignTerrainHeightAction();
+                    ActionQueue.instance.Push(atha);
+                    ActionQueue.instance.Do();
+                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
+                    MoveItTool.instance.DeactivateAlignTool();
+                    break;
+
                 case "MoveIt_AlignSlopeBtn":
                     if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
                     {
@@ -107,6 +122,12 @@ namespace MoveIt
                     AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
+                case MoveItTool.AlignModes.TerrainHeight:
+                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
+                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
+                    break;
+
                 case MoveItTool.AlignModes.Slope:
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
                     AlignButtons["MoveIt_AlignSlopeBtn"].normalBgSprite = "OptionBaseFocused";
@@ -139,7 +160,7 @@ namespace MoveIt
                     AlignButtons["MoveIt_AlignGroupBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                // Random mode is instant, button isn't relevant
+                // TerrainHeight and Random modes are instant, their buttons aren't relevant
 
                 default:
                     if (AlignToolsPanel.isVisible)

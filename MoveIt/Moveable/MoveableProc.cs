@@ -151,6 +151,7 @@ namespace MoveIt
 
         public override void Delete()
         {
+            MoveItTool.PO.visibleObjects.Remove(id.NetLane);
             MoveItTool.PO.Delete(m_procObj);
         }
 

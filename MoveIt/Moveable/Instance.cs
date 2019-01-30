@@ -229,6 +229,11 @@ namespace MoveIt
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
 
+        public virtual void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleOriginalRawHeightSmooth(position));
+        }
+
         public static implicit operator Instance(InstanceID id)
         {
             switch(id.Type)

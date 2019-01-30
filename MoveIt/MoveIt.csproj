@@ -59,6 +59,7 @@
     <Compile Include="Actions\AlignHeightAction.cs" />
     <Compile Include="Actions\AlignRotationSuite.cs" />
     <Compile Include="Actions\AlignSlopeAction.cs" />
+    <Compile Include="Actions\AlignTerrainHeightAction.cs" />
     <Compile Include="Actions\BulldozeAction.cs" />
     <Compile Include="Actions\CloneAction.cs" />
     <Compile Include="Actions\ConvertToPOAction.cs" />
@@ -150,6 +151,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\PO.png" />
     <EmbeddedResource Include="Icons\POFocused.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignTerrainHeight.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

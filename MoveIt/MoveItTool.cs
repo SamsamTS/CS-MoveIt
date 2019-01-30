@@ -36,6 +36,7 @@ namespace MoveIt
         {
             Off,
             Height,
+            TerrainHeight,
             Inplace,
             Group,
             Random,
