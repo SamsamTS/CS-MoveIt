@@ -114,6 +114,11 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
+            return GetBuildingState(0);
+        }
+
+        public InstanceState GetBuildingState(int depth)
+        { 
             BuildingState state = new BuildingState
             {
                 instance = this,
@@ -127,11 +132,21 @@ namespace MoveIt
 
             List<InstanceState> subStates = new List<InstanceState>();
 
-            foreach (Instance instance in subInstances)
+            foreach (Instance subInstance in subInstances)
             {
-                if (instance != null && instance.isValid)
+                if (subInstance != null && subInstance.isValid)
                 {
-                    subStates.Add(instance.GetState());
+                    if (subInstance.id.Building > 0)
+                    {
+                        if (depth < 1)
+                        {
+                            subStates.Add(((MoveableBuilding)subInstance).GetBuildingState(depth + 1));
+                        }
+                    }
+                    else
+                    {
+                        subStates.Add(subInstance.GetState());
+                    }
                 }
             }
 
@@ -223,6 +238,13 @@ namespace MoveIt
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
+                    if (subState.instance is MoveableNode mn)
+                    {
+                        if (mn.Pillar != null)
+                        {
+                            mn.Pillar.Move(subPosition, subState.angle + deltaAngle);
+                        }
+                    }
 
                     if (subState is BuildingState bs)
                     {
@@ -235,6 +257,13 @@ namespace MoveIt
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
+                                if (subSubState.instance is MoveableNode mn2)
+                                {
+                                    if (mn2.Pillar != null)
+                                    {
+                                        mn2.Pillar.Move(subSubPosition, subSubState.angle + deltaAngle);
+                                    }
+                                }
                             }
                         }
                     }
@@ -425,6 +454,11 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
+            return GetBuildingBounds(0, ignoreSegments);
+        }
+
+        public Bounds GetBuildingBounds(int depth, bool ignoreSegments = true)
+        {
             BuildingInfo info = buildingBuffer[id.Building].Info;
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
@@ -432,7 +466,17 @@ namespace MoveIt
 
             foreach (Instance subInstance in subInstances)
             {
-                bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                if (subInstance.id.Building > 0)
+                {
+                    if (depth < 1)
+                    {
+                        bounds.Encapsulate(((MoveableBuilding)subInstance).GetBuildingBounds(depth + 1, ignoreSegments));
+                    }
+                }
+                else
+                {
+                    bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                }
             }
 
             return bounds;

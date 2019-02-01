@@ -37,7 +37,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.3.1";
+        public const string version = "2.3.2";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -187,7 +187,7 @@ namespace MoveIt
                 if (!hasSegments)
                 {
                     count++;
-                    Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
+                    //Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
                     NetManager.instance.ReleaseNode(nodeId);
                 }
             }

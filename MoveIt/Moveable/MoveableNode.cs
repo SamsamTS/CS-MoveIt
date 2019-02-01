@@ -30,7 +30,7 @@ namespace MoveIt
 
             if (pillarState != null)
             {
-                pillarState.instance = node.pillar;
+                pillarState.instance = node.Pillar;
                 if(pillarState.instance == null)
                 {
                     pillarState = null;
@@ -41,7 +41,7 @@ namespace MoveIt
 
     public class MoveableNode : Instance
     {
-        public MoveableBuilding pillar
+        public MoveableBuilding Pillar
         {
             get
             {
@@ -50,9 +50,15 @@ namespace MoveIt
                     InstanceID pillarID = new InstanceID();
                     pillarID.Building = nodeBuffer[id.NetNode].m_building;
 
-                    MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
+                    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
+                    {
+                        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
 
-                    if(pillarInstance.isValid) return pillarInstance;
+                        if (pillarInstance.isValid)
+                        {
+                            return pillarInstance;
+                        }
+                    }
                 }
                 return null;
             }
@@ -93,10 +99,10 @@ namespace MoveIt
 
             state.flags = nodeBuffer[node].m_flags;
 
-            MoveableBuilding pillarInstance = pillar;
-            if (pillar != null)
+            MoveableBuilding pillarInstance = Pillar;
+            if (Pillar != null)
             {
-                state.pillarState = pillar.GetState() as BuildingState;
+                state.pillarState = Pillar.GetState() as BuildingState;
             }
 
             for (int i = 0; i < 8; i++)
@@ -330,7 +336,7 @@ namespace MoveIt
         {
             Vector3 newPosition = position;
 
-            MoveableBuilding nodePillar = pillar;
+            MoveableBuilding nodePillar = Pillar;
             if (nodePillar != null)
             {
                 Vector3 subPosition = nodePillar.position;
