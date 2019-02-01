@@ -121,8 +121,6 @@ namespace MoveIt
 
         public MoveableBuilding(InstanceID instanceID) : base(instanceID)
         {
-            //Debug.Log($"MOVEBUILD CONSTRUCTOR {MoveItTool.InstanceIDDebug(instanceID)}\n{BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info.name}");
-            //Debug.Log(StackTraceUtility.ExtractStackTrace());
             if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
             {
                 throw new Exception($"Building #{instanceID.Building} not found!");
@@ -132,10 +130,10 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
-            return GetBuildingState(new HashSet<ushort>(), 0);
+            return GetBuildingState(0);
         }
 
-        public InstanceState GetBuildingState(HashSet<ushort> processedIds, int depth)
+        public InstanceState GetBuildingState(int depth)
         { 
             BuildingState state = new BuildingState
             {
@@ -150,32 +148,16 @@ namespace MoveIt
 
             List<InstanceState> subStates = new List<InstanceState>();
 
-            //string msg = "";
-            //foreach (ushort b in processedIds)
-            //{
-            //    if (b == id.Building)
-            //        msg += "SELF:";
-            //    msg += $"{b},";
-            //}
-            //Debug.Log(msg);
-
-            processedIds.Add(id.Building);
-            //Debug.Log($"GETSTATE {depth} {id.Building}:{Info.Name}");
             foreach (Instance subInstance in subInstances)
             {
                 if (subInstance != null && subInstance.isValid)
                 {
                     if (subInstance.id.Building > 0)
                     {
-                        if (depth < 1) //(!processedIds.Contains(subInstance.id.Building))
+                        if (depth < 1)
                         {
-                            //Debug.Log($"STATE {depth}   - Processing {subInstance.id.Building} - {subInstance.Info.Name}");
-                            subStates.Add(((MoveableBuilding)subInstance).GetBuildingState(processedIds, depth + 1));
+                            subStates.Add(((MoveableBuilding)subInstance).GetBuildingState(depth + 1));
                         }
-                        //else
-                        //{
-                        //    Debug.Log($"STATE {depth}   - Skipping {subInstance.id.Building}");
-                        //}
                     }
                     else
                     {
@@ -183,7 +165,6 @@ namespace MoveIt
                     }
                 }
             }
-            //Debug.Log($"END STATE {depth} {id.Building}:{Info.Name}");
 
             if (subStates.Count > 0)
                 state.subStates = subStates.ToArray();
@@ -504,45 +485,30 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
-            return GetBuildingBounds(new HashSet<ushort>(), 0, ignoreSegments);
+            return GetBuildingBounds(0, ignoreSegments);
         }
 
-        public Bounds GetBuildingBounds(HashSet<ushort> processedIds, int depth, bool ignoreSegments = true)
+        public Bounds GetBuildingBounds(int depth, bool ignoreSegments = true)
         {
-            //processedIds.Add(id.Building);
             BuildingInfo info = buildingBuffer[id.Building].Info;
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
             Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
 
-            //string msg = "";
-            //foreach (ushort b in processedIds)
-            //{
-            //    msg += $"{b},";
-            //}
-            //Debug.Log(msg);
-
-            //Debug.Log($"GETBUILDINGBOUNDS {id.Building}:{Info.Name}");
             foreach (Instance subInstance in subInstances)
             {
                 if (subInstance.id.Building > 0)
                 {
-                    if (depth < 1) //(!processedIds.Contains(subInstance.id.Building))
+                    if (depth < 1)
                     {
-                        //Debug.Log($"   - BBBB {subInstance.id.Building} - {BuildingManager.instance.m_buildings.m_buffer[subInstance.id.Building].Info.name}");
-                        bounds.Encapsulate(((MoveableBuilding)subInstance).GetBuildingBounds(processedIds, depth + 1, ignoreSegments));
+                        bounds.Encapsulate(((MoveableBuilding)subInstance).GetBuildingBounds(depth + 1, ignoreSegments));
                     }
-                    //else
-                    //{
-                    //    Debug.Log($"   LOOP!");
-                    //}
                 }
                 else
                 {
                     bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
                 }
             }
-            //Debug.Log($"END {id.Building} - {BuildingManager.instance.m_buildings.m_buffer[id.Building].Info.name}");
 
             return bounds;
         }

@@ -123,8 +123,8 @@ namespace MoveIt
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
 
-                Instance instance = m_hoverInstance;
-                InstanceID instanceID = instance.id;
+                //Instance instance = m_hoverInstance;
+                //InstanceID instanceID = instance.id;
                 //Debug.Log($"instance:{(instance == null ? "null" : instance.GetType().ToString())}");
 
                 //if (instanceID.Building > 0)
