@@ -39,10 +39,19 @@ namespace MoveIt
         {
             get
             {
+                //HashSet<ushort> buildings = new HashSet<ushort>();
                 ushort building = buildingBuffer[id.Building].m_subBuilding;
                 int count = 0;
                 while (building != 0)
                 {
+                    //buildings.Add(building);
+                    //string msg = "";
+                    //foreach (ushort b in buildings)
+                    //{
+                    //    msg += $"{b}, ";
+                    //}
+                    //Debug.Log($"{msg}");
+
                     InstanceID buildingID = default(InstanceID);
                     buildingID.Building = building;
 
@@ -112,6 +121,8 @@ namespace MoveIt
 
         public MoveableBuilding(InstanceID instanceID) : base(instanceID)
         {
+            //Debug.Log($"MOVEBUILD CONSTRUCTOR {MoveItTool.InstanceIDDebug(instanceID)}\n{BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info.name}");
+            //Debug.Log(StackTraceUtility.ExtractStackTrace());
             if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
             {
                 throw new Exception($"Building #{instanceID.Building} not found!");
@@ -121,6 +132,11 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
+            return GetBuildingState(new HashSet<ushort>(), 0);
+        }
+
+        public InstanceState GetBuildingState(HashSet<ushort> processedIds, int depth)
+        { 
             BuildingState state = new BuildingState
             {
                 instance = this,
@@ -134,18 +150,47 @@ namespace MoveIt
 
             List<InstanceState> subStates = new List<InstanceState>();
 
-            foreach (Instance instance in subInstances)
+            //string msg = "";
+            //foreach (ushort b in processedIds)
+            //{
+            //    if (b == id.Building)
+            //        msg += "SELF:";
+            //    msg += $"{b},";
+            //}
+            //Debug.Log(msg);
+
+            processedIds.Add(id.Building);
+            //Debug.Log($"GETSTATE {depth} {id.Building}:{Info.Name}");
+            foreach (Instance subInstance in subInstances)
             {
-                if (instance != null && instance.isValid)
+                if (subInstance != null && subInstance.isValid)
                 {
-                    subStates.Add(instance.GetState());
+                    if (subInstance.id.Building > 0)
+                    {
+                        if (depth < 1) //(!processedIds.Contains(subInstance.id.Building))
+                        {
+                            //Debug.Log($"STATE {depth}   - Processing {subInstance.id.Building} - {subInstance.Info.Name}");
+                            subStates.Add(((MoveableBuilding)subInstance).GetBuildingState(processedIds, depth + 1));
+                        }
+                        //else
+                        //{
+                        //    Debug.Log($"STATE {depth}   - Skipping {subInstance.id.Building}");
+                        //}
+                    }
+                    else
+                    {
+                        subStates.Add(subInstance.GetState());
+                    }
                 }
             }
+            //Debug.Log($"END STATE {depth} {id.Building}:{Info.Name}");
 
             if (subStates.Count > 0)
                 state.subStates = subStates.ToArray();
 
             return state;
+
+
         }
 
         public override void SetState(InstanceState state)
@@ -239,7 +284,15 @@ namespace MoveIt
                     subPosition = matrix4x.MultiplyPoint(subPosition);
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
+                    Debug.Log($"{subState.instance.GetType()}");
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
+                    if (subState.instance is MoveableNode mn)
+                    {
+                        if (mn.Pillar != null)
+                        {
+                            mn.Pillar.Move(subPosition, subState.angle + deltaAngle);
+                        }
+                    }
 
                     if (subState is BuildingState bs)
                     {
@@ -251,7 +304,15 @@ namespace MoveIt
                                 subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
+                                Debug.Log($"  - {subSubState.instance.GetType()}");
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
+                                if (subSubState.instance is MoveableNode mn2)
+                                {
+                                    if (mn2.Pillar != null)
+                                    {
+                                        mn2.Pillar.Move(subSubPosition, subSubState.angle + deltaAngle);
+                                    }
+                                }
                             }
                         }
                     }
@@ -273,6 +334,7 @@ namespace MoveIt
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             AddFixedHeightFlag(id.Building);
 
+            Debug.Log($"SETHEIGHT {id.Building}:{Info.Name}");
             foreach (Instance subInstance in subInstances)
             {
                 Vector3 subPosition = subInstance.position;
@@ -442,15 +504,45 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
+            return GetBuildingBounds(new HashSet<ushort>(), 0, ignoreSegments);
+        }
+
+        public Bounds GetBuildingBounds(HashSet<ushort> processedIds, int depth, bool ignoreSegments = true)
+        {
+            //processedIds.Add(id.Building);
             BuildingInfo info = buildingBuffer[id.Building].Info;
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
             Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
 
+            //string msg = "";
+            //foreach (ushort b in processedIds)
+            //{
+            //    msg += $"{b},";
+            //}
+            //Debug.Log(msg);
+
+            //Debug.Log($"GETBUILDINGBOUNDS {id.Building}:{Info.Name}");
             foreach (Instance subInstance in subInstances)
             {
-                bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                if (subInstance.id.Building > 0)
+                {
+                    if (depth < 1) //(!processedIds.Contains(subInstance.id.Building))
+                    {
+                        //Debug.Log($"   - BBBB {subInstance.id.Building} - {BuildingManager.instance.m_buildings.m_buffer[subInstance.id.Building].Info.name}");
+                        bounds.Encapsulate(((MoveableBuilding)subInstance).GetBuildingBounds(processedIds, depth + 1, ignoreSegments));
+                    }
+                    //else
+                    //{
+                    //    Debug.Log($"   LOOP!");
+                    //}
+                }
+                else
+                {
+                    bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                }
             }
+            //Debug.Log($"END {id.Building} - {BuildingManager.instance.m_buildings.m_buffer[id.Building].Info.name}");
 
             return bounds;
         }

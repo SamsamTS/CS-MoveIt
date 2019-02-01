@@ -198,7 +198,8 @@ namespace MoveIt
 
             Move(newPosition, 0);
 
-            if(state.pillarState != null)
+
+            if (state.pillarState != null)
             {
                 Vector3 subPosition = state.pillarState.position - center;
                 subPosition = matrix4x.MultiplyPoint(subPosition);

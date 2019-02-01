@@ -121,8 +121,40 @@ namespace MoveIt
 
             if (ToolState == ToolStates.Default || ToolState == ToolStates.DrawingSelection)
             {
+                Debug.Log($"AAAA A:{m_hoverInstance}");
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
+
+
+
+
+
+
+                MoveableBuilding instance = (MoveableBuilding)m_hoverInstance;
+
+                Debug.Log($"Iinstance:{(instance == null ? "null" : instance.GetType().ToString())}");
+                InstanceID instanceID = instance.id;
+                string msg = $"{instanceID.Building}:{instance.Info.Name}\n";
+               // Debug.Log(msg);
+                foreach (Instance subInstance in instance.subInstances)
+                {
+                    msg += $" - {subInstance.id.Building}/{subInstance.id.NetNode}: {subInstance.Info.Name}\n";
+                   // Debug.Log(msg);
+                    if (subInstance.id.Building > 0)
+                    {
+                        foreach (Instance subSubInstance in ((MoveableBuilding)subInstance).subInstances)
+                        {
+                            msg += $"    - {subSubInstance.id.Building}/{subSubInstance.id.NetNode}: {subSubInstance.Info.Name}\n";
+                            //Debug.Log(msg);
+                        }
+                    }
+                }
+                msg += "End";
+                Debug.Log(msg);
+
+
+
+
 
                 if (!(ActionQueue.instance.current is SelectAction action))
                 {
