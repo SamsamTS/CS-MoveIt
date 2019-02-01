@@ -284,7 +284,7 @@ namespace MoveIt
                     subPosition = matrix4x.MultiplyPoint(subPosition);
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
-                    Debug.Log($"{subState.instance.GetType()}");
+                    //Debug.Log($"{subState.instance.GetType()}");
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
                     if (subState.instance is MoveableNode mn)
                     {
@@ -304,7 +304,7 @@ namespace MoveIt
                                 subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
-                                Debug.Log($"  - {subSubState.instance.GetType()}");
+                                //Debug.Log($"  - {subSubState.instance.GetType()}");
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
                                 if (subSubState.instance is MoveableNode mn2)
                                 {

@@ -207,8 +207,8 @@ namespace MoveIt
                 if (!hasSegments)
                 {
                     count++;
-                    Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
-                    //NetManager.instance.ReleaseNode(nodeId);
+                    //Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
+                    NetManager.instance.ReleaseNode(nodeId);
                 }
             }
             if (count > 0)

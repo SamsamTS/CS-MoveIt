@@ -77,8 +77,7 @@ namespace MoveIt
 
                 Event e = Event.current;
 
-                if (m_marqueeInstances == null ||
-                    m_marqueeInstances.Count == 0 ||
+                if (m_marqueeInstances == null || m_marqueeInstances.Count == 0 ||
                     (e.alt && !Action.selection.Overlaps(m_marqueeInstances)) ||
                     (e.shift && Action.selection.IsSupersetOf(m_marqueeInstances))
                     ) return;
@@ -121,39 +120,34 @@ namespace MoveIt
 
             if (ToolState == ToolStates.Default || ToolState == ToolStates.DrawingSelection)
             {
-                Debug.Log($"AAAA A:{m_hoverInstance}");
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
 
-
-
-
-
-
-                MoveableBuilding instance = (MoveableBuilding)m_hoverInstance;
-
-                Debug.Log($"Iinstance:{(instance == null ? "null" : instance.GetType().ToString())}");
+                Instance instance = m_hoverInstance;
                 InstanceID instanceID = instance.id;
-                string msg = $"{instanceID.Building}:{instance.Info.Name}\n";
-               // Debug.Log(msg);
-                foreach (Instance subInstance in instance.subInstances)
-                {
-                    msg += $" - {subInstance.id.Building}/{subInstance.id.NetNode}: {subInstance.Info.Name}\n";
-                   // Debug.Log(msg);
-                    if (subInstance.id.Building > 0)
-                    {
-                        foreach (Instance subSubInstance in ((MoveableBuilding)subInstance).subInstances)
-                        {
-                            msg += $"    - {subSubInstance.id.Building}/{subSubInstance.id.NetNode}: {subSubInstance.Info.Name}\n";
-                            //Debug.Log(msg);
-                        }
-                    }
-                }
-                msg += "End";
-                Debug.Log(msg);
+                //Debug.Log($"instance:{(instance == null ? "null" : instance.GetType().ToString())}");
 
-
-
+                //if (instanceID.Building > 0)
+                //{
+                //    MoveableBuilding mb = (MoveableBuilding)instance;
+                //    string msg = $"{mb.id.Building}:{mb.Info.Name}\n";
+                //    //Debug.Log(msg);
+                //    foreach (Instance subInstance in mb.subInstances)
+                //    {
+                //        msg += $" - {subInstance.id.Building}/{subInstance.id.NetNode}: {subInstance.Info.Name}\n";
+                //        //Debug.Log(msg);
+                //        if (subInstance.id.Building > 0)
+                //        {
+                //            foreach (Instance subSubInstance in ((MoveableBuilding)subInstance).subInstances)
+                //            {
+                //                msg += $"    - {subSubInstance.id.Building}/{subSubInstance.id.NetNode}: {subSubInstance.Info.Name}\n";
+                //                //Debug.Log(msg);
+                //            }
+                //        }
+                //    }
+                //    msg += "End";
+                //    Debug.Log(msg);
+                //}
 
 
                 if (!(ActionQueue.instance.current is SelectAction action))
