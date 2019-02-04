@@ -691,7 +691,7 @@ namespace MoveIt
             if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
             {
                 Debug.Log($"PARKING (RB)\n#{building}:{info.name}");
-                BuildingManager.instance.UpdateParkingSpaces(building, ref data);
+                //BuildingManager.instance.UpdateParkingSpaces(building, ref data);
             }
 
             data.m_position = position;

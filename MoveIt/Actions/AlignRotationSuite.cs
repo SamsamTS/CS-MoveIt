@@ -97,13 +97,11 @@ namespace MoveIt
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
-                            //Debug.Log("PARKING (ATA.Do)");
-                            BuildingManager.instance.UpdateParkingSpaces(id, ref building);
+                            Debug.Log("PARKING (ATA.Do)");
+                            //BuildingManager.instance.UpdateParkingSpaces(id, ref building);
                         }
 
                         BuildingManager.instance.UpdateBuildingRenderer(id, true);
-
-                        //Debug.Log($"Building {state.prefabName} #{mb.id.Building}:{BuildingManager.instance.m_buildings.m_buffer[mb.id.Building].m_angle} (delta:{angleDelta} MB-angle:{mb.angle}, new:{angle}, old:{oldAngle})");
                     }
                     else if (state.instance is MoveableProp mp)
                     {
@@ -111,18 +109,14 @@ namespace MoveIt
                         {
                             angleDelta = 0 - mp.angle + newAngle;
                             PoR = state.position;
-                            //Debug.Log($"P:Each ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}, bounds Size:{bounds.size}");
                         }
                         else if (this is AlignRandomAction)
                         {
                             angleDelta = 0 - mp.angle + (float)(random.NextDouble() * Math.PI * 2);
                             PoR = state.position;
-                            //Debug.Log($"P:Random ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}");
                         }
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mp.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
-
-                        //state.instance.Move(state.instance.position, angle);
                     }
                     else if (state.instance is MoveableProc mpo)
                     {
@@ -130,13 +124,11 @@ namespace MoveIt
                         {
                             angleDelta = 0 - mpo.angle + newAngle;
                             PoR = state.position;
-                            //Debug.Log($"PO:Each ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}, bounds Size:{bounds.size}");
                         }
                         else if (this is AlignRandomAction)
                         {
                             angleDelta = 0 - mpo.angle + (float)(random.NextDouble() * Math.PI * 2);
                             PoR = state.position;
-                            //Debug.Log($"PO:Random ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}");
                         }
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mpo.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);

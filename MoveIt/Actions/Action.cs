@@ -74,19 +74,16 @@ namespace MoveIt
 
         public static void UpdateArea(Bounds bounds)
         {
-            bounds.Expand(64f);
+            bounds.Expand(32f);
+            MoveItTool.instance.aerasToUpdate.Add(bounds);
+            MoveItTool.instance.aeraUpdateCountdown = 100;
 
+            bounds.Expand(32f);
             BuildingManager.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            //ZoneManager.instance.UpdateBlocks(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             PropManager.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             TreeManager.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
 
-            //VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            MoveItTool.instance.aerasToUpdate.Add(bounds);
-            MoveItTool.instance.aeraUpdateCountdown = 1;
-
             bounds.Expand(64f);
-
             ElectricityManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             WaterManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
 

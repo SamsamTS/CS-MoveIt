@@ -653,6 +653,7 @@ namespace MoveIt
             if (MoveItTool.PO.Enabled)
             {
                 viewOptions.height += 36;
+                viewOptions.absolutePosition += new Vector3(0, -36);
 
                 PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
                 PO_button.atlas = GetIconsAtlas();

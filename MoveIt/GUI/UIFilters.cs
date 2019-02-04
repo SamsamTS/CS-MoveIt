@@ -172,7 +172,7 @@ namespace MoveIt
 
         internal static void POToggled()
         {
-            UICheckBox cbProcedural = FilterPanel.Find<UICheckBox>("PO");
+            UICheckBox cbProcedural = FilterCBs.Find(cb => cb.name == "PO");
 
             if (MoveItTool.PO.Active)
             {

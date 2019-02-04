@@ -700,12 +700,27 @@ namespace MoveIt
 
                     if (aeraUpdateCountdown == 0)
                     {
+                        Bounds totalBounds = default(Bounds);
+                        bool init = false;
+
                         foreach (Bounds bounds in aerasToUpdate)
                         {
-                            //Debug.Log($"PARKING (SS)\n{bounds}");
-                            bounds.Expand(64f);
-                            VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                             if (!init)
+                            {
+                                //Debug.Log($"SIMSTEP PARKING (initialising)\n{bounds}");
+                                totalBounds = bounds;
+                                init = true;
+                            }
+                            else
+                            {
+                                //Debug.Log($"SIMSTEP PARKING (combining)\n{bounds}");
+                                totalBounds.Encapsulate(bounds);
+                            }
                         }
+
+                        totalBounds.Expand(16f);
+                        Debug.Log($"SIMSTEP PARKING\n{totalBounds}");
+                        VehicleManager.instance.UpdateParkedVehicles(totalBounds.min.x, totalBounds.min.z, totalBounds.max.x, totalBounds.max.z);
                         aerasToUpdate.Clear();
                     }
 
