@@ -78,6 +78,10 @@ namespace MoveIt
                     }
 
                     node = nodeBuffer[node].m_nextBuildingNode;
+                    if ((nodeBuffer[node].m_flags & NetNode.Flags.Created) != NetNode.Flags.Created)
+                    {
+                        node = 0;
+                    }
 
                     if (++count > 32768)
                     {
