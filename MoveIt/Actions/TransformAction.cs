@@ -33,7 +33,7 @@ namespace MoveIt
 
         public override void Do()
         {
-            Bounds bounds = GetTotalBounds(false);
+            Bounds originalBounds = GetTotalBounds(false);
 
             Matrix4x4 matrix4x = default(Matrix4x4);
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -51,7 +51,7 @@ namespace MoveIt
                 }
             }
 
-            UpdateArea(bounds);
+            UpdateArea(originalBounds);
             UpdateArea(GetTotalBounds(false));
         }
 
@@ -66,6 +66,30 @@ namespace MoveIt
 
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
+        }
+
+        public void InitialiseDrag()
+        {
+            foreach (InstanceState instanceState in savedStates)
+            {
+                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
+                if (mb != null)
+                {
+                    mb.InitialiseDrag((BuildingState)instanceState);
+                }
+            }
+        }
+
+        public void FinaliseDrag()
+        {
+            foreach (InstanceState instanceState in savedStates)
+            {
+                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
+                if (mb != null)
+                {
+                    mb.FinaliseDrag((BuildingState)instanceState);
+                }
+            }
         }
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)

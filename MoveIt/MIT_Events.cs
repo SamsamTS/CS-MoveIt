@@ -352,6 +352,7 @@ namespace MoveIt
                 m_startPosition = action.moveDelta;
 
                 ToolState = ToolStates.MouseDragging;
+                action.InitialiseDrag();
             }
         }
 
@@ -372,6 +373,8 @@ namespace MoveIt
 
                 m_startAngle = action.angleDelta;
                 ToolState = ToolStates.MouseDragging;
+
+                action.InitialiseDrag();
             }
             else if (ToolState == ToolStates.Cloning)
             {
@@ -386,6 +389,7 @@ namespace MoveIt
             if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
                 ToolState = ToolStates.Default;
+                ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();
             }
@@ -398,6 +402,7 @@ namespace MoveIt
             if (ToolState == ToolStates.MouseDragging && m_leftClickTime == 0)
             {
                 ToolState = ToolStates.Default;
+                ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();
             }

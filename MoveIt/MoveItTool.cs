@@ -641,6 +641,15 @@ namespace MoveIt
                     state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
                 }
             }
+            else if (ToolState == ToolStates.MouseDragging)
+            {
+                TransformAction action = ActionQueue.instance.current as TransformAction;
+
+                foreach (InstanceState state in action.savedStates)
+                {
+                    state.instance.RenderGeometry(cameraInfo, m_hoverColor);
+                }
+            }
         }
 
         public override void SimulationStep()
@@ -700,27 +709,17 @@ namespace MoveIt
 
                     if (aeraUpdateCountdown == 0)
                     {
-                        Bounds totalBounds = default(Bounds);
-                        bool init = false;
-
-                        foreach (Bounds bounds in aerasToUpdate)
+                        string msg = "";
+                        foreach (Bounds bounds in MergeBounds(aerasToUpdate))
                         {
-                             if (!init)
-                            {
-                                //Debug.Log($"SIMSTEP PARKING (initialising)\n{bounds}");
-                                totalBounds = bounds;
-                                init = true;
-                            }
-                            else
-                            {
-                                //Debug.Log($"SIMSTEP PARKING (combining)\n{bounds}");
-                                totalBounds.Encapsulate(bounds);
-                            }
-                        }
+                            bounds.Expand(64f);
+                            msg += $"SimStep: {bounds}\n";
 
-                        totalBounds.Expand(16f);
-                        Debug.Log($"SIMSTEP PARKING\n{totalBounds}");
-                        VehicleManager.instance.UpdateParkedVehicles(totalBounds.min.x, totalBounds.min.z, totalBounds.max.x, totalBounds.max.z);
+                            VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                            TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                        }
+                        Debug.Log(msg);
+
                         aerasToUpdate.Clear();
                     }
 
@@ -1011,6 +1010,80 @@ namespace MoveIt
         {
             if (instance == null) return "(null instance)";
             return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
+        }
+
+
+        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerList)
+        {
+            HashSet<Bounds> innerList = new HashSet<Bounds>();
+            HashSet<Bounds> newList = new HashSet<Bounds>();
+
+            int c = 0;
+            string msg = "MERGE INFO\n";
+            do
+            {
+                int d = 0;
+                msg += $"{c} - Out:{outerList.Count}\n";
+                foreach (Bounds outer in outerList)
+                {
+                    int e = 0;
+                    bool merged = false;
+
+                    float outerVolume = outer.size.x * outer.size.y * outer.size.z;
+                    msg += $"{c}.{d} - In:{innerList.Count} - Outer Vol:{outerVolume}\n";
+                    foreach (Bounds inner in innerList)
+                    {
+                        float separateVolume = (inner.size.x * inner.size.y * inner.size.z) + outerVolume;
+
+                        Bounds encapsulated = inner;
+                        encapsulated.Encapsulate(outer);
+                        float encapsulateVolume = encapsulated.size.x * encapsulated.size.y * encapsulated.size.z;
+
+                        msg += $"{c}.{d}.{e} - New:{newList.Count} - Inner Vol:{inner.size.x * inner.size.y * inner.size.z}\n" +
+                            $"  Sep: {separateVolume}, Enc: {encapsulateVolume}";
+                        if (!merged && encapsulateVolume < separateVolume)
+                        {
+                            msg += "  MERGING\n";
+                            newList.Add(encapsulated);
+                            merged = true;
+                        }
+                        else
+                        {
+                            msg += "  adding\n";
+                            newList.Add(inner);
+                        }
+                        e++;
+                    }
+                    if (!merged)
+                    {
+                        newList.Add(outer);
+                    }
+
+                    innerList = new HashSet<Bounds>(newList);
+                    newList.Clear();
+                    d++;
+                }
+
+                if (outerList.Count <= innerList.Count)
+                {
+                    break;
+                }
+                outerList = new HashSet<Bounds>(innerList);
+                innerList.Clear();
+
+                if (c > 1000)
+                {
+                    Debug.Log($"Looped bounds-merge a thousand times");
+                    break;
+                }
+
+                c++;
+            }
+            while (true);
+
+            Debug.Log(msg + $"Outer: {outerList.Count}, Inner: {innerList.Count}");
+
+            return innerList;
         }
     }
 }

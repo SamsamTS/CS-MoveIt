@@ -74,11 +74,10 @@ namespace MoveIt
 
         public static void UpdateArea(Bounds bounds)
         {
-            bounds.Expand(32f);
+            bounds.Expand(64f);
             MoveItTool.instance.aerasToUpdate.Add(bounds);
-            MoveItTool.instance.aeraUpdateCountdown = 100;
+            MoveItTool.instance.aeraUpdateCountdown = 50;
 
-            bounds.Expand(32f);
             BuildingManager.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             PropManager.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             TreeManager.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
@@ -87,7 +86,7 @@ namespace MoveIt
             ElectricityManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             WaterManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
 
-            TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            //TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
             UpdateRender(bounds);
         }
 
