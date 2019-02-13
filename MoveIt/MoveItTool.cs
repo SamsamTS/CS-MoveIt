@@ -267,14 +267,65 @@ namespace MoveIt
                         StartCloning();
                     }
                 }
+                //else if (OptionsKeymapping.testKey.IsPressed(e))
+                //{ }
                 else if (OptionsKeymapping.bulldoze.IsPressed(e))
                 {
                     StartBulldoze();
                 }
+                else if (OptionsKeymapping.viewGrid.IsPressed(e))
+                {
+                    if (gridVisible)
+                    {
+                        gridVisible = false;
+                        UIToolOptionPanel.instance.grid.activeStateIndex = 0;
+                    }
+                    else
+                    {
+                        gridVisible = true;
+                        UIToolOptionPanel.instance.grid.activeStateIndex = 1;
+                    }
+                }
+                else if (OptionsKeymapping.viewUnderground.IsPressed(e))
+                {
+                    if (tunnelVisible)
+                    {
+                        tunnelVisible = false;
+                        UIToolOptionPanel.instance.underground.activeStateIndex = 0;
+                    }
+                    else
+                    {
+                        tunnelVisible = true;
+                        UIToolOptionPanel.instance.underground.activeStateIndex = 1;
+                    }
+                }
+                else if (OptionsKeymapping.activatePO.IsPressed(e))
+                {
+                    if (PO.Active == false)
+                    {
+                        PO.Active = true;
+                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                        PO.ToolEnabled();
+                    }
+                    else
+                    {
+                        PO.Active = false;
+                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
+                    }
+                    UIFilters.POToggled();
+                }
                 else if (OptionsKeymapping.convertToPO.IsPressed(e))
                 {
-                    if (PO.Active)
+                    if (PO.Enabled && ToolState == ToolStates.Default)
                     {
+                        if (PO.Active == false)
+                        {
+                            PO.Active = true;
+                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                            PO.ToolEnabled();
+                            UIFilters.POToggled();
+                        }
+
                         ConvertToPOAction ca = new ConvertToPOAction();
                         ActionQueue.instance.Push(ca);
                         ActionQueue.instance.Do();
@@ -712,7 +763,6 @@ namespace MoveIt
                         string msg = "";
                         foreach (Bounds bounds in MergeBounds(aerasToUpdate))
                         {
-                            bounds.Expand(64f);
                             msg += $"SimStep: {bounds}\n";
 
                             VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
@@ -1018,19 +1068,23 @@ namespace MoveIt
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
 
-            int c = 0;
-            string msg = "MERGE INFO\n";
+            int c1 = 0;
+            int c2 = 0;
+            int c3 = 0;
+            foreach (Bounds b in outerList)
+            {
+                b.Expand(64f);
+            }
+
             do
             {
-                int d = 0;
-                msg += $"{c} - Out:{outerList.Count}\n";
                 foreach (Bounds outer in outerList)
                 {
-                    int e = 0;
+                    //string msg = $"MERGE INFO\n{c} - Out:{outerList.Count}\n";
                     bool merged = false;
 
                     float outerVolume = outer.size.x * outer.size.y * outer.size.z;
-                    msg += $"{c}.{d} - In:{innerList.Count} - Outer Vol:{outerVolume}\n";
+                    //msg += $"{c}.{d} - In:{innerList.Count}\n";
                     foreach (Bounds inner in innerList)
                     {
                         float separateVolume = (inner.size.x * inner.size.y * inner.size.z) + outerVolume;
@@ -1039,29 +1093,31 @@ namespace MoveIt
                         encapsulated.Encapsulate(outer);
                         float encapsulateVolume = encapsulated.size.x * encapsulated.size.y * encapsulated.size.z;
 
-                        msg += $"{c}.{d}.{e} - New:{newList.Count} - Inner Vol:{inner.size.x * inner.size.y * inner.size.z}\n" +
-                            $"  Sep: {separateVolume}, Enc: {encapsulateVolume}";
+                        //msg += $"{c}.{d}.{e} - New:{newList.Count} - Inner Vol:{inner.size.x * inner.size.y * inner.size.z} - Outer Vol:{outerVolume}\n" +
+                        //    $"  Sep: {separateVolume}, Enc: {encapsulateVolume}";
                         if (!merged && encapsulateVolume < separateVolume)
                         {
-                            msg += "  MERGING\n";
+                            //msg += "  MERGING\n";
                             newList.Add(encapsulated);
                             merged = true;
                         }
                         else
                         {
-                            msg += "  adding\n";
+                            //msg += "  adding\n";
                             newList.Add(inner);
                         }
-                        e++;
+                        c3++;
                     }
                     if (!merged)
                     {
                         newList.Add(outer);
                     }
 
+                    //Debug.Log(msg + $"Outer: {outerList.Count}, Inner: {innerList.Count}");
+
                     innerList = new HashSet<Bounds>(newList);
                     newList.Clear();
-                    d++;
+                    c2++;
                 }
 
                 if (outerList.Count <= innerList.Count)
@@ -1071,17 +1127,17 @@ namespace MoveIt
                 outerList = new HashSet<Bounds>(innerList);
                 innerList.Clear();
 
-                if (c > 1000)
+                if (c1 > 1000)
                 {
                     Debug.Log($"Looped bounds-merge a thousand times");
                     break;
                 }
 
-                c++;
+                c1++;
             }
             while (true);
 
-            Debug.Log(msg + $"Outer: {outerList.Count}, Inner: {innerList.Count}");
+            Debug.Log($"{c1}.{c2}.{c3} - {innerList.Count}");
 
             return innerList;
         }

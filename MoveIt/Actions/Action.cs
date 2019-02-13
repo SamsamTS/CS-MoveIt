@@ -72,8 +72,14 @@ namespace MoveIt
             return totalBounds;
         }
 
-        public static void UpdateArea(Bounds bounds)
+        public static void UpdateArea(Bounds bounds, bool updateTerrain = false)
         {
+
+            if (updateTerrain)
+            {
+                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            }
+
             bounds.Expand(64f);
             MoveItTool.instance.aerasToUpdate.Add(bounds);
             MoveItTool.instance.aeraUpdateCountdown = 50;
@@ -85,8 +91,6 @@ namespace MoveIt
             bounds.Expand(64f);
             ElectricityManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             WaterManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-
-            //TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
             UpdateRender(bounds);
         }
 

@@ -16,6 +16,8 @@ namespace MoveIt
         public bool autoCurve;
         public NetSegment segmentCurve;
 
+        private bool containsNetwork = false;
+
         public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
 
         public TransformAction()
@@ -25,6 +27,11 @@ namespace MoveIt
                 if (instance.isValid)
                 {
                     savedStates.Add(instance.GetState());
+
+                    if (instance is MoveableNode || instance is MoveableSegment)
+                    {
+                        containsNetwork = true;
+                    }
                 }
             }
 
@@ -51,7 +58,7 @@ namespace MoveIt
                 }
             }
 
-            UpdateArea(originalBounds);
+            UpdateArea(originalBounds, containsNetwork);
             UpdateArea(GetTotalBounds(false));
         }
 
@@ -75,7 +82,7 @@ namespace MoveIt
                 MoveableBuilding mb = instanceState.instance as MoveableBuilding;
                 if (mb != null)
                 {
-                    mb.InitialiseDrag((BuildingState)instanceState);
+                    mb.InitialiseDrag();
                 }
             }
         }
@@ -87,7 +94,7 @@ namespace MoveIt
                 MoveableBuilding mb = instanceState.instance as MoveableBuilding;
                 if (mb != null)
                 {
-                    mb.FinaliseDrag((BuildingState)instanceState);
+                    mb.FinaliseDrag();
                 }
             }
         }

@@ -243,6 +243,29 @@ namespace MoveIt
             }
         }
 
+        private bool _virtual;
+        public bool Virtual
+        {
+            get => _virtual;
+            set
+            {
+                if (value == true)
+                {
+                    if (_virtual == false)
+                    {
+                        _virtual = true;
+                    }
+                }
+                else
+                {
+                    if (_virtual == true)
+                    { 
+                        _virtual = false;
+                    }
+                }
+            }
+        }
+
         public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
             //Building building = buildingBuffer[id.Building];
@@ -316,52 +339,42 @@ namespace MoveIt
             }
         }
 
-        private void SetHiddenFlag(BuildingState state, bool hide)
+        private void SetHiddenFlag(bool hide)
         {
             buildingBuffer[id.Building].m_flags = ToggleBuildingFlag(id.Building, hide); // |= Building.Flags.Hidden;
 
-            if (state.subStates != null)
+            foreach (Instance sub in subInstances)
             {
-                foreach (InstanceState subState in state.subStates)
+                string msg = $"<{sub.GetType()}> ";
+                //Debug.Log($"{subState.instance.GetType()}");
+                if (sub is MoveableNode mn)
                 {
-                    string msg = $"<{subState.GetType()}> ";
-                    //Debug.Log($"{subState.instance.GetType()}");
-                    if (subState.instance is MoveableNode mn)
+                    if (mn.Pillar != null)
                     {
-                        if (mn.Pillar != null)
-                        {
-                            msg += $"P({mn.Pillar.id.Building}),";
-                            buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleBuildingFlag(mn.Pillar.id.Building, hide);
-                        }
+                        msg += $"P({mn.Pillar.id.Building}),";
+                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleBuildingFlag(mn.Pillar.id.Building, hide);
                     }
-;
-                    if (subState is BuildingState bs)
-                    {
-                        buildingBuffer[subState.instance.id.Building].m_flags = ToggleBuildingFlag(subState.instance.id.Building, hide);
-                        
-                        Building subBuilding = (Building)subState.instance.data;
-                        msg += $"{subBuilding.Info.name} ({hide}) ";
-
-                        if (bs.subStates != null)
-                        {
-                            foreach (InstanceState subSubState in bs.subStates)
-                            {
-                                if (subSubState.instance is MoveableNode mn2)
-                                {
-                                    msg += $"Q({mn2.Pillar.id.Building}),";
-                                    buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleBuildingFlag(mn2.Pillar.id.Building, hide);
-                                    //if (mn2.Pillar != null)
-                                    //{
-                                    //    buildingBuffer[mn2.id.Building].m_flags = ToggleFlag(mn2.id.Building, hide);
-                                    //    Building pillar = (Building)mn2.Pillar.data;
-                                    //}
-                                }
-                            }
-                        }
-                        msg += "\n";
-                    }
-                    Debug.Log(msg);
                 }
+
+                if (sub is MoveableBuilding bs)
+                {
+                    buildingBuffer[sub.id.Building].m_flags = ToggleBuildingFlag(sub.id.Building, hide);
+
+                    Building subBuilding = (Building)sub.data;
+                    msg += $"{subBuilding.Info.name} ({hide}) ";
+
+
+                    foreach (Instance subSub in bs.subInstances)
+                    {
+                        if (subSub is MoveableNode mn2)
+                        {
+                            msg += $"Q({mn2.Pillar.id.Building}),";
+                            buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleBuildingFlag(mn2.Pillar.id.Building, hide);
+                        }
+                    }
+                    msg += "\n";
+                }
+                Debug.Log(msg);
             }
         }
 
@@ -388,22 +401,22 @@ namespace MoveIt
         }
 
 
-        public void InitialiseDrag(BuildingState state)
+        public void InitialiseDrag()
         {
             //Debug.Log($"INITIALISE DRAG");
-            SetHiddenFlag(state, true);
+            SetHiddenFlag(true);
 
-            Bounds bounds = new Bounds(state.position, new Vector3(state.length, 0, state.length));
+            Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
             bounds.Expand(64f);
             Action.UpdateArea(bounds);
         }
 
-        public void FinaliseDrag(BuildingState state)
+        public void FinaliseDrag()
         {
             //Debug.Log($"FINALISE DRAG");
-            SetHiddenFlag(state, false);
+            SetHiddenFlag(false);
 
-            Bounds bounds = new Bounds(state.instance.position, new Vector3(state.length, 0, state.length));
+            Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
             bounds.Expand(64f);
             Action.UpdateArea(bounds);
         }

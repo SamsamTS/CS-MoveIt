@@ -8,7 +8,7 @@ namespace MoveIt
         private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
         private HashSet<Instance> m_clones = new HashSet<Instance>();
         private HashSet<Instance> m_oldSelection;
-        private bool firstRun = true;
+        private bool firstRun = true; // TODO this disables Redo
 
         public ConvertToPOAction()
         {
@@ -23,7 +23,7 @@ namespace MoveIt
 
         public override void Do()
         {
-            if (!firstRun) return;
+            if (!firstRun) return; // TODO this disables Redo
             m_clones.Clear();
             m_oldSelection = new HashSet<Instance>(selection);
 
@@ -33,6 +33,12 @@ namespace MoveIt
             //    msg += $"{i.id.Prop}:{i.Info.Name}\n";
             //}
             //Debug.Log(msg);
+
+            //Debug.Log($"state: {MoveItTool.instance.ToolState}");
+            //if (MoveItTool.instance.ToolState != MoveItTool.ToolStates.Default)
+            //{
+            //    return;
+            //}
 
             foreach (InstanceState instanceState in m_states)
             {
@@ -67,7 +73,7 @@ namespace MoveIt
 
         public override void Undo()
         {
-            firstRun = false;
+            firstRun = false; // TODO this disables Redo
             if (m_states == null) return;
 
             Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
