@@ -58,8 +58,8 @@ namespace MoveIt
                 }
             }
 
-            UpdateArea(originalBounds, containsNetwork);
-            UpdateArea(GetTotalBounds(false));
+            UpdateArea(originalBounds, Event.current.control || containsNetwork);
+            UpdateArea(GetTotalBounds(false), Event.current.control);
         }
 
         public override void Undo()
@@ -77,6 +77,8 @@ namespace MoveIt
 
         public void InitialiseDrag()
         {
+            MoveItTool.dragging = true;
+
             foreach (InstanceState instanceState in savedStates)
             {
                 MoveableBuilding mb = instanceState.instance as MoveableBuilding;
@@ -89,6 +91,8 @@ namespace MoveIt
 
         public void FinaliseDrag()
         {
+            MoveItTool.dragging = false;
+
             foreach (InstanceState instanceState in savedStates)
             {
                 MoveableBuilding mb = instanceState.instance as MoveableBuilding;

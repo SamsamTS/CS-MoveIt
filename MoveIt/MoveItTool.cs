@@ -74,8 +74,8 @@ namespace MoveIt
         public static bool filterProcs = true;
 
         public static bool followTerrain = true;
-
         public static bool marqueeSelection = false;
+        internal static bool dragging = false;
 
         public static StepOver stepOver;
         internal static DebugPanel debugPanel;
@@ -493,6 +493,13 @@ namespace MoveIt
                     ActionQueue.instance.Invalidate();
                 }
 
+                if (ToolState == ToolStates.MouseDragging)
+                {
+                    Debug.Log($"Hello");
+                    ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
+                    UpdateAreas();
+                }
+
                 ToolState = ToolStates.Default;
 
                 if (UITipsWindow.instance != null)
@@ -760,17 +767,7 @@ namespace MoveIt
 
                     if (aeraUpdateCountdown == 0)
                     {
-                        string msg = "";
-                        foreach (Bounds bounds in MergeBounds(aerasToUpdate))
-                        {
-                            msg += $"SimStep: {bounds}\n";
-
-                            VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                            TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                        }
-                        Debug.Log(msg);
-
-                        aerasToUpdate.Clear();
+                        UpdateAreas();
                     }
 
                     if (!inputHeld && aeraUpdateCountdown >= 0)
@@ -786,6 +783,21 @@ namespace MoveIt
 
                 m_nextAction = ToolAction.None;
             }
+        }
+
+        public void UpdateAreas()
+        {
+            //string msg = "";
+            foreach (Bounds bounds in MergeBounds(aerasToUpdate))
+            {
+                //msg += $"SimStep: {bounds}\n";
+
+                VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            }
+            //Debug.Log(msg);
+
+            aerasToUpdate.Clear();
         }
 
         public override ToolErrors GetErrors()
@@ -1062,15 +1074,14 @@ namespace MoveIt
             return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
         }
 
-
         internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerList)
         {
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
 
             int c1 = 0;
-            int c2 = 0;
-            int c3 = 0;
+            //int c2 = 0;
+            //int c3 = 0;
             foreach (Bounds b in outerList)
             {
                 b.Expand(64f);
@@ -1106,7 +1117,7 @@ namespace MoveIt
                             //msg += "  adding\n";
                             newList.Add(inner);
                         }
-                        c3++;
+                        //c3++;
                     }
                     if (!merged)
                     {
@@ -1117,7 +1128,7 @@ namespace MoveIt
 
                     innerList = new HashSet<Bounds>(newList);
                     newList.Clear();
-                    c2++;
+                    //c2++;
                 }
 
                 if (outerList.Count <= innerList.Count)
@@ -1133,11 +1144,11 @@ namespace MoveIt
                     break;
                 }
 
-                c1++;
+                //c1++;
             }
             while (true);
 
-            Debug.Log($"{c1}.{c2}.{c3} - {innerList.Count}");
+            //Debug.Log($"{c1}.{c2}.{c3} - {innerList.Count}");
 
             return innerList;
         }

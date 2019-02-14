@@ -39,18 +39,13 @@ namespace MoveIt
         {
             get
             {
-                //HashSet<ushort> buildings = new HashSet<ushort>();
+                //string msg = $"{Info.Name}: ";
+
                 ushort building = buildingBuffer[id.Building].m_subBuilding;
                 int count = 0;
                 while (building != 0)
                 {
-                    //buildings.Add(building);
-                    //string msg = "";
-                    //foreach (ushort b in buildings)
-                    //{
-                    //    msg += $"{b}, ";
-                    //}
-                    //Debug.Log($"{msg}");
+                    //msg += $"B{building}, ";
 
                     InstanceID buildingID = default(InstanceID);
                     buildingID.Building = building;
@@ -69,6 +64,8 @@ namespace MoveIt
                 count = 0;
                 while (node != 0)
                 {
+                    //msg += $"N{node}, ";
+
                     ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                     if (layer != ItemClass.Layer.PublicTransport)
                     {
@@ -89,6 +86,8 @@ namespace MoveIt
                         break;
                     }
                 }
+
+                //Debug.Log($"{msg}");
             }
         }
 
@@ -243,7 +242,7 @@ namespace MoveIt
             }
         }
 
-        private bool _virtual;
+        private bool _virtual = false;
         public bool Virtual
         {
             get => _virtual;
@@ -254,6 +253,7 @@ namespace MoveIt
                     if (_virtual == false)
                     {
                         _virtual = true;
+                        SetHiddenFlag(true);
                     }
                 }
                 else
@@ -261,6 +261,7 @@ namespace MoveIt
                     if (_virtual == true)
                     { 
                         _virtual = false;
+                        SetHiddenFlag(false);
                     }
                 }
             }
@@ -283,14 +284,16 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
 
-            // TODO: when should the flag be set?
-            if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
+            if (MoveItTool.dragging)
             {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
-            {
-                RemoveFixedHeightFlag(id.Building);
+                if (Event.current.control)
+                {
+                    Virtual = false;
+                }
+                else
+                {
+                    Virtual = true;
+                }
             }
 
             Move(newPosition, state.angle + deltaAngle);
@@ -337,48 +340,53 @@ namespace MoveIt
                     }
                 }
             }
+
+            // TODO: when should the flag be set?
+            if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
+            {
+                AddFixedHeightFlag(id.Building);
+            }
+            else
+            {
+                RemoveFixedHeightFlag(id.Building);
+            }
         }
 
         private void SetHiddenFlag(bool hide)
         {
-            buildingBuffer[id.Building].m_flags = ToggleBuildingFlag(id.Building, hide); // |= Building.Flags.Hidden;
+            buildingBuffer[id.Building].m_flags = ToggleHiddenFlag(id.Building, hide);
 
             foreach (Instance sub in subInstances)
             {
-                string msg = $"<{sub.GetType()}> ";
-                //Debug.Log($"{subState.instance.GetType()}");
                 if (sub is MoveableNode mn)
                 {
                     if (mn.Pillar != null)
                     {
-                        msg += $"P({mn.Pillar.id.Building}),";
-                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleBuildingFlag(mn.Pillar.id.Building, hide);
+                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleHiddenFlag(mn.Pillar.id.Building, hide);
                     }
                 }
 
                 if (sub is MoveableBuilding bs)
                 {
-                    buildingBuffer[sub.id.Building].m_flags = ToggleBuildingFlag(sub.id.Building, hide);
+                    buildingBuffer[sub.id.Building].m_flags = ToggleHiddenFlag(sub.id.Building, hide);
 
                     Building subBuilding = (Building)sub.data;
-                    msg += $"{subBuilding.Info.name} ({hide}) ";
-
 
                     foreach (Instance subSub in bs.subInstances)
                     {
                         if (subSub is MoveableNode mn2)
                         {
-                            msg += $"Q({mn2.Pillar.id.Building}),";
-                            buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleBuildingFlag(mn2.Pillar.id.Building, hide);
+                            if (mn2.Pillar != null)
+                            {
+                                buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleHiddenFlag(mn2.Pillar.id.Building, hide);
+                            }
                         }
                     }
-                    msg += "\n";
                 }
-                Debug.Log(msg);
             }
         }
 
-        private Building.Flags ToggleBuildingFlag(ushort id, bool hide)
+        private static Building.Flags ToggleHiddenFlag(ushort id, bool hide)
         {
             if (hide)
             {
@@ -404,7 +412,8 @@ namespace MoveIt
         public void InitialiseDrag()
         {
             //Debug.Log($"INITIALISE DRAG");
-            SetHiddenFlag(true);
+            //SetHiddenFlag(true);
+            Virtual = true;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
             bounds.Expand(64f);
@@ -414,7 +423,8 @@ namespace MoveIt
         public void FinaliseDrag()
         {
             //Debug.Log($"FINALISE DRAG");
-            SetHiddenFlag(false);
+            //SetHiddenFlag(false);
+            Virtual = false;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
             bounds.Expand(64f);
@@ -864,6 +874,7 @@ namespace MoveIt
         {
             BuildingInfo info = data.Info;
             RemoveFromGrid(building, ref data);
+
             //if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
             //{
             //    Debug.Log($"PARKING (RB)\n#{building}:{info.name}");
