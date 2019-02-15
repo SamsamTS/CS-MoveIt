@@ -154,8 +154,8 @@ namespace MoveIt
 
         public static bool IsSurface(BuildingInfo info)
         {
-            if (MoveItTool.extraAsSurfaces)
-            {
+            //if (MoveItTool.extraAsSurfaces)
+            //{
                 foreach (string subname in SurfaceExtraBuildingNames)
                 {
                     if (subname.Length > info.name.Length) continue;
@@ -164,10 +164,10 @@ namespace MoveIt
                         return true;
                     }
                 }
-            }
+            //}
 
-            if (MoveItTool.brushesAsSurfaces)
-            {
+            //if (MoveItTool.brushesAsSurfaces)
+            //{
                 foreach (string subname in SurfaceBrushNames)
                 {
                     if (subname.Length > info.name.Length) continue;
@@ -176,7 +176,7 @@ namespace MoveIt
                         return true;
                     }
                 }
-            }
+            //}
 
             return false;
         }
@@ -188,8 +188,8 @@ namespace MoveIt
                 return true;
             }
 
-            if (MoveItTool.extraAsSurfaces)
-            {
+            //if (MoveItTool.decalsAsSurfaces)
+            //{
                 if (info.m_isDecal)
                 {
                     if (Array.Exists(SurfaceExtraDecalNames, s => s.Equals(info.m_mesh.name)))
@@ -208,7 +208,7 @@ namespace MoveIt
                         }
                     }
                 }
-            }
+            //}
 
             return false;
         }
@@ -283,8 +283,8 @@ namespace MoveIt
 
             if (info.m_isDecal)
             {
-                if (MoveItTool.extraAsSurfaces)
-                {
+                //if (MoveItTool.extraAsSurfaces)
+                //{
                     if (MoveItTool.filterSurfaces && IsSurface(info))
                     {
                         return true;
@@ -293,14 +293,14 @@ namespace MoveIt
                     {
                         return true;
                     }
-                }
-                else
-                {
-                    if (MoveItTool.filterDecals)
-                    {
-                        return true;
-                    }
-                }
+                //}
+                //else
+                //{
+                //    if (MoveItTool.filterDecals)
+                //    {
+                //        return true;
+                //    }
+                //}
                 return false;
             }
 

@@ -286,13 +286,13 @@ namespace MoveIt
 
             if (MoveItTool.dragging)
             {
-                if (Event.current.control)
+                if (Event.current.shift)
                 {
-                    Virtual = false;
+                    Virtual = true;
                 }
                 else
                 {
-                    Virtual = true;
+                    Virtual = false;
                 }
             }
 
@@ -412,8 +412,7 @@ namespace MoveIt
         public void InitialiseDrag()
         {
             //Debug.Log($"INITIALISE DRAG");
-            //SetHiddenFlag(true);
-            Virtual = true;
+            Virtual = false;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
             bounds.Expand(64f);

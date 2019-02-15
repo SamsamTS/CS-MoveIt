@@ -75,6 +75,10 @@ namespace MoveIt
             {
                 ToolState = ToolStates.Default;
 
+                //Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                //RaycastHoverInstance(mouseRay);
+                //m_marqueeInstances = GetMarqueeList(mouseRay);
+
                 Event e = Event.current;
 
                 if (m_marqueeInstances == null || m_marqueeInstances.Count == 0 ||

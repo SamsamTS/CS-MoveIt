@@ -58,8 +58,8 @@ namespace MoveIt
                 }
             }
 
-            UpdateArea(originalBounds, Event.current.control || containsNetwork);
-            UpdateArea(GetTotalBounds(false), Event.current.control);
+            UpdateArea(originalBounds, !Event.current.shift || containsNetwork);
+            UpdateArea(GetTotalBounds(false), !Event.current.shift);
         }
 
         public override void Undo()

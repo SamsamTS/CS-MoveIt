@@ -327,6 +327,12 @@ namespace MoveIt
                     m_selection.d = m_selection.a + dotDown * down;
                 }
 
+                // Disables select-during-drag
+                //if (ToolState == ToolStates.DrawingSelection)
+                //{
+                //    return list;
+                //}
+
                 Vector3 min = m_selection.Min();
                 Vector3 max = m_selection.Max();
 

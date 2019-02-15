@@ -34,10 +34,10 @@ namespace MoveIt
 
         public string Description
         {
-            get { return "[Alpha Prodecural Objects Option]"; }
+            get { return "Move things"; }
         }
 
-        public const string version = "2.4.0 [APOO]";
+        public const string version = "2.4.0";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -80,7 +80,7 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Check this if you don't want to see the tips.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Auto-close Align Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
@@ -92,7 +92,7 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Only see PO objects that are selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
                 {
@@ -108,7 +108,7 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
@@ -119,19 +119,19 @@ namespace MoveIt
                 //    MoveItTool.altSelectSegmentNodes.value = b;
                 //});
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: [RWB] FxUK's Brushes", MoveItTool.brushesAsSurfaces.value, (b) =>
-                {
-                    MoveItTool.brushesAsSurfaces.value = b;
-                });
-                checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: Extras", MoveItTool.extraAsSurfaces.value, (b) =>
-                {
-                    MoveItTool.extraAsSurfaces.value = b;
-                });
-                checkBox.tooltip = "Ploppable Asphalt Decals, Ronyx69's Docks, Deczaah's Surfaces";
+                //checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: [RWB] FxUK's Brushes", MoveItTool.brushesAsSurfaces.value, (b) =>
+                //{
+                //    MoveItTool.brushesAsSurfaces.value = b;
+                //});
+                //checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: Extras", MoveItTool.extraAsSurfaces.value, (b) =>
+                //{
+                //    MoveItTool.extraAsSurfaces.value = b;
+                //});
+                //checkBox.tooltip = "Ploppable Asphalt Decals, Ronyx69's Docks, Deczaah's Surfaces";
 
-                group.AddSpace(10);
+                //group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {
@@ -145,11 +145,11 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 panel.gameObject.AddComponent<OptionsKeymapping>();
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", _cleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
@@ -166,7 +166,7 @@ namespace MoveIt
                 });
                 checkBox.name = "MoveIt_DebugPanel";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
             }
             catch (Exception e)
             {
