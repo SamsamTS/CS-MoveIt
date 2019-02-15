@@ -234,7 +234,7 @@ namespace MoveIt
 
         public virtual void SetHeight()
         {
-            SetHeight(TerrainManager.instance.SampleOriginalRawHeightSmooth(position));
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
         }
 
         public static implicit operator Instance(InstanceID id)
