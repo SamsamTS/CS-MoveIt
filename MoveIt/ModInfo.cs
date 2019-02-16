@@ -94,44 +94,31 @@ namespace MoveIt
 
                 group.AddSpace(15);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Only see PO objects that are selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                if (!MoveItTool.HidePO)
                 {
-                    MoveItTool.POOnlySelectedAreVisible.value = b;
-                    MoveItTool.PO.ToolEnabled();
-                });
-                checkBox.tooltip = "If you have a lot (250 or more) of PO objects, this is recommended.";
+                    checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                    {
+                        MoveItTool.POOnlySelectedAreVisible.value = b;
+                        MoveItTool.PO.ToolEnabled();
+                    });
+                    checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
 
-                checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
-                {
-                    MoveItTool.POHighlightUnselected.value = b;
-                    MoveItTool.PO.ToolEnabled();
-                });
-                checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
+                    checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
+                    {
+                        MoveItTool.POHighlightUnselected.value = b;
+                        MoveItTool.PO.ToolEnabled();
+                    });
+                    checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
 
-                group.AddSpace(15);
+                    group.AddSpace(15);
+                }
 
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
                 });
-                //checkBox = (UICheckBox)group.AddCheckbox("Alt+Click on segment to select nodes", MoveItTool.altSelectSegmentNodes.value, (b) =>
-                //{
-                //    MoveItTool.altSelectSegmentNodes.value = b;
-                //});
 
                 group.AddSpace(15);
-
-                //checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: [RWB] FxUK's Brushes", MoveItTool.brushesAsSurfaces.value, (b) =>
-                //{
-                //    MoveItTool.brushesAsSurfaces.value = b;
-                //});
-                //checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: Extras", MoveItTool.extraAsSurfaces.value, (b) =>
-                //{
-                //    MoveItTool.extraAsSurfaces.value = b;
-                //});
-                //checkBox.tooltip = "Ploppable Asphalt Decals, Ronyx69's Docks, Deczaah's Surfaces";
-
-                //group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {

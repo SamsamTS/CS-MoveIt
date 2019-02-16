@@ -30,6 +30,7 @@ namespace MoveIt
 
         public UIPanel filtersPanel;
         public UIPanel alignToolsPanel;
+        public UIPanel viewOptions;
 
         public override void Start()
         {
@@ -572,7 +573,7 @@ namespace MoveIt
             #endregion
 
             #region View Options
-            UIPanel viewOptions = AddUIComponent<UIPanel>();
+            viewOptions = AddUIComponent<UIPanel>();
             viewOptions.atlas = UIUtils.GetAtlas("Ingame");
             viewOptions.backgroundSprite = "InfoPanelBack";
             viewOptions.size = new Vector2(44f, 80f);
@@ -652,9 +653,6 @@ namespace MoveIt
 
             if (MoveItTool.PO.Enabled)
             {
-                viewOptions.height += 36;
-                viewOptions.absolutePosition += new Vector3(0, -36);
-
                 PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
                 PO_button.atlas = GetIconsAtlas();
                 PO_button.name = "MoveIt_PO_button";
@@ -698,6 +696,16 @@ namespace MoveIt
                     }
                     UIFilters.POToggled();
                 };
+
+                if (!MoveItTool.HidePO)
+                {
+                    viewOptions.height += 36;
+                    viewOptions.absolutePosition += new Vector3(0, -36);
+                }
+                else
+                {
+                    PO_button.isVisible = false;
+                }
             }
 
             #endregion

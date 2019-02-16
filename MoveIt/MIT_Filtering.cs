@@ -57,7 +57,7 @@ namespace MoveIt
             do
             {
 
-                if (PO.Active && selectProc)
+                if (!HidePO && PO.Active && selectProc)
                 {
                     //string msg = "";
                     foreach (IPO_Object obj in PO.Objects)
@@ -344,7 +344,7 @@ namespace MoveIt
                 InstanceID id = new InstanceID();
                 ItemClass.Layer itemLayers = GetItemLayers();
 
-                if (PO.Active && filterProcs)
+                if (!HidePO && PO.Active && filterProcs)
                 {
                     //string msg = "";
                     foreach (IPO_Object obj in PO.Objects)

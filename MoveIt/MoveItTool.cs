@@ -62,6 +62,7 @@ namespace MoveIt
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
+        public static SavedBool HidePO = new SavedBool("HidePO", settingsFileName, true, true);
 
         public static bool filterBuildings = true;
         public static bool filterProps = true;
@@ -99,6 +100,7 @@ namespace MoveIt
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
+        //internal static bool HidePO = true;
         internal static PO_Manager PO;
 
         private const float XFACTOR = 0.263671875f;
@@ -269,6 +271,26 @@ namespace MoveIt
                 }
                 //else if (OptionsKeymapping.testKey.IsPressed(e))
                 //{ }
+                else if (OptionsKeymapping.ShowPO.IsPressed(e))
+                {
+                    HidePO.value = !HidePO;
+                    if (HidePO)
+                    {
+                        UIToolOptionPanel.instance.PO_button.isVisible = false;
+
+                        UIToolOptionPanel.instance.viewOptions.height -= 36;
+                        UIToolOptionPanel.instance.viewOptions.absolutePosition -= new Vector3(0, -36);
+                        //UIFilters.POToggled();
+                    }
+                    else
+                    {
+                        UIToolOptionPanel.instance.PO_button.isVisible = true;
+
+                        UIToolOptionPanel.instance.viewOptions.height += 36;
+                        UIToolOptionPanel.instance.viewOptions.absolutePosition += new Vector3(0, -36);
+                        //UIFilters.POToggled();
+                    }
+                }
                 else if (OptionsKeymapping.bulldoze.IsPressed(e))
                 {
                     StartBulldoze();
@@ -301,22 +323,25 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.activatePO.IsPressed(e))
                 {
-                    if (PO.Active == false)
+                    if (!HidePO)
                     {
-                        PO.Active = true;
-                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                        PO.ToolEnabled();
+                        if (PO.Active == false)
+                        {
+                            PO.Active = true;
+                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                            PO.ToolEnabled();
+                        }
+                        else
+                        {
+                            PO.Active = false;
+                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
+                        }
+                        UIFilters.POToggled();
                     }
-                    else
-                    {
-                        PO.Active = false;
-                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
-                    }
-                    UIFilters.POToggled();
                 }
                 else if (OptionsKeymapping.convertToPO.IsPressed(e))
                 {
-                    if (PO.Enabled && ToolState == ToolStates.Default)
+                    if (!HidePO && PO.Enabled && ToolState == ToolStates.Default)
                     {
                         if (PO.Active == false)
                         {
@@ -463,7 +488,7 @@ namespace MoveIt
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
 
-            if (PO.Active)
+            if (!HidePO && PO.Active)
             {
                 PO.ToolEnabled();
                 ActionQueue.instance.Push(new TransformAction());
@@ -531,7 +556,7 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
                 // Highlight all PO
-                if (PO.Active && POHighlightUnselected)
+                if (!HidePO && PO.Active && POHighlightUnselected)
                 {
                     foreach (IPO_Object obj in PO.Objects)
                     {

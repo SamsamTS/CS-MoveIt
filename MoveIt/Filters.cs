@@ -154,29 +154,23 @@ namespace MoveIt
 
         public static bool IsSurface(BuildingInfo info)
         {
-            //if (MoveItTool.extraAsSurfaces)
-            //{
-                foreach (string subname in SurfaceExtraBuildingNames)
+            foreach (string subname in SurfaceExtraBuildingNames)
+            {
+                if (subname.Length > info.name.Length) continue;
+                if (subname == info.name.Substring(0, subname.Length))
                 {
-                    if (subname.Length > info.name.Length) continue;
-                    if (subname == info.name.Substring(0, subname.Length))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-            //}
+            }
 
-            //if (MoveItTool.brushesAsSurfaces)
-            //{
-                foreach (string subname in SurfaceBrushNames)
+            foreach (string subname in SurfaceBrushNames)
+            {
+                if (subname.Length > info.name.Length) continue;
+                if (subname == info.name.Substring(0, subname.Length))
                 {
-                    if (subname.Length > info.name.Length) continue;
-                    if (subname == info.name.Substring(0, subname.Length))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-            //}
+            }
 
             return false;
         }
@@ -188,27 +182,24 @@ namespace MoveIt
                 return true;
             }
 
-            //if (MoveItTool.decalsAsSurfaces)
-            //{
-                if (info.m_isDecal)
+            if (info.m_isDecal)
+            {
+                if (Array.Exists(SurfaceExtraDecalNames, s => s.Equals(info.m_mesh.name)))
                 {
-                    if (Array.Exists(SurfaceExtraDecalNames, s => s.Equals(info.m_mesh.name)))
+                    return true;
+                }
+            }
+            else
+            {
+                foreach (string subname in SurfaceExtraPropNames)
+                {
+                    if (subname.Length > info.name.Length) continue;
+                    if (subname == info.name.Substring(0, subname.Length))
                     {
                         return true;
                     }
                 }
-                else
-                {
-                    foreach (string subname in SurfaceExtraPropNames)
-                    {
-                        if (subname.Length > info.name.Length) continue;
-                        if (subname == info.name.Substring(0, subname.Length))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            //}
+            }
 
             return false;
         }
@@ -221,23 +212,19 @@ namespace MoveIt
                 //Select P&P on hover with Alt
                 if (MoveItTool.altSelectNodeBuildings)
                 {
-                    //Debug.Log($"SINGLE-Pi m_class.name:{info.m_class.name}");
                     if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
                     {
                         if (Event.current.alt)
                         {
-                            //Debug.Log("Alt");
                             return true;
                         }
                         return false;
                     }
 
-                    //Debug.Log($"SINGLE-Py AI type:{info.GetAI().GetType()}");
                     if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
                     {
                         if (Event.current.alt)
                         {
-                            //Debug.Log("Alt");
                             return true;
                         }
                         return false;
@@ -258,10 +245,8 @@ namespace MoveIt
 
             if (MoveItTool.filterBuildings)
             {
-                //Filter pillars and pylons out of select
                 if (MoveItTool.altSelectNodeBuildings)
                 {
-                    //Debug.Log($"MARQUEE m_class.name:{info.m_class.name}");
                     if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
                     {
                         return false;
@@ -283,24 +268,14 @@ namespace MoveIt
 
             if (info.m_isDecal)
             {
-                //if (MoveItTool.extraAsSurfaces)
-                //{
-                    if (MoveItTool.filterSurfaces && IsSurface(info))
-                    {
-                        return true;
-                    }
-                    if (MoveItTool.filterDecals && !IsSurface(info))
-                    {
-                        return true;
-                    }
-                //}
-                //else
-                //{
-                //    if (MoveItTool.filterDecals)
-                //    {
-                //        return true;
-                //    }
-                //}
+                if (MoveItTool.filterSurfaces && IsSurface(info))
+                {
+                    return true;
+                }
+                if (MoveItTool.filterDecals && !IsSurface(info))
+                {
+                    return true;
+                }
                 return false;
             }
 
