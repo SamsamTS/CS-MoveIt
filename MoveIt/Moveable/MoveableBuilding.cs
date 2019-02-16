@@ -288,11 +288,11 @@ namespace MoveIt
             {
                 if (Event.current.shift)
                 {
-                    Virtual = true;
+                    Virtual = !MoveItTool.fastMove;
                 }
                 else
                 {
-                    Virtual = false;
+                    Virtual = MoveItTool.fastMove;
                 }
             }
 

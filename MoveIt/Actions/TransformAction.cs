@@ -58,8 +58,9 @@ namespace MoveIt
                 }
             }
 
-            UpdateArea(originalBounds, !Event.current.shift || containsNetwork);
-            UpdateArea(GetTotalBounds(false), !Event.current.shift);
+            bool fast = MoveItTool.fastMove != Event.current.shift;
+            UpdateArea(originalBounds, !fast || containsNetwork);
+            UpdateArea(GetTotalBounds(false), !fast);
         }
 
         public override void Undo()

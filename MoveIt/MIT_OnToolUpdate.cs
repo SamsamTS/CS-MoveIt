@@ -233,9 +233,9 @@ namespace MoveIt
             direction = Vector3.zero;
             angle = 0;
 
-            float magnitude = 5f;
-            if (e.shift) magnitude = magnitude * 5f;
-            if (e.alt) magnitude = magnitude / 5f;
+            float magnitude = 4f;
+            if (e.shift) magnitude = magnitude * 4f;
+            if (e.alt) magnitude = magnitude / 4f;
 
             if (IsKeyDown(OptionsKeymapping.moveXpos, e))
             {

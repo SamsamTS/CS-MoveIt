@@ -58,6 +58,7 @@ namespace MoveIt
         //public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
         //public static SavedBool brushesAsSurfaces = new SavedBool("brushesAsSurfaces", settingsFileName, false, true);
         //public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
+        public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
@@ -274,21 +275,24 @@ namespace MoveIt
                 else if (OptionsKeymapping.ShowPO.IsPressed(e))
                 {
                     HidePO.value = !HidePO;
-                    if (HidePO)
+                    if (PO.Enabled)
                     {
-                        UIToolOptionPanel.instance.PO_button.isVisible = false;
+                        if (HidePO)
+                        {
+                            UIToolOptionPanel.instance.PO_button.isVisible = false;
 
-                        UIToolOptionPanel.instance.viewOptions.height -= 36;
-                        UIToolOptionPanel.instance.viewOptions.absolutePosition -= new Vector3(0, -36);
-                        //UIFilters.POToggled();
-                    }
-                    else
-                    {
-                        UIToolOptionPanel.instance.PO_button.isVisible = true;
+                            UIToolOptionPanel.instance.viewOptions.height -= 36;
+                            UIToolOptionPanel.instance.viewOptions.absolutePosition -= new Vector3(0, -36);
+                            //UIFilters.POToggled();
+                        }
+                        else
+                        {
+                            UIToolOptionPanel.instance.PO_button.isVisible = true;
 
-                        UIToolOptionPanel.instance.viewOptions.height += 36;
-                        UIToolOptionPanel.instance.viewOptions.absolutePosition += new Vector3(0, -36);
-                        //UIFilters.POToggled();
+                            UIToolOptionPanel.instance.viewOptions.height += 36;
+                            UIToolOptionPanel.instance.viewOptions.absolutePosition += new Vector3(0, -36);
+                            //UIFilters.POToggled();
+                        }
                     }
                 }
                 else if (OptionsKeymapping.bulldoze.IsPressed(e))
@@ -520,7 +524,6 @@ namespace MoveIt
 
                 if (ToolState == ToolStates.MouseDragging)
                 {
-                    Debug.Log($"Hello");
                     ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
                     UpdateAreas();
                 }

@@ -113,6 +113,14 @@ namespace MoveIt
                     group.AddSpace(15);
                 }
 
+                checkBox = (UICheckBox)group.AddCheckbox("Prefer fast, low-detail moving (hold Shift to temporarily switch)", MoveItTool.fastMove.value, (b) =>
+                {
+                    MoveItTool.fastMove.value = b;
+                });
+                checkBox.tooltip = "Helps you position objects when your frame-rate is poor.";
+
+                group.AddSpace(15);
+
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
