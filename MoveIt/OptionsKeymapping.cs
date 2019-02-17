@@ -50,7 +50,7 @@ namespace MoveIt
         public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
 
         //public static readonly SavedInputKey testKey = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, false, false, true), true);
-        public static readonly SavedInputKey ShowPO = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightBracket, true, false, true), true);
+        public static readonly SavedInputKey ShowPO = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, true, false, true), true);
 
         /*public static readonly SavedInputKey export = new SavedInputKey("export", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.X, true, false, false), false);
         public static readonly SavedInputKey import = new SavedInputKey("import", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.V, true, false, false), false);
