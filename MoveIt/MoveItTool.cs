@@ -857,7 +857,7 @@ namespace MoveIt
             }
         }
 
-        private Vector3 RaycastMouseLocation(Ray mouseRay)
+        internal static Vector3 RaycastMouseLocation(Ray mouseRay)
         {
             RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
             input.m_ignoreTerrain = false;
@@ -891,9 +891,7 @@ namespace MoveIt
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
 
-            int c1 = 0;
-            //int c2 = 0;
-            //int c3 = 0;
+            int c = 0;
             foreach (Bounds b in outerList)
             {
                 b.Expand(64f);
@@ -903,11 +901,9 @@ namespace MoveIt
             {
                 foreach (Bounds outer in outerList)
                 {
-                    //string msg = $"MERGE INFO\n{c} - Out:{outerList.Count}\n";
                     bool merged = false;
 
                     float outerVolume = outer.size.x * outer.size.y * outer.size.z;
-                    //msg += $"{c}.{d} - In:{innerList.Count}\n";
                     foreach (Bounds inner in innerList)
                     {
                         float separateVolume = (inner.size.x * inner.size.y * inner.size.z) + outerVolume;
@@ -916,31 +912,23 @@ namespace MoveIt
                         encapsulated.Encapsulate(outer);
                         float encapsulateVolume = encapsulated.size.x * encapsulated.size.y * encapsulated.size.z;
 
-                        //msg += $"{c}.{d}.{e} - New:{newList.Count} - Inner Vol:{inner.size.x * inner.size.y * inner.size.z} - Outer Vol:{outerVolume}\n" +
-                        //    $"  Sep: {separateVolume}, Enc: {encapsulateVolume}";
                         if (!merged && encapsulateVolume < separateVolume)
                         {
-                            //msg += "  MERGING\n";
                             newList.Add(encapsulated);
                             merged = true;
                         }
                         else
                         {
-                            //msg += "  adding\n";
                             newList.Add(inner);
                         }
-                        //c3++;
                     }
                     if (!merged)
                     {
                         newList.Add(outer);
                     }
 
-                    //Debug.Log(msg + $"Outer: {outerList.Count}, Inner: {innerList.Count}");
-
                     innerList = new HashSet<Bounds>(newList);
                     newList.Clear();
-                    //c2++;
                 }
 
                 if (outerList.Count <= innerList.Count)
@@ -950,17 +938,15 @@ namespace MoveIt
                 outerList = new HashSet<Bounds>(innerList);
                 innerList.Clear();
 
-                if (c1 > 1000)
+                if (c > 1000)
                 {
                     Debug.Log($"Looped bounds-merge a thousand times");
                     break;
                 }
 
-                //c1++;
+                c++;
             }
             while (true);
-
-            //Debug.Log($"{c1}.{c2}.{c3} - {innerList.Count}");
 
             return innerList;
         }

@@ -190,13 +190,13 @@ namespace MoveIt
                             while (segment != 0u)
                             {
                                 if (stepOver.isValidS(segment) && IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
-                                    segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
+                                            segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                                 {
                                     //Debug.Log($"Segment:{segment}");
                                     ushort building = 0;
                                     if (!Event.current.alt)
                                     {
-                                        building = MoveItTool.FindOwnerBuilding(segment, 363f);
+                                        building = FindOwnerBuilding(segment, 363f);
                                     }
 
                                     if (building != 0)
@@ -211,8 +211,8 @@ namespace MoveIt
                                     else if (selectSegments)
                                     {
                                         if (!selectNodes || (
-                                            !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority) &&
-                                            !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_endNode], ray, -1000f, out t2, out priority)
+                                            (!stepOver.isValidN(segmentBuffer[segment].m_startNode) || !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority)) &&
+                                            (!stepOver.isValidN(segmentBuffer[segment].m_endNode) || !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_endNode], ray, -1000f, out t2, out priority))
                                         ))
                                         {
                                             if (Filters.Filter(segmentBuffer[segment]))

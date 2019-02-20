@@ -115,6 +115,36 @@ namespace MoveIt
             set { }
         }
 
+        private MoveableNode _startNode = null;
+        public MoveableNode StartNode
+        {
+            get
+            {
+                if (_startNode == null)
+                {
+                    InstanceID instanceID = default(InstanceID);
+                    instanceID.NetNode = segmentBuffer[id.NetSegment].m_startNode;
+                    _startNode = new MoveableNode(instanceID);
+                }
+                return _startNode;
+            }
+        }
+
+        private MoveableNode _endNode = null;
+        public MoveableNode EndNode
+        {
+            get
+            {
+                if (_endNode == null)
+                {
+                    InstanceID instanceID = default(InstanceID);
+                    instanceID.NetNode = segmentBuffer[id.NetSegment].m_endNode;
+                    _endNode = new MoveableNode(instanceID);
+                }
+                return _endNode;
+            }
+        }
+
         public override bool isValid
         {
             get
@@ -147,6 +177,20 @@ namespace MoveIt
 
             netManager.UpdateNode(segmentBuffer[segment].m_startNode);
             netManager.UpdateNode(segmentBuffer[segment].m_endNode);
+        }
+
+        public MoveableNode GetClosestNode()
+        {
+            Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Vector3 clickPos = MoveItTool.RaycastMouseLocation(mouseRay);
+            if (Vector3.Distance(StartNode.position, clickPos) < Vector3.Distance(EndNode.position, clickPos))
+            {
+                return StartNode;
+            }
+            else
+            {
+                return EndNode;
+            }
         }
 
         public override void SetHeight(float height) { }

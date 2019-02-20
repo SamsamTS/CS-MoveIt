@@ -127,6 +127,7 @@ namespace MoveIt
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
 
+                #region Debug Ouput
                 //Instance instance = m_hoverInstance;
                 //InstanceID instanceID = instance.id;
                 //Debug.Log($"instance:{(instance == null ? "null" : instance.GetType().ToString())}");
@@ -152,7 +153,7 @@ namespace MoveIt
                 //    msg += "End";
                 //    Debug.Log(msg);
                 //}
-
+                #endregion
 
                 if (!(ActionQueue.instance.current is SelectAction action))
                 {
@@ -165,23 +166,46 @@ namespace MoveIt
 
                 if (e.shift)
                 {
-                    if (Action.selection.Contains(m_hoverInstance))
+                    if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
-                        Action.selection.Remove(m_hoverInstance);
-                        PO.SelectionRemove(m_hoverInstance);
+                        MoveableNode closest = ms.GetClosestNode();
+                        if (Action.selection.Contains(closest))
+                        {
+                            Action.selection.Remove(closest);
+                        }
+                        else
+                        {
+                            Action.selection.Add(closest);
+                        }
                     }
                     else
                     {
-                        Action.selection.Add(m_hoverInstance);
-                        PO.SelectionAdd(m_hoverInstance);
+                        if (Action.selection.Contains(m_hoverInstance))
+                        {
+                            Action.selection.Remove(m_hoverInstance);
+                            PO.SelectionRemove(m_hoverInstance);
+                        }
+                        else
+                        {
+                            Action.selection.Add(m_hoverInstance);
+                            PO.SelectionAdd(m_hoverInstance);
+                        }
                     }
                 }
                 else
                 {
                     Action.selection.Clear();
                     PO.SelectionClear();
-                    Action.selection.Add(m_hoverInstance);
-                    PO.SelectionAdd(m_hoverInstance);
+
+                    if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
+                    {
+                        Action.selection.Add(ms.GetClosestNode());
+                    }
+                    else
+                    {
+                        Action.selection.Add(m_hoverInstance);
+                        PO.SelectionAdd(m_hoverInstance);
+                    }
                 }
 
                 ToolState = ToolStates.Default;
