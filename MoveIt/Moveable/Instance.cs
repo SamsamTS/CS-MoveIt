@@ -13,7 +13,7 @@ namespace MoveIt
         public Instance instance;
 
         [XmlIgnore]
-        public IInfo Info;
+        public IInfo Info = new Info_Prefab();
 
         public Vector3 position;
         public float angle;
@@ -41,7 +41,7 @@ namespace MoveIt
         {
             get
             {
-                if(Info != null)
+                if (Info != null)
                 {
                     return Info.Name;
                 }
@@ -55,7 +55,9 @@ namespace MoveIt
             {
                 m_loadedName = value;
 
-                switch(instance.id.Type)
+                //Debug.Log($"Info:{Info}, m_loadedName:{m_loadedName}, type:{instance.id.Type}");
+
+                switch (instance.id.Type)
                 {
                     case InstanceType.Building:
                         {
@@ -108,8 +110,12 @@ namespace MoveIt
     public class Info_Prefab : IInfo
     {
         public Info_Prefab(object i) => Prefab = (PrefabInfo)i;
+        public Info_Prefab() => Prefab = null;
 
-        public string Name => Prefab.name;
+        public string Name
+        {
+            get => (Prefab == null) ? "<null>" : Prefab.name;
+        }
 
         public PrefabInfo Prefab { get; set; } = null;
     }

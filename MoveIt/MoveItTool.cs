@@ -829,7 +829,9 @@ namespace MoveIt
                     {
                         ActionQueue.instance.Push(action);
 
-                        ToolState = ToolStates.Cloning;
+                        ToolState = ToolStates.Cloning; // For clone
+                        //ActionQueue.instance.Do(); // For paste
+
                         UIToolOptionPanel.RefreshCloneButton();
                         UIToolOptionPanel.RefreshAlignHeightButton();
                     }
