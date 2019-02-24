@@ -269,9 +269,6 @@ namespace MoveIt
 
         public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
-            //Building building = buildingBuffer[id.Building];
-            //Debug.Log($"{id.Building}: {building.m_flags}");
-            //return;
             BuildingState state = instanceState as BuildingState;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
@@ -284,17 +281,17 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
 
-            if (MoveItTool.dragging)
-            {
-                if (Event.current.shift)
-                {
-                    Virtual = !MoveItTool.fastMove;
-                }
-                else
-                {
-                    Virtual = MoveItTool.fastMove;
-                }
-            }
+            //if (MoveItTool.dragging)
+            //{
+            //    if (Event.current.shift)
+            //    {
+            //        Virtual = !MoveItTool.fastMove;
+            //    }
+            //    else
+            //    {
+            //        Virtual = MoveItTool.fastMove;
+            //    }
+            //}
 
             Move(newPosition, state.angle + deltaAngle);
 

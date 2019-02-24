@@ -5,6 +5,28 @@ namespace MoveIt
 {
     public partial class MoveItTool : ToolBase
     {
+        internal void TogglePOHidden()
+        {
+            HidePO.value = !HidePO;
+            if (PO.Enabled && MoveItLoader.IsGameLoaded)
+            {
+                if (HidePO)
+                {
+                    UIToolOptionPanel.instance.PO_button.isVisible = false;
+
+                    UIToolOptionPanel.instance.viewOptions.height -= 36;
+                    UIToolOptionPanel.instance.viewOptions.absolutePosition -= new Vector3(0, -36);
+                }
+                else
+                {
+                    UIToolOptionPanel.instance.PO_button.isVisible = true;
+
+                    UIToolOptionPanel.instance.viewOptions.height += 36;
+                    UIToolOptionPanel.instance.viewOptions.absolutePosition += new Vector3(0, -36);
+                }
+            }
+        }
+
         protected override void OnToolGUI(Event e)
         {
             if (UIView.HasModalInput() || UIView.HasInputFocus()) return;
@@ -38,24 +60,7 @@ namespace MoveIt
                 //{ }
                 else if (OptionsKeymapping.ShowPO.IsPressed(e))
                 {
-                    HidePO.value = !HidePO;
-                    if (PO.Enabled)
-                    {
-                        if (HidePO)
-                        {
-                            UIToolOptionPanel.instance.PO_button.isVisible = false;
-
-                            UIToolOptionPanel.instance.viewOptions.height -= 36;
-                            UIToolOptionPanel.instance.viewOptions.absolutePosition -= new Vector3(0, -36);
-                        }
-                        else
-                        {
-                            UIToolOptionPanel.instance.PO_button.isVisible = true;
-
-                            UIToolOptionPanel.instance.viewOptions.height += 36;
-                            UIToolOptionPanel.instance.viewOptions.absolutePosition += new Vector3(0, -36);
-                        }
-                    }
+                    TogglePOHidden();
                 }
                 else if (OptionsKeymapping.bulldoze.IsPressed(e))
                 {

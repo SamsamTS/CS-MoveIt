@@ -62,13 +62,11 @@ namespace MoveIt
             //return 0;
         }
 
-
         public void Delete(IPO_Object obj)
         {
             Logic.proceduralObjects.Remove((ProceduralObject)obj.GetProceduralObject());
             Logic.pObjSelection.Remove((ProceduralObject)obj.GetProceduralObject());
         }
-
 
         public IPO_Object ConvertToPO(Instance instance)
         {
@@ -120,6 +118,11 @@ namespace MoveIt
             {
                 return null;
             }
+        }
+
+        public static string getVersion()
+        {
+            return ProceduralObjectsMod.VERSION;
         }
     }
 

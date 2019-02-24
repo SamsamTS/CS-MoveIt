@@ -104,8 +104,7 @@ namespace MoveIt
                 Action.selection.Remove(instance);
             }
 
-            Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\n" +
-                $"Selected from:{selectedIds.Count} to:{newSelectedIds.Count}");
+            //Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
             visibleObjects = newVisible;
             visibleIds = newIds;
@@ -166,6 +165,32 @@ namespace MoveIt
         internal static bool isPOEnabled()
         {
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
+        }
+
+        internal static string getVersion()
+        {
+            try
+            {
+                return _getVersion();
+            }
+            catch (TypeLoadException)
+            {
+                return "PO is not available. To use these options please subscribe to PO and enable it, then \n" +
+                       "restart Cities Skylines.\n ";
+            }
+        }
+
+        internal static string _getVersion()
+        {
+            if (isPOEnabled())
+            {
+                return $"PO version {PO_LogicEnabled.getVersion()}.x found, integration enabled!\n ";
+            }
+            else
+            {
+                return "PO is not available. To use these options please subscribe to PO and enable it, then \n" +
+                        "restart Cities Skylines.\n ";
+            }
         }
     }
 

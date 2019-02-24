@@ -126,6 +126,31 @@ namespace MoveIt
                                 float newAngle = action.angleDelta;
                                 float newSnapAngle = 0f;
 
+                                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                {
+                                    if (dragging)
+                                    {
+                                        foreach (Instance i in Action.selection)
+                                        {
+                                            if (i is MoveableBuilding mb)
+                                            {
+                                                mb.Virtual = !fastMove;
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (Instance i in Action.selection)
+                                    {
+                                        if (i is MoveableBuilding mb)
+                                        {
+                                            mb.Virtual = fastMove;
+                                        }
+                                    }
+                                }
+                            
+
                                 if (m_leftClickTime > 0)
                                 {
                                     float y = action.moveDelta.y;

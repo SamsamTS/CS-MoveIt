@@ -62,8 +62,8 @@ namespace MoveIt
         {
             try
             {
-                UIHelper group = helper.AddGroup(Name) as UIHelper;
-                UIPanel panel = group.self as UIPanel;
+                UIHelperBase group = helper.AddGroup(Name);
+                UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
                 UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
                 {
@@ -94,31 +94,6 @@ namespace MoveIt
 
                 group.AddSpace(15);
 
-                if (!MoveItTool.HidePO)
-                {
-                    checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
-                    {
-                        MoveItTool.POOnlySelectedAreVisible.value = b;
-                        if (MoveItTool.PO != null)
-                        {
-                            MoveItTool.PO.ToolEnabled();
-                        }
-                    });
-                    checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
-
-                    checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
-                    {
-                        MoveItTool.POHighlightUnselected.value = b;
-                        if (MoveItTool.PO != null)
-                        {
-                            MoveItTool.PO.ToolEnabled();
-                        }
-                    });
-                    checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
-
-                    group.AddSpace(15);
-                }
-
                 checkBox = (UICheckBox)group.AddCheckbox("Prefer fast, low-detail moving (hold Shift to temporarily switch)", MoveItTool.fastMove.value, (b) =>
                 {
                     MoveItTool.fastMove.value = b;
@@ -148,7 +123,7 @@ namespace MoveIt
 
                 group.AddSpace(15);
 
-                panel.gameObject.AddComponent<OptionsKeymapping>();
+                ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
                 group.AddSpace(15);
 
@@ -157,7 +132,7 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n(Affects performance, do not enable unless you have a specific reason)", MoveItTool.showDebugPanel.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n", MoveItTool.showDebugPanel.value, (b) =>
                 {
                     MoveItTool.showDebugPanel.value = b;
                     if (MoveItTool.debugPanel != null)
@@ -167,12 +142,74 @@ namespace MoveIt
                 });
                 checkBox.name = "MoveIt_DebugPanel";
 
-                group.AddSpace(15);
+                UILabel debugLabel = panel.AddUIComponent<UILabel>();
+                debugLabel.name = "debugLabel";
+                debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
+                debugLabel.eventClick += DebugLabel_eventClick;
+
+                group.AddSpace(5);
+
+                if (!MoveItTool.HidePO)
+                {
+                    group = helper.AddGroup("Procedural Objects");
+                    panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+
+                    UILabel poLabel = panel.AddUIComponent<UILabel>();
+                    poLabel.name = "poLabel";
+                    poLabel.text = PO_Manager.getVersion();
+
+                    UILabel poWarning = panel.AddUIComponent<UILabel>();
+                    poWarning.name = "poWarning";
+                    poWarning.text = "Procedural Objects (PO) support is in beta. At present you can not clone PO objects, \n" +
+                        "redo Convert-to-PO actions or undo Bulldoze actions. This means if you delete PO objects \n" +
+                        "with Move It, they are immediately PERMANENTLY gone.\n ";
+
+                    checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                    {
+                        MoveItTool.POOnlySelectedAreVisible.value = b;
+                        if (MoveItTool.PO != null)
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
+                    });
+                    checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
+
+                    checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
+                    {
+                        MoveItTool.POHighlightUnselected.value = b;
+                        if (MoveItTool.PO != null)
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
+                    });
+                    checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
+
+                    group.AddSpace(15);
+
+                    panel.gameObject.AddComponent<OptionsKeymappingPO>();
+
+                    group.AddSpace(15);
+                }
             }
             catch (Exception e)
             {
                 DebugUtils.Log("OnSettingsUI failed");
                 DebugUtils.LogException(e);
+            }
+        }
+
+        private void DebugLabel_eventClick(UIComponent component, UIMouseEventParameter eventParam)
+        {
+            MoveItTool.HidePO.value = !MoveItTool.HidePO;
+            if (MoveItTool.HidePO)
+            {
+                ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
+                    "PO Mode is no longer enabled.";
+            }
+            else
+            {
+                ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
+                    "PO Mode will be enabled after game restart!";
             }
         }
 
