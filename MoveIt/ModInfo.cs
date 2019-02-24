@@ -99,14 +99,20 @@ namespace MoveIt
                     checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
                     {
                         MoveItTool.POOnlySelectedAreVisible.value = b;
-                        MoveItTool.PO.ToolEnabled();
+                        if (MoveItTool.PO != null)
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
                     });
                     checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
 
                     checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
                     {
                         MoveItTool.POHighlightUnselected.value = b;
-                        MoveItTool.PO.ToolEnabled();
+                        if (MoveItTool.PO != null)
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
                     });
                     checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
 

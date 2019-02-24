@@ -469,7 +469,7 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = alignToolsPanel;
             alignToolsPanel.autoLayout = false;
             alignToolsPanel.clipChildren = true;
-            alignToolsPanel.size = new Vector2(36, 238);
+            alignToolsPanel.size = new Vector2(36, 242); // Previous:238
             alignToolsPanel.isVisible = false;
             alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - alignToolsPanel.height);
             m_alignTools.zOrder = alignToolsPanel.zOrder + 10;

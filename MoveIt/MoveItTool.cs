@@ -102,7 +102,7 @@ namespace MoveIt
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
         //internal static bool HidePO = true;
-        internal static PO_Manager PO;
+        internal static PO_Manager PO = null;
 
         private const float XFACTOR = 0.263671875f;
         private const float YFACTOR = 0.015625f;
