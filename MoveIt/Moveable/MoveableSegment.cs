@@ -179,17 +179,31 @@ namespace MoveIt
             netManager.UpdateNode(segmentBuffer[segment].m_endNode);
         }
 
-        public MoveableNode GetClosestNode()
+        public MoveableNode GetNodeByDistance(bool furthest = false)
         {
             Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             Vector3 clickPos = MoveItTool.RaycastMouseLocation(mouseRay);
             if (Vector3.Distance(StartNode.position, clickPos) < Vector3.Distance(EndNode.position, clickPos))
             {
-                return StartNode;
+                if (furthest)
+                {
+                    return EndNode;
+                }
+                else
+                {
+                    return StartNode;
+                }
             }
             else
             {
-                return EndNode;
+                if (furthest)
+                {
+                    return StartNode;
+                }
+                else
+                {
+                    return EndNode;
+                }
             }
         }
 

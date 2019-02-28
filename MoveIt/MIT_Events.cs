@@ -168,15 +168,39 @@ namespace MoveIt
                 {
                     if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
-                        MoveableNode closest = ms.GetClosestNode();
-                        if (Action.selection.Contains(closest))
-                        {
-                            Action.selection.Remove(closest);
-                        }
-                        else
+                        MoveableNode closest = ms.GetNodeByDistance();
+                        MoveableNode furthest = ms.GetNodeByDistance(true);
+
+                        if (!Action.selection.Contains(closest))
                         {
                             Action.selection.Add(closest);
                         }
+                        else if (!Action.selection.Contains(furthest))
+                        {
+                            Action.selection.Add(furthest);
+                        }
+                        else
+                        {
+                            Action.selection.Remove(furthest);
+                        }
+
+                        //if (Action.selection.Contains(closest) && Action.selection.Contains(furthest))
+                        //{
+                        //    Action.selection.Remove(closest);
+                        //}
+                        //else if (Action.selection.Contains(closest))
+                        //{
+                        //    Action.selection.Add(furthest);
+                        //}
+                        //else if (Action.selection.Contains(furthest))
+                        //{
+                        //    Action.selection.Add(closest);
+                        //    Action.selection.Remove(furthest);
+                        //}
+                        //else
+                        //{
+                        //    Action.selection.Add(closest);
+                        //}
                     }
                     else
                     {
@@ -194,15 +218,27 @@ namespace MoveIt
                 }
                 else
                 {
-                    Action.selection.Clear();
                     PO.SelectionClear();
 
                     if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
-                        Action.selection.Add(ms.GetClosestNode());
+                        MoveableNode closest = ms.GetNodeByDistance();
+                        MoveableNode furthest = ms.GetNodeByDistance(true);
+
+                        if (Action.selection.Contains(closest) && !Action.selection.Contains(furthest))
+                        {
+                            Action.selection.Clear();
+                            Action.selection.Add(furthest);
+                        }
+                        else
+                        {
+                            Action.selection.Clear();
+                            Action.selection.Add(closest);
+                        }
                     }
                     else
                     {
+                        Action.selection.Clear();
                         Action.selection.Add(m_hoverInstance);
                         PO.SelectionAdd(m_hoverInstance);
                     }
@@ -277,7 +313,6 @@ namespace MoveIt
                     ActionQueue.instance.Push(action);
                     m_nextAction = ToolAction.Do;
 
-                    //Debug.Log($"Angle:{angle}, from {___m_hoverInstance}");
                     DeactivateAlignTool(false);
                 }
                 else if (AlignMode == AlignModes.Slope)
@@ -302,7 +337,6 @@ namespace MoveIt
                             action.followTerrain = followTerrain;
                             m_nextAction = ToolAction.Do;
                             DeactivateAlignTool();
-                            //UIAlignTools.UpdateAlignTools();
                             break;
                     }
                 }

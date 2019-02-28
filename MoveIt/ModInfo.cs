@@ -209,7 +209,7 @@ namespace MoveIt
             else
             {
                 ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
-                    "PO Mode will be enabled after game restart!";
+                    "PO Mode enabled! Restart the game to view PO options.";
             }
         }
 
