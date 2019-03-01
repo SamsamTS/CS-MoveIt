@@ -281,18 +281,6 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
 
-            //if (MoveItTool.dragging)
-            //{
-            //    if (Event.current.shift)
-            //    {
-            //        Virtual = !MoveItTool.fastMove;
-            //    }
-            //    else
-            //    {
-            //        Virtual = MoveItTool.fastMove;
-            //    }
-            //}
-
             Move(newPosition, state.angle + deltaAngle);
 
             if (state.subStates != null)
@@ -405,7 +393,6 @@ namespace MoveIt
             return buildingBuffer[id].m_flags & ~Building.Flags.Hidden;
         }
 
-
         public void InitialiseDrag()
         {
             //Debug.Log($"INITIALISE DRAG");
@@ -426,38 +413,6 @@ namespace MoveIt
             bounds.Expand(64f);
             Action.UpdateArea(bounds);
         }
-
-        //protected bool Dragging()
-        //{
-        //    Building building = (Building)data;
-
-        //    if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.MouseDragging)
-        //    {
-        //        if (!isDragging)
-        //        {
-        //            Debug.Log($"DRAG #{id.Building} (switching on)");
-        //            isDragging = true;
-        //            building.m_flags = building.m_flags | Building.Flags.Hidden;
-        //        }
-        //        else
-        //        {
-        //            Debug.Log($"DRAG #{id.Building}");
-        //        }
-        //        return true;
-        //    }
-        //    if (isDragging)
-        //    {
-        //        Debug.Log($"NOPE #{id.Building} (switching off)");
-        //        isDragging = false;
-        //        if ((building.m_flags & Building.Flags.Hidden) != Building.Flags.Hidden) throw new Exception($"Building #{id.Building} not hidden");
-        //        building.m_flags -= Building.Flags.Hidden;
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"NOPE #{id.Building}");
-        //    }
-        //    return false;
-        //}
 
         public override void Move(Vector3 location, float angle)
         {
@@ -820,7 +775,6 @@ namespace MoveIt
                 }
             }
         }
-
 
         private Color GetColor(ushort buildingID, BuildingInfo info)
         {
