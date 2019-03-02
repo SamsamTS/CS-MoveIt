@@ -19,7 +19,7 @@ namespace MoveIt
             HashSet<Instance> extraNodes = new HashSet<Instance>();
             HashSet<ushort> segments = new HashSet<ushort>(); // Segments to be removed
 
-            string msg = $"\nBasic Selection: {selection.Count}\n";
+            //string msg = $"\nBasic Selection: {selection.Count}\n";
 
             // Add any segments whose node is selected
             foreach (Instance instance in selection)
@@ -85,7 +85,7 @@ namespace MoveIt
                 }
             }
 
-            msg += $"Selection With Extra Segments: {newSelection.Count}\nTotal Segments: {segments.Count}\n";
+            //msg += $"Selection With Extra Segments: {newSelection.Count}\nTotal Segments: {segments.Count}\n";
 
             // Add any nodes whose segments are all selected
             foreach (Instance instance in newSelection)
@@ -131,7 +131,7 @@ namespace MoveIt
                 m_states.Add(instance.GetState());
             }
 
-            Debug.Log(msg + $"Final Selection: {m_states.Count}");
+            //Debug.Log(msg + $"Final Selection: {m_states.Count}");
         }
 
         public override void Do()
@@ -214,11 +214,11 @@ namespace MoveIt
                             {
                                 InstanceID instanceID = default(InstanceID);
                                 instanceID.RawData = ns.id;
-                                msg2 += $"\n{c} - Attached node #{instanceID.NetNode}: {ns.Info.Name}";
+                                //msg2 += $"\n{c} - Attached node #{instanceID.NetNode}: {ns.Info.Name}";
                                 origNodeIds.Insert(c++, instanceID.NetNode);
                             }
                         }
-                        Debug.Log(msg2);
+                        //Debug.Log(msg2);
 
                         c = 0;
                         msg2 = "";
