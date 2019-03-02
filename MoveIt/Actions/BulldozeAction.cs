@@ -13,15 +13,13 @@ namespace MoveIt
 
         public bool replaceInstances = true;
 
-        //HashSet<ushort> buildingNodes = new HashSet<ushort>(); // Buildings already selected to be removed
-
         public BulldozeAction()
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
             HashSet<Instance> extraNodes = new HashSet<Instance>();
             HashSet<ushort> segments = new HashSet<ushort>(); // Segments to be removed
 
-            Debug.Log("Selection: " + selection.Count);
+            string msg = $"\nBasic Selection: {selection.Count}\n";
 
             // Add any segments whose node is selected
             foreach (Instance instance in selection)
@@ -49,31 +47,45 @@ namespace MoveIt
                             }
                         }
                     }
+                    else if (instance.id.Type == InstanceType.Building)
+                    {
+                        Building building = (Building)((MoveableBuilding)instance).data;
+                        ushort nodeId = building.m_netNode;
+
+                        int c = 0;
+                        while (nodeId != 0)
+                        {
+                            NetNode node = NetManager.instance.m_nodes.m_buffer[nodeId];
+
+                            for (int i = 0; i < 8; i++)
+                            {
+                                ushort segmentId = node.GetSegment(i);
+                                if (segmentId != 0 && MoveableSegment.isSegmentValid(segmentId) && 
+                                        ((NetManager.instance.m_segments.m_buffer[segmentId].m_flags & NetSegment.Flags.Untouchable) == NetSegment.Flags.None))
+                                {
+                                    InstanceID instanceID = default(InstanceID);
+                                    instanceID.NetSegment = segmentId;
+
+                                    if (selection.Contains(instanceID)) continue;
+
+                                    newSelection.Add(new MoveableSegment(instanceID));
+                                    segments.Add(segmentId);
+                                }
+                            }
+
+                            nodeId = node.m_nextBuildingNode;
+
+                            if (++c > 32768)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-            Debug.Log($"newSelection: {newSelection.Count}, Segments found: {segments.Count}");
 
-            // Add any nodes attached to selected buildings
-            //foreach (Instance instance in newSelection)
-            //{
-            //    if (instance.isValid)
-            //    {
-            //        if (instance is MoveableBuilding mb)
-            //        {
-            //            foreach (Instance i in mb.subInstances)
-            //            {
-            //                if (i is MoveableNode mn)
-            //                {
-            //                    if (!newSelection.Contains(mn))
-            //                    {
-            //                        Debug.Log($"Adding node:{mn.id.NetNode}");
-            //                        buildingNodes.Add(mn.id.NetNode);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+            msg += $"Selection With Extra Segments: {newSelection.Count}\nTotal Segments: {segments.Count}\n";
 
             // Add any nodes whose segments are all selected
             foreach (Instance instance in newSelection)
@@ -88,19 +100,14 @@ namespace MoveIt
                         {
                             bool toDelete = true;
                             NetNode node = NetManager.instance.m_nodes.m_buffer[id];
-
-                            ushort ownerBuilding = NetNode.FindOwnerBuilding(id, 363f);
-                            //if (!(ownerBuilding > 0 && buildings.Contains(ownerBuilding)))
-                            //{
-                                for (int i = 0; i < 8; i++)
+                            for (int i = 0; i < 8; i++)
+                            {
+                                if (node.GetSegment(i) != 0 && !segments.Contains(node.GetSegment(i)))
                                 {
-                                    if (node.GetSegment(i) != 0 && !segments.Contains(node.GetSegment(i)))
-                                    {
-                                        toDelete = false;
-                                        break;
-                                    }
+                                    toDelete = false;
+                                    break;
                                 }
-                            //}
+                            }
                             if (toDelete)
                             {
                                 InstanceID instanceId = default(InstanceID);
@@ -123,7 +130,8 @@ namespace MoveIt
             {
                 m_states.Add(instance.GetState());
             }
-            Debug.Log("m_states: " + m_states.Count);
+
+            Debug.Log(msg + $"Final Selection: {m_states.Count}");
         }
 
         public override void Do()
@@ -164,19 +172,17 @@ namespace MoveIt
 
             Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
             Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
-            //Dictionary<ushort, ushort> attachedNodes = new Dictionary<ushort, ushort>();
 
             // Recreate nodes
             foreach (InstanceState state in m_states)
             {
-                Debug.Log($"{state.instance.id.Type}");
                 if (state.instance.id.Type == InstanceType.NetNode)
                 {
                     Instance clone = state.instance.Clone(state, null);
                     toReplace.Add(state.instance, clone);
                     clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
                     ActionQueue.instance.UpdateNodeIdInStateHistory(state.instance.id.NetNode, clone.id.NetNode);
-                    Debug.Log($"Cloned N:{state.instance.id.NetNode}->{clone.id.NetNode}");
+                    //Debug.Log($"Cloned N:{state.instance.id.NetNode}->{clone.id.NetNode}");
                 }
             }
 
@@ -192,83 +198,68 @@ namespace MoveIt
                 // Add attached nodes to the clonedNode list so other segments reconnect
                 if (state.instance.id.Type == InstanceType.Building)
                 {
+                    BuildingState buildingState = state as BuildingState;
                     List<ushort> origNodeIds = new List<ushort>();
-
-                    int c = 0;
-                    foreach (InstanceState i in ((BuildingState)state).subStates)
-                    {
-                        if (i is NodeState ns)
-                        {
-                            InstanceID instanceID = default(InstanceID);
-                            instanceID.RawData = ns.id;
-                            origNodeIds.Insert(c++, instanceID.NetNode);
-                            Debug.Log($"\n{c} - orig:{instanceID.NetNode}, {ns.Info.Name}");
-                        }
-                    }
 
                     MoveableBuilding cb = clone as MoveableBuilding;
                     ushort cloneNodeId = ((Building)cb.data).m_netNode;
 
-                    Debug.Log($"{((Building)cb.data).Info.name} attached - orig:{origNodeIds[0]}, new:{cloneNodeId}");
-
-                    c = 0;
-                    while (cloneNodeId != 0)
+                    if (cloneNodeId != 0)
                     {
-                        ushort origNodeId = origNodeIds[c];
-
-                        NetNode clonedAttachedNode = NetManager.instance.m_nodes.m_buffer[cloneNodeId];
-                        if (clonedAttachedNode.Info.GetAI() is TransportLineAI)
+                        int c = 0;
+                        string msg2 = "Original attached nodes:";
+                        foreach (InstanceState i in buildingState.subStates)
                         {
+                            if (i is NodeState ns)
+                            {
+                                InstanceID instanceID = default(InstanceID);
+                                instanceID.RawData = ns.id;
+                                msg2 += $"\n{c} - Attached node #{instanceID.NetNode}: {ns.Info.Name}";
+                                origNodeIds.Insert(c++, instanceID.NetNode);
+                            }
+                        }
+                        Debug.Log(msg2);
+
+                        c = 0;
+                        msg2 = "";
+                        while (cloneNodeId != 0)
+                        {
+                            ushort origNodeId = origNodeIds[c];
+
+                            NetNode clonedAttachedNode = NetManager.instance.m_nodes.m_buffer[cloneNodeId];
+                            if (clonedAttachedNode.Info.GetAI() is TransportLineAI)
+                            {
+                                cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
+                                continue;
+                            }
+
+                            if (clonedNodes.ContainsKey(origNodeId))
+                            {
+                                Debug.Log($"Node #{origNodeId} is already in clone list!");
+                            }
+
+                            clonedNodes.Add(origNodeId, cloneNodeId);
+
+                            msg2 += $"\n{c} - {origNodeId} -> {cloneNodeId} {clonedAttachedNode.Info.GetAI()}";
                             cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
-                            continue;
+
+                            if (++c > 32768)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
                         }
-
-                        if (clonedNodes.ContainsKey(origNodeId))
-                        {
-                            Debug.Log($"Node #{origNodeId} is already in clone list!");
-                        }
-
-                        clonedNodes.Add(origNodeId, cloneNodeId);
-
-                        Debug.Log($"{c} - orig:{origNodeId}, new:{cloneNodeId} (next:{clonedAttachedNode.m_nextBuildingNode})\n{clonedAttachedNode.Info.GetAI()}");
-                        cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
-
-                        if (++c > 32768)
-                        {
-                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                            break;
-                        }
+                        Debug.Log(msg2);
                     }
-
-                    #region Old
-                    //List<ushort> attachedNodeOriginal = new List<ushort>();
-                    //List<ushort> attachedNodeClone = new List<ushort>();
-
-                    //foreach (Instance i in mb.subInstances)
-                    //{
-                    //    if (i is MoveableNode mn)
-                    //    {
-                    //        attachedNodeOriginal.Add(mn.id.NetNode);
-                    //    }
-                    //}
-                    //foreach (Instance i in cb.subInstances)
-                    //{
-                    //    if (i is MoveableNode mn)
-                    //    {
-                    //        attachedNodeClone.Add(mn.id.NetNode);
-                    //    }
-                    //}
-                    #endregion
                 }
             }
 
-            Debug.Log("Hello");
-            string msg = "Cloned Nodes:\n";
-            foreach (KeyValuePair<ushort, ushort> kvp in clonedNodes)
-            {
-                msg += $"{kvp.Key} => {kvp.Value}\n";
-            }
-            Debug.Log(msg);
+            //string msg = "Cloned Nodes:\n";
+            //foreach (KeyValuePair<ushort, ushort> kvp in clonedNodes)
+            //{
+            //    msg += $"{kvp.Key} => {kvp.Value}\n";
+            //}
+            //Debug.Log(msg);
 
             // Recreate segments
             foreach (InstanceState state in m_states)

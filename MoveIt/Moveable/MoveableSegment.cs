@@ -154,6 +154,11 @@ namespace MoveIt
             }
         }
 
+        public static bool isSegmentValid(ushort segmentId)
+        {
+            return (segmentBuffer[segmentId].m_flags & NetSegment.Flags.Created) != NetSegment.Flags.None;
+        }
+
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
