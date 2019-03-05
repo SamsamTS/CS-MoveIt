@@ -60,7 +60,8 @@ namespace MoveIt
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
-        public static SavedBool HidePO = new SavedBool("HidePO", settingsFileName, true, true);
+
+        public static bool HidePO = false;
 
         public static bool filterBuildings = true;
         public static bool filterProps = true;
@@ -294,8 +295,9 @@ namespace MoveIt
                 if (ToolState == ToolStates.MouseDragging)
                 {
                     ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
-                    UpdateAreas();
                 }
+
+                UpdateAreas();
 
                 ToolState = ToolStates.Default;
 

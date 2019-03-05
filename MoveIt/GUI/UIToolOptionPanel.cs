@@ -546,7 +546,7 @@ namespace MoveIt
             UIButton alignTerrainHeight = UIAlignTools.AlignButtons["MoveIt_AlignTerrainHeightBtn"];
             alignTerrainHeight.name = "MoveIt_AlignTerrainHeightBtn";
             alignTerrainHeight.atlas = GetIconsAtlas();
-            alignTerrainHeight.tooltip = "Align Terrain Height";
+            alignTerrainHeight.tooltip = "Immediately Align to Terrain Height";
             alignTerrainHeight.playAudioEvents = true;
             alignTerrainHeight.size = new Vector2(36, 36);
             alignTerrainHeight.normalBgSprite = "OptionBase";

@@ -145,7 +145,7 @@ namespace MoveIt
                 UILabel debugLabel = panel.AddUIComponent<UILabel>();
                 debugLabel.name = "debugLabel";
                 debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
-                debugLabel.eventDoubleClick += DebugLabel_eventClick;
+                //debugLabel.eventDoubleClick += DebugLabel_eventClick;
 
                 group.AddSpace(5);
 
@@ -198,20 +198,20 @@ namespace MoveIt
             }
         }
 
-        private void DebugLabel_eventClick(UIComponent component, UIMouseEventParameter eventParam)
-        {
-            MoveItTool.HidePO.value = !MoveItTool.HidePO;
-            if (MoveItTool.HidePO)
-            {
-                ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
-                    "PO Mode is no longer enabled.";
-            }
-            else
-            {
-                ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
-                    "PO Mode enabled! Restart the game to view PO options.";
-            }
-        }
+        //private void DebugLabel_eventClick(UIComponent component, UIMouseEventParameter eventParam)
+        //{
+        //    MoveItTool.HidePO.value = !MoveItTool.HidePO;
+        //    if (MoveItTool.HidePO)
+        //    {
+        //        ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
+        //            "PO Mode is no longer enabled.";
+        //    }
+        //    else
+        //    {
+        //        ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
+        //            "PO Mode enabled! Restart the game to view PO options.";
+        //    }
+        //}
 
         private void _cleanGhostNodes()
         {

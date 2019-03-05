@@ -1,0 +1,30 @@
+New in 2.4.0
+------------
+
+Follow Terrain button status saved
+Align to Terrain Height
+Faster building moving - hold Shift to use a faster, low detail movement system (can be permanently enabled in options)
+Alt to select pillars and pylons now disabled by default
+Alt-Click on a segment to select the nodes
+
+New shortcut optionss
+ - Bulldoze (Ctrl+B)
+ - View Underground (no default)
+ - View Grid (no default)
+
+Bugs fixed:
+ - Complex buildings can be moved more efficently
+ - Complex buildings can be undeleted more reliably
+ - Another source of Ghost Nodes removed
+ - Possible fix for Height Align not working on second-loads
+
+
+Alternative Features
+--------------------
+Alt-Click on a segment to select the closer node, or if it is already selected the further node. Combines with Shift to add/remove from selection.
+Hold Alt while dragging objects to toggle snapping to the grid.
+Hold Alt while dragging only a single segment to snap to a straight line or, if the segment is connected to further segments, to a curve.
+Hold Alt while dragging only a single node to snap node, re-curving segments as required. Snaps to a straight line or, if the segments are connected to further segments, to a curve.
+Hold Alt while over a building to view attached nodes or segments, Alt-Click to select nodes or segments.
+Optional, disabled by default: Hold Alt while over a node to view or select a pillar or pylon.
+If only a single node is selected and that node has 2 segments (i.e. is not a junction or dead-end), Alt-Click on the Slope Align button to immediately slope align the selected node using the 2 attached nodes as A/B positions.
