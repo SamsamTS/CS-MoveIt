@@ -55,17 +55,10 @@ namespace MoveIt
         public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
-<<<<<<< HEAD
-        public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
-        public static SavedBool brushesAsSurfaces = new SavedBool("brushesAsSurfaces", settingsFileName, false, true);
-        public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
-        public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, true, true);
-=======
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
->>>>>>> PO
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
         public static SavedBool HidePO = new SavedBool("HidePO", settingsFileName, true, true);
 
@@ -112,7 +105,7 @@ namespace MoveIt
         private const float YFACTOR = 0.015625f;
         private const float ZFACTOR = 0.263671875f;
 
-        private ToolStates m_toolState;
+        private ToolStates m_toolState = ToolStates.Default;
         public ToolStates ToolState
         {
             get => m_toolState;
@@ -125,7 +118,7 @@ namespace MoveIt
                 }
             }
         }
-        private AlignModes m_alignMode;
+        private AlignModes m_alignMode = AlignModes.Off;
         public AlignModes AlignMode
         { 
             get => m_alignMode;
@@ -135,7 +128,7 @@ namespace MoveIt
                 debugPanel.Update();
             }
         }
-        private ushort m_alignToolPhase;
+        private ushort m_alignToolPhase = 0;
         public ushort AlignToolPhase
         {
             get => m_alignToolPhase;
@@ -285,18 +278,6 @@ namespace MoveIt
                 PO.ToolEnabled();
                 ActionQueue.instance.Push(new TransformAction());
             }
-
-            //string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
-            //foreach (Instance i in Action.selection)
-            //{
-            //    msg += $"{i.GetType()} {InstanceIDDebug(i)}\n";
-            //    if (i is MoveableProc mpo)
-            //    {
-            //        msg += $"    {mpo.m_procObj.DebugQuaternion()}\n";
-            //    }
-            //}
-            //msg += "Queue: " + ActionQueue.instance.DebugQueue();
-            //Debug.Log(msg);
         }
 
         protected override void OnDisable()
@@ -654,11 +635,6 @@ namespace MoveIt
 
         public void StopAligning()
         {
-<<<<<<< HEAD
-            m_alignMode = AlignModes.Off;
-            m_alignToolPhase = 0;
-            if (m_toolState == ToolState.Aligning)
-=======
             AlignMode = AlignModes.Off;
             AlignToolPhase = 0;
             if (ToolState == ToolStates.Aligning)
@@ -672,7 +648,6 @@ namespace MoveIt
         {
             //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
             if (switchMode)
->>>>>>> PO
             {
                 AlignMode = AlignModes.Off;
                 ToolState = ToolStates.Default;

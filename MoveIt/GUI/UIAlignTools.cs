@@ -15,7 +15,6 @@ namespace MoveIt
 
         public static void AlignToolsClicked(UIComponent c, UIMouseEventParameter p)
         {
-
             switch (c.name)
             {
                 case "MoveIt_AlignToolsBtn":

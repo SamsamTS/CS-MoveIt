@@ -32,7 +32,6 @@ namespace MoveIt
 
                 UIFilters.FilterCBs.Clear();
                 UIFilters.NetworkCBs.Clear();
-                Statistics.counters.Clear();
 
                 MoveItTool.filterBuildings = true;
                 MoveItTool.filterProps = true;
@@ -49,12 +48,17 @@ namespace MoveIt
 
         public static void UninstallMod()
         {
+            MoveItTool.debugPanel = null;
+            UIToolOptionPanel.instance = null;
+            UIAlignTools.AlignToolsPanel = null;
+            UIAlignTools.AlignToolsBtn = null;
+            Action.selection.Clear();
+
             if (MoveItTool.instance != null)
             {
                 MoveItTool.instance.enabled = false;
             }
 
-            //MoveItTool.debugPanel.Panel.parent.RemoveUIComponent(MoveItTool.debugPanel.Panel);
             IsGameLoaded = false;
         }
     }

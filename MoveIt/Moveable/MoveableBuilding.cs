@@ -320,8 +320,6 @@ namespace MoveIt
                                         mn2.Pillar.Move(subSubPosition, subSubState.angle + deltaAngle);
                                     }
                                 }
-<<<<<<< HEAD
-=======
                             }
                         }
                     }
@@ -366,7 +364,6 @@ namespace MoveIt
                             if (mn2.Pillar != null)
                             {
                                 buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleHiddenFlag(mn2.Pillar.id.Building, hide);
->>>>>>> PO
                             }
                         }
                     }
@@ -612,19 +609,7 @@ namespace MoveIt
             Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
 
             if (depth < 1)
-            {
-<<<<<<< HEAD
-                if (subInstance.id.Building > 0)
-                {
-                    if (depth < 1)
-                    {
-                        bounds.Encapsulate(((MoveableBuilding)subInstance).GetBuildingBounds(depth + 1, ignoreSegments));
-                    }
-                }
-                else
-                {
-                    bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
-=======
+            { 
                 foreach (Instance subInstance in subInstances)
                 {
                     if (subInstance.id.Building > 0)
@@ -635,7 +620,6 @@ namespace MoveIt
                     {
                         bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
                     }
->>>>>>> PO
                 }
             }
 

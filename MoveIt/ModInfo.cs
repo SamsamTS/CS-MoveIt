@@ -125,11 +125,7 @@ namespace MoveIt
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
-<<<<<<< HEAD
-                group.AddSpace(20);
-=======
                 group.AddSpace(15);
->>>>>>> PO
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", _cleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";

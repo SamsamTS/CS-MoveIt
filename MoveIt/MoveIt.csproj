@@ -64,7 +64,6 @@
     <Compile Include="Actions\ConvertToPOAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
-    <Compile Include="BusStopTest.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="GUI\UIAlignTools.cs" />

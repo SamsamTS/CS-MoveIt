@@ -50,18 +50,11 @@ namespace MoveIt
                     InstanceID pillarID = new InstanceID();
                     pillarID.Building = nodeBuffer[id.NetNode].m_building;
 
-<<<<<<< HEAD
-                    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
-                    {
-                        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
-
-=======
 
                     if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
                     {
                         MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
 
->>>>>>> PO
                         if (pillarInstance.isValid)
                         {
                             return pillarInstance;
@@ -115,11 +108,8 @@ namespace MoveIt
 
             state.flags = nodeBuffer[node].m_flags;
 
-<<<<<<< HEAD
             MoveableBuilding pillarInstance = Pillar;
-=======
-            //MoveableBuilding pillarInstance = Pillar;
->>>>>>> PO
+
             if (Pillar != null)
             {
                 state.pillarState = Pillar.GetState() as BuildingState;
