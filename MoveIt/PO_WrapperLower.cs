@@ -92,7 +92,8 @@ namespace MoveIt
                     else
                     {
                         Logic.SpawnObject(info);
-                        Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
+                        // PO 1.5: Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
+                        Logic.tempVerticesBuffer = Vertex.CreateVertexList(Logic.currentlyEditingObject);
                     }
 
                 }
@@ -106,7 +107,7 @@ namespace MoveIt
                     else
                     {
                         Logic.SpawnObject(info);
-                        Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
+                        Logic.tempVerticesBuffer = Vertex.CreateVertexList(Logic.currentlyEditingObject);
                     }
                 }
 

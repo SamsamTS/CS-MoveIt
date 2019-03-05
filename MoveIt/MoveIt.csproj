@@ -43,9 +43,8 @@
     <Reference Include="ICities">
       <HintPath>C:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
     </Reference>
-    <Reference Include="ProceduralObjects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Rob\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods - Deactivated\PO 1.5\ProceduralObjects.dll</HintPath>
+    <Reference Include="ProceduralObjects-1.6b1">
+      <HintPath>..\..\ProceduralObjects-1.6b1.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -65,6 +64,7 @@
     <Compile Include="Actions\ConvertToPOAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
+    <Compile Include="BusStopTest.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="GUI\UIAlignTools.cs" />

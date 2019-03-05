@@ -145,7 +145,7 @@ namespace MoveIt
                 UILabel debugLabel = panel.AddUIComponent<UILabel>();
                 debugLabel.name = "debugLabel";
                 debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
-                debugLabel.eventClick += DebugLabel_eventClick;
+                debugLabel.eventDoubleClick += DebugLabel_eventClick;
 
                 group.AddSpace(5);
 
