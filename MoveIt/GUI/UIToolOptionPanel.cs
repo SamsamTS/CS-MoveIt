@@ -19,16 +19,18 @@ namespace MoveIt
 
         private UITabstrip m_tabStrip;
         private UIButton m_single;
-        public UIButton m_marquee;
+        private UIButton m_marquee;
         private UIButton m_copy;
         private UIButton m_bulldoze;
         private UIButton m_alignTools;
 
+        public UIMultiStateButton PO_button;
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;
 
         public UIPanel filtersPanel;
         public UIPanel alignToolsPanel;
+        public UIPanel viewOptions;
 
         public override void Start()
         {
@@ -154,6 +156,7 @@ namespace MoveIt
             m_followTerrain.eventClicked += (c, p) =>
             {
                 MoveItTool.followTerrain = (m_followTerrain.activeStateIndex == 1);
+                MoveItTool.followTerrainModeEnabled.value = (m_followTerrain.activeStateIndex == 1);
             };
             #endregion
 
@@ -289,6 +292,17 @@ namespace MoveIt
             checkBox = UIFilters.CreateFilterCB(filtersPanel, "Trees");
             checkBox.eventDoubleClick += OnDoubleClick;
 
+            if (MoveItTool.PO.Enabled)
+            {
+                if (MoveItTool.PO.Active)
+                {
+                    filtersPanel.height += 20f;
+                }
+                checkBox = UIFilters.CreateFilterCB(filtersPanel, "PO");
+                checkBox.eventDoubleClick += OnDoubleClick;
+                checkBox.isVisible = MoveItTool.PO.Active;
+            }
+
             checkBox = UIFilters.CreateFilterCB(filtersPanel, "Nodes");
             checkBox.eventDoubleClick += OnDoubleClick;
 
@@ -367,7 +381,6 @@ namespace MoveIt
                     cb.isChecked = newChecked;
                     Filters.SetAnyFilter(cb.label.text, newChecked);
                 }
-
             };
             
             #region Copy
@@ -393,7 +406,7 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    if (MoveItTool.instance.m_toolState == MoveItTool.ToolState.Cloning)
+                    if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
                     {
                         MoveItTool.instance.StopCloning();
                     }
@@ -454,13 +467,13 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = alignToolsPanel;
             alignToolsPanel.autoLayout = false;
             alignToolsPanel.clipChildren = true;
-            alignToolsPanel.size = new Vector2(36, 202);
+            alignToolsPanel.size = new Vector2(36, 242); // Previous:238
             alignToolsPanel.isVisible = false;
             alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - alignToolsPanel.height);
             m_alignTools.zOrder = alignToolsPanel.zOrder + 10;
 
             UIPanel atpBackground = alignToolsPanel.AddUIComponent<UIPanel>();
-            atpBackground.size = new Vector2(26, 202);
+            atpBackground.size = new Vector2(26, 236);
             atpBackground.clipChildren = true;
             atpBackground.relativePosition = new Vector3(5, 10);
             atpBackground.atlas = UIUtils.GetAtlas("Ingame");
@@ -529,6 +542,20 @@ namespace MoveIt
             alignSlope.normalFgSprite = "AlignSlope";
             alignSlope.eventClicked += UIAlignTools.AlignToolsClicked;
 
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignTerrainHeightBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignTerrainHeight = UIAlignTools.AlignButtons["MoveIt_AlignTerrainHeightBtn"];
+            alignTerrainHeight.name = "MoveIt_AlignTerrainHeightBtn";
+            alignTerrainHeight.atlas = GetIconsAtlas();
+            alignTerrainHeight.tooltip = "Align Terrain Height";
+            alignTerrainHeight.playAudioEvents = true;
+            alignTerrainHeight.size = new Vector2(36, 36);
+            alignTerrainHeight.normalBgSprite = "OptionBase";
+            alignTerrainHeight.hoveredBgSprite = "OptionBaseHovered";
+            alignTerrainHeight.pressedBgSprite = "OptionBasePressed";
+            alignTerrainHeight.disabledBgSprite = "OptionBaseDisabled";
+            alignTerrainHeight.normalFgSprite = "AlignTerrainHeight";
+            alignTerrainHeight.eventClicked += UIAlignTools.AlignToolsClicked;
+
             UIAlignTools.AlignButtons.Add("MoveIt_AlignHeightBtn", atpContainer.AddUIComponent<UIButton>());
             UIButton alignHeight = UIAlignTools.AlignButtons["MoveIt_AlignHeightBtn"];
             alignHeight.name = "MoveIt_AlignHeightBtn";
@@ -545,12 +572,13 @@ namespace MoveIt
             #endregion
 
             #region View Options
-            UIPanel viewOptions = AddUIComponent<UIPanel>();
+            viewOptions = AddUIComponent<UIPanel>();
             viewOptions.atlas = UIUtils.GetAtlas("Ingame");
             viewOptions.backgroundSprite = "InfoPanelBack";
             viewOptions.size = new Vector2(44f, 80f);
 
             viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - viewOptions.width, absolutePosition.y - viewOptions.height - 8f);
+
 
             grid = viewOptions.AddUIComponent<UIMultiStateButton>();
             grid.atlas = GetIconsAtlas();
@@ -586,6 +614,7 @@ namespace MoveIt
                 MoveItTool.gridVisible = (grid.activeStateIndex == 1);
             };
 
+
             underground = viewOptions.AddUIComponent<UIMultiStateButton>();
             underground.atlas = UIUtils.GetAtlas("Ingame");
             underground.name = "MoveIt_UndergroundView";
@@ -619,6 +648,65 @@ namespace MoveIt
             {
                 MoveItTool.tunnelVisible = (underground.activeStateIndex == 1);
             };
+
+
+            if (MoveItTool.PO.Enabled)
+            {
+                PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
+                PO_button.atlas = GetIconsAtlas();
+                PO_button.name = "MoveIt_PO_button";
+                PO_button.tooltip = "Toggle Procedural Objects";
+                PO_button.playAudioEvents = true;
+
+                PO_button.size = new Vector2(36, 36);
+                PO_button.spritePadding = new RectOffset();
+
+                PO_button.backgroundSprites[0].disabled = "OptionBaseDisabled";
+                PO_button.backgroundSprites[0].hovered = "OptionBaseHovered";
+                PO_button.backgroundSprites[0].normal = "OptionBase";
+                PO_button.backgroundSprites[0].pressed = "OptionBasePressed";
+
+                PO_button.backgroundSprites.AddState();
+                PO_button.backgroundSprites[1].disabled = "OptionBaseDisabled";
+                PO_button.backgroundSprites[1].hovered = "";
+                PO_button.backgroundSprites[1].normal = "OptionBaseFocused";
+                PO_button.backgroundSprites[1].pressed = "OptionBasePressed";
+
+                PO_button.foregroundSprites[0].normal = "PO";
+
+                PO_button.foregroundSprites.AddState();
+                PO_button.foregroundSprites[1].normal = "POFocused";
+
+                PO_button.relativePosition = new Vector3(4f, 76f);
+
+                PO_button.activeStateIndex = 0;
+
+                PO_button.eventClicked += (c, p) =>
+                {
+                    MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
+                    if (MoveItTool.PO.Active)
+                    {
+                        MoveItTool.PO.ToolEnabled();
+                        ActionQueue.instance.Push(new TransformAction());
+                    }
+                    else
+                    {
+                        Action.ClearPOFromSelection();
+                    }
+                    UIFilters.POToggled();
+                };
+
+                if (!MoveItTool.HidePO)
+                {
+                    viewOptions.height += 36;
+                    viewOptions.absolutePosition += new Vector3(0, -36);
+                }
+                else
+                {
+                    PO_button.isVisible = false;
+                }
+            }
+
             #endregion
 
             MoveItTool.debugPanel = new DebugPanel();
@@ -645,7 +733,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_alignTools != null && MoveItTool.instance != null)
             {
-                if(MoveItTool.instance.m_toolState == MoveItTool.ToolState.Aligning)
+                if(MoveItTool.instance.ToolState == MoveItTool.ToolStates.Aligning)
                 {
                     instance.m_alignTools.normalBgSprite = "OptionBaseFocused";
                 }
@@ -660,7 +748,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_copy != null && MoveItTool.instance != null)
             {
-                if (MoveItTool.instance.m_toolState == MoveItTool.ToolState.Cloning || MoveItTool.instance.m_toolState == MoveItTool.ToolState.RightDraggingClone)
+                if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.instance.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                 {
                     instance.m_copy.normalBgSprite = "OptionBaseFocused";
                 }
@@ -718,14 +806,17 @@ namespace MoveIt
                 "AlignSlopeA",
                 "AlignSlopeB",
                 "AlignHeight",
-				"Copy",
+                "AlignTerrainHeight",
+                "Copy",
                 "Bulldoze",
                 "Group",
                 "Save",
                 "Save_disabled",
                 "Load",
                 "Grid",
-                "GridFocused"
+                "GridFocused",
+                "PO",
+                "POFocused"
             };
 
             UITextureAtlas loadedAtlas = ResourceLoader.CreateTextureAtlas("MoveIt_Icons", spriteNames, "MoveIt.Icons.");

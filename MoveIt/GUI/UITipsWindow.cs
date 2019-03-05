@@ -11,8 +11,8 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 2.3.0: Hold Alt to select pylons or pillars.",
-            "Tip: Hold Alt to select a node or segment owned by a building.",
+            "New in 2.4.0: Hold Shift to move objects in a fast, low detail mode",
+            "Tip: Hold Alt to select a node or segment owned by a building",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
             "Tip: Hold Ctrl while rotating to snap to 45° angles",

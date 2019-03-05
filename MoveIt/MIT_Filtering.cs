@@ -36,8 +36,9 @@ namespace MoveIt
             bool selectNodes = true;
             bool selectSegments = true;
             bool selectTrees = true;
+            bool selectProc = PO.Active;
 
-            bool _repeatSearch = false;
+            bool repeatSearch = false;
 
             if (marqueeSelection)
             {
@@ -48,12 +49,39 @@ namespace MoveIt
                 selectNodes = filterNodes;
                 selectSegments = filterSegments;
                 selectTrees = filterTrees;
+                selectProc = PO.Active ? filterProcs : false;
             }
 
             float smallestDist = 640000f;
 
             do
             {
+
+                if (!HidePO && PO.Active && selectProc)
+                {
+                    //string msg = "";
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (stepOver.isValidPO(obj.Id))
+                        {
+                            //msg += $"{obj.Id},";
+                            bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
+                            bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
+                            if (inXBounds && inZBounds)
+                            {
+                                float t = obj.GetDistance(location);
+                                //Debug.Log($"Object {obj.Id}: {t}m");
+                                if (t < smallestDist)
+                                {
+                                    id.NetLane = obj.Id;
+                                    smallestDist = t;
+                                }
+                            }
+                        }
+                    }
+                    //Debug.Log(msg);
+                }
+
                 int gridMinX = Mathf.Max((int)((location.x - 16f) / 64f + 135f) - 1, 0);
                 int gridMinZ = Mathf.Max((int)((location.z - 16f) / 64f + 135f) - 1, 0);
                 int gridMaxX = Mathf.Min((int)((location.x + 16f) / 64f + 135f) + 1, 269);
@@ -71,8 +99,6 @@ namespace MoveIt
                             {
                                 if (stepOver.isValidB(building) && IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
                                 {
-                                    //Debug.Log($"Building:{building}");
-
                                     if (Filters.Filter(buildingBuffer[building].Info, true))
                                     {
                                         id.Building = Building.FindParentBuilding(building);
@@ -164,13 +190,13 @@ namespace MoveIt
                             while (segment != 0u)
                             {
                                 if (stepOver.isValidS(segment) && IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
-                                    segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
+                                            segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                                 {
                                     //Debug.Log($"Segment:{segment}");
                                     ushort building = 0;
                                     if (!Event.current.alt)
                                     {
-                                        building = MoveItTool.FindOwnerBuilding(segment, 363f);
+                                        building = FindOwnerBuilding(segment, 363f);
                                     }
 
                                     if (building != 0)
@@ -185,8 +211,8 @@ namespace MoveIt
                                     else if (selectSegments)
                                     {
                                         if (!selectNodes || (
-                                            !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority) &&
-                                            !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_endNode], ray, -1000f, out t2, out priority)
+                                            (!stepOver.isValidN(segmentBuffer[segment].m_startNode) || !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority)) &&
+                                            (!stepOver.isValidN(segmentBuffer[segment].m_endNode) || !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_endNode], ray, -1000f, out t2, out priority))
                                         ))
                                         {
                                             if (Filters.Filter(segmentBuffer[segment]))
@@ -239,14 +265,13 @@ namespace MoveIt
                     }
                 }
 
-                _repeatSearch = false;
-
+                repeatSearch = false;
                 if (OptionsKeymapping.stepOverKey.IsPressed())
                 {
                     if (!_stepProcessed)
                     {
                         _stepProcessed = true;
-                        _repeatSearch = true;
+                        repeatSearch = true;
                         stepOver.Add(id);
                     }
                 }
@@ -255,13 +280,11 @@ namespace MoveIt
                     _stepProcessed = false;
                 }
             }
-            while (_repeatSearch);
+            while (repeatSearch);
 
-            //Debug.Log($"ID=({id.Building},{id.Prop},{id.NetNode},{id.NetSegment},{id.Tree})");
-            if (debugPanel != null)
-            {
-                debugPanel.Update(id);
-            }
+            //Debug.Log($"Id={InstanceIDDebug(id)}");
+            if (debugPanel != null) debugPanel.Update(id);
+
             m_hoverInstance = id;
         }
 
@@ -304,6 +327,12 @@ namespace MoveIt
                     m_selection.d = m_selection.a + dotDown * down;
                 }
 
+                // Disables select-during-drag
+                //if (ToolState == ToolStates.DrawingSelection)
+                //{
+                //    return list;
+                //}
+
                 Vector3 min = m_selection.Min();
                 Vector3 max = m_selection.Max();
 
@@ -314,6 +343,21 @@ namespace MoveIt
 
                 InstanceID id = new InstanceID();
                 ItemClass.Layer itemLayers = GetItemLayers();
+
+                if (!HidePO && PO.Active && filterProcs)
+                {
+                    //string msg = "";
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (PointInRectangle(m_selection, obj.Position))
+                        {
+                            //msg += $"{obj.Id},";
+                            id.NetLane = obj.Id;
+                            list.Add(id);
+                        }
+                    }
+                    //Debug.Log(msg);
+                }
 
                 for (int i = gridMinZ; i <= gridMaxZ; i++)
                 {

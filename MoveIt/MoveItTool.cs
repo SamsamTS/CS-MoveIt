@@ -1,7 +1,8 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
-using ColossalFramework.UI;
 using ColossalFramework.IO;
+using ColossalFramework.Plugins;
+using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +22,7 @@ namespace MoveIt
             Redo
         }
 
-        public enum ToolState
+        public enum ToolStates
         {
             Default,
             MouseDragging,
@@ -35,6 +36,7 @@ namespace MoveIt
         {
             Off,
             Height,
+            TerrainHeight,
             Inplace,
             Group,
             Random,
@@ -49,13 +51,23 @@ namespace MoveIt
         public static MoveItTool instance;
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true); 
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
+        public static SavedBool POOnlySelectedAreVisible = new SavedBool("POOnlySelectedAreVisible", settingsFileName, true, true);
+        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
+<<<<<<< HEAD
         public static SavedBool decalsAsSurfaces = new SavedBool("decalsAsSurfaces", settingsFileName, false, true);
         public static SavedBool brushesAsSurfaces = new SavedBool("brushesAsSurfaces", settingsFileName, false, true);
         public static SavedBool extraAsSurfaces = new SavedBool("extraAsSurfaces", settingsFileName, false, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, true, true);
+=======
+        public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
+        public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
+        public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
+        public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
+>>>>>>> PO
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
+        public static SavedBool HidePO = new SavedBool("HidePO", settingsFileName, true, true);
 
         public static bool filterBuildings = true;
         public static bool filterProps = true;
@@ -65,13 +77,14 @@ namespace MoveIt
         public static bool filterNodes = true;
         public static bool filterSegments = true;
         public static bool filterNetworks = false;
+        public static bool filterProcs = true;
 
         public static bool followTerrain = true;
-
         public static bool marqueeSelection = false;
+        internal static bool dragging = false;
 
         public static StepOver stepOver;
-        public static DebugPanel debugPanel;
+        internal static DebugPanel debugPanel;
 
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
@@ -79,31 +92,67 @@ namespace MoveIt
         public int aeraUpdateCountdown = -1;
         public HashSet<Bounds> aerasToUpdate = new HashSet<Bounds>();
 
-        private static Color m_hoverColor = new Color32(0, 181, 255, 255);
-        private static Color m_selectedColor = new Color32(95, 166, 0, 244);
-        private static Color m_moveColor = new Color32(125, 196, 30, 244);
-        private static Color m_removeColor = new Color32(255, 160, 47, 191);
-        private static Color m_despawnColor = new Color32(255, 160, 47, 191);
-        private static Color m_alignColor = new Color32(255, 255, 255, 244);
+        internal static Color m_hoverColor = new Color32(0, 181, 255, 255);
+        internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
+        internal static Color m_moveColor = new Color32(125, 196, 30, 244);
+        internal static Color m_removeColor = new Color32(255, 160, 47, 191);
+        internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
+        internal static Color m_alignColor = new Color32(255, 255, 255, 244);
+        internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
+        internal static Color m_POselectedColor = new Color32(230, 130, 245, 140);
+        internal static Color m_POdisabledColor = new Color32(150, 100, 160, 80);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
+
+        //internal static bool HidePO = true;
+        internal static PO_Manager PO = null;
 
         private const float XFACTOR = 0.263671875f;
         private const float YFACTOR = 0.015625f;
         private const float ZFACTOR = 0.263671875f;
 
-        public ToolState m_toolState;
-        public AlignModes m_alignMode;
-        public ushort m_alignToolPhase = 0;
+        private ToolStates m_toolState;
+        public ToolStates ToolState
+        {
+            get => m_toolState;
+            set
+            {
+                m_toolState = value;
+                if (debugPanel != null)
+                {
+                    debugPanel.Update();
+                }
+            }
+        }
+        private AlignModes m_alignMode;
+        public AlignModes AlignMode
+        { 
+            get => m_alignMode;
+            set
+            {
+                m_alignMode = value;
+                debugPanel.Update();
+            }
+        }
+        private ushort m_alignToolPhase;
+        public ushort AlignToolPhase
+        {
+            get => m_alignToolPhase;
+            set
+            {
+                m_alignToolPhase = value;
+                debugPanel.Update();
+            }
+        }
 
         private bool m_snapping = false;
         public bool snapping
         {
             get
             {
-                if (m_toolState == ToolState.MouseDragging ||
-                    m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+                if (ToolState == ToolStates.MouseDragging ||
+                    ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
                     return m_snapping != Event.current.alt;
                 }
@@ -186,136 +235,14 @@ namespace MoveIt
         {
             ActionQueue.instance = new ActionQueue();
 
-            m_toolController = GameObject.FindObjectOfType<ToolController>();
+            m_toolController = FindObjectOfType<ToolController>();
             enabled = false;
 
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
-        }
 
-        protected override void OnToolGUI(Event e)
-        {
-            if (UIView.HasModalInput() || UIView.HasInputFocus()) return;
+            followTerrain = followTerrainModeEnabled;
 
-            lock (ActionQueue.instance)
-            {
-                if (m_toolState == ToolState.Default)
-                {
-                    if (OptionsKeymapping.undo.IsPressed(e))
-                    {
-                        m_nextAction = ToolAction.Undo;
-                    }
-                    else if (OptionsKeymapping.redo.IsPressed(e))
-                    {
-                        m_nextAction = ToolAction.Redo;
-                    }
-                }
-
-                if (OptionsKeymapping.copy.IsPressed(e))
-                {
-                    if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-                    else
-                    {
-                        StartCloning();
-                    }
-                }
-                else if (OptionsKeymapping.alignHeights.IsPressed(e))
-                {
-                    ProcessAligning(AlignModes.Height);
-                }
-                else if (OptionsKeymapping.alignSlope.IsPressed(e))
-                {
-                    ProcessAligning(AlignModes.Slope);
-                }
-                else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
-                {
-                    m_alignMode = AlignModes.SlopeNode;
-
-                    if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    AlignSlopeAction asa = new AlignSlopeAction();
-                    asa.followTerrain = followTerrain;
-                    asa.IsQuick = true;
-                    ActionQueue.instance.Push(asa);
-                    ActionQueue.instance.Do();
-                    if (autoCloseAlignTools) UIAlignTools.AlignToolsPanel.isVisible = false;
-                    DeactivateAlignTool();
-                }
-                else if (OptionsKeymapping.alignInplace.IsPressed(e))
-                {
-                    ProcessAligning(AlignModes.Inplace);
-                }
-                else if (OptionsKeymapping.alignGroup.IsPressed(e))
-                {
-                    ProcessAligning(AlignModes.Group);
-                }
-                else if (OptionsKeymapping.alignRandom.IsPressed(e))
-                {
-                    m_alignMode = AlignModes.Random;
-
-                    if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    AlignRandomAction action = new AlignRandomAction();
-                    action.followTerrain = followTerrain;
-                    ActionQueue.instance.Push(action);
-                    ActionQueue.instance.Do();
-                    DeactivateAlignTool();
-                }
-
-                if (m_toolState == ToolState.Cloning)
-                {
-                    if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
-                    {
-                        CloneAction action = ActionQueue.instance.current as CloneAction;
-
-                        action.moveDelta.y += direction.y * YFACTOR;
-                        action.angleDelta += angle;
-                    }
-                }
-                else if (m_toolState == ToolState.Default && Action.selection.Count > 0)
-                {
-                    // TODO: if no selection select hovered instance
-                    // Or not. Nobody asked for getting it back
-
-                    if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
-                    {
-                        if (!(ActionQueue.instance.current is TransformAction action))
-                        {
-                            action = new TransformAction();
-                            ActionQueue.instance.Push(action);
-                        }
-
-                        if (direction != Vector3.zero)
-                        {
-                            direction.x = direction.x * XFACTOR;
-                            direction.y = direction.y * YFACTOR;
-                            direction.z = direction.z * ZFACTOR;
-
-                            if (!useCardinalMoves)
-                            {
-                                Matrix4x4 matrix4x = default(Matrix4x4);
-                                matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);
-
-                                direction = matrix4x.MultiplyVector(direction);
-                            }
-                        }
-
-                        action.moveDelta += direction;
-                        action.angleDelta += angle;
-                        action.followTerrain = followTerrain;
-
-                        m_nextAction = ToolAction.Do;
-                    }
-                }
-            }
+            PO = new PO_Manager();
         }
 
         protected override void OnEnable()
@@ -352,20 +279,44 @@ namespace MoveIt
                 gridVisible = UIToolOptionPanel.instance.grid.activeStateIndex == 1;
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
+
+            if (!HidePO && PO.Active)
+            {
+                PO.ToolEnabled();
+                ActionQueue.instance.Push(new TransformAction());
+            }
+
+            //string msg = $"Selected:{Action.selection.Count} (before PO refresh:{oldSelectionCount})\n";
+            //foreach (Instance i in Action.selection)
+            //{
+            //    msg += $"{i.GetType()} {InstanceIDDebug(i)}\n";
+            //    if (i is MoveableProc mpo)
+            //    {
+            //        msg += $"    {mpo.m_procObj.DebugQuaternion()}\n";
+            //    }
+            //}
+            //msg += "Queue: " + ActionQueue.instance.DebugQueue();
+            //Debug.Log(msg);
         }
 
         protected override void OnDisable()
         {
             lock (ActionQueue.instance)
             {
-                if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+                if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
                     // Cancel cloning
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();
                 }
 
-                m_toolState = ToolState.Default;
+                if (ToolState == ToolStates.MouseDragging)
+                {
+                    ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
+                    UpdateAreas();
+                }
+
+                ToolState = ToolStates.Default;
 
                 if (UITipsWindow.instance != null)
                 {
@@ -393,10 +344,20 @@ namespace MoveIt
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
-            if (m_toolState == ToolState.Default || m_toolState == ToolState.Aligning)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
+                // Highlight all PO
+                if (!HidePO && PO.Active && POHighlightUnselected)
+                {
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        obj.RenderOverlay(cameraInfo, m_POdisabledColor);
+                    }
+                }
+
                 if (Action.selection.Count > 0)
                 {
+                    // Highlight Selected Items
                     foreach (Instance instance in Action.selection)
                     {
                         if (instance.isValid && instance != m_hoverInstance)
@@ -404,7 +365,7 @@ namespace MoveIt
                             instance.RenderOverlay(cameraInfo, m_selectedColor, m_despawnColor);
                         }
                     }
-                    if (m_toolState == ToolState.Aligning && m_alignMode == AlignModes.Slope && m_alignToolPhase == 2)
+                    if (ToolState == ToolStates.Aligning && AlignMode == AlignModes.Slope && AlignToolPhase == 2)
                     {
                         AlignSlopeAction action = ActionQueue.instance.current as AlignSlopeAction;
                         action.PointA.RenderOverlay(cameraInfo, m_alignColor, m_despawnColor);
@@ -412,14 +373,13 @@ namespace MoveIt
 
                     Vector3 center = Action.GetCenter();
                     center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-
                     RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
                 }
 
                 if (m_hoverInstance != null && m_hoverInstance.isValid)
                 {
                     Color color = m_hoverColor;
-                    if (m_toolState == ToolState.Aligning)
+                    if (ToolState == ToolStates.Aligning)
                     {
                         color = m_alignColor;
                     }
@@ -437,7 +397,7 @@ namespace MoveIt
                     m_hoverInstance.RenderOverlay(cameraInfo, color, m_despawnColor);
                 }
             }
-            else if (m_toolState == ToolState.MouseDragging)
+            else if (ToolState == ToolStates.MouseDragging)
             {
                 if (Action.selection.Count > 0)
                 {
@@ -476,7 +436,7 @@ namespace MoveIt
                     }
                 }
             }
-            else if (m_toolState == ToolState.DrawingSelection)
+            else if (ToolState == ToolStates.DrawingSelection)
             {
                 bool removing = Event.current.alt;
                 bool adding = Event.current.shift;
@@ -527,7 +487,7 @@ namespace MoveIt
                     }
                 }
             }
-            else if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+            else if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
@@ -543,7 +503,7 @@ namespace MoveIt
 
         public override void RenderGeometry(RenderManager.CameraInfo cameraInfo)
         {
-            if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+            if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
@@ -555,21 +515,15 @@ namespace MoveIt
                     state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
                 }
             }
-        }
-
-        public bool DeactivateAlignTool(bool switchMode = true)
-        {
-            //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
-            if (switchMode)
+            else if (ToolState == ToolStates.MouseDragging)
             {
-                m_alignMode = AlignModes.Off;
-                m_toolState = ToolState.Default;
-                m_alignToolPhase = 0;
-            }
+                TransformAction action = ActionQueue.instance.current as TransformAction;
 
-            UIAlignTools.UpdateAlignTools();
-            Action.UpdateArea(Action.GetTotalBounds(false));
-            return false;
+                foreach (InstanceState state in action.savedStates)
+                {
+                    state.instance.RenderGeometry(cameraInfo, m_hoverColor);
+                }
+            }
         }
 
         public override void SimulationStep()
@@ -619,7 +573,6 @@ namespace MoveIt
 
                             segmentBuffer[segment].Info.m_netAI.CreateSegment(segment, ref segmentBuffer[segment]);
                         }
-
                         segmentsToUpdate.Clear();
                     }
 
@@ -630,13 +583,7 @@ namespace MoveIt
 
                     if (aeraUpdateCountdown == 0)
                     {
-                        foreach (Bounds bounds in aerasToUpdate)
-                        {
-                            bounds.Expand(64f);
-                            VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                        }
-
-                        aerasToUpdate.Clear();
+                        UpdateAreas();
                     }
 
                     if (!inputHeld && aeraUpdateCountdown >= 0)
@@ -654,6 +601,21 @@ namespace MoveIt
             }
         }
 
+        public void UpdateAreas()
+        {
+            //string msg = "";
+            foreach (Bounds bounds in MergeBounds(aerasToUpdate))
+            {
+                //msg += $"SimStep: {bounds}\n";
+
+                VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            }
+            //Debug.Log(msg);
+
+            aerasToUpdate.Clear();
+        }
+
         public override ToolErrors GetErrors()
         {
             return ToolErrors.None;
@@ -661,7 +623,7 @@ namespace MoveIt
 
         public void ProcessAligning(AlignModes mode)
         {
-            if (m_toolState == ToolState.Aligning && m_alignMode == mode)
+            if (ToolState == ToolStates.Aligning && AlignMode == mode)
             {
                 StopAligning();
             }
@@ -673,18 +635,18 @@ namespace MoveIt
 
         public void StartAligning(AlignModes mode)
         {
-            if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+            if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
                 StopCloning();
             }
 
-            if (m_toolState != ToolState.Default) return;
+            if (ToolState != ToolStates.Default) return;
 
             if (Action.selection.Count > 0)
             {
-                m_toolState = ToolState.Aligning;
-                m_alignMode = mode;
-                m_alignToolPhase = 1;
+                ToolState = ToolStates.Aligning;
+                AlignMode = mode;
+                AlignToolPhase = 1;
             }
 
             UIAlignTools.UpdateAlignTools();
@@ -692,20 +654,41 @@ namespace MoveIt
 
         public void StopAligning()
         {
+<<<<<<< HEAD
             m_alignMode = AlignModes.Off;
             m_alignToolPhase = 0;
             if (m_toolState == ToolState.Aligning)
+=======
+            AlignMode = AlignModes.Off;
+            AlignToolPhase = 0;
+            if (ToolState == ToolStates.Aligning)
             {
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
             }
             UIAlignTools.UpdateAlignTools();
+        }
+
+        public bool DeactivateAlignTool(bool switchMode = true)
+        {
+            //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
+            if (switchMode)
+>>>>>>> PO
+            {
+                AlignMode = AlignModes.Off;
+                ToolState = ToolStates.Default;
+                AlignToolPhase = 0;
+            }
+
+            UIAlignTools.UpdateAlignTools();
+            Action.UpdateArea(Action.GetTotalBounds(false));
+            return false;
         }
 
         public void StartCloning()
         {
             lock (ActionQueue.instance)
             {
-                if (m_toolState != ToolState.Default && m_toolState != ToolState.Aligning) return;
+                if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning) return;
 
                 if (Action.selection.Count > 0)
                 {
@@ -715,7 +698,7 @@ namespace MoveIt
                     {
                         ActionQueue.instance.Push(action);
 
-                        m_toolState = ToolState.Cloning;
+                        ToolState = ToolStates.Cloning;
                         UIToolOptionPanel.RefreshCloneButton();
                         UIToolOptionPanel.RefreshAlignHeightButton();
                     }
@@ -727,11 +710,11 @@ namespace MoveIt
         {
             lock (ActionQueue.instance)
             {
-                if (m_toolState == ToolState.Cloning || m_toolState == ToolState.RightDraggingClone)
+                if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();
-                    m_toolState = ToolState.Default;
+                    ToolState = ToolStates.Default;
 
                     UIToolOptionPanel.RefreshCloneButton();
                 }
@@ -740,7 +723,7 @@ namespace MoveIt
 
         public void StartBulldoze()
         {
-            if (m_toolState != ToolState.Default) return;
+            if (ToolState != ToolStates.Default) return;
 
             if (Action.selection.Count > 0)
             {
@@ -837,7 +820,7 @@ namespace MoveIt
 
                     foreach (InstanceState state in selectionState.states)
                     {
-                        if (state.info == null)
+                        if (state.Info == null)
                         {
                             missingPrefabs.Add(state.prefabName);
                         }
@@ -856,7 +839,9 @@ namespace MoveIt
                     {
                         ActionQueue.instance.Push(action);
 
-                        m_toolState = ToolState.Cloning;
+                        ToolState = ToolStates.Cloning; // For clone
+                        //ActionQueue.instance.Do(); // For paste
+
                         UIToolOptionPanel.RefreshCloneButton();
                         UIToolOptionPanel.RefreshAlignHeightButton();
                     }
@@ -884,7 +869,7 @@ namespace MoveIt
             }
         }
 
-        private Vector3 RaycastMouseLocation(Ray mouseRay)
+        internal static Vector3 RaycastMouseLocation(Ray mouseRay)
         {
             RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
             input.m_ignoreTerrain = false;
@@ -900,6 +885,82 @@ namespace MoveIt
                 ZoneManager.instance.ReleaseBlock(segmentBlock);
                 segmentBlock = 0;
             }
+        }
+
+        public static string InstanceIDDebug(InstanceID id)
+        {
+            return $"(B:{id.Building},P:{id.Prop},T:{id.Tree},N:{id.NetNode},S:{id.NetSegment},L:{id.NetLane})";
+        }
+
+        public static string InstanceIDDebug(Instance instance)
+        {
+            if (instance == null) return "(null instance)";
+            return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
+        }
+
+        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerList)
+        {
+            HashSet<Bounds> innerList = new HashSet<Bounds>();
+            HashSet<Bounds> newList = new HashSet<Bounds>();
+
+            int c = 0;
+            foreach (Bounds b in outerList)
+            {
+                b.Expand(64f);
+            }
+
+            do
+            {
+                foreach (Bounds outer in outerList)
+                {
+                    bool merged = false;
+
+                    float outerVolume = outer.size.x * outer.size.y * outer.size.z;
+                    foreach (Bounds inner in innerList)
+                    {
+                        float separateVolume = (inner.size.x * inner.size.y * inner.size.z) + outerVolume;
+
+                        Bounds encapsulated = inner;
+                        encapsulated.Encapsulate(outer);
+                        float encapsulateVolume = encapsulated.size.x * encapsulated.size.y * encapsulated.size.z;
+
+                        if (!merged && encapsulateVolume < separateVolume)
+                        {
+                            newList.Add(encapsulated);
+                            merged = true;
+                        }
+                        else
+                        {
+                            newList.Add(inner);
+                        }
+                    }
+                    if (!merged)
+                    {
+                        newList.Add(outer);
+                    }
+
+                    innerList = new HashSet<Bounds>(newList);
+                    newList.Clear();
+                }
+
+                if (outerList.Count <= innerList.Count)
+                {
+                    break;
+                }
+                outerList = new HashSet<Bounds>(innerList);
+                innerList.Clear();
+
+                if (c > 1000)
+                {
+                    Debug.Log($"Looped bounds-merge a thousand times");
+                    break;
+                }
+
+                c++;
+            }
+            while (true);
+
+            return innerList;
         }
     }
 }

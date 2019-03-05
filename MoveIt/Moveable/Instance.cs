@@ -13,7 +13,7 @@ namespace MoveIt
         public Instance instance;
 
         [XmlIgnore]
-        public PrefabInfo info;
+        public IInfo Info = new Info_Prefab();
 
         public Vector3 position;
         public float angle;
@@ -41,9 +41,9 @@ namespace MoveIt
         {
             get
             {
-                if(info != null)
+                if (Info != null)
                 {
-                    return info.name;
+                    return Info.Name;
                 }
                 else
                 {
@@ -55,27 +55,29 @@ namespace MoveIt
             {
                 m_loadedName = value;
 
-                switch(instance.id.Type)
+                //Debug.Log($"Info:{Info}, m_loadedName:{m_loadedName}, type:{instance.id.Type}");
+
+                switch (instance.id.Type)
                 {
                     case InstanceType.Building:
                         {
-                            info = PrefabCollection<BuildingInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<BuildingInfo>.FindLoaded(value);
                             break;
                         }
                     case InstanceType.Prop:
                         {
-                            info = PrefabCollection<PropInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<PropInfo>.FindLoaded(value);
                             break;
                         }
                     case InstanceType.Tree:
                         {
-                            info = PrefabCollection<TreeInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<TreeInfo>.FindLoaded(value);
                             break;
                         }
                     case InstanceType.NetNode:
                     case InstanceType.NetSegment:
                         {
-                            info = PrefabCollection<NetInfo>.FindLoaded(value);
+                            Info.Prefab = PrefabCollection<NetInfo>.FindLoaded(value);
                             break;
                         }
                 }
@@ -84,6 +86,7 @@ namespace MoveIt
 
         public virtual void ReplaceInstance(Instance newInstance)
         {
+            //Debug.Log($"ReplaceInstance\n{instance.id.Prop}:{instance.Info.Name} <{instance.GetType()}>\n{newInstance.id.Prop}:{newInstance.Info.Name} <{newInstance.GetType()}>\n{Info.Name} <{Info.Prefab.GetType()}>");
             instance = newInstance;
 
             if (newInstance.id.Type != instance.id.Type)
@@ -91,11 +94,30 @@ namespace MoveIt
                 DebugUtils.Warning("Mismatching instances type ('" + newInstance.id.Type + "' -> '" + newInstance.id.Type + "').");
             }
 
-            if (newInstance.info != info)
+            if (newInstance.Info.Prefab != Info.Prefab)
             {
-                DebugUtils.Warning("Mismatching instances info ('" + info.name + "' -> '" + newInstance.info.name + "').");
+                DebugUtils.Warning($"Mismatching instances info:\n{Info.Prefab.name} <{Info.GetHashCode()}>\n{newInstance.Info.Prefab.name} <{newInstance.Info.GetHashCode()}>\n");
             }
         }
+    }
+
+    public interface IInfo
+    {
+        string Name { get; }
+        PrefabInfo Prefab { get; set; }
+    }
+
+    public class Info_Prefab : IInfo
+    {
+        public Info_Prefab(object i) => Prefab = (PrefabInfo)i;
+        public Info_Prefab() => Prefab = null;
+
+        public string Name
+        {
+            get => (Prefab == null) ? "<null>" : Prefab.name;
+        }
+
+        public PrefabInfo Prefab { get; set; } = null;
     }
 
     public abstract class Instance
@@ -122,9 +144,9 @@ namespace MoveIt
             get;
         }
 
-        public abstract Vector3 position { get; }
+        public abstract Vector3 position { get; set; }
 
-        public abstract float angle { get; }
+        public abstract float angle { get; set; }
 
         public abstract bool isValid { get; }
 
@@ -160,37 +182,45 @@ namespace MoveIt
             }
         }
 
-        public PrefabInfo info
-        {
-            get
-            {
-                switch (id.Type)
-                {
-                    case InstanceType.Building:
-                        {
-                            return BuildingManager.instance.m_buildings.m_buffer[id.Building].Info;
-                        }
-                    case InstanceType.Prop:
-                        {
-                            return PropManager.instance.m_props.m_buffer[id.Prop].Info;
-                        }
-                    case InstanceType.Tree:
-                        {
-                            return TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
-                        }
-                    case InstanceType.NetNode:
-                        {
-                            return NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
-                        }
-                    case InstanceType.NetSegment:
-                        {
-                            return NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
-                        }
-                }
+        private IInfo info;
+        public IInfo Info { get => info; set => info = value; }
 
-                return null;
-            }
-        }
+
+        //public Info_Wrapper Info
+        //{
+        //    get
+        //    {
+        //        switch (id.Type)
+        //        {
+        //            case InstanceType.Building:
+        //                {
+        //                    return BuildingManager.instance.m_buildings.m_buffer[id.Building].Info;
+        //                }
+        //            case InstanceType.Prop:
+        //                {
+        //                    return PropManager.instance.m_props.m_buffer[id.Prop].Info;
+        //                }
+        //            case InstanceType.Tree:
+        //                {
+        //                    return TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
+        //                }
+        //            case InstanceType.NetNode:
+        //                {
+        //                    return NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
+        //                }
+        //            case InstanceType.NetSegment:
+        //                {
+        //                    return NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
+        //                }
+        //                //case InstanceType.NetLane:
+        //                //    {
+        //                //        return MoveItTool.PO.GetProcObj(id.NetLane).Info;
+        //                //    }
+        //        }
+
+        //        return null;
+        //    }
+        //}
 
         public abstract InstanceState GetState();
         public abstract void SetState(InstanceState state);
@@ -204,6 +234,14 @@ namespace MoveIt
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
+
+
+        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor, int depth = 0) { }
+
+        public virtual void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+        }
 
         public static implicit operator Instance(InstanceID id)
         {
@@ -219,6 +257,8 @@ namespace MoveIt
                     return new MoveableProp(id);
                 case InstanceType.Tree:
                     return new MoveableTree(id);
+                case InstanceType.NetLane:
+                    return new MoveableProc(id);
             }
             return null;
         }

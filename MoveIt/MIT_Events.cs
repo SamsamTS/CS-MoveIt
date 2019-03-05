@@ -8,16 +8,16 @@ namespace MoveIt
     {
         private void OnLeftMouseDown()
         {
-            DebugUtils.Log("OnLeftMouseDown: " + m_toolState);
+            DebugUtils.Log("OnLeftMouseDown: " + ToolState);
 
-            if (m_toolState == ToolState.Default)
+            if (ToolState == ToolStates.Default)
             {
                 if (marqueeSelection && (m_hoverInstance == null || !Action.selection.Contains(m_hoverInstance)))
                 {
                     m_selection = default(Quad3);
                     m_marqueeInstances = null;
 
-                    m_toolState = ToolState.DrawingSelection;
+                    ToolState = ToolStates.DrawingSelection;
                 }
 
                 m_lastInstance = m_hoverInstance;
@@ -25,7 +25,7 @@ namespace MoveIt
                 Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 m_mouseStartPosition = RaycastMouseLocation(mouseRay);
             }
-            else if (m_toolState == ToolState.MouseDragging)
+            else if (ToolState == ToolStates.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_startPosition = action.moveDelta;
@@ -33,32 +33,32 @@ namespace MoveIt
                 Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 m_mouseStartPosition = RaycastMouseLocation(mouseRay);
             }
-            else if (m_toolState == ToolState.Cloning)
+            else if (ToolState == ToolStates.Cloning)
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
                 action.followTerrain = followTerrain;
 
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
                 m_nextAction = ToolAction.Do;
             }
         }
 
         private void OnRightMouseDown()
         {
-            DebugUtils.Log("OnRightMouseDown: " + m_toolState);
+            DebugUtils.Log("OnRightMouseDown: " + ToolState);
 
-            if (m_toolState == ToolState.Default)
+            if (ToolState == ToolStates.Default)
             {
                 m_mouseStartX = Input.mousePosition.x;
             }
-            else if (m_toolState == ToolState.MouseDragging)
+            else if (ToolState == ToolStates.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_startAngle = action.angleDelta;
 
                 m_mouseStartX = Input.mousePosition.x;
             }
-            else if (m_toolState == ToolState.Cloning)
+            else if (ToolState == ToolStates.Cloning)
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
                 m_startAngle = action.angleDelta;
@@ -69,16 +69,19 @@ namespace MoveIt
 
         private void OnLeftMouseUp()
         {
-            DebugUtils.Log("OnLeftMouseUp: " + m_toolState);
+            DebugUtils.Log("OnLeftMouseUp: " + ToolState);
 
-            if (m_toolState == ToolState.DrawingSelection)
+            if (ToolState == ToolStates.DrawingSelection)
             {
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
+
+                //Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                //RaycastHoverInstance(mouseRay);
+                //m_marqueeInstances = GetMarqueeList(mouseRay);
 
                 Event e = Event.current;
 
-                if (m_marqueeInstances == null ||
-                    m_marqueeInstances.Count == 0 ||
+                if (m_marqueeInstances == null || m_marqueeInstances.Count == 0 ||
                     (e.alt && !Action.selection.Overlaps(m_marqueeInstances)) ||
                     (e.shift && Action.selection.IsSupersetOf(m_marqueeInstances))
                     ) return;
@@ -96,6 +99,7 @@ namespace MoveIt
                 if (e.alt)
                 {
                     Action.selection.ExceptWith(m_marqueeInstances);
+                    PO.SelectionRemove(m_marqueeInstances);
                 }
                 else
                 {
@@ -104,6 +108,7 @@ namespace MoveIt
                         Action.selection.Clear();
                     }
                     Action.selection.UnionWith(m_marqueeInstances);
+                    PO.SelectionAdd(m_marqueeInstances);
                 }
 
                 m_marqueeInstances = null;
@@ -113,54 +118,42 @@ namespace MoveIt
         private void OnRightMouseUp()
         { }
 
-        private void OnRightClick()
-        {
-            DebugUtils.Log("OnRightClick: " + m_toolState);
-
-            if (m_toolState == ToolState.Default)
-            {
-                if (!(ActionQueue.instance.current is SelectAction action))
-                {
-                    action = new SelectAction();
-                    ActionQueue.instance.Push(action);
-                }
-                else
-                {
-                    Action.selection.Clear();
-                    ActionQueue.instance.Invalidate();
-                }
-            }
-            else if (m_toolState == ToolState.Cloning)
-            {
-                if (rmbCancelsCloning.value)
-                {
-                    StopCloning();
-                }
-                else
-                {
-                    // Rotate 45° clockwise
-                    CloneAction action = ActionQueue.instance.current as CloneAction;
-                    action.angleDelta -= Mathf.PI / 4;
-                }
-            }
-            else if (m_toolState == ToolState.Aligning)
-            {
-                DeactivateAlignTool();
-            }
-            else if (m_toolState != ToolState.MouseDragging)
-            {
-                m_toolState = ToolState.Default;
-            }
-        }
-
         private void OnLeftClick()
         {
-            DebugUtils.Log("OnLeftClick: " + m_toolState);
+            DebugUtils.Log("OnLeftClick: " + ToolState);
 
-            if (m_toolState == ToolState.Default || m_toolState == ToolState.DrawingSelection)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.DrawingSelection)
             {
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
+
+                #region Debug Ouput
+                //Instance instance = m_hoverInstance;
+                //InstanceID instanceID = instance.id;
+                //Debug.Log($"instance:{(instance == null ? "null" : instance.GetType().ToString())}");
+
+                //if (instanceID.Building > 0)
+                //{
+                //    MoveableBuilding mb = (MoveableBuilding)instance;
+                //    string msg = $"{mb.id.Building}:{mb.Info.Name}\n";
+                //    //Debug.Log(msg);
+                //    foreach (Instance subInstance in mb.subInstances)
+                //    {
+                //        msg += $" - {subInstance.id.Building}/{subInstance.id.NetNode}: {subInstance.Info.Name}\n";
+                //        //Debug.Log(msg);
+                //        if (subInstance.id.Building > 0)
+                //        {
+                //            foreach (Instance subSubInstance in ((MoveableBuilding)subInstance).subInstances)
+                //            {
+                //                msg += $"    - {subSubInstance.id.Building}/{subSubInstance.id.NetNode}: {subSubInstance.Info.Name}\n";
+                //                //Debug.Log(msg);
+                //            }
+                //        }
+                //    }
+                //    msg += "End";
+                //    Debug.Log(msg);
+                //}
+                #endregion
 
                 if (!(ActionQueue.instance.current is SelectAction action))
                 {
@@ -173,29 +166,92 @@ namespace MoveIt
 
                 if (e.shift)
                 {
-                    if (Action.selection.Contains(m_hoverInstance))
+                    if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
-                        Action.selection.Remove(m_hoverInstance);
+                        MoveableNode closest = ms.GetNodeByDistance();
+                        MoveableNode furthest = ms.GetNodeByDistance(true);
+
+                        if (!Action.selection.Contains(closest))
+                        {
+                            Action.selection.Add(closest);
+                        }
+                        else if (!Action.selection.Contains(furthest))
+                        {
+                            Action.selection.Add(furthest);
+                        }
+                        else
+                        {
+                            Action.selection.Remove(furthest);
+                        }
+
+                        //if (Action.selection.Contains(closest) && Action.selection.Contains(furthest))
+                        //{
+                        //    Action.selection.Remove(closest);
+                        //}
+                        //else if (Action.selection.Contains(closest))
+                        //{
+                        //    Action.selection.Add(furthest);
+                        //}
+                        //else if (Action.selection.Contains(furthest))
+                        //{
+                        //    Action.selection.Add(closest);
+                        //    Action.selection.Remove(furthest);
+                        //}
+                        //else
+                        //{
+                        //    Action.selection.Add(closest);
+                        //}
                     }
                     else
                     {
-                        Action.selection.Add(m_hoverInstance);
+                        if (Action.selection.Contains(m_hoverInstance))
+                        {
+                            Action.selection.Remove(m_hoverInstance);
+                            PO.SelectionRemove(m_hoverInstance);
+                        }
+                        else
+                        {
+                            Action.selection.Add(m_hoverInstance);
+                            PO.SelectionAdd(m_hoverInstance);
+                        }
                     }
                 }
                 else
                 {
-                    Action.selection.Clear();
-                    Action.selection.Add(m_hoverInstance);
+                    PO.SelectionClear();
+
+                    if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
+                    {
+                        MoveableNode closest = ms.GetNodeByDistance();
+                        MoveableNode furthest = ms.GetNodeByDistance(true);
+
+                        if (Action.selection.Contains(closest) && !Action.selection.Contains(furthest))
+                        {
+                            Action.selection.Clear();
+                            Action.selection.Add(furthest);
+                        }
+                        else
+                        {
+                            Action.selection.Clear();
+                            Action.selection.Add(closest);
+                        }
+                    }
+                    else
+                    {
+                        Action.selection.Clear();
+                        Action.selection.Add(m_hoverInstance);
+                        PO.SelectionAdd(m_hoverInstance);
+                    }
                 }
 
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
             }
-            else if (m_toolState == ToolState.Aligning)
+            else if (ToolState == ToolStates.Aligning)
             {
-                if (m_alignMode == AlignModes.Height)
+                if (AlignMode == AlignModes.Height)
                 {
-                    m_toolState = ToolState.Default;
-                    m_alignMode = AlignModes.Off;
+                    ToolState = ToolStates.Default;
+                    AlignMode = AlignModes.Off;
 
                     AlignHeightAction action = new AlignHeightAction();
                     if (m_hoverInstance != null)
@@ -208,7 +264,7 @@ namespace MoveIt
 
                     UIAlignTools.UpdateAlignTools();
                 }
-                else if (m_alignMode == AlignModes.Inplace || m_alignMode == AlignModes.Group)
+                else if (AlignMode == AlignModes.Inplace || AlignMode == AlignModes.Group)
                 {
                     float angle;
 
@@ -219,6 +275,10 @@ namespace MoveIt
                     else if (m_hoverInstance is MoveableProp mp)
                     {
                         angle = PropManager.instance.m_props.m_buffer[mp.id.Prop].Angle;
+                    }
+                    else if (m_hoverInstance is MoveableProc mpo)
+                    {
+                        angle = PO.GetProcObj(mpo.id.NetLane).Angle;
                     }
                     else if (m_hoverInstance is MoveableSegment ms)
                     {
@@ -238,7 +298,7 @@ namespace MoveIt
 
                     // Add action to queue, also enables Undo/Redo
                     AlignRotationAction action;
-                    switch (m_alignMode)
+                    switch (AlignMode)
                     {
                         case AlignModes.Group:
                             action = new AlignGroupAction();
@@ -253,18 +313,17 @@ namespace MoveIt
                     ActionQueue.instance.Push(action);
                     m_nextAction = ToolAction.Do;
 
-                    //Debug.Log($"Angle:{angle}, from {___m_hoverInstance}");
                     DeactivateAlignTool(false);
                 }
-                else if (m_alignMode == AlignModes.Slope)
+                else if (AlignMode == AlignModes.Slope)
                 {
                     if (m_hoverInstance == null) return;
 
                     AlignSlopeAction action;
-                    switch (m_alignToolPhase)
+                    switch (AlignToolPhase)
                     {
                         case 1: // Point A selected, prepare for Point B
-                            m_alignToolPhase++;
+                            AlignToolPhase++;
                             action = new AlignSlopeAction();
                             action.PointA = m_hoverInstance;
                             ActionQueue.instance.Push(action);
@@ -272,24 +331,63 @@ namespace MoveIt
                             break;
 
                         case 2: // Point B selected, fire action
-                            m_alignToolPhase++;
+                            AlignToolPhase++;
                             action = ActionQueue.instance.current as AlignSlopeAction;
                             action.PointB = m_hoverInstance;
                             action.followTerrain = followTerrain;
                             m_nextAction = ToolAction.Do;
                             DeactivateAlignTool();
-                            //UIAlignTools.UpdateAlignTools();
                             break;
                     }
                 }
             }
         }
 
+        private void OnRightClick()
+        {
+            DebugUtils.Log("OnRightClick: " + ToolState);
+
+            if (ToolState == ToolStates.Default)
+            {
+                if (!(ActionQueue.instance.current is SelectAction action))
+                {
+                    action = new SelectAction();
+                    ActionQueue.instance.Push(action);
+                }
+                else
+                {
+                    Action.selection.Clear();
+                    ActionQueue.instance.Invalidate();
+                }
+            }
+            else if (ToolState == ToolStates.Cloning)
+            {
+                if (rmbCancelsCloning.value)
+                {
+                    StopCloning();
+                }
+                else
+                {
+                    // Rotate 45° clockwise
+                    CloneAction action = ActionQueue.instance.current as CloneAction;
+                    action.angleDelta -= Mathf.PI / 4;
+                }
+            }
+            else if (ToolState == ToolStates.Aligning)
+            {
+                DeactivateAlignTool();
+            }
+            else if (ToolState != ToolStates.MouseDragging)
+            {
+                ToolState = ToolStates.Default;
+            }
+        }
+
         private void OnLeftDrag()
         {
-            DebugUtils.Log("OnLeftDrag: " + m_toolState);
+            DebugUtils.Log("OnLeftDrag: " + ToolState);
 
-            if (m_toolState == ToolState.Default)
+            if (ToolState == ToolStates.Default)
             {
                 if (m_lastInstance == null) return;
 
@@ -307,6 +405,7 @@ namespace MoveIt
                 {
                     ActionQueue.instance.Push(new SelectAction());
                     Action.selection.Add(m_lastInstance);
+                    PO.SelectionAdd(m_lastInstance);
 
                     action = new TransformAction();
                     ActionQueue.instance.Push(action);
@@ -314,15 +413,16 @@ namespace MoveIt
 
                 m_startPosition = action.moveDelta;
 
-                m_toolState = ToolState.MouseDragging;
+                ToolState = ToolStates.MouseDragging;
+                action.InitialiseDrag();
             }
         }
 
         private void OnRightDrag()
         {
-            DebugUtils.Log("OnRightDrag: " + m_toolState);
+            DebugUtils.Log("OnRightDrag: " + ToolState);
 
-            if (m_toolState == ToolState.Default)
+            if (ToolState == ToolStates.Default)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 if (action == null)
@@ -334,21 +434,24 @@ namespace MoveIt
                 }
 
                 m_startAngle = action.angleDelta;
-                m_toolState = ToolState.MouseDragging;
+                ToolState = ToolStates.MouseDragging;
+
+                action.InitialiseDrag();
             }
-            else if (m_toolState == ToolState.Cloning)
+            else if (ToolState == ToolStates.Cloning)
             {
-                m_toolState = ToolState.RightDraggingClone;
+                ToolState = ToolStates.RightDraggingClone;
             }
         }
 
         private void OnLeftDragStop()
         {
-            DebugUtils.Log("OnLeftDragStop: " + m_toolState);
+            DebugUtils.Log("OnLeftDragStop: " + ToolState);
 
-            if (m_toolState == ToolState.MouseDragging && m_rightClickTime == 0)
+            if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
+                ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();
             }
@@ -356,17 +459,18 @@ namespace MoveIt
 
         private void OnRightDragStop()
         {
-            DebugUtils.Log("OnRightDragStop: " + m_toolState);
+            DebugUtils.Log("OnRightDragStop: " + ToolState);
 
-            if (m_toolState == ToolState.MouseDragging && m_leftClickTime == 0)
+            if (ToolState == ToolStates.MouseDragging && m_leftClickTime == 0)
             {
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
+                ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();
             }
-            else if (m_toolState == ToolState.RightDraggingClone)
+            else if (ToolState == ToolStates.RightDraggingClone)
             {
-                m_toolState = ToolState.Cloning;
+                ToolState = ToolStates.Cloning;
             }
         }
     }

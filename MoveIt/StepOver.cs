@@ -34,6 +34,15 @@ namespace MoveIt
             return _isValid(instance);
         }
 
+        public bool isValidPO(uint id)
+        {
+            if (id == 0) return true;
+            if (buffer.Count == 0) return true;
+            InstanceID instance = new InstanceID();
+            instance.NetLane = id;
+            return _isValid(instance);
+        }
+
         public bool isValidT(uint id)
         {
             if (id == 0) return true;

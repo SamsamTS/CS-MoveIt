@@ -5,11 +5,7 @@ namespace MoveIt
 {
     public class MoveItLoader : LoadingExtensionBase
     {
-        private static bool isGameLoaded = false;
-        public static bool IsGameLoaded {
-            get => isGameLoaded;
-            private set => isGameLoaded = value;
-        }
+        public static bool IsGameLoaded { get; private set; } = false;
 
         public override void OnLevelLoaded(LoadMode mode)
         {

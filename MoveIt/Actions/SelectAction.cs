@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -25,6 +26,7 @@ namespace MoveIt
 
         public void Add(Instance instance)
         {
+            Debug.Log($"Adding:{MoveItTool.InstanceIDDebug(instance.id)}");
             if (!selection.Contains(instance))
             {
                 m_newSelection.Add(instance);

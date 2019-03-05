@@ -154,13 +154,14 @@ namespace MoveIt
             return newSelection;
         }
 
+        // Constructor for imported selections
         public CloneAction(InstanceState[] states, Vector3 centerPoint)
         {
             m_oldSelection = selection;
 
             foreach (InstanceState state in states)
             {
-                if (state.instance != null && state.info != null)
+                if (state.instance != null && state.Info != null)
                 {
                     savedStates.Add(state);
                 }
@@ -177,9 +178,9 @@ namespace MoveIt
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             Dictionary<Instance, Instance> clonedOrigin = new Dictionary<Instance, Instance>();
-            // Clone nodes first
             Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
+            // Clone nodes first
             foreach (InstanceState state in savedStates)
             {
                 if (state.instance.id.Type == InstanceType.NetNode)
@@ -301,7 +302,7 @@ namespace MoveIt
                 {
                     InstanceState newState = new InstanceState();
                     newState.instance = state.instance;
-                    newState.info = state.info;
+                    newState.Info = state.Info;
 
                     newState.position = matrix4x.MultiplyPoint(state.position - center);
                     newState.position.y = state.position.y + deltaPosition.y;

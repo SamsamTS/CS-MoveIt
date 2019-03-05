@@ -15,7 +15,7 @@ namespace MoveIt
 
             if (m_pauseMenu != null && m_pauseMenu.isVisible)
             {
-                if (m_toolState == ToolState.Default || m_toolState == ToolState.MouseDragging || m_toolState == ToolState.DrawingSelection)
+                if (ToolState == ToolStates.Default || ToolState == ToolStates.MouseDragging || ToolState == ToolStates.DrawingSelection)
                 {
                     ToolsModifierControl.SetTool<DefaultTool>();
                 }
@@ -23,7 +23,7 @@ namespace MoveIt
                 StopCloning();
                 StopAligning();
 
-                m_toolState = ToolState.Default;
+                ToolState = ToolStates.Default;
 
                 UIView.library.Hide("PauseMenu");
 
@@ -110,21 +110,46 @@ namespace MoveIt
                     m_marqueeInstances = null;
                     m_segmentGuide = default(NetSegment);
 
-                    switch (m_toolState)
+                    switch (ToolState)
                     {
-                        case ToolState.Default:
-                        case ToolState.Aligning:
+                        case ToolStates.Default:
+                        case ToolStates.Aligning:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 break;
                             }
-                        case ToolState.MouseDragging:
+                        case ToolStates.MouseDragging:
                             {
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
                                 Vector3 newMove = action.moveDelta;
                                 float newAngle = action.angleDelta;
                                 float newSnapAngle = 0f;
+
+                                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                {
+                                    if (dragging)
+                                    {
+                                        foreach (Instance i in Action.selection)
+                                        {
+                                            if (i is MoveableBuilding mb)
+                                            {
+                                                mb.Virtual = !fastMove;
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (Instance i in Action.selection)
+                                    {
+                                        if (i is MoveableBuilding mb)
+                                        {
+                                            mb.Virtual = fastMove;
+                                        }
+                                    }
+                                }
+                            
 
                                 if (m_leftClickTime > 0)
                                 {
@@ -171,7 +196,7 @@ namespace MoveIt
                                 UIToolOptionPanel.RefreshSnapButton();
                                 break;
                             }
-                        case ToolState.Cloning:
+                        case ToolStates.Cloning:
                             {
                                 if (m_rightClickTime != 0) break;
 
@@ -194,7 +219,7 @@ namespace MoveIt
                                 UIToolOptionPanel.RefreshSnapButton();
                                 break;
                             }
-                        case ToolState.RightDraggingClone:
+                        case ToolStates.RightDraggingClone:
                             {
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
@@ -214,7 +239,7 @@ namespace MoveIt
                                 UIToolOptionPanel.RefreshSnapButton();
                                 break;
                             }
-                        case ToolState.DrawingSelection:
+                        case ToolStates.DrawingSelection:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 m_marqueeInstances = GetMarqueeList(mouseRay);
@@ -233,9 +258,9 @@ namespace MoveIt
             direction = Vector3.zero;
             angle = 0;
 
-            float magnitude = 5f;
-            if (e.shift) magnitude = magnitude * 5f;
-            if (e.alt) magnitude = magnitude / 5f;
+            float magnitude = 4f;
+            if (e.shift) magnitude = magnitude * 4f;
+            if (e.alt) magnitude = magnitude / 4f;
 
             if (IsKeyDown(OptionsKeymapping.moveXpos, e))
             {
@@ -388,7 +413,7 @@ namespace MoveIt
                 netManager.GetClosestSegments(state.position, closeSegments, out int closeSegmentCount);
                 segmentList.UnionWith(closeSegments);
 
-                if (m_toolState != ToolState.Cloning)
+                if (ToolState != ToolStates.Cloning)
                 {
                     ingnoreSegments.UnionWith(state.instance.segmentList);
                 }

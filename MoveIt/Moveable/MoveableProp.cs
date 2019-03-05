@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System;
 using System.Collections.Generic;
 using ColossalFramework.Math;
 
@@ -21,7 +21,14 @@ namespace MoveIt
             }
         }
 
-        public MoveableProp(InstanceID instanceID) : base(instanceID) { }
+        public MoveableProp(InstanceID instanceID) : base(instanceID)
+        {
+            if (((PropInstance.Flags)PropManager.instance.m_props.m_buffer[instanceID.Prop].m_flags & PropInstance.Flags.Created) == PropInstance.Flags.None)
+            {
+                throw new Exception($"Prop #{instanceID.Prop} not found!");
+            }
+            Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -30,7 +37,7 @@ namespace MoveIt
             state.instance = this;
 
             ushort prop = id.Prop;
-            state.info = info;
+            state.Info = Info;
 
             state.position = PropManager.instance.m_props.m_buffer[prop].Position;
             state.angle = PropManager.instance.m_props.m_buffer[prop].Angle;
@@ -58,6 +65,11 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return PropManager.instance.m_props.m_buffer[id.Prop].Position;
             }
+            set
+            {
+                if (id.IsEmpty) PropManager.instance.m_props.m_buffer[id.Prop].Position = Vector3.zero;
+                else PropManager.instance.m_props.m_buffer[id.Prop].Position = value;
+            }
         }
 
         public override float angle
@@ -66,6 +78,11 @@ namespace MoveIt
             {
                 if (id.IsEmpty) return 0f;
                 return PropManager.instance.m_props.m_buffer[id.Prop].Angle;
+            }
+            set
+            {
+                if (id.IsEmpty) return;
+                PropManager.instance.m_props.m_buffer[id.Prop].Angle = value;
             }
         }
 
@@ -128,7 +145,7 @@ namespace MoveIt
             PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
 
             if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
-                state.info as PropInfo, newPosition, state.angle + deltaAngle, state.single))
+                state.Info.Prefab as PropInfo, newPosition, state.angle + deltaAngle, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
                 cloneID.Prop = clone;
@@ -145,7 +162,7 @@ namespace MoveIt
             Instance cloneInstance = null;
 
             if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
-                state.info as PropInfo, state.position, state.angle, state.single))
+                state.Info.Prefab as PropInfo, state.position, state.angle, state.single))
             {
                 InstanceID cloneID = default(InstanceID);
                 cloneID.Prop = clone;
@@ -193,7 +210,7 @@ namespace MoveIt
         {
             PropState state = instanceState as PropState;
 
-            PropInfo info = state.info as PropInfo;
+            PropInfo info = state.Info.Prefab as PropInfo;
             Randomizer randomizer = new Randomizer(state.instance.id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
@@ -214,7 +231,7 @@ namespace MoveIt
         {
             PropState state = instanceState as PropState;
 
-            PropInfo info = state.info as PropInfo;
+            PropInfo info = state.Info.Prefab as PropInfo;
             Randomizer randomizer = new Randomizer(state.instance.id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 

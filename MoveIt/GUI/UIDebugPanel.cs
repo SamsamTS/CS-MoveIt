@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    public class DebugPanel
+    internal class DebugPanel
     {
-        public UIPanel Panel;
-        public DebugPanel_ModTools ModTools = null;
-        private UILabel HoverLarge, HoverSmall;
+        internal UIPanel Panel;
+        internal DebugPanel_ModTools ModTools = null;
+        private UILabel HoverLarge, HoverSmall, ToolStatus;
         private InstanceID id, lastId;
 
-        public DebugPanel()
+        internal DebugPanel()
         {
             _initialise();
 
@@ -25,13 +25,13 @@ namespace MoveIt
         }
 
 
-        public void Visible(bool show)
+        internal void Visible(bool show)
         {
             Panel.isVisible = show;
         }
 
 
-        public void UpdateVisible()
+        internal void UpdateVisible()
         {
             if (MoveItTool.showDebugPanel)
             {
@@ -44,14 +44,22 @@ namespace MoveIt
         }
 
 
-        public void Update(InstanceID instanceId)
+        internal void Update(InstanceID instanceId)
         {
             id = instanceId;
+            Update();
+        }
+
+        internal void Update()
+        { 
             if (!MoveItTool.showDebugPanel)
             {
                 return;
             }
 
+            ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase})";
+
+            // End with updating the hovered item
             if (id == null)
             {
                 return;
@@ -78,7 +86,7 @@ namespace MoveIt
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}\n({info.m_class.m_service}.{info.m_class.m_subService})";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.Prop > 0)
+            else if (id.Prop > 0)
             {
                 string type = "P";
                 PropInfo info = PropManager.instance.m_props.m_buffer[id.Prop].Info;
@@ -87,21 +95,28 @@ namespace MoveIt
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.Tree > 0)
+            else if (id.NetLane > 0)
+            {
+                IInfo info = MoveItTool.PO.GetProcObj(id.NetLane).Info;
+                HoverLarge.text = $"{id.NetLane}: {info.Name}";
+                HoverSmall.text = $"\n";
+                if (isModToolsEnabled()) ModTools.Id = id;
+            }
+            else if (id.Tree > 0)
             {
                 TreeInfo info = TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
                 HoverLarge.text = $"T:{id.Tree}  {info.name}";
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.NetNode > 0)
+            else if (id.NetNode > 0)
             {
                 NetInfo info = NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
                 HoverLarge.text = $"N:{id.NetNode}  {info.name}";
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}";
                 if (isModToolsEnabled()) ModTools.Id = id;
             }
-            if (id.NetSegment > 0)
+            else if (id.NetSegment > 0)
             {
                 NetInfo info = NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
                 HoverLarge.text = $"S:{id.NetSegment}  {info.name}";
@@ -112,12 +127,10 @@ namespace MoveIt
             lastId = id;
         }
 
-
-        public static bool isModToolsEnabled()
+        internal static bool isModToolsEnabled()
         {
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 450877484uL || mod.name.Contains("ModTools")) && mod.isEnabled);
         }
-
 
         private void _initialise()
         {
@@ -125,7 +138,7 @@ namespace MoveIt
             Panel.name = "MoveIt_DebugPanel";
             Panel.atlas = ResourceLoader.GetAtlas("Ingame");
             Panel.backgroundSprite = "SubcategoriesPanel";
-            Panel.size = new Vector2(260, 62);
+            Panel.size = new Vector2(260, 78);
             Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 330, 3);
             Panel.clipChildren = true;
             Panel.isVisible = MoveItTool.showDebugPanel;
@@ -147,21 +160,30 @@ namespace MoveIt
             HoverSmall.clipChildren = true;
             HoverSmall.useDropShadow = true;
             HoverSmall.dropShadowOffset = new Vector2(1, -1);
+
+            ToolStatus = Panel.AddUIComponent<UILabel>();
+            ToolStatus.textScale = 0.65f;
+            ToolStatus.text = "";
+            ToolStatus.relativePosition = new Vector3(5, 64);
+            ToolStatus.width = HoverSmall.parent.width - 20;
+            ToolStatus.clipChildren = true;
+            ToolStatus.useDropShadow = true;
+            ToolStatus.dropShadowOffset = new Vector2(1, -1);
         }
     }
 
 
-    public class DebugPanel_ModTools
+    internal class DebugPanel_ModTools
     {
-        public InstanceID Id { get; set; }
-        public UIPanel Parent { get; set; }
-        public UIButton btn;
+        internal InstanceID Id { get; set; }
+        internal UIPanel Parent { get; set; }
+        internal UIButton btn;
         private readonly object ModTools, SceneExplorer;
         private readonly Type tModTools, tSceneExplorer, tReferenceChain;
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
         private readonly object rcBuildings, rcProps, rcTrees, rcNodes, rcSegments;
 
-        public DebugPanel_ModTools(UIPanel parent)
+        internal DebugPanel_ModTools(UIPanel parent)
         {
             try
             {
@@ -219,6 +241,8 @@ namespace MoveIt
                 rcNodes = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(FieldInfo) }, null).Invoke(rcNodes, new object[] { typeof(NetManager).GetField("m_nodes") });
                 rcNodes = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(FieldInfo) }, null).Invoke(rcNodes, new object[] { typeof(Array16<NetNode>).GetField("m_buffer") });
                 //Debug.Log($"rcNodes:{rcNodes}\nrcSegments:{rcSegments}");
+
+                //rcPO = MoveItTool.PO.GetReferenceChain(tReferenceChain);
             }
             catch (ReflectionTypeLoadException)
             {
@@ -245,7 +269,7 @@ namespace MoveIt
             btn.tooltip = "Open in ModTools Scene Explorer";
             btn.size = new Vector2(20, 20);
             btn.textPadding = new RectOffset(1, 0, 5, 1);
-            btn.relativePosition = new Vector3(parent.width - 24, parent.height - 24);
+            btn.relativePosition = new Vector3(parent.width - 24, 22);
             btn.eventClicked += _toModTools;
 
             btn.atlas = ResourceLoader.GetAtlas("Ingame");

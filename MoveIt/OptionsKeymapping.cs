@@ -7,13 +7,51 @@ using UnityEngine;
 
 namespace MoveIt
 {
+    public class OptionsKeymappingMain : OptionsKeymapping
+    {
+        private void Awake()
+        {
+            AddKeymapping("Toggle Tool", toggleTool);
+            AddKeymapping("Move North", moveZpos);
+            AddKeymapping("Move South", moveZneg);
+            AddKeymapping("Move East", moveXpos);
+            AddKeymapping("Move West", moveXneg);
+            AddKeymapping("Move Up", moveYpos);
+            AddKeymapping("Move Down", moveYneg);
+            AddKeymapping("Rotate Counterclockwise", turnNeg);
+            AddKeymapping("Rotate Clockwise", turnPos);
+            AddKeymapping("Undo", undo);
+            AddKeymapping("Redo", redo);
+            AddKeymapping("Copy", copy);
+            AddKeymapping("Bulldoze", bulldoze);
+            AddKeymapping("Toggle Grid View", viewGrid);
+            AddKeymapping("Toggle Underground View", viewUnderground);
+            AddKeymapping("Step Over", stepOverKey);
+            AddKeymapping("Align Heights", alignHeights);
+            AddKeymapping("Align Slope", alignSlope);
+            AddKeymapping("Quick Align Slope", alignSlopeQuick);
+            AddKeymapping("Align In-Place", alignInplace);
+            AddKeymapping("Align As Group", alignGroup);
+            AddKeymapping("Align Randomly", alignRandom);
+        }
+    }
+
+    public class OptionsKeymappingPO : OptionsKeymapping
+    {
+        private void Awake()
+        {
+            AddKeymapping("Toggle PO Active/Inactive", activatePO);
+            AddKeymapping("Convert to PO", convertToPO);
+        }
+    }
+
     public class OptionsKeymapping : UICustomControl
     {
-        private static readonly string kKeyBindingTemplate = "KeyBindingTemplate";
+        protected static readonly string kKeyBindingTemplate = "KeyBindingTemplate";
 
-        private SavedInputKey m_EditingBinding;
+        protected SavedInputKey m_EditingBinding;
 
-        private string m_EditingBindingCategory;
+        protected string m_EditingBindingCategory;
 
         public static readonly SavedInputKey toggleTool = new SavedInputKey("toggleTool", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.M, false, false, false), true);
 
@@ -33,6 +71,12 @@ namespace MoveIt
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
 
         public static readonly SavedInputKey copy = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
+        public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
+        public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
+        public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
+
+        public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
+        public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);
 
         public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);
 
@@ -43,36 +87,12 @@ namespace MoveIt
         public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
 
-        /*public static readonly SavedInputKey export = new SavedInputKey("export", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.X, true, false, false), false);
-        public static readonly SavedInputKey import = new SavedInputKey("import", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.V, true, false, false), false);
-        */
+        //public static readonly SavedInputKey testKey = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, false, false, true), true);
+        public static readonly SavedInputKey ShowPO = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, true, false, true), true);
 
-        private int count = 0;
+        protected int count = 0;
 
-        private void Awake()
-        {
-            AddKeymapping("Toggle Tool", toggleTool);
-            AddKeymapping("Move North", moveZpos);
-            AddKeymapping("Move South", moveZneg);
-            AddKeymapping("Move East", moveXpos);
-            AddKeymapping("Move West", moveXneg);
-            AddKeymapping("Move Up", moveYpos);
-            AddKeymapping("Move Down", moveYneg);
-            AddKeymapping("Rotate Counterclockwise", turnNeg);
-            AddKeymapping("Rotate Clockwise", turnPos);
-            AddKeymapping("Undo", undo);
-            AddKeymapping("Redo", redo);
-            AddKeymapping("Copy", copy);
-            AddKeymapping("Step Over", stepOverKey);
-            AddKeymapping("Align Heights", alignHeights);
-            AddKeymapping("Align Slope", alignSlope);
-            AddKeymapping("Quick Align Slope", alignSlopeQuick);
-            AddKeymapping("Align In-Place", alignInplace);
-            AddKeymapping("Align As Group", alignGroup);
-            AddKeymapping("Align Randomly", alignRandom);
-        }
-
-        private void AddKeymapping(string label, SavedInputKey savedInputKey)
+        protected void AddKeymapping(string label, SavedInputKey savedInputKey)
         {
             UIPanel uIPanel = component.AttachUIComponent(UITemplateManager.GetAsGameObject(kKeyBindingTemplate)) as UIPanel;
             if (count++ % 2 == 1) uIPanel.backgroundSprite = null;
@@ -87,47 +107,47 @@ namespace MoveIt
             uIButton.objectUserData = savedInputKey;
         }
 
-        private void OnEnable()
+        protected void OnEnable()
         {
             LocaleManager.eventLocaleChanged += new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
         }
 
-        private void OnDisable()
+        protected void OnDisable()
         {
             LocaleManager.eventLocaleChanged -= new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
         }
 
-        private void OnLocaleChanged()
+        protected void OnLocaleChanged()
         {
             this.RefreshBindableInputs();
         }
 
-        private bool IsModifierKey(KeyCode code)
+        protected bool IsModifierKey(KeyCode code)
         {
             return code == KeyCode.LeftControl || code == KeyCode.RightControl || code == KeyCode.LeftShift || code == KeyCode.RightShift || code == KeyCode.LeftAlt || code == KeyCode.RightAlt;
         }
 
-        private bool IsControlDown()
+        protected bool IsControlDown()
         {
             return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         }
 
-        private bool IsShiftDown()
+        protected bool IsShiftDown()
         {
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
 
-        private bool IsAltDown()
+        protected bool IsAltDown()
         {
             return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
         }
 
-        private bool IsUnbindableMouseButton(UIMouseButton code)
+        protected bool IsUnbindableMouseButton(UIMouseButton code)
         {
             return code == UIMouseButton.Left || code == UIMouseButton.Right;
         }
 
-        private KeyCode ButtonToKeycode(UIMouseButton button)
+        protected KeyCode ButtonToKeycode(UIMouseButton button)
         {
             if (button == UIMouseButton.Left)
             {
@@ -160,7 +180,7 @@ namespace MoveIt
             return KeyCode.None;
         }
 
-        private void OnBindingKeyDown(UIComponent comp, UIKeyEventParameter p)
+        protected void OnBindingKeyDown(UIComponent comp, UIKeyEventParameter p)
         {
             if (this.m_EditingBinding != null && !this.IsModifierKey(p.keycode))
             {
@@ -180,7 +200,7 @@ namespace MoveIt
             }
         }
 
-        private void OnBindingMouseDown(UIComponent comp, UIMouseEventParameter p)
+        protected void OnBindingMouseDown(UIComponent comp, UIMouseEventParameter p)
         {
             if (this.m_EditingBinding == null)
             {
@@ -208,7 +228,7 @@ namespace MoveIt
             }
         }
 
-        private void RefreshBindableInputs()
+        protected void RefreshBindableInputs()
         {
             foreach (UIComponent current in component.GetComponentsInChildren<UIComponent>())
             {
@@ -229,7 +249,7 @@ namespace MoveIt
             }
         }
 
-        internal InputKey GetDefaultEntry(string entryName)
+        protected InputKey GetDefaultEntry(string entryName)
         {
             FieldInfo field = typeof(DefaultSettings).GetField(entryName, BindingFlags.Static | BindingFlags.Public);
             if (field == null)
@@ -244,7 +264,7 @@ namespace MoveIt
             return 0;
         }
 
-        private void RefreshKeyMapping()
+        protected void RefreshKeyMapping()
         {
             foreach (UIComponent current in component.GetComponentsInChildren<UIComponent>())
             {

@@ -37,7 +37,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.3.2";
+        public const string version = "2.4.0";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -62,8 +62,8 @@ namespace MoveIt
         {
             try
             {
-                UIHelper group = helper.AddGroup(Name) as UIHelper;
-                UIPanel panel = group.self as UIPanel;
+                UIHelperBase group = helper.AddGroup(Name);
+                UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
                 UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
                 {
@@ -80,7 +80,7 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Check this if you don't want to see the tips.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Auto-close Align Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
@@ -92,26 +92,22 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Prefer fast, low-detail moving (hold Shift to temporarily switch)", MoveItTool.fastMove.value, (b) =>
+                {
+                    MoveItTool.fastMove.value = b;
+                });
+                checkBox.tooltip = "Helps you position objects when your frame-rate is poor.";
+
+                group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
                 });
 
-                group.AddSpace(10);
-
-                checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: [RWB] FxUK's Brushes", MoveItTool.brushesAsSurfaces.value, (b) =>
-                {
-                    MoveItTool.brushesAsSurfaces.value = b;
-                });
-                checkBox = (UICheckBox)group.AddCheckbox("Filter as surface: Extras", MoveItTool.extraAsSurfaces.value, (b) =>
-                {
-                    MoveItTool.extraAsSurfaces.value = b;
-                });
-                checkBox.tooltip = "Ploppable Asphalt Decals, Ronyx69's Docks, Deczaah's Surfaces";
-
-                group.AddSpace(10);
+                group.AddSpace(15);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {
@@ -125,18 +121,22 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
 
-                group.AddSpace(10);
+                group.AddSpace(15);
 
-                panel.gameObject.AddComponent<OptionsKeymapping>();
+                ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
+<<<<<<< HEAD
                 group.AddSpace(20);
+=======
+                group.AddSpace(15);
+>>>>>>> PO
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", _cleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
 
                 group.AddSpace(20);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n(Affects performance, do not enable unless you have a specific reason)", MoveItTool.showDebugPanel.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n", MoveItTool.showDebugPanel.value, (b) =>
                 {
                     MoveItTool.showDebugPanel.value = b;
                     if (MoveItTool.debugPanel != null)
@@ -146,12 +146,74 @@ namespace MoveIt
                 });
                 checkBox.name = "MoveIt_DebugPanel";
 
-                group.AddSpace(10);
+                UILabel debugLabel = panel.AddUIComponent<UILabel>();
+                debugLabel.name = "debugLabel";
+                debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
+                debugLabel.eventDoubleClick += DebugLabel_eventClick;
+
+                group.AddSpace(5);
+
+                if (!MoveItTool.HidePO)
+                {
+                    group = helper.AddGroup("Procedural Objects");
+                    panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+
+                    UILabel poLabel = panel.AddUIComponent<UILabel>();
+                    poLabel.name = "poLabel";
+                    poLabel.text = PO_Manager.getVersion();
+
+                    UILabel poWarning = panel.AddUIComponent<UILabel>();
+                    poWarning.name = "poWarning";
+                    poWarning.text = "Procedural Objects (PO) support is in beta. At present you can not clone PO objects, \n" +
+                        "redo Convert-to-PO actions or undo Bulldoze actions. This means if you delete PO objects \n" +
+                        "with Move It, they are immediately PERMANENTLY gone.\n ";
+
+                    checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                    {
+                        MoveItTool.POOnlySelectedAreVisible.value = b;
+                        if (MoveItTool.PO != null)
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
+                    });
+                    checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
+
+                    checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
+                    {
+                        MoveItTool.POHighlightUnselected.value = b;
+                        if (MoveItTool.PO != null)
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
+                    });
+                    checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
+
+                    group.AddSpace(15);
+
+                    panel.gameObject.AddComponent<OptionsKeymappingPO>();
+
+                    group.AddSpace(15);
+                }
             }
             catch (Exception e)
             {
                 DebugUtils.Log("OnSettingsUI failed");
                 DebugUtils.LogException(e);
+            }
+        }
+
+        private void DebugLabel_eventClick(UIComponent component, UIMouseEventParameter eventParam)
+        {
+            MoveItTool.HidePO.value = !MoveItTool.HidePO;
+            if (MoveItTool.HidePO)
+            {
+                ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
+                    "PO Mode is no longer enabled.";
+            }
+            else
+            {
+                ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
+                    "PO Mode enabled! Restart the game to view PO options.";
             }
         }
 

@@ -89,6 +89,9 @@ namespace MoveIt
                 case "Trees":
                     MoveItTool.filterTrees = active;
                     break;
+                case "PO":
+                    MoveItTool.filterProcs = active;
+                    break;
                 case "Nodes":
                     MoveItTool.filterNodes = active;
                     break;
@@ -125,6 +128,9 @@ namespace MoveIt
                 case "Trees":
                     MoveItTool.filterTrees = !MoveItTool.filterTrees;
                     break;
+                case "PO":
+                    MoveItTool.filterProcs = !MoveItTool.filterProcs;
+                    break;
                 case "Nodes":
                     MoveItTool.filterNodes = !MoveItTool.filterNodes;
                     break;
@@ -145,27 +151,21 @@ namespace MoveIt
 
         public static bool IsSurface(BuildingInfo info)
         {
-            if (MoveItTool.extraAsSurfaces)
+            foreach (string subname in SurfaceExtraBuildingNames)
             {
-                foreach (string subname in SurfaceExtraBuildingNames)
+                if (subname.Length > info.name.Length) continue;
+                if (subname == info.name.Substring(0, subname.Length))
                 {
-                    if (subname.Length > info.name.Length) continue;
-                    if (subname == info.name.Substring(0, subname.Length))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
-            if (MoveItTool.brushesAsSurfaces)
+            foreach (string subname in SurfaceBrushNames)
             {
-                foreach (string subname in SurfaceBrushNames)
+                if (subname.Length > info.name.Length) continue;
+                if (subname == info.name.Substring(0, subname.Length))
                 {
-                    if (subname.Length > info.name.Length) continue;
-                    if (subname == info.name.Substring(0, subname.Length))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -179,24 +179,21 @@ namespace MoveIt
                 return true;
             }
 
-            if (MoveItTool.extraAsSurfaces)
+            if (info.m_isDecal)
             {
-                if (info.m_isDecal)
+                if (Array.Exists(SurfaceExtraDecalNames, s => s.Equals(info.m_mesh.name)))
                 {
-                    if (Array.Exists(SurfaceExtraDecalNames, s => s.Equals(info.m_mesh.name)))
+                    return true;
+                }
+            }
+            else
+            {
+                foreach (string subname in SurfaceExtraPropNames)
+                {
+                    if (subname.Length > info.name.Length) continue;
+                    if (subname == info.name.Substring(0, subname.Length))
                     {
                         return true;
-                    }
-                }
-                else
-                {
-                    foreach (string subname in SurfaceExtraPropNames)
-                    {
-                        if (subname.Length > info.name.Length) continue;
-                        if (subname == info.name.Substring(0, subname.Length))
-                        {
-                            return true;
-                        }
                     }
                 }
             }
@@ -245,7 +242,6 @@ namespace MoveIt
 
             if (MoveItTool.filterBuildings)
             {
-                //Filter pillars and pylons out of select
                 if (MoveItTool.altSelectNodeBuildings)
                 {
                     if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
@@ -269,23 +265,13 @@ namespace MoveIt
 
             if (info.m_isDecal)
             {
-                if (MoveItTool.extraAsSurfaces)
+                if (MoveItTool.filterSurfaces && IsSurface(info))
                 {
-                    if (MoveItTool.filterSurfaces && IsSurface(info))
-                    {
-                        return true;
-                    }
-                    if (MoveItTool.filterDecals && !IsSurface(info))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                else
+                if (MoveItTool.filterDecals && !IsSurface(info))
                 {
-                    if (MoveItTool.filterDecals)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
                 return false;
             }
@@ -308,7 +294,7 @@ namespace MoveIt
 
         public static bool Filter(NetNode node)
         {
-            if (MoveItTool.instance.m_alignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.m_alignMode == MoveItTool.AlignModes.Inplace)
+            if (MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Inplace)
             {
                 return false;
             }

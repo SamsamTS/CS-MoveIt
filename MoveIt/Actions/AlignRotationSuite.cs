@@ -47,7 +47,7 @@ namespace MoveIt
             {
                 if (state.instance.isValid)
                 {
-                    if (state.instance is MoveableBuilding || state.instance is MoveableProp)
+                    if (state.instance is MoveableBuilding || state.instance is MoveableProp || state.instance is MoveableProc)
                     {
                         firstValidAngle = state.angle;
                         break;
@@ -56,7 +56,7 @@ namespace MoveIt
             }
             angleDelta = 0 - firstValidAngle + newAngle;
             PoR = bounds.center;
-            //Debug.Log($"Ready, mode is {Mod.mode},{GetType()} - All delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}");
+            //Debug.Log($"{GetType()}\nAll delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}\n0 - {firstValidAngle} + {newAngle} = {angleDelta}");
 
             foreach (InstanceState state in m_states)
             {
@@ -91,18 +91,17 @@ namespace MoveIt
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mb.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
 
-                        BuildingInfo prefab = (BuildingInfo)state.info;
+                        BuildingInfo prefab = (BuildingInfo)state.Info.Prefab;
                         ushort id = mb.id.Building;
                         Building building = BuildingManager.instance.m_buildings.m_buffer[id];
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
+                            //Debug.Log("PARKING (ATA.Do)");
                             BuildingManager.instance.UpdateParkingSpaces(id, ref building);
                         }
 
                         BuildingManager.instance.UpdateBuildingRenderer(id, true);
-
-                        //Debug.Log($"Building {state.prefabName} #{mb.id.Building}:{BuildingManager.instance.m_buildings.m_buffer[mb.id.Building].m_angle} (delta:{angleDelta} MB-angle:{mb.angle}, new:{angle}, old:{oldAngle})");
                     }
                     else if (state.instance is MoveableProp mp)
                     {
@@ -110,24 +109,36 @@ namespace MoveIt
                         {
                             angleDelta = 0 - mp.angle + newAngle;
                             PoR = state.position;
-                            //Debug.Log($"P:Each ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}, bounds Size:{bounds.size}");
                         }
                         else if (this is AlignRandomAction)
                         {
                             angleDelta = 0 - mp.angle + (float)(random.NextDouble() * Math.PI * 2);
                             PoR = state.position;
-                            //Debug.Log($"P:Random ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}");
                         }
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mp.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
-
-                        //state.instance.Move(state.instance.position, angle);
+                    }
+                    else if (state.instance is MoveableProc mpo)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - mpo.angle + newAngle;
+                            PoR = state.position;
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - mpo.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                        }
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        mpo.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
                     }
                 }
             }
 
-            MoveItTool.instance.m_alignMode = MoveItTool.AlignModes.Off;
-            MoveItTool.instance.m_toolState = MoveItTool.ToolState.Default;
+            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
+            MoveItTool.instance.AlignMode = MoveItTool.AlignModes.Off;
+            MoveItTool.instance.AlignToolPhase = 0;
             UIAlignTools.UpdateAlignTools();
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));

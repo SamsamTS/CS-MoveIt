@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -50,10 +50,18 @@ namespace MoveIt
                     InstanceID pillarID = new InstanceID();
                     pillarID.Building = nodeBuffer[id.NetNode].m_building;
 
+<<<<<<< HEAD
                     if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
                     {
                         MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
 
+=======
+
+                    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
+                    {
+                        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
+
+>>>>>>> PO
                         if (pillarInstance.isValid)
                         {
                             return pillarInstance;
@@ -83,7 +91,15 @@ namespace MoveIt
             }
         }
 
-        public MoveableNode(InstanceID instanceID) : base(instanceID) { }
+        public MoveableNode(InstanceID instanceID) : base(instanceID)
+        {
+            if ((NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].m_flags & NetNode.Flags.Created) == NetNode.Flags.None)
+            {
+                Debug.Log($"Node #{instanceID.NetNode} not found!\n{Environment.StackTrace}");
+                // TODO throw new Exception($"Node #{instanceID.NetNode} not found!");
+            }
+            Info = new Info_Prefab(NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -92,14 +108,18 @@ namespace MoveIt
             NodeState state = new NodeState();
 
             state.instance = this;
-            state.info = info;
+            state.Info = Info;
 
             state.position = nodeBuffer[node].m_position;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
             state.flags = nodeBuffer[node].m_flags;
 
+<<<<<<< HEAD
             MoveableBuilding pillarInstance = Pillar;
+=======
+            //MoveableBuilding pillarInstance = Pillar;
+>>>>>>> PO
             if (Pillar != null)
             {
                 state.pillarState = Pillar.GetState() as BuildingState;
@@ -154,11 +174,17 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return nodeBuffer[id.NetNode].m_position;
             }
+            set
+            {
+                if (id.IsEmpty) nodeBuffer[id.NetNode].m_position = Vector3.zero;
+                else nodeBuffer[id.NetNode].m_position = value;
+            }
         }
 
         public override float angle
         {
             get { return 0f; }
+            set { }
         }
 
         public override bool isValid
@@ -184,7 +210,8 @@ namespace MoveIt
 
             Move(newPosition, 0);
 
-            if(state.pillarState != null)
+
+            if (state.pillarState != null)
             {
                 Vector3 subPosition = state.pillarState.position - center;
                 subPosition = matrix4x.MultiplyPoint(subPosition);
@@ -363,7 +390,7 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 newPosition, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;
@@ -388,7 +415,7 @@ namespace MoveIt
 
             MoveableNode cloneInstance = null;
 
-            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (NetManager.instance.CreateNode(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 state.position, SimulationManager.instance.m_currentBuildIndex))
             {
                 SimulationManager.instance.m_currentBuildIndex++;

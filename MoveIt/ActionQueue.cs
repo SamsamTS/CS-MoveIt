@@ -18,7 +18,7 @@ namespace MoveIt
             {
                 if (action == null) continue;
                 //Debug.Log($"{action.GetType()}");
-                action.UpdateNodeIdInState(oldId, newId);
+                action.UpdateNodeIdInSegmentState(oldId, newId);
             }
         }
 
@@ -176,6 +176,12 @@ namespace MoveIt
 
                 return m_actions[m_current];
             }
+        }
+
+        public string DebugQueue()
+        {
+            string t = (current == null ? "null" : current.GetType().ToString());
+            return $"{m_current} ({m_tail}/{m_head}) - <{t}>";
         }
     }
 }

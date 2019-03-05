@@ -16,6 +16,8 @@ namespace MoveIt
         public bool autoCurve;
         public NetSegment segmentCurve;
 
+        private bool containsNetwork = false;
+
         public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
 
         public TransformAction()
@@ -25,6 +27,11 @@ namespace MoveIt
                 if (instance.isValid)
                 {
                     savedStates.Add(instance.GetState());
+
+                    if (instance is MoveableNode || instance is MoveableSegment)
+                    {
+                        containsNetwork = true;
+                    }
                 }
             }
 
@@ -33,7 +40,7 @@ namespace MoveIt
 
         public override void Do()
         {
-            Bounds bounds = GetTotalBounds(false);
+            Bounds originalBounds = GetTotalBounds(false);
 
             Matrix4x4 matrix4x = default(Matrix4x4);
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -51,8 +58,9 @@ namespace MoveIt
                 }
             }
 
-            UpdateArea(bounds);
-            UpdateArea(GetTotalBounds(false));
+            bool fast = MoveItTool.fastMove != Event.current.shift;
+            UpdateArea(originalBounds, !fast || containsNetwork);
+            UpdateArea(GetTotalBounds(false), !fast);
         }
 
         public override void Undo()
@@ -66,6 +74,34 @@ namespace MoveIt
 
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
+        }
+
+        public void InitialiseDrag()
+        {
+            MoveItTool.dragging = true;
+
+            foreach (InstanceState instanceState in savedStates)
+            {
+                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
+                if (mb != null)
+                {
+                    mb.InitialiseDrag();
+                }
+            }
+        }
+
+        public void FinaliseDrag()
+        {
+            MoveItTool.dragging = false;
+
+            foreach (InstanceState instanceState in savedStates)
+            {
+                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
+                if (mb != null)
+                {
+                    mb.FinaliseDrag();
+                }
+            }
         }
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
@@ -93,7 +129,7 @@ namespace MoveIt
                 {
                     InstanceState newState = new InstanceState();
                     newState.instance = state.instance;
-                    newState.info = state.info;
+                    newState.Info = state.Info;
 
                     newState.position = matrix4x.MultiplyPoint(state.position - center);
                     newState.position.y = state.position.y + deltaPosition.y;

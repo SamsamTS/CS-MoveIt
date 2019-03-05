@@ -39,10 +39,14 @@ namespace MoveIt
         {
             get
             {
+                //string msg = $"{Info.Name}: ";
+
                 ushort building = buildingBuffer[id.Building].m_subBuilding;
                 int count = 0;
                 while (building != 0)
                 {
+                    //msg += $"B{building}, ";
+
                     InstanceID buildingID = default(InstanceID);
                     buildingID.Building = building;
 
@@ -60,6 +64,8 @@ namespace MoveIt
                 count = 0;
                 while (node != 0)
                 {
+                    //msg += $"N{node}, ";
+
                     ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                     if (layer != ItemClass.Layer.PublicTransport)
                     {
@@ -69,6 +75,10 @@ namespace MoveIt
                     }
 
                     node = nodeBuffer[node].m_nextBuildingNode;
+                    if ((nodeBuffer[node].m_flags & NetNode.Flags.Created) != NetNode.Flags.Created)
+                    {
+                        node = 0;
+                    }
 
                     if (++count > 32768)
                     {
@@ -76,6 +86,8 @@ namespace MoveIt
                         break;
                     }
                 }
+
+                //Debug.Log($"{msg}");
             }
         }
 
@@ -110,7 +122,14 @@ namespace MoveIt
             }
         }
 
-        public MoveableBuilding(InstanceID instanceID) : base(instanceID) { }
+        public MoveableBuilding(InstanceID instanceID) : base(instanceID)
+        {
+            if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
+            {
+                throw new Exception($"Building #{instanceID.Building} not found!");
+            }
+            Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -122,7 +141,7 @@ namespace MoveIt
             BuildingState state = new BuildingState
             {
                 instance = this,
-                info = info,
+                Info = Info,
                 position = buildingBuffer[id.Building].m_position,
                 angle = buildingBuffer[id.Building].m_angle,
                 flags = buildingBuffer[id.Building].m_flags,
@@ -154,6 +173,8 @@ namespace MoveIt
                 state.subStates = subStates.ToArray();
 
             return state;
+
+
         }
 
         public override void SetState(InstanceState state)
@@ -183,6 +204,11 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return buildingBuffer[id.Building].m_position;
             }
+            set
+            {
+                if (id.IsEmpty) return;
+                buildingBuffer[id.Building].m_position = value;
+            }
         }
 
         public override float angle
@@ -192,6 +218,11 @@ namespace MoveIt
                 if (id.IsEmpty) return 0f;
                 return buildingBuffer[id.Building].m_angle;
             }
+            set
+            {
+                if (id.IsEmpty) return;
+                buildingBuffer[id.Building].m_angle = value;
+            }
         }
 
         public override bool isValid
@@ -200,6 +231,39 @@ namespace MoveIt
             {
                 if (id.IsEmpty) return false;
                 return (buildingBuffer[id.Building].m_flags & Building.Flags.Created) != Building.Flags.None;
+            }
+        }
+
+        public int Length
+        {
+            get
+            {
+                return buildingBuffer[id.Building].m_length;
+            }
+        }
+
+        private bool _virtual = false;
+        public bool Virtual
+        {
+            get => _virtual;
+            set
+            {
+                if (value == true)
+                {
+                    if (_virtual == false)
+                    {
+                        _virtual = true;
+                        SetHiddenFlag(true);
+                    }
+                }
+                else
+                {
+                    if (_virtual == true)
+                    { 
+                        _virtual = false;
+                        SetHiddenFlag(false);
+                    }
+                }
             }
         }
 
@@ -217,16 +281,6 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
 
-            // TODO: when should the flag be set?
-            if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
-            {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
-            {
-                RemoveFixedHeightFlag(id.Building);
-            }
-
             Move(newPosition, state.angle + deltaAngle);
 
             if (state.subStates != null)
@@ -237,6 +291,7 @@ namespace MoveIt
                     subPosition = matrix4x.MultiplyPoint(subPosition);
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
+                    //Debug.Log($"{subState.instance.GetType()}");
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
                     if (subState.instance is MoveableNode mn)
                     {
@@ -256,6 +311,7 @@ namespace MoveIt
                                 subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
+                                //Debug.Log($"  - {subSubState.instance.GetType()}");
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
                                 if (subSubState.instance is MoveableNode mn2)
                                 {
@@ -264,11 +320,101 @@ namespace MoveIt
                                         mn2.Pillar.Move(subSubPosition, subSubState.angle + deltaAngle);
                                     }
                                 }
+<<<<<<< HEAD
+=======
                             }
                         }
                     }
                 }
             }
+
+            // TODO: when should the flag be set?
+            if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
+            {
+                AddFixedHeightFlag(id.Building);
+            }
+            else
+            {
+                RemoveFixedHeightFlag(id.Building);
+            }
+        }
+
+        private void SetHiddenFlag(bool hide)
+        {
+            buildingBuffer[id.Building].m_flags = ToggleHiddenFlag(id.Building, hide);
+
+            foreach (Instance sub in subInstances)
+            {
+                if (sub is MoveableNode mn)
+                {
+                    if (mn.Pillar != null)
+                    {
+                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleHiddenFlag(mn.Pillar.id.Building, hide);
+                    }
+                }
+
+                if (sub is MoveableBuilding bs)
+                {
+                    buildingBuffer[sub.id.Building].m_flags = ToggleHiddenFlag(sub.id.Building, hide);
+
+                    Building subBuilding = (Building)sub.data;
+
+                    foreach (Instance subSub in bs.subInstances)
+                    {
+                        if (subSub is MoveableNode mn2)
+                        {
+                            if (mn2.Pillar != null)
+                            {
+                                buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleHiddenFlag(mn2.Pillar.id.Building, hide);
+>>>>>>> PO
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static Building.Flags ToggleHiddenFlag(ushort id, bool hide)
+        {
+            if (hide)
+            {
+                if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden)
+                {
+                    throw new Exception($"Building already hidden");
+                }
+
+                return buildingBuffer[id].m_flags | Building.Flags.Hidden;
+            }
+            else
+            {
+                if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
+                {
+                    throw new Exception($"Building not hidden");
+                }
+            }
+
+            return buildingBuffer[id].m_flags & ~Building.Flags.Hidden;
+        }
+
+        public void InitialiseDrag()
+        {
+            //Debug.Log($"INITIALISE DRAG");
+            Virtual = false;
+
+            Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
+            bounds.Expand(64f);
+            Action.UpdateArea(bounds);
+        }
+
+        public void FinaliseDrag()
+        {
+            //Debug.Log($"FINALISE DRAG");
+            //SetHiddenFlag(false);
+            Virtual = false;
+
+            Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
+            bounds.Expand(64f);
+            Action.UpdateArea(bounds);
         }
 
         public override void Move(Vector3 location, float angle)
@@ -285,6 +431,7 @@ namespace MoveIt
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             AddFixedHeightFlag(id.Building);
 
+            //Debug.Log($"SETHEIGHT {id.Building}:{Info.Name}");
             foreach (Instance subInstance in subInstances)
             {
                 Vector3 subPosition = subInstance.position;
@@ -320,7 +467,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
             MoveableBuilding cloneInstance = null;
-            BuildingInfo info = state.info as BuildingInfo;
+            BuildingInfo info = state.Info.Prefab as BuildingInfo;
 
             float newAngle = state.angle + deltaAngle;
             if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
@@ -390,7 +537,7 @@ namespace MoveIt
             BuildingState state = instanceState as BuildingState;
 
             MoveableBuilding cloneInstance = null;
-            BuildingInfo info = state.info as BuildingInfo;
+            BuildingInfo info = state.Info.Prefab as BuildingInfo;
 
             if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 info, state.position, state.angle,
@@ -464,8 +611,9 @@ namespace MoveIt
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
             Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
 
-            foreach (Instance subInstance in subInstances)
+            if (depth < 1)
             {
+<<<<<<< HEAD
                 if (subInstance.id.Building > 0)
                 {
                     if (depth < 1)
@@ -476,9 +624,22 @@ namespace MoveIt
                 else
                 {
                     bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+=======
+                foreach (Instance subInstance in subInstances)
+                {
+                    if (subInstance.id.Building > 0)
+                    {
+                            bounds.Encapsulate(((MoveableBuilding)subInstance).GetBuildingBounds(depth + 1, ignoreSegments));
+                    }
+                    else
+                    {
+                        bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                    }
+>>>>>>> PO
                 }
             }
 
+            //Debug.Log($"{depth} - {bounds}");
             return bounds;
         }
 
@@ -546,7 +707,7 @@ namespace MoveIt
         {
             BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = state.info as BuildingInfo;
+            BuildingInfo buildingInfo = state.Info.Prefab as BuildingInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;
@@ -579,7 +740,7 @@ namespace MoveIt
         {
             BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = state.info as BuildingInfo;
+            BuildingInfo buildingInfo = state.Info.Prefab as BuildingInfo;
             Color color = GetColor(state.instance.id.Building, buildingInfo);
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
@@ -605,6 +766,28 @@ namespace MoveIt
                     float angle = buildingInfo.m_subBuildings[i].m_angle * Mathf.Deg2Rad + newAngle;
                     buildingInfo2.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
                     BuildingTool.RenderGeometry(cameraInfo, buildingInfo2, 0, position, angle, true, color);
+                }
+            }
+        }
+
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor, int depth = 0)
+        {
+            BuildingInfo buildingInfo = Info.Prefab as BuildingInfo;
+            Color color = GetColor(id.Building, buildingInfo);
+
+            buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
+            BuildingTool.RenderGeometry(cameraInfo, buildingInfo, Length, position, angle, false, color);
+
+            if (depth < 1)
+            {
+                foreach (Instance subInstance in subInstances)
+                {
+                    MoveableBuilding msb = subInstance as MoveableBuilding;
+
+                    if (msb != null)
+                    {
+                        msb.RenderGeometry(cameraInfo, toolColor, depth + 1);
+                    }
                 }
             }
         }
@@ -657,11 +840,12 @@ namespace MoveIt
         {
             BuildingInfo info = data.Info;
             RemoveFromGrid(building, ref data);
-            if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
-            {
-                Debug.Log("PARKING (RB)");
-                BuildingManager.instance.UpdateParkingSpaces(building, ref data);
-            }
+
+            //if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
+            //{
+            //    Debug.Log($"PARKING (RB)\n#{building}:{info.name}");
+            //    BuildingManager.instance.UpdateParkingSpaces(building, ref data);
+            //}
 
             data.m_position = position;
             data.m_angle = angle;

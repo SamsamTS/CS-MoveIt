@@ -12,7 +12,7 @@ namespace MoveIt
         public abstract void Undo();
         public abstract void ReplaceInstances(Dictionary<Instance, Instance> toReplace);
 
-        public virtual void UpdateNodeIdInState(ushort oldId, ushort newId) { }
+        public virtual void UpdateNodeIdInSegmentState(ushort oldId, ushort newId) { }
 
         public static bool IsSegmentSelected(ushort segment)
         {
@@ -27,6 +27,26 @@ namespace MoveIt
             return GetTotalBounds().center;
         }
 
+        public static void ClearPOFromSelection()
+        {
+            if (!MoveItTool.PO.Enabled) return;
+
+            HashSet<Instance> toRemove = new HashSet<Instance>();
+            foreach (Instance i in selection)
+            {
+                if (i is MoveableProc)
+                {
+                    toRemove.Add(i);
+                }
+            }
+            foreach (Instance i in toRemove)
+            {
+                selection.Remove(i);
+            }
+
+            MoveItTool.PO.SelectionClear();
+        }
+
         public static Bounds GetTotalBounds(bool ignoreSegments = true, bool hasAngleOnly = false)
         {
             Bounds totalBounds = default(Bounds);
@@ -35,7 +55,7 @@ namespace MoveIt
 
             foreach (Instance instance in Action.selection)
             {
-                if (!hasAngleOnly || (instance.id.Building > 0 || instance.id.Prop > 0))
+                if (!hasAngleOnly || (instance.id.Building > 0 || instance.id.Prop > 0 || instance.id.NetLane > 0))
                 {
                     if (!init)
                     {
@@ -52,25 +72,25 @@ namespace MoveIt
             return totalBounds;
         }
 
-        public static void UpdateArea(Bounds bounds)
+        public static void UpdateArea(Bounds bounds, bool updateTerrain = false)
         {
+
+            if (updateTerrain)
+            {
+                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            }
+
             bounds.Expand(64f);
+            MoveItTool.instance.aerasToUpdate.Add(bounds);
+            MoveItTool.instance.aeraUpdateCountdown = 50;
 
             BuildingManager.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            //ZoneManager.instance.UpdateBlocks(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             PropManager.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             TreeManager.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
 
-            //VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            MoveItTool.instance.aerasToUpdate.Add(bounds);
-            MoveItTool.instance.aeraUpdateCountdown = 1;
-
             bounds.Expand(64f);
-
             ElectricityManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             WaterManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-
-            TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
             UpdateRender(bounds);
         }
 

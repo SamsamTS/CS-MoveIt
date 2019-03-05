@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System;
 using System.Reflection;
 using System.Collections.Generic;
 using ColossalFramework.Math;
@@ -43,7 +43,14 @@ namespace MoveIt
             }
         }
 
-        public MoveableSegment(InstanceID instanceID) : base(instanceID) { }
+        public MoveableSegment(InstanceID instanceID) : base(instanceID)
+        {
+            if ((NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].m_flags & NetSegment.Flags.Created) == NetSegment.Flags.None)
+            {
+                throw new Exception($"Segment #{instanceID.NetSegment} not found!");
+            }
+            Info = new Info_Prefab(NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].Info);
+        }
 
         public override InstanceState GetState()
         {
@@ -52,7 +59,7 @@ namespace MoveIt
             SegmentState state = new SegmentState
             {
                 instance = this,
-                info = info,
+                Info = Info,
 
                 position = GetControlPoint(segment),
 
@@ -96,6 +103,7 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return GetControlPoint(id.NetSegment);
             }
+            set { }
         }
 
         public override float angle
@@ -103,6 +111,37 @@ namespace MoveIt
             get
             {
                 return 0f;
+            }
+            set { }
+        }
+
+        private MoveableNode _startNode = null;
+        public MoveableNode StartNode
+        {
+            get
+            {
+                if (_startNode == null)
+                {
+                    InstanceID instanceID = default(InstanceID);
+                    instanceID.NetNode = segmentBuffer[id.NetSegment].m_startNode;
+                    _startNode = new MoveableNode(instanceID);
+                }
+                return _startNode;
+            }
+        }
+
+        private MoveableNode _endNode = null;
+        public MoveableNode EndNode
+        {
+            get
+            {
+                if (_endNode == null)
+                {
+                    InstanceID instanceID = default(InstanceID);
+                    instanceID.NetNode = segmentBuffer[id.NetSegment].m_endNode;
+                    _endNode = new MoveableNode(instanceID);
+                }
+                return _endNode;
             }
         }
 
@@ -113,6 +152,11 @@ namespace MoveIt
                 if (id.IsEmpty) return false;
                 return (segmentBuffer[id.NetSegment].m_flags & NetSegment.Flags.Created) != NetSegment.Flags.None;
             }
+        }
+
+        public static bool isSegmentValid(ushort segmentId)
+        {
+            return (segmentBuffer[segmentId].m_flags & NetSegment.Flags.Created) != NetSegment.Flags.None;
         }
 
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
@@ -138,6 +182,34 @@ namespace MoveIt
 
             netManager.UpdateNode(segmentBuffer[segment].m_startNode);
             netManager.UpdateNode(segmentBuffer[segment].m_endNode);
+        }
+
+        public MoveableNode GetNodeByDistance(bool furthest = false)
+        {
+            Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Vector3 clickPos = MoveItTool.RaycastMouseLocation(mouseRay);
+            if (Vector3.Distance(StartNode.position, clickPos) < Vector3.Distance(EndNode.position, clickPos))
+            {
+                if (furthest)
+                {
+                    return EndNode;
+                }
+                else
+                {
+                    return StartNode;
+                }
+            }
+            else
+            {
+                if (furthest)
+                {
+                    return StartNode;
+                }
+                else
+                {
+                    return EndNode;
+                }
+            }
         }
 
         public override void SetHeight(float height) { }
@@ -166,7 +238,7 @@ namespace MoveIt
             startDirection.Normalize();
             endDirection.Normalize();
 
-            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 startNode, endNode, startDirection, endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
@@ -194,7 +266,7 @@ namespace MoveIt
             startNode = clonedNodes[startNode];
             endNode = clonedNodes[endNode];
 
-            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.info as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
                 startNode, endNode, state.startDirection, state.endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
@@ -261,7 +333,7 @@ namespace MoveIt
         {
             SegmentState state = instanceState as SegmentState;
 
-            NetInfo netInfo = state.info as NetInfo;
+            NetInfo netInfo = state.Info.Prefab as NetInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;
@@ -307,7 +379,7 @@ namespace MoveIt
         {
             SegmentState state = instanceState as SegmentState;
 
-            NetInfo netInfo = state.info as NetInfo;
+            NetInfo netInfo = state.Info.Prefab as NetInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;
