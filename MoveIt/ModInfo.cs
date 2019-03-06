@@ -145,7 +145,6 @@ namespace MoveIt
                 UILabel debugLabel = panel.AddUIComponent<UILabel>();
                 debugLabel.name = "debugLabel";
                 debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
-                //debugLabel.eventDoubleClick += DebugLabel_eventClick;
 
                 group.AddSpace(5);
 
@@ -156,7 +155,7 @@ namespace MoveIt
 
                     UILabel poLabel = panel.AddUIComponent<UILabel>();
                     poLabel.name = "poLabel";
-                    poLabel.text = PO_Manager.getVersion();
+                    poLabel.text = PO_Manager.getVersionText();
 
                     UILabel poWarning = panel.AddUIComponent<UILabel>();
                     poWarning.name = "poWarning";
@@ -197,21 +196,6 @@ namespace MoveIt
                 DebugUtils.LogException(e);
             }
         }
-
-        //private void DebugLabel_eventClick(UIComponent component, UIMouseEventParameter eventParam)
-        //{
-        //    MoveItTool.HidePO.value = !MoveItTool.HidePO;
-        //    if (MoveItTool.HidePO)
-        //    {
-        //        ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
-        //            "PO Mode is no longer enabled.";
-        //    }
-        //    else
-        //    {
-        //        ((UILabel)component).text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n \n" +
-        //            "PO Mode enabled! Restart the game to view PO options.";
-        //    }
-        //}
 
         private void _cleanGhostNodes()
         {

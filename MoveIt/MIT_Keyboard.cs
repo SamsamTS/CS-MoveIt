@@ -5,28 +5,6 @@ namespace MoveIt
 {
     public partial class MoveItTool : ToolBase
     {
-        //internal void TogglePOHidden()
-        //{
-        //    HidePO.value = !HidePO;
-        //    if (PO.Enabled && MoveItLoader.IsGameLoaded)
-        //    {
-        //        if (HidePO)
-        //        {
-        //            UIToolOptionPanel.instance.PO_button.isVisible = false;
-
-        //            UIToolOptionPanel.instance.viewOptions.height -= 36;
-        //            UIToolOptionPanel.instance.viewOptions.absolutePosition -= new Vector3(0, -36);
-        //        }
-        //        else
-        //        {
-        //            UIToolOptionPanel.instance.PO_button.isVisible = true;
-
-        //            UIToolOptionPanel.instance.viewOptions.height += 36;
-        //            UIToolOptionPanel.instance.viewOptions.absolutePosition += new Vector3(0, -36);
-        //        }
-        //    }
-        //}
-
         protected override void OnToolGUI(Event e)
         {
             if (UIView.HasModalInput() || UIView.HasInputFocus()) return;
@@ -58,10 +36,6 @@ namespace MoveIt
                 }
                 //else if (OptionsKeymapping.testKey.IsPressed(e))
                 //{ }
-                //else if (OptionsKeymapping.ShowPO.IsPressed(e))
-                //{
-                //    TogglePOHidden();
-                //}
                 else if (OptionsKeymapping.bulldoze.IsPressed(e))
                 {
                     StartBulldoze();
@@ -188,9 +162,6 @@ namespace MoveIt
                 }
                 else if (ToolState == ToolStates.Default && Action.selection.Count > 0)
                 {
-                    // TODO: if no selection select hovered instance
-                    // Or not. Nobody asked for getting it back
-
                     if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
                     {
                         if (!(ActionQueue.instance.current is TransformAction action))

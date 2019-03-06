@@ -19,6 +19,8 @@ namespace MoveIt
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
+        internal const string VersionName = "1.6-beta 1";
+
         internal bool Enabled = false;
         private bool _active = false;
         public bool Active
@@ -164,7 +166,41 @@ namespace MoveIt
 
         internal static bool isPOEnabled()
         {
-            return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled);
+            if (!isPOInstalled())
+            {
+                return false;
+            }
+            if (getVersion() != VersionName)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool isPOInstalled()
+        {
+            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static string getVersionText()
+        {
+            if (isPOInstalled())
+            {
+                if (PO_LogicEnabled.getVersion() == VersionName)
+                {
+                    return $"PO version {PO_LogicEnabled.getVersion()} found, integration enabled!\n ";
+                }
+                else
+                {
+                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion()} (required: {VersionName})\n ";
+                }
+            }
+
+            return "PO is not available. To use these options please subscribe to PO and enable it, then \nrestart Cities Skylines.\n ";
         }
 
         internal static string getVersion()
@@ -175,22 +211,13 @@ namespace MoveIt
             }
             catch (TypeLoadException)
             {
-                return "PO is not available. To use these options please subscribe to PO and enable it, then \n" +
-                       "restart Cities Skylines.\n ";
+                return "";
             }
         }
 
-        internal static string _getVersion()
+        private static string _getVersion()
         {
-            if (isPOEnabled())
-            {
-                return $"PO version {PO_LogicEnabled.getVersion()}.x found, integration enabled!\n ";
-            }
-            else
-            {
-                return "PO is not available. To use these options please subscribe to PO and enable it, then \n" +
-                        "restart Cities Skylines.\n ";
-            }
+            return PO_LogicEnabled.getVersion();
         }
     }
 
