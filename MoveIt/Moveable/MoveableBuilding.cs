@@ -262,6 +262,7 @@ namespace MoveIt
                     { 
                         _virtual = false;
                         SetHiddenFlag(false);
+                        Action.UpdateArea(Action.GetTotalBounds(), true);
                     }
                 }
             }
@@ -291,7 +292,6 @@ namespace MoveIt
                     subPosition = matrix4x.MultiplyPoint(subPosition);
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
-                    //Debug.Log($"{subState.instance.GetType()}");
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
                     if (subState.instance is MoveableNode mn)
                     {
@@ -311,7 +311,6 @@ namespace MoveIt
                                 subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
-                                //Debug.Log($"  - {subSubState.instance.GetType()}");
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
                                 if (subSubState.instance is MoveableNode mn2)
                                 {
@@ -326,7 +325,6 @@ namespace MoveIt
                 }
             }
 
-            // TODO: when should the flag be set?
             if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
             {
                 AddFixedHeightFlag(id.Building);

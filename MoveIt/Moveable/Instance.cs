@@ -185,43 +185,6 @@ namespace MoveIt
         private IInfo info;
         public IInfo Info { get => info; set => info = value; }
 
-
-        //public Info_Wrapper Info
-        //{
-        //    get
-        //    {
-        //        switch (id.Type)
-        //        {
-        //            case InstanceType.Building:
-        //                {
-        //                    return BuildingManager.instance.m_buildings.m_buffer[id.Building].Info;
-        //                }
-        //            case InstanceType.Prop:
-        //                {
-        //                    return PropManager.instance.m_props.m_buffer[id.Prop].Info;
-        //                }
-        //            case InstanceType.Tree:
-        //                {
-        //                    return TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
-        //                }
-        //            case InstanceType.NetNode:
-        //                {
-        //                    return NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
-        //                }
-        //            case InstanceType.NetSegment:
-        //                {
-        //                    return NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
-        //                }
-        //                //case InstanceType.NetLane:
-        //                //    {
-        //                //        return MoveItTool.PO.GetProcObj(id.NetLane).Info;
-        //                //    }
-        //        }
-
-        //        return null;
-        //    }
-        //}
-
         public abstract InstanceState GetState();
         public abstract void SetState(InstanceState state);
         public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);

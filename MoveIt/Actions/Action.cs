@@ -74,7 +74,6 @@ namespace MoveIt
 
         public static void UpdateArea(Bounds bounds, bool updateTerrain = false)
         {
-
             if (updateTerrain)
             {
                 TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);

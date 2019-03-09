@@ -261,6 +261,7 @@ namespace MoveIt
     // PO Object
     internal interface IPO_Object
     {
+        bool Selected { get; set; }
         uint Id { get; set; } // The InstanceID.NetLane value
         Vector3 Position { get; set; }
         float Angle { get; set; }
@@ -285,6 +286,12 @@ namespace MoveIt
         public float Angle
         {
             get => 0f;
+            set { }
+        }
+
+        public bool Selected
+        {
+            get => false;
             set { }
         }
 

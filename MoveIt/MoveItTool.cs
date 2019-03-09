@@ -61,8 +61,6 @@ namespace MoveIt
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
 
-        public static bool HidePO = false;
-
         public static bool filterBuildings = true;
         public static bool filterProps = true;
         public static bool filterDecals = true;
@@ -93,13 +91,13 @@ namespace MoveIt
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
-        internal static Color m_POselectedColor = new Color32(230, 130, 245, 140);
-        internal static Color m_POdisabledColor = new Color32(150, 100, 160, 80);
+        internal static Color m_POselectedColor = new Color32(220, 125, 235, 120);
+        internal static Color m_POdisabledColor = new Color32(130, 95, 140, 80);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
-        //internal static bool HidePO = true;
+        internal static bool HidePO = false;
         internal static PO_Manager PO = null;
 
         private const float XFACTOR = 0.263671875f;
@@ -329,12 +327,12 @@ namespace MoveIt
         {
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
-                // Highlight all PO
+                // Reset all PO
                 if (!HidePO && PO.Active && POHighlightUnselected)
                 {
                     foreach (IPO_Object obj in PO.Objects)
                     {
-                        obj.RenderOverlay(cameraInfo, m_POdisabledColor);
+                        obj.Selected = false;
                     }
                 }
 
@@ -345,7 +343,18 @@ namespace MoveIt
                     {
                         if (instance.isValid && instance != m_hoverInstance)
                         {
-                            instance.RenderOverlay(cameraInfo, m_selectedColor, m_despawnColor);
+                            if (instance is MoveableProc mpo)
+                            {
+                                if (m_hoverInstance == null || (m_hoverInstance.isValid && (mpo.id != m_hoverInstance.id)))
+                                {
+                                    mpo.RenderOverlay(cameraInfo, m_POselectedColor, m_despawnColor);
+                                    mpo.m_procObj.Selected = true;
+                                }
+                            }
+                            else
+                            {
+                                instance.RenderOverlay(cameraInfo, m_selectedColor, m_despawnColor);
+                            }
                         }
                     }
                     if (ToolState == ToolStates.Aligning && AlignMode == AlignModes.Slope && AlignToolPhase == 2)
@@ -362,6 +371,12 @@ namespace MoveIt
                 if (m_hoverInstance != null && m_hoverInstance.isValid)
                 {
                     Color color = m_hoverColor;
+                    if (m_hoverInstance is MoveableProc mpo)
+                    {
+                        color = m_POhoverColor;
+                        mpo.m_procObj.Selected = true;
+                    }
+
                     if (ToolState == ToolStates.Aligning)
                     {
                         color = m_alignColor;
@@ -372,12 +387,21 @@ namespace MoveIt
                         {
                             color = m_removeColor;
                         }
-                        else
+                    }
+
+                    m_hoverInstance.RenderOverlay(cameraInfo, color, m_despawnColor);
+                }
+
+                // Highlight unselected PO
+                if (!HidePO && PO.Active && POHighlightUnselected)
+                {
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (!obj.Selected)
                         {
-                            color = m_moveColor;
+                            obj.RenderOverlay(cameraInfo, m_POdisabledColor);
                         }
                     }
-                    m_hoverInstance.RenderOverlay(cameraInfo, color, m_despawnColor);
                 }
             }
             else if (ToolState == ToolStates.MouseDragging)
