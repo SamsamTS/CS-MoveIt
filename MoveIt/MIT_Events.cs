@@ -75,10 +75,6 @@ namespace MoveIt
             {
                 ToolState = ToolStates.Default;
 
-                //Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                //RaycastHoverInstance(mouseRay);
-                //m_marqueeInstances = GetMarqueeList(mouseRay);
-
                 Event e = Event.current;
 
                 if (m_marqueeInstances == null || m_marqueeInstances.Count == 0 ||
@@ -183,24 +179,6 @@ namespace MoveIt
                         {
                             Action.selection.Remove(furthest);
                         }
-
-                        //if (Action.selection.Contains(closest) && Action.selection.Contains(furthest))
-                        //{
-                        //    Action.selection.Remove(closest);
-                        //}
-                        //else if (Action.selection.Contains(closest))
-                        //{
-                        //    Action.selection.Add(furthest);
-                        //}
-                        //else if (Action.selection.Contains(furthest))
-                        //{
-                        //    Action.selection.Add(closest);
-                        //    Action.selection.Remove(furthest);
-                        //}
-                        //else
-                        //{
-                        //    Action.selection.Add(closest);
-                        //}
                     }
                     else
                     {

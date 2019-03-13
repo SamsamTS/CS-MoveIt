@@ -44,10 +44,10 @@ namespace MoveIt
             {
                 Instance instance = instanceState.instance;
 
-                //if (!((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid))
-                //{
-                //    continue;
-                //}
+                if (!((instance is MoveableBuilding || instance is MoveableProp) || !instance.isValid))
+                {
+                    continue;
+                }
 
                 IPO_Object obj = MoveItTool.PO.ConvertToPO(instance);
                 if (obj == null)
