@@ -45,10 +45,10 @@ namespace MoveIt
 
         public MoveableSegment(InstanceID instanceID) : base(instanceID)
         {
-            if ((NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].m_flags & NetSegment.Flags.Created) == NetSegment.Flags.None)
-            {
-                throw new Exception($"Segment #{instanceID.NetSegment} not found!");
-            }
+            //if ((NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].m_flags & NetSegment.Flags.Created) == NetSegment.Flags.None)
+            //{
+            //    throw new Exception($"Segment #{instanceID.NetSegment} not found!");
+            //}
             Info = new Info_Prefab(NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].Info);
         }
 

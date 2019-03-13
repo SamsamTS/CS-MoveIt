@@ -41,7 +41,7 @@ namespace MoveIt
         {
             get
             {
-                if (Info != null)
+                if (Info.Prefab != null)
                 {
                     return Info.Name;
                 }

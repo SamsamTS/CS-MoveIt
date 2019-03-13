@@ -86,11 +86,12 @@ namespace MoveIt
 
         public MoveableNode(InstanceID instanceID) : base(instanceID)
         {
-            if ((NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].m_flags & NetNode.Flags.Created) == NetNode.Flags.None)
-            {
-                Debug.Log($"Node #{instanceID.NetNode} not found!\n{Environment.StackTrace}");
-                // TODO throw new Exception($"Node #{instanceID.NetNode} not found!");
-            }
+            //if ((NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].m_flags & NetNode.Flags.Created) == NetNode.Flags.None)
+            //{
+            //    Debug.Log($"Node #{instanceID.NetNode} not found!");
+            //    return;
+            //    // TODO throw new Exception($"Node #{instanceID.NetNode} not found!");
+            //}
             Info = new Info_Prefab(NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].Info);
         }
 

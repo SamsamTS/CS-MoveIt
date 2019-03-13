@@ -23,10 +23,10 @@ namespace MoveIt
 
         public MoveableProp(InstanceID instanceID) : base(instanceID)
         {
-            if (((PropInstance.Flags)PropManager.instance.m_props.m_buffer[instanceID.Prop].m_flags & PropInstance.Flags.Created) == PropInstance.Flags.None)
-            {
-                throw new Exception($"Prop #{instanceID.Prop} not found!");
-            }
+            //if (((PropInstance.Flags)PropManager.instance.m_props.m_buffer[instanceID.Prop].m_flags & PropInstance.Flags.Created) == PropInstance.Flags.None)
+            //{
+            //    throw new Exception($"Prop #{instanceID.Prop} not found!");
+            //}
             Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
         }
 

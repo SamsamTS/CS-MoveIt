@@ -23,10 +23,10 @@ namespace MoveIt
 
         public MoveableTree(InstanceID instanceID) : base(instanceID)
         {
-            if (((TreeInstance.Flags)TreeManager.instance.m_trees.m_buffer[instanceID.Tree].m_flags & TreeInstance.Flags.Created) == TreeInstance.Flags.None)
-            {
-                throw new Exception($"Tree #{instanceID.Tree} not found!");
-            }
+            //if (((TreeInstance.Flags)TreeManager.instance.m_trees.m_buffer[instanceID.Tree].m_flags & TreeInstance.Flags.Created) == TreeInstance.Flags.None)
+            //{
+            //    throw new Exception($"Tree #{instanceID.Tree} not found!");
+            //}
             Info = new Info_Prefab(TreeManager.instance.m_trees.m_buffer[instanceID.Tree].Info);
         }
 

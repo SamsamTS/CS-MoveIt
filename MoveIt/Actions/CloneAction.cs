@@ -161,7 +161,7 @@ namespace MoveIt
 
             foreach (InstanceState state in states)
             {
-                if (state.instance != null && state.Info != null)
+                if (state.instance != null && state.Info.Prefab != null)
                 {
                     savedStates.Add(state);
                 }

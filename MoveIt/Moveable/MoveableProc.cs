@@ -27,7 +27,6 @@ namespace MoveIt
             Info = m_procObj.Info;
         }
 
-
         public override InstanceState GetState()
         {
             ProcState state = new ProcState();
@@ -40,13 +39,11 @@ namespace MoveIt
             return state;
         }
 
-
         public override void SetState(InstanceState state)
         {
             m_procObj.Position = state.position;
             m_procObj.Angle = state.angle;
         }
-
 
         public override Vector3 position
         {
@@ -85,7 +82,6 @@ namespace MoveIt
             }
         }
 
-
         // deltaAngleRad is clumulative delta since Transform Action started, CCW
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain)
         {
@@ -102,7 +98,6 @@ namespace MoveIt
             Move(newPosition, a % (Mathf.PI * 2));
         }
 
-
         // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
@@ -112,13 +107,11 @@ namespace MoveIt
             m_procObj.Angle = angleRad;
         }
 
-
         public override void SetHeight(float height)
         {
             if (!isValid) return;
             m_procObj.SetPositionY(height);
         }
-
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
         {

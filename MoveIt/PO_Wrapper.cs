@@ -179,40 +179,20 @@ namespace MoveIt
 
         internal static bool isPOInstalled()
         {
-            if (PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL)))
-            {
-                Debug.Log($"ID:true");
-            }
-            else
-            {
-                Debug.Log($"ID:false");
-            }
-            if (PluginManager.instance.GetPluginsInfo().Any(mod => (mod.name.Contains("ProceduralObjects"))))
-            {
-                Debug.Log($"Short:true");
-            }
-            else
-            {
-                Debug.Log($"Short:false");
-            }
-            if (PluginManager.instance.GetPluginsInfo().Any(mod => (mod.name.Contains("Procedural Objects"))))
-            {
-                Debug.Log($"Long:true");
-            }
-            else
-            {
-                Debug.Log($"Long:false");
-            }
-            if (PluginManager.instance.GetPluginsInfo().Any(mod => (mod.name.Contains("Procedural"))))
-            {
-                Debug.Log($"Single:true");
-            }
-            else
-            {
-                Debug.Log($"Single:false");
-            }
+            //string msg = "";
+            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            //{
+            //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
+            //        $"\n - {pi.modPath}";
+            //}
+            //Debug.Log(msg);
 
-            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == 1094334744uL || mod.name.Contains("ProceduralObjects") || mod.name.Contains("Procedural Objects")) && mod.isEnabled))
+            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
+                    mod.publishedFileID.AsUInt64 == 1094334744uL || 
+                    mod.name.Contains("ProceduralObjects") || 
+                    mod.name.Contains("Procedural Objects") ||
+                    mod.name.Contains("1094334744")
+            ) && mod.isEnabled))
             {
                 return false;
             }

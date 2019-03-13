@@ -124,10 +124,10 @@ namespace MoveIt
 
         public MoveableBuilding(InstanceID instanceID) : base(instanceID)
         {
-            if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
-            {
-                throw new Exception($"Building #{instanceID.Building} not found!");
-            }
+            //if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
+            //{
+            //    throw new Exception($"Building #{instanceID.Building} not found!");
+            //}
             Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
         }
 

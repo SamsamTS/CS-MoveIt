@@ -821,7 +821,7 @@ namespace MoveIt
 
                     foreach (InstanceState state in selectionState.states)
                     {
-                        if (state.Info == null)
+                        if (state.Info.Prefab == null)
                         {
                             missingPrefabs.Add(state.prefabName);
                         }
@@ -834,6 +834,14 @@ namespace MoveIt
                         UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n"+ string.Join("\n", missingPrefabs.ToArray()), false);
 
                     }
+
+                    //string msg = "";
+                    //foreach (InstanceState state in selectionState.states)
+                    //{
+                    //    msg += $"\n{InstanceIDDebug(state.instance.id)}: {state.prefabName}";
+                    //}
+                    //Debug.Log($"{msg}");
+
                     CloneAction action = new CloneAction(selectionState.states, selectionState.center);
 
                     if (action.Count > 0)
