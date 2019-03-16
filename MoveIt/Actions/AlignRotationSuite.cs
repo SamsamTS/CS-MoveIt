@@ -133,6 +133,15 @@ namespace MoveIt
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mpo.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
                     }
+                    else if (state.instance is MoveableTree mt)
+                    {
+                        if (this is AlignIndividualAction || this is AlignRandomAction)
+                        {
+                            continue;
+                        }
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        mt.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
                 }
             }
 

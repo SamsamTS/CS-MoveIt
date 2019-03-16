@@ -47,7 +47,7 @@ namespace MoveIt
             MoveItTool.PO.SelectionClear();
         }
 
-        public static Bounds GetTotalBounds(bool ignoreSegments = true, bool hasAngleOnly = false)
+        public static Bounds GetTotalBounds(bool ignoreSegments = true, bool excludeNetworks = false)
         {
             Bounds totalBounds = default(Bounds);
 
@@ -55,7 +55,7 @@ namespace MoveIt
 
             foreach (Instance instance in Action.selection)
             {
-                if (!hasAngleOnly || (instance.id.Building > 0 || instance.id.Prop > 0 || instance.id.NetLane > 0))
+                if (!excludeNetworks || (instance.id.Building > 0 || instance.id.Prop > 0 || instance.id.NetLane > 0 || instance.id.Tree > 0))
                 {
                     if (!init)
                     {

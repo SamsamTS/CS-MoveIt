@@ -17,6 +17,7 @@ Bugs fixed:
  - Complex buildings can be undeleted more reliably
  - Another source of Ghost Nodes removed
  - Possible fix for Height Align not working on second-loads
+ - Align Rotation as Group now rotates trees' positions
 
 
 Alternative Features
