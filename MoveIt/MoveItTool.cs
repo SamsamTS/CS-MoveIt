@@ -272,11 +272,11 @@ namespace MoveIt
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
 
-            if (!HidePO && PO.Active)
-            {
-                PO.ToolEnabled();
-                ActionQueue.instance.Push(new TransformAction());
-            }
+            //if (!HidePO && PO.Active)
+            //{
+            //    PO.ToolEnabled();
+            //    ActionQueue.instance.Push(new TransformAction());
+            //}
         }
 
         protected override void OnDisable()
@@ -296,6 +296,7 @@ namespace MoveIt
                 }
 
                 UpdateAreas();
+                UpdateSegments();
 
                 ToolState = ToolStates.Default;
 
@@ -328,13 +329,13 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
                 // Reset all PO
-                if (!HidePO && PO.Active && POHighlightUnselected)
-                {
-                    foreach (IPO_Object obj in PO.Objects)
-                    {
-                        obj.Selected = false;
-                    }
-                }
+                //if (!HidePO && PO.Active && POHighlightUnselected)
+                //{
+                //    foreach (IPO_Object obj in PO.Objects)
+                //    {
+                //        obj.Selected = false;
+                //    }
+                //}
 
                 if (Action.selection.Count > 0)
                 {
@@ -393,16 +394,16 @@ namespace MoveIt
                 }
 
                 // Highlight unselected PO
-                if (!HidePO && PO.Active && POHighlightUnselected)
-                {
-                    foreach (IPO_Object obj in PO.Objects)
-                    {
-                        if (!obj.Selected)
-                        {
-                            obj.RenderOverlay(cameraInfo, m_POdisabledColor);
-                        }
-                    }
-                }
+                //if (!HidePO && PO.Active && POHighlightUnselected)
+                //{
+                //    foreach (IPO_Object obj in PO.Objects)
+                //    {
+                //        if (!obj.Selected)
+                //        {
+                //            obj.RenderOverlay(cameraInfo, m_POdisabledColor);
+                //        }
+                //    }
+                //}
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
@@ -567,20 +568,7 @@ namespace MoveIt
 
                     if (segmentUpdateCountdown == 0)
                     {
-                        foreach (ushort segment in segmentsToUpdate)
-                        {
-                            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-                            if (segmentBuffer[segment].m_flags != NetSegment.Flags.None)
-                            {
-                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockStartLeft);
-                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockStartRight);
-                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockEndLeft);
-                                ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockEndRight);
-                            }
-
-                            segmentBuffer[segment].Info.m_netAI.CreateSegment(segment, ref segmentBuffer[segment]);
-                        }
-                        segmentsToUpdate.Clear();
+                        UpdateSegments();
                     }
 
                     if (!inputHeld && segmentUpdateCountdown >= 0)
@@ -621,6 +609,24 @@ namespace MoveIt
             //Debug.Log(msg);
 
             aerasToUpdate.Clear();
+        }
+
+        public void UpdateSegments()
+        {
+            foreach (ushort segment in segmentsToUpdate)
+            {
+                NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+                if (segmentBuffer[segment].m_flags != NetSegment.Flags.None)
+                {
+                    ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockStartLeft);
+                    ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockStartRight);
+                    ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockEndLeft);
+                    ReleaseSegmentBlock(segment, ref segmentBuffer[segment].m_blockEndRight);
+                }
+
+                segmentBuffer[segment].Info.m_netAI.CreateSegment(segment, ref segmentBuffer[segment]);
+            }
+            segmentsToUpdate.Clear();
         }
 
         public override ToolErrors GetErrors()

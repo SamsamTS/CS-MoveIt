@@ -66,41 +66,41 @@ namespace MoveIt
                         UIToolOptionPanel.instance.underground.activeStateIndex = 1;
                     }
                 }
-                else if (OptionsKeymapping.activatePO.IsPressed(e))
-                {
-                    if (!HidePO)
-                    {
-                        if (PO.Active == false)
-                        {
-                            PO.Active = true;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                            PO.ToolEnabled();
-                        }
-                        else
-                        {
-                            PO.Active = false;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
-                        }
-                        UIFilters.POToggled();
-                    }
-                }
-                else if (OptionsKeymapping.convertToPO.IsPressed(e))
-                {
-                    if (!HidePO && PO.Enabled && ToolState == ToolStates.Default)
-                    {
-                        if (PO.Active == false)
-                        {
-                            PO.Active = true;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                            PO.ToolEnabled();
-                            UIFilters.POToggled();
-                        }
+                //else if (OptionsKeymapping.activatePO.IsPressed(e))
+                //{
+                //    if (!HidePO)
+                //    {
+                //        if (PO.Active == false)
+                //        {
+                //            PO.Active = true;
+                //            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                //            PO.ToolEnabled();
+                //        }
+                //        else
+                //        {
+                //            PO.Active = false;
+                //            UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
+                //        }
+                //        UIFilters.POToggled();
+                //    }
+                //}
+                //else if (OptionsKeymapping.convertToPO.IsPressed(e))
+                //{
+                //    if (!HidePO && PO.Enabled && ToolState == ToolStates.Default)
+                //    {
+                //        if (PO.Active == false)
+                //        {
+                //            PO.Active = true;
+                //            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                //            PO.ToolEnabled();
+                //            UIFilters.POToggled();
+                //        }
 
-                        ConvertToPOAction ca = new ConvertToPOAction();
-                        ActionQueue.instance.Push(ca);
-                        ActionQueue.instance.Do();
-                    }
-                }
+                //        ConvertToPOAction ca = new ConvertToPOAction();
+                //        ActionQueue.instance.Push(ca);
+                //        ActionQueue.instance.Do();
+                //    }
+                //}
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
                     ProcessAligning(AlignModes.Height);

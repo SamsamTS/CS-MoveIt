@@ -96,10 +96,6 @@ namespace MoveIt
                     {
                         cb.isVisible = true;
                     }
-                    else
-                    {
-                        Debug.Log($"On - CB is null");
-                    }
                 }
 
                 FilterPanel.height += MoveItTool.UI_Filter_CB_Height * filterRows;
@@ -113,10 +109,6 @@ namespace MoveIt
                     if (cb != null)
                     {
                         cb.isVisible = false;
-                    }
-                    else
-                    {
-                        Debug.Log($"Off - CB is null");
                     }
                 }
 

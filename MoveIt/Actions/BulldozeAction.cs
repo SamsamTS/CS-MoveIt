@@ -207,7 +207,7 @@ namespace MoveIt
                     if (cloneNodeId != 0)
                     {
                         int c = 0;
-                        string msg2 = "Original attached nodes:";
+                        //string msg2 = "Original attached nodes:";
                         foreach (InstanceState i in buildingState.subStates)
                         {
                             if (i is NodeState ns)
@@ -221,7 +221,7 @@ namespace MoveIt
                         //Debug.Log(msg2);
 
                         c = 0;
-                        msg2 = "";
+                        //msg2 = "";
                         while (cloneNodeId != 0)
                         {
                             ushort origNodeId = origNodeIds[c];
@@ -240,7 +240,7 @@ namespace MoveIt
 
                             clonedNodes.Add(origNodeId, cloneNodeId);
 
-                            msg2 += $"\n{c} - {origNodeId} -> {cloneNodeId} {clonedAttachedNode.Info.GetAI()}";
+                            //msg2 += $"\n{c} - {origNodeId} -> {cloneNodeId} {clonedAttachedNode.Info.GetAI()}";
                             cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
 
                             if (++c > 32768)
@@ -249,7 +249,7 @@ namespace MoveIt
                                 break;
                             }
                         }
-                        Debug.Log(msg2);
+                        //Debug.Log(msg2);
                     }
                 }
             }
