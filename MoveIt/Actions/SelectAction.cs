@@ -22,6 +22,7 @@ namespace MoveIt
             }
 
             selection = m_newSelection;
+            MoveItTool.m_debugPanel.Update();
         }
 
         public void Add(Instance instance)
@@ -41,11 +42,13 @@ namespace MoveIt
         public override void Do()
         {
             selection = m_newSelection;
+            MoveItTool.m_debugPanel.Update();
         }
 
         public override void Undo()
         {
             selection = m_oldSelection;
+            MoveItTool.m_debugPanel.Update();
         }
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)

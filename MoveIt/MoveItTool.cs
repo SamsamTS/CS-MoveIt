@@ -76,7 +76,7 @@ namespace MoveIt
         internal static bool dragging = false;
 
         public static StepOver stepOver;
-        internal static DebugPanel debugPanel;
+        internal static DebugPanel m_debugPanel;
 
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
@@ -111,9 +111,9 @@ namespace MoveIt
             set
             {
                 m_toolState = value;
-                if (debugPanel != null)
+                if (m_debugPanel != null)
                 {
-                    debugPanel.Update();
+                    m_debugPanel.Update();
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace MoveIt
             set
             {
                 m_alignMode = value;
-                debugPanel.Update();
+                m_debugPanel.Update();
             }
         }
         private ushort m_alignToolPhase = 0;
@@ -134,7 +134,7 @@ namespace MoveIt
             set
             {
                 m_alignToolPhase = value;
-                debugPanel.Update();
+                m_debugPanel.Update();
             }
         }
 
@@ -272,11 +272,11 @@ namespace MoveIt
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
 
-            //if (!HidePO && PO.Active)
-            //{
-            //    PO.ToolEnabled();
-            //    ActionQueue.instance.Push(new TransformAction());
-            //}
+            if (!HidePO && PO.Active)
+            {
+                PO.ToolEnabled();
+                ActionQueue.instance.Push(new TransformAction());
+            }
         }
 
         protected override void OnDisable()
@@ -329,13 +329,13 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
             {
                 // Reset all PO
-                //if (!HidePO && PO.Active && POHighlightUnselected)
-                //{
-                //    foreach (IPO_Object obj in PO.Objects)
-                //    {
-                //        obj.Selected = false;
-                //    }
-                //}
+                if (!HidePO && PO.Active && POHighlightUnselected)
+                {
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        obj.Selected = false;
+                    }
+                }
 
                 if (Action.selection.Count > 0)
                 {
@@ -394,16 +394,16 @@ namespace MoveIt
                 }
 
                 // Highlight unselected PO
-                //if (!HidePO && PO.Active && POHighlightUnselected)
-                //{
-                //    foreach (IPO_Object obj in PO.Objects)
-                //    {
-                //        if (!obj.Selected)
-                //        {
-                //            obj.RenderOverlay(cameraInfo, m_POdisabledColor);
-                //        }
-                //    }
-                //}
+                if (!HidePO && PO.Active && POHighlightUnselected)
+                {
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (!obj.Selected)
+                        {
+                            obj.RenderOverlay(cameraInfo, m_POdisabledColor);
+                        }
+                    }
+                }
             }
             else if (ToolState == ToolStates.MouseDragging)
             {

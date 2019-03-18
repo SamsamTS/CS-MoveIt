@@ -164,6 +164,7 @@ namespace MoveIt
             UpdateArea(bounds);
 
             selection = new HashSet<Instance>();
+            MoveItTool.m_debugPanel.Update();
         }
 
         public override void Undo()
@@ -301,6 +302,7 @@ namespace MoveIt
                 ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
                 selection = m_oldSelection;
+                MoveItTool.m_debugPanel.Update();
             }
         }
 

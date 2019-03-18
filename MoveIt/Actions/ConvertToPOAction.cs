@@ -68,6 +68,7 @@ namespace MoveIt
                 selection.Add(mpo);
                 selection.Remove(instance);
                 instance.Delete();
+                MoveItTool.m_debugPanel.Update();
             }
         }
 
@@ -102,6 +103,7 @@ namespace MoveIt
             ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
             selection = m_oldSelection;
+            MoveItTool.m_debugPanel.Update();
 
             //msg = "\"old\" Selection\n";
             //foreach (Instance i in m_oldSelection)

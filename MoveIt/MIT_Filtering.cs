@@ -56,31 +56,30 @@ namespace MoveIt
 
             do
             {
-
-                //if (!HidePO && PO.Active && selectProc)
-                //{
-                //    //string msg = "";
-                //    foreach (IPO_Object obj in PO.Objects)
-                //    {
-                //        if (stepOver.isValidPO(obj.Id))
-                //        {
-                //            //msg += $"{obj.Id},";
-                //            bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
-                //            bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
-                //            if (inXBounds && inZBounds)
-                //            {
-                //                float t = obj.GetDistance(location);
-                //                //Debug.Log($"Object {obj.Id}: {t}m");
-                //                if (t < smallestDist)
-                //                {
-                //                    id.NetLane = obj.Id;
-                //                    smallestDist = t;
-                //                }
-                //            }
-                //        }
-                //    }
-                //    //Debug.Log(msg);
-                //}
+                if (!HidePO && PO.Active && selectProc)
+                {
+                    //string msg = "";
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (stepOver.isValidPO(obj.Id))
+                        {
+                            //msg += $"{obj.Id},";
+                            bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
+                            bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
+                            if (inXBounds && inZBounds)
+                            {
+                                float t = obj.GetDistance(location);
+                                //Debug.Log($"Object {obj.Id}: {t}m");
+                                if (t < smallestDist)
+                                {
+                                    id.NetLane = obj.Id;
+                                    smallestDist = t;
+                                }
+                            }
+                        }
+                    }
+                    //Debug.Log(msg);
+                }
 
                 int gridMinX = Mathf.Max((int)((location.x - 16f) / 64f + 135f) - 1, 0);
                 int gridMinZ = Mathf.Max((int)((location.z - 16f) / 64f + 135f) - 1, 0);
@@ -283,7 +282,7 @@ namespace MoveIt
             while (repeatSearch);
 
             //Debug.Log($"Id={InstanceIDDebug(id)}");
-            if (debugPanel != null) debugPanel.Update(id);
+            if (m_debugPanel != null) m_debugPanel.Update(id);
 
             m_hoverInstance = id;
         }
@@ -344,20 +343,20 @@ namespace MoveIt
                 InstanceID id = new InstanceID();
                 ItemClass.Layer itemLayers = GetItemLayers();
 
-                //if (!HidePO && PO.Active && filterProcs)
-                //{
-                //    //string msg = "";
-                //    foreach (IPO_Object obj in PO.Objects)
-                //    {
-                //        if (PointInRectangle(m_selection, obj.Position))
-                //        {
-                //            //msg += $"{obj.Id},";
-                //            id.NetLane = obj.Id;
-                //            list.Add(id);
-                //        }
-                //    }
-                //    //Debug.Log(msg);
-                //}
+                if (!HidePO && PO.Active && filterProcs)
+                {
+                    //string msg = "";
+                    foreach (IPO_Object obj in PO.Objects)
+                    {
+                        if (PointInRectangle(m_selection, obj.Position))
+                        {
+                            //msg += $"{obj.Id},";
+                            id.NetLane = obj.Id;
+                            list.Add(id);
+                        }
+                    }
+                    //Debug.Log(msg);
+                }
 
                 for (int i = gridMinZ; i <= gridMaxZ; i++)
                 {

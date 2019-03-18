@@ -226,6 +226,7 @@ namespace MoveIt
 
             // Select clones
             selection = m_clones;
+            MoveItTool.m_debugPanel.Update();
 
             UpdateArea(GetTotalBounds(false));
         }
@@ -245,6 +246,7 @@ namespace MoveIt
 
             // Restore selection
             selection = m_oldSelection;
+            MoveItTool.m_debugPanel.Update();
 
             UpdateArea(bounds);
         }

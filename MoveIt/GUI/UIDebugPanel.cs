@@ -11,11 +11,12 @@ namespace MoveIt
     {
         internal UIPanel Panel;
         internal DebugPanel_ModTools ModTools = null;
-        private UILabel HoverLarge, HoverSmall, ToolStatus;
+        private UILabel HoverLarge, HoverSmall, ToolStatus, SelectedLarge, SelectedSmall;
         private InstanceID id, lastId;
 
         internal DebugPanel()
         {
+            Debug.Log($"DEBUGPANEL INITIALISE");
             _initialise();
 
             if (isModToolsEnabled())
@@ -24,12 +25,10 @@ namespace MoveIt
             }
         }
 
-
         internal void Visible(bool show)
         {
             Panel.isVisible = show;
         }
-
 
         internal void UpdateVisible()
         {
@@ -58,6 +57,53 @@ namespace MoveIt
             }
 
             ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase})";
+
+            SelectedLarge.text = $"Objects Selected: {Action.selection.Count}";
+            ushort[] types = new ushort[8];
+            foreach (Instance instance in Action.selection)
+            {
+                if (instance is MoveableBuilding)
+                {
+                    types[0]++;
+                }
+                else if (instance is MoveableProp)
+                {
+                    PropInfo info = PropManager.instance.m_props.m_buffer[instance.id.Prop].Info;
+                    if (info.m_isDecal)
+                    {
+                        types[2]++;
+                    }
+                    else if (Filters.IsSurface(info))
+                    {
+                        types[3]++;
+                    }
+                    else
+                    {
+                        types[1]++;
+                    }
+                }
+                else if (instance is MoveableTree)
+                {
+                    types[4]++;
+                }
+                else if (instance is MoveableProc)
+                {
+                    types[5]++;
+                }
+                else if (instance is MoveableNode)
+                {
+                    types[6]++;
+                }
+                else if (instance is MoveableSegment)
+                {
+                    types[7]++;
+                }
+                else
+                {
+                    throw new Exception($"Instance is invalid type (<{instance.GetType()}>)");
+                }
+            }
+            SelectedSmall.text = $"B:{types[0]}, P:{types[1]}, D:{types[2]}, S:{types[3]}, T:{types[4]}, PO:{types[5]}, N:{types[6]}, S:{types[7]}\n ";
 
             // End with updating the hovered item
             if (id == null)
@@ -138,8 +184,8 @@ namespace MoveIt
             Panel.name = "MoveIt_DebugPanel";
             Panel.atlas = ResourceLoader.GetAtlas("Ingame");
             Panel.backgroundSprite = "SubcategoriesPanel";
-            Panel.size = new Vector2(260, 78);
-            Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 330, 3);
+            Panel.size = new Vector2(300, 107);
+            Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 370, 3);
             Panel.clipChildren = true;
             Panel.isVisible = MoveItTool.showDebugPanel;
 
@@ -155,7 +201,7 @@ namespace MoveIt
             HoverSmall = Panel.AddUIComponent<UILabel>();
             HoverSmall.textScale = 0.65f;
             HoverSmall.text = "No item being hovered\n ";
-            HoverSmall.relativePosition = new Vector3(5, 24);
+            HoverSmall.relativePosition = new Vector3(5, 23);
             HoverSmall.width = HoverSmall.parent.width - 20;
             HoverSmall.clipChildren = true;
             HoverSmall.useDropShadow = true;
@@ -164,11 +210,29 @@ namespace MoveIt
             ToolStatus = Panel.AddUIComponent<UILabel>();
             ToolStatus.textScale = 0.65f;
             ToolStatus.text = "";
-            ToolStatus.relativePosition = new Vector3(5, 64);
+            ToolStatus.relativePosition = new Vector3(5, 63);
             ToolStatus.width = HoverSmall.parent.width - 20;
             ToolStatus.clipChildren = true;
             ToolStatus.useDropShadow = true;
             ToolStatus.dropShadowOffset = new Vector2(1, -1);
+
+            SelectedLarge = Panel.AddUIComponent<UILabel>();
+            SelectedLarge.textScale = 0.8f;
+            SelectedLarge.text = "Objects Selected: 0";
+            SelectedLarge.relativePosition = new Vector3(6, 79);
+            SelectedLarge.width = SelectedLarge.parent.width - 20;
+            SelectedLarge.clipChildren = true;
+            SelectedLarge.useDropShadow = true;
+            SelectedLarge.dropShadowOffset = new Vector2(2, -2);
+
+            SelectedSmall = Panel.AddUIComponent<UILabel>();
+            SelectedSmall.textScale = 0.65f;
+            SelectedSmall.text = "B:0, P:0, D:0, S:0, T:0, PO:0, N:0, S:0\n ";
+            SelectedSmall.relativePosition = new Vector3(5, 94);
+            SelectedSmall.width = SelectedSmall.parent.width - 20;
+            SelectedSmall.clipChildren = true;
+            SelectedSmall.useDropShadow = true;
+            SelectedSmall.dropShadowOffset = new Vector2(1, -1);
         }
     }
 

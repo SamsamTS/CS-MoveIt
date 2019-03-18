@@ -48,7 +48,7 @@ namespace MoveIt
 
         public static void UninstallMod()
         {
-            MoveItTool.debugPanel = null;
+            MoveItTool.m_debugPanel = null;
             UIToolOptionPanel.instance = null;
             UIAlignTools.AlignToolsPanel = null;
             UIAlignTools.AlignToolsBtn = null;

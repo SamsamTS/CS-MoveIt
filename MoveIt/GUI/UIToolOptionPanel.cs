@@ -650,66 +650,66 @@ namespace MoveIt
             };
 
 
-            //if (!MoveItTool.HidePO && MoveItTool.PO.Enabled)
-            //{
-            //    PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
-            //    PO_button.atlas = GetIconsAtlas();
-            //    PO_button.name = "MoveIt_PO_button";
-            //    PO_button.tooltip = "Toggle Procedural Objects";
-            //    PO_button.playAudioEvents = true;
+            if (!MoveItTool.HidePO && MoveItTool.PO.Enabled)
+            {
+                PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
+                PO_button.atlas = GetIconsAtlas();
+                PO_button.name = "MoveIt_PO_button";
+                PO_button.tooltip = "Toggle Procedural Objects";
+                PO_button.playAudioEvents = true;
 
-            //    PO_button.size = new Vector2(36, 36);
-            //    PO_button.spritePadding = new RectOffset();
+                PO_button.size = new Vector2(36, 36);
+                PO_button.spritePadding = new RectOffset();
 
-            //    PO_button.backgroundSprites[0].disabled = "OptionBaseDisabled";
-            //    PO_button.backgroundSprites[0].hovered = "OptionBaseHovered";
-            //    PO_button.backgroundSprites[0].normal = "OptionBase";
-            //    PO_button.backgroundSprites[0].pressed = "OptionBasePressed";
+                PO_button.backgroundSprites[0].disabled = "OptionBaseDisabled";
+                PO_button.backgroundSprites[0].hovered = "OptionBaseHovered";
+                PO_button.backgroundSprites[0].normal = "OptionBase";
+                PO_button.backgroundSprites[0].pressed = "OptionBasePressed";
 
-            //    PO_button.backgroundSprites.AddState();
-            //    PO_button.backgroundSprites[1].disabled = "OptionBaseDisabled";
-            //    PO_button.backgroundSprites[1].hovered = "";
-            //    PO_button.backgroundSprites[1].normal = "OptionBaseFocused";
-            //    PO_button.backgroundSprites[1].pressed = "OptionBasePressed";
+                PO_button.backgroundSprites.AddState();
+                PO_button.backgroundSprites[1].disabled = "OptionBaseDisabled";
+                PO_button.backgroundSprites[1].hovered = "";
+                PO_button.backgroundSprites[1].normal = "OptionBaseFocused";
+                PO_button.backgroundSprites[1].pressed = "OptionBasePressed";
 
-            //    PO_button.foregroundSprites[0].normal = "PO";
+                PO_button.foregroundSprites[0].normal = "PO";
 
-            //    PO_button.foregroundSprites.AddState();
-            //    PO_button.foregroundSprites[1].normal = "POFocused";
+                PO_button.foregroundSprites.AddState();
+                PO_button.foregroundSprites[1].normal = "POFocused";
 
-            //    PO_button.relativePosition = new Vector3(4f, 76f);
+                PO_button.relativePosition = new Vector3(4f, 76f);
 
-            //    PO_button.activeStateIndex = 0;
+                PO_button.activeStateIndex = 0;
 
-            //    PO_button.eventClicked += (c, p) =>
-            //    {
-            //        MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
-            //        if (MoveItTool.PO.Active)
-            //        {
-            //            MoveItTool.PO.ToolEnabled();
-            //            ActionQueue.instance.Push(new TransformAction());
-            //        }
-            //        else
-            //        {
-            //            Action.ClearPOFromSelection();
-            //        }
-            //        UIFilters.POToggled();
-            //    };
+                PO_button.eventClicked += (c, p) =>
+                {
+                    MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
+                    if (MoveItTool.PO.Active)
+                    {
+                        MoveItTool.PO.ToolEnabled();
+                        ActionQueue.instance.Push(new TransformAction());
+                    }
+                    else
+                    {
+                        Action.ClearPOFromSelection();
+                    }
+                    UIFilters.POToggled();
+                };
 
-            //    //if (!MoveItTool.HidePO)
-            //    //{
-            //    //    viewOptions.height += 36;
-            //    //    viewOptions.absolutePosition += new Vector3(0, -36);
-            //    //}
-            //    //else
-            //    //{
-            //    //    PO_button.isVisible = false;
-            //    //}
-            //}
+                if (!MoveItTool.HidePO)
+                {
+                    viewOptions.height += 36;
+                    viewOptions.absolutePosition += new Vector3(0, -36);
+                }
+                else
+                {
+                    PO_button.isVisible = false;
+                }
+            }
 
             #endregion
 
-            MoveItTool.debugPanel = new DebugPanel();
+            MoveItTool.m_debugPanel = new DebugPanel();
         }
 
         protected override void OnVisibilityChanged()

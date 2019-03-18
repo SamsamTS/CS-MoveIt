@@ -105,6 +105,7 @@ namespace MoveIt
             {
                 Action.selection.Remove(instance);
             }
+            MoveItTool.m_debugPanel.Update();
 
             //Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
