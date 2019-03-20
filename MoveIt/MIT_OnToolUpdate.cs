@@ -114,6 +114,7 @@ namespace MoveIt
                     {
                         case ToolStates.Default:
                         case ToolStates.Aligning:
+                        case ToolStates.Picking:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 break;

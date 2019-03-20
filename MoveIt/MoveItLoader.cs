@@ -53,6 +53,7 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = null;
             UIAlignTools.AlignToolsBtn = null;
             Action.selection.Clear();
+            Filters.Picker = null;
 
             if (MoveItTool.instance != null)
             {

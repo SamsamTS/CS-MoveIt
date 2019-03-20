@@ -16,7 +16,6 @@ namespace MoveIt
 
         internal DebugPanel()
         {
-            Debug.Log($"DEBUGPANEL INITIALISE");
             _initialise();
 
             if (isModToolsEnabled())

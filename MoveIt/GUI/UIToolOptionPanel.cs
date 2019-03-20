@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-
 using ColossalFramework.UI;
-using System.Collections.Generic;
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
@@ -23,18 +21,21 @@ namespace MoveIt
         private UIButton m_copy;
         private UIButton m_bulldoze;
         private UIButton m_alignTools;
+        public UIButton m_picker;
 
         public UIMultiStateButton PO_button;
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;
 
-        public UIPanel filtersPanel;
-        public UIPanel alignToolsPanel;
-        public UIPanel viewOptions;
+        public UIPanel m_filtersPanel, m_filtersPanelList;
+        public UIPanel m_alignToolsPanel;
+        public UIPanel m_viewOptions;
 
         public override void Start()
         {
             instance = this;
+
+            UICheckBox checkBox = null;
 
             atlas = UIUtils.GetAtlas("Ingame");
             size = new Vector2(41, 41);
@@ -254,14 +255,14 @@ namespace MoveIt
             #endregion
 
             #region filtersPanel
-            filtersPanel = AddUIComponent(typeof(UIPanel)) as UIPanel;
-            filtersPanel.atlas = UIUtils.GetAtlas("Ingame");
-            filtersPanel.backgroundSprite = "SubcategoriesPanel";
-            filtersPanel.clipChildren = true;
 
-            filtersPanel.size = new Vector2(150, 140);
-            filtersPanel.isVisible = false;
-            UIFilters.FilterPanel = filtersPanel;
+            m_filtersPanel = AddUIComponent(typeof(UIPanel)) as UIPanel;
+            m_filtersPanel.atlas = UIUtils.GetAtlas("Ingame");
+            m_filtersPanel.backgroundSprite = "SubcategoriesPanel";
+            m_filtersPanel.clipChildren = true;
+            m_filtersPanel.size = new Vector2(150, 235);
+            m_filtersPanel.isVisible = false;
+            UIFilters.FilterPanel = m_filtersPanel;
 
             void OnDoubleClick(UIComponent c, UIMouseEventParameter p)
             {
@@ -276,37 +277,71 @@ namespace MoveIt
                 UIFilters.RefreshFilters();
             }
 
+            void OnPickerClick(UIComponent c, UIMouseEventParameter p)
+            {
+                MoveItTool.instance.ToolState = MoveItTool.ToolStates.Picking;
+                ((UIButton)c).normalBgSprite = "OptionsDropboxListboxHovered";
+            }
+
+            void OnPickerDoubleClick(UIComponent c, UIMouseEventParameter p)
+            {
+                Filters.Picker = new PickerFilter();
+
+                Filters.SetFilter("Picker", false);
+            }
+
             #region Standard Filters
-            UICheckBox checkBox = UIFilters.CreateFilterCB(filtersPanel, "Buildings");
+            m_filtersPanelList = m_filtersPanel.AddUIComponent(typeof(UIPanel)) as UIPanel;
+            m_filtersPanelList.name = "m_filtersPanelList";
+
+            m_picker = UIUtils.CreateButton(m_filtersPanel);
+            m_picker.relativePosition = new Vector3(120, 10);
+            m_picker.size = new Vector2(20, 20);
+            m_picker.textPadding = new RectOffset(0, 0, 3, 0);
+            m_picker.text = "+";
+            m_picker.normalBgSprite = "OptionsDropboxListbox";
+            m_picker.disabledBgSprite = "OptionsDropboxListbox";
+            m_picker.hoveredBgSprite = "OptionsDropboxListbox";
+            m_picker.focusedBgSprite = "OptionsDropboxListboxHovered";
+            m_picker.pressedBgSprite = "OptionsDropboxListboxPressed";
+            m_picker.eventClick += OnPickerClick;
+            m_picker.eventDoubleClick += OnPickerDoubleClick;
+
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Picker", null, false);
+            checkBox.width -= 23;
+            UIFilters.UpdatePickerLabel("Picker", "Pick an object to filter for objects of the same type", UIFilters.InactiveLabelColor, false);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Props");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Buildings");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Decals");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Props");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Surfaces");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Decals");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Trees");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Surfaces");
+            checkBox.eventDoubleClick += OnDoubleClick;
+
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Trees");
             checkBox.eventDoubleClick += OnDoubleClick;
 
             if (MoveItTool.PO.Enabled)
             {
                 if (MoveItTool.PO.Active)
                 {
-                    filtersPanel.height += 20f;
+                    m_filtersPanel.height += 20f;
                 }
-                checkBox = UIFilters.CreateFilterCB(filtersPanel, "PO");
+                checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "PO");
                 checkBox.eventDoubleClick += OnDoubleClick;
                 checkBox.isVisible = MoveItTool.PO.Active;
             }
 
-            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Nodes");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Nodes");
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(filtersPanel, "Segments");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Segments");
             checkBox.eventDoubleClick += OnDoubleClick;
             #endregion
 
@@ -325,39 +360,40 @@ namespace MoveIt
                 UIFilters.RefreshFilters();
             }
 
-            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Roads");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Roads");
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Tracks");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Tracks");
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Paths");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Paths");
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Fences");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Fences");
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Powerlines");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Powerlines");
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(filtersPanel, "Others");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Others");
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
             UIFilters.RefreshFilters();
             #endregion
-            
-            filtersPanel.padding = new RectOffset(10, 10, 10, 10);
-            filtersPanel.autoLayoutDirection = LayoutDirection.Vertical;
-            filtersPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 5);
-            filtersPanel.autoLayout = true;
-            filtersPanel.height = 210;
-            filtersPanel.absolutePosition = m_marquee.absolutePosition + new Vector3(-47, -5 - filtersPanel.height);
+
+            m_filtersPanelList.padding = new RectOffset(10, 10, 10, 10);
+            m_filtersPanelList.autoLayoutDirection = LayoutDirection.Vertical;
+            m_filtersPanelList.autoLayoutPadding = new RectOffset(0, 0, 0, 5);
+            m_filtersPanelList.autoLayout = true;
+            m_filtersPanelList.relativePosition = new Vector3(0, 0, 0);
+            m_filtersPanel.autoLayout = false;
+            m_filtersPanel.absolutePosition = m_marquee.absolutePosition + new Vector3(-47, -5 - m_filtersPanel.height);
             #endregion
 
             m_marquee.eventButtonStateChanged += (c, p) =>
             {
                 MoveItTool.marqueeSelection = p == UIButton.ButtonState.Focused;
-                filtersPanel.isVisible = MoveItTool.marqueeSelection;
+                m_filtersPanel.isVisible = MoveItTool.marqueeSelection;
 
                 if (UITipsWindow.instance != null)
                 {
@@ -367,7 +403,7 @@ namespace MoveIt
             m_marquee.eventDoubleClick += (UIComponent c, UIMouseEventParameter p) =>
             {
                 bool newChecked = false;
-                foreach (UICheckBox cb in filtersPanel.GetComponentsInChildren<UICheckBox>())
+                foreach (UICheckBox cb in m_filtersPanel.GetComponentsInChildren<UICheckBox>())
                 {
                     if (!cb.isChecked)
                     {
@@ -376,10 +412,10 @@ namespace MoveIt
                     }
                 }
 
-                foreach (UICheckBox cb in filtersPanel.GetComponentsInChildren<UICheckBox>())
+                foreach (UICheckBox cb in m_filtersPanel.GetComponentsInChildren<UICheckBox>())
                 {
                     cb.isChecked = newChecked;
-                    Filters.SetAnyFilter(cb.label.text, newChecked);
+                    Filters.SetAnyFilter(cb.name, newChecked);
                 }
             };
             
@@ -463,23 +499,23 @@ namespace MoveIt
             m_alignTools.relativePosition = m_bulldoze.relativePosition + new Vector3(m_bulldoze.width, 0);
             m_alignTools.eventClicked += UIAlignTools.AlignToolsClicked;
 
-            alignToolsPanel = AddUIComponent<UIPanel>();
-            UIAlignTools.AlignToolsPanel = alignToolsPanel;
-            alignToolsPanel.autoLayout = false;
-            alignToolsPanel.clipChildren = true;
-            alignToolsPanel.size = new Vector2(36, 242); // Previous:238
-            alignToolsPanel.isVisible = false;
-            alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - alignToolsPanel.height);
-            m_alignTools.zOrder = alignToolsPanel.zOrder + 10;
+            m_alignToolsPanel = AddUIComponent<UIPanel>();
+            UIAlignTools.AlignToolsPanel = m_alignToolsPanel;
+            m_alignToolsPanel.autoLayout = false;
+            m_alignToolsPanel.clipChildren = true;
+            m_alignToolsPanel.size = new Vector2(36, 242); // Previous:238
+            m_alignToolsPanel.isVisible = false;
+            m_alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - m_alignToolsPanel.height);
+            m_alignTools.zOrder = m_alignToolsPanel.zOrder + 10;
 
-            UIPanel atpBackground = alignToolsPanel.AddUIComponent<UIPanel>();
+            UIPanel atpBackground = m_alignToolsPanel.AddUIComponent<UIPanel>();
             atpBackground.size = new Vector2(26, 236);
             atpBackground.clipChildren = true;
             atpBackground.relativePosition = new Vector3(5, 10);
             atpBackground.atlas = UIUtils.GetAtlas("Ingame");
             atpBackground.backgroundSprite = "InfoPanelBack";
 
-            UIPanel atpContainer = alignToolsPanel.AddUIComponent<UIPanel>();
+            UIPanel atpContainer = m_alignToolsPanel.AddUIComponent<UIPanel>();
             atpContainer.autoLayoutDirection = LayoutDirection.Vertical;
             atpContainer.autoLayoutPadding = new RectOffset(0, 0, 0, 3);
             atpContainer.autoLayout = true;
@@ -572,15 +608,15 @@ namespace MoveIt
             #endregion
 
             #region View Options
-            viewOptions = AddUIComponent<UIPanel>();
-            viewOptions.atlas = UIUtils.GetAtlas("Ingame");
-            viewOptions.backgroundSprite = "InfoPanelBack";
-            viewOptions.size = new Vector2(44f, 80f);
+            m_viewOptions = AddUIComponent<UIPanel>();
+            m_viewOptions.atlas = UIUtils.GetAtlas("Ingame");
+            m_viewOptions.backgroundSprite = "InfoPanelBack";
+            m_viewOptions.size = new Vector2(44f, 80f);
 
-            viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - viewOptions.width, absolutePosition.y - viewOptions.height - 8f);
+            m_viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - m_viewOptions.width, absolutePosition.y - m_viewOptions.height - 8f);
 
 
-            grid = viewOptions.AddUIComponent<UIMultiStateButton>();
+            grid = m_viewOptions.AddUIComponent<UIMultiStateButton>();
             grid.atlas = GetIconsAtlas();
             grid.name = "MoveIt_GridView";
             grid.tooltip = "Toggle Grid";
@@ -615,7 +651,7 @@ namespace MoveIt
             };
 
 
-            underground = viewOptions.AddUIComponent<UIMultiStateButton>();
+            underground = m_viewOptions.AddUIComponent<UIMultiStateButton>();
             underground.atlas = UIUtils.GetAtlas("Ingame");
             underground.name = "MoveIt_UndergroundView";
             underground.tooltip = "Toogle Underground View";
@@ -652,7 +688,7 @@ namespace MoveIt
 
             if (!MoveItTool.HidePO && MoveItTool.PO.Enabled)
             {
-                PO_button = viewOptions.AddUIComponent<UIMultiStateButton>();
+                PO_button = m_viewOptions.AddUIComponent<UIMultiStateButton>();
                 PO_button.atlas = GetIconsAtlas();
                 PO_button.name = "MoveIt_PO_button";
                 PO_button.tooltip = "Toggle Procedural Objects";
@@ -698,8 +734,8 @@ namespace MoveIt
 
                 if (!MoveItTool.HidePO)
                 {
-                    viewOptions.height += 36;
-                    viewOptions.absolutePosition += new Vector3(0, -36);
+                    m_viewOptions.height += 36;
+                    m_viewOptions.absolutePosition += new Vector3(0, -36);
                 }
                 else
                 {

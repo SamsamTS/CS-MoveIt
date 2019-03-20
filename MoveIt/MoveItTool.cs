@@ -29,7 +29,8 @@ namespace MoveIt
             RightDraggingClone,
             DrawingSelection,
             Cloning,
-            Aligning
+            Aligning,
+            Picking
         }
 
         public enum AlignModes
@@ -61,6 +62,7 @@ namespace MoveIt
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
         public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
 
+        public static bool filterPicker = false;
         public static bool filterBuildings = true;
         public static bool filterProps = true;
         public static bool filterDecals = true;
@@ -235,6 +237,7 @@ namespace MoveIt
             followTerrain = followTerrainModeEnabled;
 
             PO = new PO_Manager();
+            Filters.Picker = new PickerFilter();
         }
 
         protected override void OnEnable()
@@ -326,7 +329,7 @@ namespace MoveIt
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
-            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
             {
                 // Reset all PO
                 if (!HidePO && PO.Active && POHighlightUnselected)
@@ -378,7 +381,7 @@ namespace MoveIt
                         mpo.m_procObj.Selected = true;
                     }
 
-                    if (ToolState == ToolStates.Aligning)
+                    if (ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
                     {
                         color = m_alignColor;
                     }

@@ -322,6 +322,15 @@ namespace MoveIt
                     }
                 }
             }
+            else if (ToolState == ToolStates.Picking)
+            {
+                if (m_hoverInstance == null) return;
+
+                Filters.Picker = new PickerFilter(m_hoverInstance.Info.Prefab);
+                Filters.SetFilter("Picker", true);
+                
+                ToolState = ToolStates.Default;
+            }
         }
 
         private void OnRightClick()
@@ -358,6 +367,10 @@ namespace MoveIt
             else if (ToolState == ToolStates.Aligning)
             {
                 DeactivateAlignTool();
+            }
+            else if (ToolState == ToolStates.Picking)
+            {
+                UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListbox";
             }
             else if (ToolState != ToolStates.MouseDragging)
             {

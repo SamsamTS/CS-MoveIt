@@ -41,7 +41,7 @@ namespace MoveIt
 
         public static UIButton CreateToggleNFBtn()
         {
-            ToggleNF = SamsamTS.UIUtils.CreateButton(FilterPanel);
+            ToggleNF = SamsamTS.UIUtils.CreateButton(FilterPanel.Find<UIPanel>("m_filtersPanelList"));
             ToggleNF.textHorizontalAlignment = UIHorizontalAlignment.Center;
             ToggleNF.textColor = TextColor;
             ToggleNF.disabledTextColor = TextColor;
@@ -120,9 +120,9 @@ namespace MoveIt
             RefreshFilters();
         }
 
-        public static UICheckBox CreateFilterCB(UIComponent parent, string name, string label = null)
+        public static UICheckBox CreateFilterCB(UIComponent parent, string name, string label = null, bool isChecked = true)
         {
-            UICheckBox checkBox = _createFilterCB(parent, name, label);
+            UICheckBox checkBox = _createFilterCB(parent, name, label, isChecked);
             checkBox.isVisible = true;
             checkBox.eventClicked += (c, p) =>
             {
@@ -133,9 +133,9 @@ namespace MoveIt
             return checkBox;
         }
 
-        public static UICheckBox CreateNetworkFilterCB(UIComponent parent, string name, string label = null)
+        public static UICheckBox CreateNetworkFilterCB(UIComponent parent, string name, string label = null, bool isChecked = true)
         {
-            UICheckBox checkBox = _createFilterCB(parent, name, label);
+            UICheckBox checkBox = _createFilterCB(parent, name, label, isChecked);
             checkBox.isVisible = false;
             checkBox.eventClicked += (c, p) =>
             {
@@ -146,16 +146,30 @@ namespace MoveIt
             return checkBox;
         }
 
-        private static UICheckBox _createFilterCB(UIComponent parent, string name, string label)
+        private static UICheckBox _createFilterCB(UIComponent parent, string name, string label, bool isChecked)
         {
             if (label == null) label = name;
             UICheckBox checkBox = SamsamTS.UIUtils.CreateCheckBox(parent);
             checkBox.label.text = label;
             checkBox.name = name;
-            checkBox.isChecked = true;
+            checkBox.isChecked = isChecked;
+            checkBox.size = new Vector2(130, 20);
             return checkBox;
         }
 
+        public static void UpdatePickerLabel(string text, string tooltip, Color32 color, bool? isChecked = null)
+        {
+            UICheckBox checkBox = FilterCBs.Find(cb => cb.name == "Picker");
+
+            checkBox.label.text = text;
+            checkBox.label.textColor = color;
+            checkBox.tooltip = tooltip;
+            if (isChecked == false)
+                checkBox.isChecked = false;
+            else if (isChecked == true)
+                checkBox.isChecked = true;
+            UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListbox";
+        }
 
         internal static void POToggled()
         {
@@ -177,12 +191,10 @@ namespace MoveIt
             RefreshFilters();
         }
 
-
         public static void RefreshFilters()
         {
-            UICheckBox cbNodes = FilterCBs.Find(cb => cb.name == "Nodes"); //FilterPanel.Find<UICheckBox>("Nodes");
-            UICheckBox cbSegments = FilterCBs.Find(cb => cb.name == "Segments"); //FilterPanel.Find<UICheckBox>("Segments");
-
+            UICheckBox cbNodes = FilterCBs.Find(cb => cb.name == "Nodes");
+            UICheckBox cbSegments = FilterCBs.Find(cb => cb.name == "Segments");
 
             if (MoveItTool.filterNodes || MoveItTool.filterSegments)
             {

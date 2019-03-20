@@ -1,11 +1,11 @@
-﻿using MoveIt;
+﻿using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MoveIt
 {
-    class Filters
+    static class Filters
     {
         static readonly string[] SurfaceMeshNames = new string[]
         {
@@ -13,7 +13,6 @@ namespace MoveIt
             "ploppablecliffgrass",
             "ploppableasphalt-prop"
         };
-
 
         static readonly string[] SurfaceExtraBuildingNames = new string[]
         {
@@ -45,7 +44,6 @@ namespace MoveIt
             typeof(PowerPoleAI)
         };
 
-
         public static Dictionary<string, NetworkFilter> NetworkFilters = new Dictionary<string, NetworkFilter>
         {
             { "Roads", new NetworkFilter(true, new List<Type> { typeof(RoadBaseAI) }, new List<string> { "Pedestrian Path", "Beautification Item" } ) },
@@ -55,7 +53,7 @@ namespace MoveIt
             { "Powerlines", new NetworkFilter(true, new List<Type> { typeof(PowerLineAI) } ) },
             { "Others", new NetworkFilter(true) }
         };
-
+        public static PickerFilter Picker = null;
 
         public static void SetAnyFilter(string name, bool active)
         {
@@ -69,11 +67,13 @@ namespace MoveIt
             }
         }
 
-
         public static void SetFilter(string name, bool active)
         {
             switch (name)
             {
+                case "Picker":
+                    MoveItTool.filterPicker = active;
+                    break;
                 case "Buildings":
                     MoveItTool.filterBuildings = active;
                     break;
@@ -100,7 +100,7 @@ namespace MoveIt
                     break;
 
                 default:
-                    throw new Exception();
+                    throw new Exception($"Failed (name:{name}, active:{active})");
             }
         }
 
@@ -113,6 +113,9 @@ namespace MoveIt
         {
             switch (name)
             {
+                case "Picker":
+                    MoveItTool.filterPicker = !MoveItTool.filterPicker;
+                    break;
                 case "Buildings":
                     MoveItTool.filterBuildings = !MoveItTool.filterBuildings;
                     break;
@@ -139,7 +142,7 @@ namespace MoveIt
                     break;
 
                 default:
-                    throw new Exception();
+                    throw new Exception($"Failed (name:{name})");
             }
         }
 
@@ -147,7 +150,6 @@ namespace MoveIt
         {
             NetworkFilters[name].enabled = !NetworkFilters[name].enabled;
         }
-
 
         public static bool IsSurface(BuildingInfo info)
         {
@@ -200,7 +202,6 @@ namespace MoveIt
 
             return false;
         }
-
 
         public static bool Filter(BuildingInfo info, bool isHover = false)
         {
@@ -316,7 +317,6 @@ namespace MoveIt
         }
     }
 
-
     public class NetworkFilter
     {
         public bool enabled;
@@ -359,5 +359,36 @@ namespace MoveIt
             }
             return Filters.NetworkFilters["Others"];
         }
+    }
+
+    public class PickerFilter
+    {
+        PrefabInfo m_info = null;
+
+        public PickerFilter()
+        {
+            UIFilters.UpdatePickerLabel(Name, "Pick an object to filter for objects of the same type", UIFilters.InactiveLabelColor, false);
+        }
+
+        public PickerFilter(PrefabInfo pi)
+        {
+            m_info = pi;
+
+            UIFilters.UpdatePickerLabel(Name, Name, UIFilters.ActiveLabelColor, true);
+        }
+
+        public string Name
+        {
+            get
+            {
+                return m_info == null ? "Picker" : m_info.name;
+            }
+        }
+
+        public bool IsBuilding { get => (m_info is BuildingInfo); }
+        public bool IsProp { get => (m_info is PropInfo); }
+        public bool IsTree { get => (m_info is TreeInfo); }
+        public bool IsSegment { get => (m_info is NetInfo); }
+        public bool IsNode { get => (m_info is NetInfo); }
     }
 }
