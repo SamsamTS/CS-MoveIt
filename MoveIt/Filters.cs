@@ -381,7 +381,15 @@ namespace MoveIt
         {
             get
             {
-                return m_info == null ? "Picker" : m_info.name;
+                if (m_info == null)
+                    return "Picker";
+                if (m_info is BuildingInfo bi)
+                    return bi.m_generatedInfo.name;
+                if (m_info is PropInfo pi)
+                    return pi.m_generatedInfo.name;
+                if (m_info is TreeInfo ti)
+                    return ti.m_generatedInfo.name;
+                return m_info.name;
             }
         }
 

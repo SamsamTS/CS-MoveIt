@@ -280,7 +280,7 @@ namespace MoveIt
             void OnPickerClick(UIComponent c, UIMouseEventParameter p)
             {
                 MoveItTool.instance.ToolState = MoveItTool.ToolStates.Picking;
-                ((UIButton)c).normalBgSprite = "OptionsDropboxListboxHovered";
+                UIFilters.UpdatePickerButton(2);
             }
 
             void OnPickerDoubleClick(UIComponent c, UIMouseEventParameter p)
@@ -295,20 +295,18 @@ namespace MoveIt
             m_filtersPanelList.name = "m_filtersPanelList";
 
             m_picker = UIUtils.CreateButton(m_filtersPanel);
-            m_picker.relativePosition = new Vector3(120, 10);
+            m_picker.relativePosition = new Vector3(122, 9);
             m_picker.size = new Vector2(20, 20);
-            m_picker.textPadding = new RectOffset(0, 0, 3, 0);
-            m_picker.text = "+";
+            m_picker.atlas = GetIconsAtlas();
+            m_picker.normalFgSprite = "EyeDropper";
             m_picker.normalBgSprite = "OptionsDropboxListbox";
-            m_picker.disabledBgSprite = "OptionsDropboxListbox";
-            m_picker.hoveredBgSprite = "OptionsDropboxListbox";
-            m_picker.focusedBgSprite = "OptionsDropboxListboxHovered";
-            m_picker.pressedBgSprite = "OptionsDropboxListboxPressed";
+            m_picker.hoveredBgSprite = "OptionsDropboxListboxFocused";
+            m_picker.pressedBgSprite = "OptionsDropboxListboxHovered";
             m_picker.eventClick += OnPickerClick;
             m_picker.eventDoubleClick += OnPickerDoubleClick;
 
             checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Picker", null, false);
-            checkBox.width -= 23;
+            checkBox.width -= 21;
             UIFilters.UpdatePickerLabel("Picker", "Pick an object to filter for objects of the same type", UIFilters.InactiveLabelColor, false);
             checkBox.eventDoubleClick += OnDoubleClick;
 
@@ -822,14 +820,16 @@ namespace MoveIt
 
         private UITextureAtlas GetIconsAtlas()
         {
-
             Texture2D[] textures = 
             {
                 atlas["OptionBase"].texture,
                 atlas["OptionBaseHovered"].texture,
                 atlas["OptionBasePressed"].texture,
                 atlas["OptionBaseDisabled"].texture,
-                atlas["OptionBaseFocused"].texture
+                atlas["OptionBaseFocused"].texture,
+                atlas["OptionsDropboxListbox"].texture,
+                atlas["OptionsDropboxListboxHovered"].texture,
+                atlas["OptionsDropboxListboxFocused"].texture
             };
 
             string[] spriteNames = new string[]
@@ -843,6 +843,7 @@ namespace MoveIt
                 "AlignSlopeB",
                 "AlignHeight",
                 "AlignTerrainHeight",
+                "EyeDropper",
                 "Copy",
                 "Bulldoze",
                 "Group",

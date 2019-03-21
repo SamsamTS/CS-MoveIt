@@ -328,7 +328,8 @@ namespace MoveIt
 
                 Filters.Picker = new PickerFilter(m_hoverInstance.Info.Prefab);
                 Filters.SetFilter("Picker", true);
-                
+                UIFilters.UpdatePickerButton(1);
+
                 ToolState = ToolStates.Default;
             }
         }
@@ -370,7 +371,8 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Picking)
             {
-                UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListbox";
+                UIFilters.UpdatePickerButton(1);
+                ToolState = ToolStates.Default;
             }
             else if (ToolState != ToolStates.MouseDragging)
             {
