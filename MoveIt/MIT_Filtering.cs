@@ -29,6 +29,7 @@ namespace MoveIt
 
             ItemClass.Layer itemLayers = GetItemLayers();
 
+            bool selectPicker = false;
             bool selectBuilding = true;
             bool selectProps = true;
             bool selectDecals = true;
@@ -42,6 +43,7 @@ namespace MoveIt
 
             if (marqueeSelection)
             {
+                selectPicker = filterPicker;
                 selectBuilding = filterBuildings;
                 selectProps = filterProps;
                 selectDecals = filterDecals;
@@ -90,7 +92,7 @@ namespace MoveIt
                 {
                     for (int j = gridMinX; j <= gridMaxX; j++)
                     {
-                        if (selectBuilding || selectSurfaces)
+                        if (selectBuilding || selectSurfaces || (selectPicker && Filters.Picker.IsBuilding))
                         {
                             ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
                             int count = 0;
@@ -115,7 +117,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (selectProps || selectDecals || selectSurfaces)
+                        if (selectProps || selectDecals || selectSurfaces || (selectPicker && Filters.Picker.IsProp))
                         {
                             ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
                             int count = 0;
@@ -140,7 +142,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (selectNodes || selectBuilding)
+                        if (selectNodes || selectBuilding || (selectPicker && Filters.Picker.IsNode))
                         {
                             ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
                             int count = 0;
@@ -164,7 +166,7 @@ namespace MoveIt
                                             smallestDist = t;
                                         }
                                     }
-                                    else if (selectNodes)
+                                    else if (selectNodes || (selectPicker && Filters.Picker.IsNode))
                                     {
                                         if (Filters.Filter(nodeBuffer[node]))
                                         {
@@ -182,7 +184,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (selectSegments || selectBuilding)
+                        if (selectSegments || selectBuilding || (selectPicker && Filters.Picker.IsSegment))
                         {
                             ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
                             int count = 0;
@@ -207,7 +209,7 @@ namespace MoveIt
                                             smallestDist = t;
                                         }
                                     }
-                                    else if (selectSegments)
+                                    else if (selectSegments || (selectPicker && Filters.Picker.IsSegment))
                                     {
                                         if (!selectNodes || (
                                             (!stepOver.isValidN(segmentBuffer[segment].m_startNode) || !RayCastNode(ref nodeBuffer[segmentBuffer[segment].m_startNode], ray, -1000f, out float t2, out priority)) &&
@@ -233,7 +235,7 @@ namespace MoveIt
                     }
                 }
 
-                if (selectTrees)
+                if (selectTrees || (selectPicker && Filters.Picker.IsTree))
                 {
                     gridMinX = Mathf.Max((int)((location.x - 8f) / 32f + 270f), 0);
                     gridMinZ = Mathf.Max((int)((location.z - 8f) / 32f + 270f), 0);
@@ -250,8 +252,11 @@ namespace MoveIt
                             {
                                 if (stepOver.isValidT(tree) && treeBuffer[tree].RayCast(tree, ray, out float t, out float targetSqr) && t < smallestDist)
                                 {
-                                    id.Tree = tree;
-                                    smallestDist = t;
+                                    if (Filters.Filter(treeBuffer[tree].Info))
+                                    {
+                                        id.Tree = tree;
+                                        smallestDist = t;
+                                    }
                                 }
                                 tree = treeBuffer[tree].m_nextGridTree;
 
@@ -362,7 +367,7 @@ namespace MoveIt
                 {
                     for (int j = gridMinX; j <= gridMaxX; j++)
                     {
-                        if (filterBuildings || filterSurfaces)
+                        if (filterBuildings || filterSurfaces || (filterPicker && Filters.Picker.IsBuilding))
                         {
                             ushort building = BuildingManager.instance.m_buildingGrid[i * 270 + j];
                             int count = 0;
@@ -388,7 +393,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (filterProps || filterDecals || filterSurfaces)
+                        if (filterProps || filterDecals || filterSurfaces || (filterPicker && Filters.Picker.IsProp))
                         {
                             ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
                             int count = 0;
@@ -413,7 +418,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (filterNodes || filterBuildings)
+                        if (filterNodes || filterBuildings || (filterPicker && Filters.Picker.IsNode))
                         {
                             ushort node = NetManager.instance.m_nodeGrid[i * 270 + j];
                             int count = 0;
@@ -433,7 +438,7 @@ namespace MoveIt
                                             list.Add(id);
                                         }
                                     }
-                                    else if (filterNodes)
+                                    else if (filterNodes || (filterPicker && Filters.Picker.IsNode))
                                     {
                                         if (Filters.Filter(nodeBuffer[node]))
                                         {
@@ -452,7 +457,7 @@ namespace MoveIt
                             }
                         }
 
-                        if (filterSegments || filterBuildings)
+                        if (filterSegments || filterBuildings || (filterPicker && Filters.Picker.IsSegment))
                         {
                             ushort segment = NetManager.instance.m_segmentGrid[i * 270 + j];
                             int count = 0;
@@ -472,7 +477,7 @@ namespace MoveIt
                                             list.Add(id);
                                         }
                                     }
-                                    else if (filterSegments)
+                                    else if (filterSegments || (filterPicker && Filters.Picker.IsSegment))
                                     {
                                         if (Filters.Filter(segmentBuffer[segment]))
                                         {
@@ -492,7 +497,7 @@ namespace MoveIt
                     }
                 }
 
-                if (filterTrees)
+                if (filterTrees || (filterPicker && Filters.Picker.IsTree))
                 {
                     gridMinX = Mathf.Max((int)((min.x - 8f) / 32f + 270f), 0);
                     gridMinZ = Mathf.Max((int)((min.z - 8f) / 32f + 270f), 0);
@@ -510,8 +515,11 @@ namespace MoveIt
                                 //Debug.Log($"Tree:{tree}");
                                 if (PointInRectangle(m_selection, treeBuffer[tree].Position))
                                 {
-                                    id.Tree = tree;
-                                    list.Add(id);
+                                    if (Filters.Filter(treeBuffer[tree].Info))
+                                    {
+                                        id.Tree = tree;
+                                        list.Add(id);
+                                    }
                                 }
                                 tree = treeBuffer[tree].m_nextGridTree;
 

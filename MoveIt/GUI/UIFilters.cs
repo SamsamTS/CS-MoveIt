@@ -161,6 +161,9 @@ namespace MoveIt
         {
             UICheckBox checkBox = FilterCBs.Find(cb => cb.name == "Picker");
 
+            if (checkBox == null)
+                return;
+
             checkBox.label.text = text;
             checkBox.label.textColor = color;
             checkBox.tooltip = tooltip;

@@ -53,7 +53,7 @@ namespace MoveIt
             { "Powerlines", new NetworkFilter(true, new List<Type> { typeof(PowerLineAI) } ) },
             { "Others", new NetworkFilter(true) }
         };
-        public static PickerFilter Picker = null;
+        public static PickerFilter Picker = new PickerFilter();
 
         public static void SetAnyFilter(string name, bool active)
         {
@@ -205,6 +205,10 @@ namespace MoveIt
 
         public static bool Filter(BuildingInfo info, bool isHover = false)
         {
+            if (MoveItTool.filterPicker && info == Picker.Info)
+            {
+                return true;
+            }
             if (isHover)
             {
                 //Select P&P on hover with Alt
@@ -264,6 +268,11 @@ namespace MoveIt
         {
             if (!MoveItTool.marqueeSelection) return true;
 
+            if (MoveItTool.filterPicker && info == Picker.Info)
+            {
+                return true;
+            }
+
             if (info.m_isDecal)
             {
                 if (MoveItTool.filterSurfaces && IsSurface(info))
@@ -293,23 +302,57 @@ namespace MoveIt
             return false;
         }
 
+        public static bool Filter(TreeInfo info)
+        {
+            if (!MoveItTool.marqueeSelection) return true;
+
+            if (MoveItTool.filterTrees)
+            {
+                return true;
+            }
+            if (MoveItTool.filterPicker && info == Picker.Info)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static bool Filter(NetNode node)
         {
             if (MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Inplace)
             {
                 return false;
             }
-            return _networkFilter(node.Info);
+            if (!MoveItTool.marqueeSelection) return true;
+
+            if (MoveItTool.filterPicker && node.Info == Picker.Info)
+            {
+                return true;
+            }
+            if (MoveItTool.filterNodes)
+            {
+                return _networkFilter(node.Info);
+            }
+            return false;
         }
 
         public static bool Filter(NetSegment segment)
         {
-            return _networkFilter(segment.Info);
+            if (!MoveItTool.marqueeSelection) return true;
+
+            if (MoveItTool.filterPicker && segment.Info == Picker.Info)
+            {
+                return true;
+            }
+            if (MoveItTool.filterSegments)
+            {
+                return _networkFilter(segment.Info);
+            }
+            return false;
         }
 
         private static bool _networkFilter(NetInfo info)
         {
-            if (!MoveItTool.marqueeSelection) return true;
             if (!MoveItTool.filterNetworks) return true;
 
             NetworkFilter nf = NetworkFilter.GetNetworkFilter(info);
@@ -363,7 +406,7 @@ namespace MoveIt
 
     public class PickerFilter
     {
-        PrefabInfo m_info = null;
+        public PrefabInfo Info { get; } = null;
 
         public PickerFilter()
         {
@@ -372,7 +415,7 @@ namespace MoveIt
 
         public PickerFilter(PrefabInfo pi)
         {
-            m_info = pi;
+            Info = pi;
 
             UIFilters.UpdatePickerLabel(Name, Name, UIFilters.ActiveLabelColor, true);
         }
@@ -381,22 +424,22 @@ namespace MoveIt
         {
             get
             {
-                if (m_info == null)
+                if (Info == null)
                     return "Picker";
-                if (m_info is BuildingInfo bi)
+                if (Info is BuildingInfo bi)
                     return bi.m_generatedInfo.name;
-                if (m_info is PropInfo pi)
+                if (Info is PropInfo pi)
                     return pi.m_generatedInfo.name;
-                if (m_info is TreeInfo ti)
+                if (Info is TreeInfo ti)
                     return ti.m_generatedInfo.name;
-                return m_info.name;
+                return Info.name;
             }
         }
 
-        public bool IsBuilding { get => (m_info is BuildingInfo); }
-        public bool IsProp { get => (m_info is PropInfo); }
-        public bool IsTree { get => (m_info is TreeInfo); }
-        public bool IsSegment { get => (m_info is NetInfo); }
-        public bool IsNode { get => (m_info is NetInfo); }
+        public bool IsBuilding { get => (Info is BuildingInfo); }
+        public bool IsProp { get => (Info is PropInfo); }
+        public bool IsTree { get => (Info is TreeInfo); }
+        public bool IsSegment { get => (Info is NetInfo); }
+        public bool IsNode { get => (Info is NetInfo); }
     }
 }

@@ -82,7 +82,7 @@ namespace MoveIt
             }
         }
 
-        // deltaAngleRad is clumulative delta since Transform Action started, CCW
+        // deltaAngleRad is cumulative delta since Transform Action started, CCW
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain)
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
