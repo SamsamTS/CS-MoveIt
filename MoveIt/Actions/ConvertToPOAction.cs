@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace MoveIt
@@ -44,31 +45,45 @@ namespace MoveIt
             {
                 Instance instance = instanceState.instance;
 
-                if (!((instance is MoveableBuilding || instance is MoveableProp) || !instance.isValid))
+
+
+
+                //while (!Monitor.TryEnter(instance.data, SimulationManager.SYNCHRONIZE_TIMEOUT))
+                //{
+                //}
+                //try
+                lock (instance.data)
                 {
-                    continue;
+                    if (!((instance is MoveableBuilding || instance is MoveableProp) || !instance.isValid))
+                    {
+                        continue;
+                    }
+
+                    IPO_Object obj = MoveItTool.PO.ConvertToPO(instance);
+                    if (obj == null)
+                    {
+                        continue;
+                    }
+
+                    MoveItTool.PO.visibleObjects.Add(obj.Id, obj);
+
+                    InstanceID instanceID = default(InstanceID);
+                    instanceID.NetLane = obj.Id;
+                    MoveableProc mpo = new MoveableProc(instanceID);
+                    m_clones.Add(mpo);
+
+                    mpo.angle = instance.angle;
+                    mpo.position = instance.position;
+
+                    selection.Add(mpo);
+                    selection.Remove(instance);
+                    instance.Delete();
+                    MoveItTool.m_debugPanel.Update();
                 }
-
-                IPO_Object obj = MoveItTool.PO.ConvertToPO(instance);
-                if (obj == null)
-                {
-                    continue;
-                }
-
-                MoveItTool.PO.visibleObjects.Add(obj.Id, obj);
-
-                InstanceID instanceID = default(InstanceID);
-                instanceID.NetLane = obj.Id;
-                MoveableProc mpo = new MoveableProc(instanceID);
-                m_clones.Add(mpo);
-
-                mpo.angle = instance.angle;
-                mpo.position = instance.position;
-
-                selection.Add(mpo);
-                selection.Remove(instance);
-                instance.Delete();
-                MoveItTool.m_debugPanel.Update();
+                //finally
+                //{
+                //    Monitor.Exit(instance.data);
+                //}
             }
         }
 

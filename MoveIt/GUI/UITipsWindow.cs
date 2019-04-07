@@ -47,6 +47,11 @@ namespace MoveIt
 
             instance = this;
 
+            Random.InitState(System.DateTime.Now.Second);
+            if (Random.Range(0, 8) == 0)
+            {
+                m_currentTip = m_tips.Length - 2;
+            }
             NextTip();
         }
 

@@ -22,7 +22,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                DebugUtils.Log("Could load/create the setting file.");
+                DebugUtils.Log("Could not load/create the setting file.");
                 DebugUtils.LogException(e);
             }
         }
@@ -65,12 +65,7 @@ namespace MoveIt
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
-                {
-                    DebugUtils.hideDebugMessages.value = b;
-                });
-                checkBox.tooltip = "If checked, debug messages won't be logged.";
-                checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
                 {
                     MoveItTool.hideTips.value = b;
                     if (UITipsWindow.instance != null)
@@ -80,7 +75,7 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Check this if you don't want to see the tips.";
 
-                group.AddSpace(15);
+                group.AddSpace(10);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Auto-close Align Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
@@ -92,7 +87,7 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";
 
-                group.AddSpace(15);
+                group.AddSpace(10);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Prefer fast, low-detail moving (hold Shift to temporarily switch)", MoveItTool.fastMove.value, (b) =>
                 {
@@ -100,20 +95,22 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "Helps you position objects when your frame-rate is poor.";
 
-                group.AddSpace(15);
+                group.AddSpace(10);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
                 });
 
-                group.AddSpace(15);
+                group.AddSpace(10);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;
                 });
                 checkBox.tooltip = "If checked, Up will move in the North direction, Down is South, Left is West, Right is East.";
+
+                group.AddSpace(10);
 
                 checkBox = (UICheckBox)group.AddCheckbox("Right click cancels cloning", MoveItTool.rmbCancelsCloning.value, (b) =>
                 {
@@ -131,6 +128,12 @@ namespace MoveIt
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
 
                 group.AddSpace(20);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
+                {
+                    DebugUtils.hideDebugMessages.value = b;
+                });
+                checkBox.tooltip = "If checked, debug messages won't be logged.";
 
                 checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n", MoveItTool.showDebugPanel.value, (b) =>
                 {
