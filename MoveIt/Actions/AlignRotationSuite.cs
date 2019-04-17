@@ -1,4 +1,5 @@
 ﻿using System;
+using ColossalFramework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace MoveIt
         public float newAngle;
         public bool followTerrain;
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
-        protected static Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
         public AlignRotationAction()
         {
@@ -42,6 +43,7 @@ namespace MoveIt
             Bounds bounds = GetTotalBounds(true, true);
             float angleDelta, firstValidAngle = 0;
             System.Random random = new System.Random();
+            BuildingManager buildingManager = Singleton<BuildingManager>.instance;
 
             foreach (InstanceState state in m_states)
             {
@@ -66,7 +68,7 @@ namespace MoveIt
                     {
                         //BuildingState bs = (BuildingState)state;
 
-                        if (Mathf.Abs(TerrainManager.instance.SampleOriginalRawHeightSmooth(mb.position) - mb.position.y) > 0.01f)
+                        if (Mathf.Abs(Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(mb.position) - mb.position.y) > 0.01f)
                         {
                             mb.AddFixedHeightFlag(mb.id.Building);
                         }
@@ -93,15 +95,15 @@ namespace MoveIt
 
                         BuildingInfo prefab = (BuildingInfo)state.Info.Prefab;
                         ushort id = mb.id.Building;
-                        Building building = BuildingManager.instance.m_buildings.m_buffer[id];
+                        Building building = buildingManager.m_buildings.m_buffer[id];
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
                             //Debug.Log("PARKING (ATA.Do)");
-                            BuildingManager.instance.UpdateParkingSpaces(id, ref building);
+                            buildingManager.UpdateParkingSpaces(id, ref building);
                         }
 
-                        BuildingManager.instance.UpdateBuildingRenderer(id, true);
+                        buildingManager.UpdateBuildingRenderer(id, true);
                     }
                     else if (state.instance is MoveableProp mp)
                     {

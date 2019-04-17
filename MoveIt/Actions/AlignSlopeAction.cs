@@ -1,4 +1,5 @@
 using System;
+using ColossalFramework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +7,11 @@ namespace MoveIt
 {
     class AlignSlopeAction : Action
     {
-        protected static Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-        protected static PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
-        protected static TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
-        protected static NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-        protected static NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+        protected static PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+        protected static TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
+        protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+        protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
         public bool IsQuick = false;
 
@@ -226,7 +227,7 @@ namespace MoveIt
             //    for (int i = 0; i < sortedNodes.Count; i++)
             //    {
             //        float Nln = ((endNode.m_position.y - startNode.m_position.y) / totalLength) * incrementLength + startNode.m_position.y;
-            //        NetManager.instance.MoveNode(sortedNodes[i], new Vector3(nodeBuffer[sortedNodes[i]].m_position.x, Nln, nodeBuffer[sortedNodes[i]].m_position.z));
+            //        Singleton<NetManager>.instance.MoveNode(sortedNodes[i], new Vector3(nodeBuffer[sortedNodes[i]].m_position.x, Nln, nodeBuffer[sortedNodes[i]].m_position.z));
             //        if (i != sortedNodes.Count - 1) incrementLength += segmentLinearLengthsXZ[i];
             //    }
             //}

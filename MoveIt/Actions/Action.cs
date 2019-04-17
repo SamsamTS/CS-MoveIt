@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using ColossalFramework;
 using System.Collections.Generic;
 
 namespace MoveIt
@@ -84,13 +84,13 @@ namespace MoveIt
             MoveItTool.instance.aerasToUpdate.Add(bounds);
             MoveItTool.instance.aeraUpdateCountdown = 50;
 
-            BuildingManager.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            PropManager.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            TreeManager.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
 
             bounds.Expand(64f);
-            ElectricityManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            WaterManager.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+            Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             UpdateRender(bounds);
         }
 
@@ -106,7 +106,7 @@ namespace MoveIt
             int x1 = num1 * 45 / 270 + 1;
             int z1 = num2 * 45 / 270 + 1;
 
-            RenderManager renderManager = RenderManager.instance;
+            RenderManager renderManager = Singleton<RenderManager>.instance;
             RenderGroup[] renderGroups = renderManager.m_groups;
 
             for (int i = z0; i < z1; i++)

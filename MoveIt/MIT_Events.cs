@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.Math;
+using ColossalFramework.UI;
 using System;
 using UnityEngine;
 
@@ -329,6 +330,20 @@ namespace MoveIt
                 Filters.Picker = new PickerFilter(m_hoverInstance.Info.Prefab);
                 Filters.SetFilter("Picker", true);
                 UIFilters.UpdatePickerButton(1);
+
+                foreach (UICheckBox cb in UIFilters.FilterCBs)
+                {
+                    if (cb.name != "Picker")
+                    {
+                        cb.isChecked = false;
+                        Filters.SetFilter(cb.name, false);
+                    }
+                    else
+                    {
+                        cb.isChecked = true;
+                    }
+                }
+                UIFilters.RefreshFilters();
 
                 ToolState = ToolStates.Default;
             }

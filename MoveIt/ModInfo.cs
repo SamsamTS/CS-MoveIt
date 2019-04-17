@@ -213,9 +213,9 @@ namespace MoveIt
             string message;
             int count = 0;
 
-            for (ushort nodeId = 0; nodeId < NetManager.instance.m_nodes.m_buffer.Length; nodeId++)
+            for (ushort nodeId = 0; nodeId < Singleton<NetManager>.instance.m_nodes.m_buffer.Length; nodeId++)
             {
-                NetNode node = NetManager.instance.m_nodes.m_buffer[nodeId];
+                NetNode node = Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
                 if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.None) continue;
                 if ((node.m_flags & NetNode.Flags.Untouchable) != NetNode.Flags.None) continue;
                 bool hasSegments = false;
@@ -233,7 +233,7 @@ namespace MoveIt
                 {
                     count++;
                     //Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
-                    NetManager.instance.ReleaseNode(nodeId);
+                    Singleton<NetManager>.instance.ReleaseNode(nodeId);
                 }
             }
             if (count > 0)

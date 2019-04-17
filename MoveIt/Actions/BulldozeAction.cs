@@ -19,6 +19,8 @@ namespace MoveIt
             HashSet<Instance> extraNodes = new HashSet<Instance>();
             HashSet<ushort> segments = new HashSet<ushort>(); // Segments to be removed
 
+            NetManager netManager = Singleton<NetManager>.instance;
+
             //string msg = $"\nBasic Selection: {selection.Count}\n";
 
             // Add any segments whose node is selected
@@ -34,7 +36,7 @@ namespace MoveIt
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            ushort segment = NetManager.instance.m_nodes.m_buffer[instance.id.NetNode].GetSegment(i);
+                            ushort segment = netManager.m_nodes.m_buffer[instance.id.NetNode].GetSegment(i);
                             if (segment != 0)
                             {
                                 InstanceID instanceID = default(InstanceID);
@@ -55,13 +57,13 @@ namespace MoveIt
                         int c = 0;
                         while (nodeId != 0)
                         {
-                            NetNode node = NetManager.instance.m_nodes.m_buffer[nodeId];
+                            NetNode node = netManager.m_nodes.m_buffer[nodeId];
 
                             for (int i = 0; i < 8; i++)
                             {
                                 ushort segmentId = node.GetSegment(i);
                                 if (segmentId != 0 && MoveableSegment.isSegmentValid(segmentId) && 
-                                        ((NetManager.instance.m_segments.m_buffer[segmentId].m_flags & NetSegment.Flags.Untouchable) == NetSegment.Flags.None))
+                                        ((netManager.m_segments.m_buffer[segmentId].m_flags & NetSegment.Flags.Untouchable) == NetSegment.Flags.None))
                                 {
                                     InstanceID instanceID = default(InstanceID);
                                     instanceID.NetSegment = segmentId;
@@ -95,11 +97,11 @@ namespace MoveIt
                     if (instance.id.Type == InstanceType.NetSegment)
                     {
                         ushort segId = instance.id.NetSegment;
-                        ushort[] nodeIds = { NetManager.instance.m_segments.m_buffer[segId].m_startNode, NetManager.instance.m_segments.m_buffer[segId].m_endNode };
+                        ushort[] nodeIds = { netManager.m_segments.m_buffer[segId].m_startNode, netManager.m_segments.m_buffer[segId].m_endNode };
                         foreach (ushort id in nodeIds)
                         {
                             bool toDelete = true;
-                            NetNode node = NetManager.instance.m_nodes.m_buffer[id];
+                            NetNode node = netManager.m_nodes.m_buffer[id];
                             for (int i = 0; i < 8; i++)
                             {
                                 if (node.GetSegment(i) != 0 && !segments.Contains(node.GetSegment(i)))
@@ -227,7 +229,7 @@ namespace MoveIt
                         {
                             ushort origNodeId = origNodeIds[c];
 
-                            NetNode clonedAttachedNode = NetManager.instance.m_nodes.m_buffer[cloneNodeId];
+                            NetNode clonedAttachedNode = Singleton<NetManager>.instance.m_nodes.m_buffer[cloneNodeId];
                             if (clonedAttachedNode.Info.GetAI() is TransportLineAI)
                             {
                                 cloneNodeId = clonedAttachedNode.m_nextBuildingNode;

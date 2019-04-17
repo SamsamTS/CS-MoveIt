@@ -113,10 +113,10 @@ namespace MoveIt
             set
             {
                 m_toolState = value;
-                if (m_debugPanel != null)
-                {
-                    m_debugPanel.Update();
-                }
+                //if (m_debugPanel != null)
+                //{
+                //    m_debugPanel.Update();
+                //}
             }
         }
         private AlignModes m_alignMode = AlignModes.Off;

@@ -75,7 +75,7 @@ namespace MoveIt
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
 
-        public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
+        public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);
 
         public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);

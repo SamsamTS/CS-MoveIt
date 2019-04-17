@@ -28,30 +28,10 @@ namespace MoveIt
             m_clones.Clear();
             m_oldSelection = new HashSet<Instance>(selection);
 
-            //string msg = "Selection\n";
-            //foreach (Instance i in m_oldSelection)
-            //{
-            //    msg += $"{i.id.Prop}:{i.Info.Name}\n";
-            //}
-            //Debug.Log(msg);
-
-            //Debug.Log($"state: {MoveItTool.instance.ToolState}");
-            //if (MoveItTool.instance.ToolState != MoveItTool.ToolStates.Default)
-            //{
-            //    return;
-            //}
-
             foreach (InstanceState instanceState in m_states)
             {
                 Instance instance = instanceState.instance;
 
-
-
-
-                //while (!Monitor.TryEnter(instance.data, SimulationManager.SYNCHRONIZE_TIMEOUT))
-                //{
-                //}
-                //try
                 lock (instance.data)
                 {
                     if (!((instance is MoveableBuilding || instance is MoveableProp) || !instance.isValid))
@@ -80,10 +60,6 @@ namespace MoveIt
                     instance.Delete();
                     MoveItTool.m_debugPanel.Update();
                 }
-                //finally
-                //{
-                //    Monitor.Exit(instance.data);
-                //}
             }
         }
 

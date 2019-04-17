@@ -49,7 +49,7 @@ namespace MoveIt
         }
 
         internal void Update()
-        { 
+        {
             if (!MoveItTool.showDebugPanel)
             {
                 return;

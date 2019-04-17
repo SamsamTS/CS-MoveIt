@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using ColossalFramework;
 using System.Collections.Generic;
 
 namespace MoveIt
@@ -15,6 +15,8 @@ namespace MoveIt
         public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
         private HashSet<Instance> m_clones;
         private HashSet<Instance> m_oldSelection;
+
+        private bool _isImport = false;
 
         private Dictionary<Instance, Instance> m_clonedOrigin;
 
@@ -39,8 +41,8 @@ namespace MoveIt
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
 
-            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
             InstanceID id = new InstanceID();
 
@@ -168,6 +170,7 @@ namespace MoveIt
             }
 
             center = centerPoint;
+            _isImport = true;
         }
 
         public override void Do()
@@ -226,7 +229,10 @@ namespace MoveIt
 
             // Select clones
             selection = m_clones;
-            MoveItTool.m_debugPanel.Update();
+            if (!_isImport)
+            {
+                MoveItTool.m_debugPanel.Update();
+            }
 
             UpdateArea(GetTotalBounds(false));
         }
@@ -311,7 +317,7 @@ namespace MoveIt
 
                     if (followTerrain)
                     {
-                        newState.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newState.position);
+                        newState.terrainHeight = Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(newState.position);
                         newState.position.y = newState.position.y + newState.terrainHeight - state.terrainHeight;
                     }
 

@@ -187,6 +187,7 @@ namespace MoveIt
                     UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListboxHovered";
                     break;
             }
+
             MoveItTool.m_debugPanel.Update();
         }
 
