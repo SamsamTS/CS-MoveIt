@@ -1,5 +1,6 @@
 ﻿using ColossalFramework.Math;
 using ColossalFramework.UI;
+using ColossalFramework;
 using System;
 using UnityEngine;
 
@@ -246,17 +247,44 @@ namespace MoveIt
 
                     UIAlignTools.UpdateAlignTools();
                 }
+                if (AlignMode == AlignModes.Mirror)
+                {
+                    ToolState = ToolStates.Default;
+                    AlignMode = AlignModes.Off;
+
+                    AlignMirrorAction action = new AlignMirrorAction();
+                    if (m_hoverInstance != null && m_hoverInstance is MoveableSegment ms)
+                    {
+                        NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+
+                        Vector3 startPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
+                        Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
+
+                        //Debug.Log($"Vector:{endPos.x - startPos.x},{endPos.z - startPos.z} Start:{startPos.x},{startPos.z} End:{endPos.x},{endPos.z}\n" +
+                        //    $"Angle:{(float)Math.Atan2(endPos.z - startPos.z, endPos.x - startPos.x) - (float)(Math.PI / 2)}");
+
+                        action.mirrorPivot = ((endPos - startPos) / 2) + startPos;
+                        action.mirrorAngle = (float)Math.Atan2(endPos.z - startPos.z, endPos.x - startPos.x) - (float)(Math.PI / 2);
+                        action.followTerrain = followTerrain;
+
+                        ActionQueue.instance.Push(action);
+
+                        m_nextAction = ToolAction.Do;
+                    }
+
+                    UIAlignTools.UpdateAlignTools();
+                }
                 else if (AlignMode == AlignModes.Inplace || AlignMode == AlignModes.Group)
                 {
                     float angle;
 
                     if (m_hoverInstance is MoveableBuilding mb)
                     {
-                        angle = BuildingManager.instance.m_buildings.m_buffer[mb.id.Building].m_angle;
+                        angle = Singleton<BuildingManager>.instance.m_buildings.m_buffer[mb.id.Building].m_angle;
                     }
                     else if (m_hoverInstance is MoveableProp mp)
                     {
-                        angle = PropManager.instance.m_props.m_buffer[mp.id.Prop].Angle;
+                        angle = Singleton<PropManager>.instance.m_props.m_buffer[mp.id.Prop].Angle;
                     }
                     else if (m_hoverInstance is MoveableProc mpo)
                     {
@@ -264,7 +292,7 @@ namespace MoveIt
                     }
                     else if (m_hoverInstance is MoveableSegment ms)
                     {
-                        NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
+                        NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
 
                         Vector3 startPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
                         Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;

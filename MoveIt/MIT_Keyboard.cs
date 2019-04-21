@@ -109,6 +109,10 @@ namespace MoveIt
                 {
                     ProcessAligning(AlignModes.Slope);
                 }
+                else if (OptionsKeymapping.alignMirror.IsPressed(e))
+                {
+                    ProcessAligning(AlignModes.Mirror);
+                }
                 else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
                 {
                     AlignMode = AlignModes.SlopeNode;

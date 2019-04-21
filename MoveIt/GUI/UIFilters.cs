@@ -183,7 +183,7 @@ namespace MoveIt
                 case 1:
                     UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListbox";
                     break;
-                case 2:
+                case 2: // Active (picking object)
                     UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListboxHovered";
                     break;
             }

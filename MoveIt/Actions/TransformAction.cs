@@ -18,7 +18,7 @@ namespace MoveIt
 
         private bool containsNetwork = false;
 
-        public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
+        public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
         public TransformAction()
         {
@@ -26,7 +26,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    savedStates.Add(instance.GetState());
+                    m_states.Add(instance.GetState());
 
                     if (instance is MoveableNode || instance is MoveableSegment)
                     {
@@ -45,7 +45,7 @@ namespace MoveIt
             Matrix4x4 matrix4x = default(Matrix4x4);
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {
@@ -67,7 +67,7 @@ namespace MoveIt
         {
             Bounds bounds = GetTotalBounds(false);
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 state.instance.SetState(state);
             }
@@ -80,7 +80,7 @@ namespace MoveIt
         {
             MoveItTool.dragging = true;
 
-            foreach (InstanceState instanceState in savedStates)
+            foreach (InstanceState instanceState in m_states)
             {
                 MoveableBuilding mb = instanceState.instance as MoveableBuilding;
                 if (mb != null)
@@ -94,7 +94,7 @@ namespace MoveIt
         {
             MoveItTool.dragging = false;
 
-            foreach (InstanceState instanceState in savedStates)
+            foreach (InstanceState instanceState in m_states)
             {
                 MoveableBuilding mb = instanceState.instance as MoveableBuilding;
                 if (mb != null)
@@ -106,7 +106,7 @@ namespace MoveIt
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (toReplace.ContainsKey(state.instance))
                 {
@@ -123,7 +123,7 @@ namespace MoveIt
 
             HashSet<InstanceState> newStates = new HashSet<InstanceState>();
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {

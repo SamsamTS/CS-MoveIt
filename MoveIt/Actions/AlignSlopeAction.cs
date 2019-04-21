@@ -55,7 +55,6 @@ namespace MoveIt
             }
         }
 
-
         public override void Do()
         {
             float angleDelta;
@@ -66,7 +65,7 @@ namespace MoveIt
             if (IsQuick)
             {
                 if (selection.Count != 1) return;
-                foreach (Instance instance in selection)// Is this really the best way to get the value of selection[0]?
+                foreach (Instance instance in selection) // Is this really the best way to get the value of selection[0]?
                 {
                     if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
 
@@ -253,7 +252,6 @@ namespace MoveIt
             }
         }
 
-
         public override void Undo()
         {
             foreach (InstanceState state in m_states)
@@ -263,7 +261,6 @@ namespace MoveIt
 
             UpdateArea(GetTotalBounds(false));
         }
-
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {

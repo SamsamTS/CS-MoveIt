@@ -42,7 +42,8 @@ namespace MoveIt
             Group,
             Random,
             Slope,
-            SlopeNode
+            SlopeNode,
+            Mirror
         }
 
         public const string settingsFileName = "MoveItTool";
@@ -530,7 +531,7 @@ namespace MoveIt
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
-                foreach (InstanceState state in action.savedStates)
+                foreach (InstanceState state in action.m_states)
                 {
                     state.instance.RenderGeometry(cameraInfo, m_hoverColor);
                 }

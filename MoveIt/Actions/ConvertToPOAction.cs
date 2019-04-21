@@ -75,50 +75,21 @@ namespace MoveIt
                 clone.Delete();
             }
 
-            //string msg = "Clones:\n";
-            //foreach (Instance c in m_clones)
-            //{
-            //    msg += $"{c.id.NetLane}:{c.Info.Name}\n";
-            //}
-
-            //msg += "Cloned ids\n";
             foreach (InstanceState state in m_states)
             {
                 Instance clone = state.instance.Clone(state, null);
                 toReplace.Add(state.instance, clone);
-            //    msg += $"{clone.id.Prop}:{state.instance.GetType()},{clone.GetType()},{clone.Info.Name}\n";
             }
-            //Debug.Log(msg);
 
             ReplaceInstances(toReplace);
             ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
             selection = m_oldSelection;
             MoveItTool.m_debugPanel.Update();
-
-            //msg = "\"old\" Selection\n";
-            //foreach (Instance i in m_oldSelection)
-            //{
-            //    msg += $"{i.id.Prop}:{i.Info.Name}\n";
-            //}
-            //Debug.Log(msg);
         }
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
-            //string msg = "STATES\n";
-            //foreach (InstanceState i in m_states)
-            //{
-            //    msg += $"{i.id}:{i.Info.Name}\n";
-            //}
-            //Debug.Log(msg);
-            //msg = "REPLACE\n";
-            //foreach (KeyValuePair<Instance,Instance> kvp in toReplace)
-            //{
-            //    msg += $"{kvp.Key.id.Prop}:{kvp.Value.id.Prop}\n";
-            //}
-            //Debug.Log(msg);
-
             foreach (InstanceState state in m_states)
             {
                 if (toReplace.ContainsKey(state.instance))

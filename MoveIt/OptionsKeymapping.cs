@@ -33,6 +33,7 @@ namespace MoveIt
             AddKeymapping("Align In-Place", alignInplace);
             AddKeymapping("Align As Group", alignGroup);
             AddKeymapping("Align Randomly", alignRandom);
+            AddKeymapping("Align Mirrored", alignMirror);
         }
     }
 
@@ -86,6 +87,7 @@ namespace MoveIt
         public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignMirror = new SavedInputKey("alignMirror", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
 
         //public static readonly SavedInputKey testKey = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, false, false, true), true);
 

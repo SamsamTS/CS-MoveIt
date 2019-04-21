@@ -33,6 +33,10 @@ namespace MoveIt
                     MIT.ProcessAligning(MoveItTool.AlignModes.Height);
                     break;
 
+                case "MoveIt_AlignMirrorBtn":
+                    MIT.ProcessAligning(MoveItTool.AlignModes.Mirror);
+                    break;
+
                 case "MoveIt_AlignTerrainHeightBtn":
                     MIT.AlignMode = MoveItTool.AlignModes.TerrainHeight;
 
@@ -157,6 +161,12 @@ namespace MoveIt
                     if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignGroup";
                     AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
                     AlignButtons["MoveIt_AlignGroupBtn"].normalBgSprite = "OptionBaseFocused";
+                    break;
+
+                case MoveItTool.AlignModes.Mirror:
+                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignGroup";
+                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    AlignButtons["MoveIt_AlignMirrorBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 // TerrainHeight and Random modes are instant, their buttons aren't relevant
