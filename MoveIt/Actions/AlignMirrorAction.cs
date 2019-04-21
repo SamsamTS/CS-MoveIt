@@ -49,7 +49,7 @@ namespace MoveIt
             Debug.Log($"Mirror:{mirrorPivot}/{mirrorAngle}");
 
             Matrix4x4 matrix4x = default(Matrix4x4);
-            matrix4x.SetTRS(mirrorPivot, Quaternion.Euler(0f, 0f, 0f), Vector3.one); //Axis(0f * Mathf.Rad2Deg, Vector3.down)
+            //matrix4x.SetTRS(mirrorPivot, Quaternion.Euler(0f, 0f, 0f), Vector3.one); //Axis(0f * Mathf.Rad2Deg, Vector3.down)
 
             foreach (InstanceState state in m_states)
             {
@@ -59,22 +59,18 @@ namespace MoveIt
                     if (oldAngle < 0) oldAngle += TWO_PI;
 
                     float newAngle = oldAngle - ((oldAngle - mirrorAngle) * 2);
+                    newAngle = newAngle % TWO_PI;
+                    if (newAngle < 0) newAngle += TWO_PI;
 
                     float angleDelta = newAngle - oldAngle;
+                    // float angleDelta = (state.angle - ((state.angle - mirrorAngle) * 2)) - state.angle;
 
-                    //float newAngle = -(oldAngle - mirrorAngle) + mirrorAngle;
-                    //newAngle = newAngle % TWO_PI;
-                    //if (newAngle < 0) newAngle += TWO_PI;
-
-                    //float angleDelta = newAngle + oldAngle;
-                    //angleDelta = angleDelta % TWO_PI;
-                    //if (angleDelta < 0) angleDelta += TWO_PI;
+                    matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(mirrorAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                     state.instance.Transform(state, ref matrix4x, 0f, angleDelta, mirrorPivot, followTerrain);
                     Debug.Log($"Mirror:{mirrorAngle}, Actual Old:{state.angle}, Actual New:{state.instance.angle}\n" +
                         $"Old:{oldAngle}, New:{newAngle}, Delta:{angleDelta}\n" +
-                        $"{newAngle} = {oldAngle} - (({oldAngle} - {mirrorAngle}) * 2)\n" +
-                        $"({(oldAngle - mirrorAngle) * 2})");
+                        $"{newAngle} = {oldAngle} - (({oldAngle} - {mirrorAngle}) * 2)      [{(oldAngle - mirrorAngle) * 2}]\n");
                 }
             }
 

@@ -79,7 +79,7 @@ namespace MoveIt
 
                             if (++c > 32768)
                             {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                                 break;
                             }
                         }
@@ -248,7 +248,7 @@ namespace MoveIt
 
                             if (++c > 32768)
                             {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                                 break;
                             }
                         }

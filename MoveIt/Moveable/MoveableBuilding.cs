@@ -55,7 +55,7 @@ namespace MoveIt
 
                     if (++count > 49152)
                     {
-                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
                         break;
                     }
                 }
@@ -82,7 +82,7 @@ namespace MoveIt
 
                     if (++count > 32768)
                     {
-                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                         break;
                     }
                 }
@@ -113,7 +113,7 @@ namespace MoveIt
 
                     if (++count > 32768)
                     {
-                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                         break;
                     }
                 }
@@ -662,7 +662,7 @@ namespace MoveIt
 
                 if (++count > 32768)
                 {
-                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                     break;
                 }
             }
@@ -679,7 +679,7 @@ namespace MoveIt
 
                 if (++count > 49152)
                 {
-                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
                     break;
                 }
             }

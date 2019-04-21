@@ -111,7 +111,7 @@ namespace MoveIt
 
                                 if (++count > 49152)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
                                     break;
                                 }
                             }
@@ -137,7 +137,7 @@ namespace MoveIt
 
                                 if (++count > 65536)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Props: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -179,7 +179,7 @@ namespace MoveIt
 
                                 if (++count > 32768)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -228,7 +228,8 @@ namespace MoveIt
 
                                 if (++count > 36864)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Segments: Invalid list detected!\n" + Environment.StackTrace);
+                                    segment = 0;
                                 }
                             }
                         }
@@ -262,7 +263,7 @@ namespace MoveIt
 
                                 if (++count > 262144)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Trees: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -387,7 +388,7 @@ namespace MoveIt
 
                                 if (++count > 49152)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
                                     break;
                                 }
                             }
@@ -413,7 +414,7 @@ namespace MoveIt
 
                                 if (++count > 65536)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Prop: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -452,7 +453,7 @@ namespace MoveIt
 
                                 if (++count > 32768)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -490,7 +491,7 @@ namespace MoveIt
 
                                 if (++count > 36864)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Segments: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -525,7 +526,7 @@ namespace MoveIt
 
                                 if (++count > 262144)
                                 {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Trees: Invalid list detected!\n" + Environment.StackTrace);
                                 }
                             }
                         }
@@ -576,7 +577,7 @@ namespace MoveIt
                         building = buildingBuffer[building].m_nextGridBuilding;
                         if (++count >= 49152)
                         {
-                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
                             break;
                         }
                     }
@@ -649,6 +650,7 @@ namespace MoveIt
 
         private bool IsSegmentValid(ref NetSegment segment, ItemClass.Layer itemLayers)
         {
+            //Debug.Log($"S:{segment.Info.name} - {segment.m_flags}\n{segment.m_startNode},{segment.m_endNode}");
             if ((segment.m_flags & NetSegment.Flags.Created) == NetSegment.Flags.Created)
             {
                 return (segment.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;

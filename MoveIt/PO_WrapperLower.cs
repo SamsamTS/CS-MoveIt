@@ -6,6 +6,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 // Low level PO wrapper, only accessed by high level
 
@@ -123,7 +124,33 @@ namespace MoveIt
 
         public static string getVersion()
         {
-            return ProceduralObjectsMod.VERSION;
+            try
+            {
+                Assembly poAssembly = null;
+                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    if (assembly.FullName.Length >= 17 && assembly.FullName.Substring(0, 17) == "ProceduralObjects")
+                    {
+                        poAssembly = assembly;
+                        break;
+                    }
+                }
+                if (poAssembly == null)
+                {
+                    return "(Failed [POF1])";
+                }
+
+                Type tPO = poAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
+                object version = tPO.GetField("VERSION", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+
+                return version.ToString();
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"PO INTERATION FAILED\n" + e);
+            }
+
+            return "(Failed [POF2])";
         }
     }
 
