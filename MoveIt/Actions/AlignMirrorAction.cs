@@ -46,31 +46,35 @@ namespace MoveIt
 
             Bounds originalBounds = GetTotalBounds(false);
 
-            Debug.Log($"Mirror:{mirrorPivot}/{mirrorAngle}");
-
             Matrix4x4 matrix4x = default(Matrix4x4);
-            //matrix4x.SetTRS(mirrorPivot, Quaternion.Euler(0f, 0f, 0f), Vector3.one); //Axis(0f * Mathf.Rad2Deg, Vector3.down)
 
             foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {
-                    float oldAngle = state.angle % TWO_PI;
-                    if (oldAngle < 0) oldAngle += TWO_PI;
+                    float faceOldAngle = (state.angle + (Mathf.PI / 2)) % TWO_PI;
+                    if (faceOldAngle < 0) faceOldAngle += TWO_PI;
 
-                    float newAngle = oldAngle - ((oldAngle - mirrorAngle) * 2);
-                    newAngle = newAngle % TWO_PI;
-                    if (newAngle < 0) newAngle += TWO_PI;
+                    float faceNewAngle = faceOldAngle - ((faceOldAngle - mirrorAngle) * 2);
+                    faceNewAngle = faceNewAngle % TWO_PI;
+                    if (faceNewAngle < 0) faceNewAngle += TWO_PI;
 
-                    float angleDelta = newAngle - oldAngle;
-                    // float angleDelta = (state.angle - ((state.angle - mirrorAngle) * 2)) - state.angle;
+                    float faceDelta = faceNewAngle - faceOldAngle;
+                    // float angleDelta = (faceOldAngle - ((faceOldAngle - mirrorAngle) * 2)) - state.angle;
 
-                    matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(mirrorAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                    Vector3 posOffset = state.position - mirrorPivot;
+                    float posAngle = Mathf.Atan2(posOffset.z, posOffset.x);
+                    float posDelta = -((posAngle - mirrorAngle) * 2);
 
-                    state.instance.Transform(state, ref matrix4x, 0f, angleDelta, mirrorPivot, followTerrain);
-                    Debug.Log($"Mirror:{mirrorAngle}, Actual Old:{state.angle}, Actual New:{state.instance.angle}\n" +
-                        $"Old:{oldAngle}, New:{newAngle}, Delta:{angleDelta}\n" +
-                        $"{newAngle} = {oldAngle} - (({oldAngle} - {mirrorAngle}) * 2)      [{(oldAngle - mirrorAngle) * 2}]\n");
+                    matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+
+                    state.instance.Transform(state, ref matrix4x, 0f, faceDelta, mirrorPivot, followTerrain);
+                    Debug.Log($"{state.Info.Name}\n" +
+                        $"Mirror:{mirrorPivot.x},{mirrorPivot.z}/{mirrorAngle} (follow:{followTerrain})\n" +
+                        $"Old:{faceOldAngle}, New:{faceNewAngle} - delta:{faceDelta}\n" +
+                        $"newAngle = {faceOldAngle} - (({faceOldAngle} - {mirrorAngle}) * 2)      [{faceOldAngle - mirrorAngle}]\n\n" +
+                        $"posOffset:{posOffset.x},{posOffset.z} / {posAngle} - delta:{posDelta}\n" +
+                        $"delta = -(({posAngle} - {mirrorAngle}) * 2)      [{posAngle - mirrorAngle}]");
                 }
             }
 

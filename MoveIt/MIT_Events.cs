@@ -261,10 +261,10 @@ namespace MoveIt
                         Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
 
                         //Debug.Log($"Vector:{endPos.x - startPos.x},{endPos.z - startPos.z} Start:{startPos.x},{startPos.z} End:{endPos.x},{endPos.z}\n" +
-                        //    $"Angle:{(float)Math.Atan2(endPos.z - startPos.z, endPos.x - startPos.x) - (float)(Math.PI / 2)}");
+                        //    $"Angle:{Mathf.Atan2(endPos.z - startPos.z, endPos.x - startPos.x)}");
 
                         action.mirrorPivot = ((endPos - startPos) / 2) + startPos;
-                        action.mirrorAngle = (float)Math.Atan2(endPos.z - startPos.z, endPos.x - startPos.x) - (float)(Math.PI / 2);
+                        action.mirrorAngle = Mathf.Atan2(endPos.z - startPos.z, endPos.x - startPos.x);
                         action.followTerrain = followTerrain;
 
                         ActionQueue.instance.Push(action);

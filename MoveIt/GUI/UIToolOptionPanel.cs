@@ -501,7 +501,7 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = m_alignToolsPanel;
             m_alignToolsPanel.autoLayout = false;
             m_alignToolsPanel.clipChildren = true;
-            m_alignToolsPanel.size = new Vector2(36, 242); //282
+            m_alignToolsPanel.size = new Vector2(36, 282);
             m_alignToolsPanel.isVisible = false;
             m_alignToolsPanel.absolutePosition = m_alignTools.absolutePosition + new Vector3(0, 10 - m_alignToolsPanel.height);
             m_alignTools.zOrder = m_alignToolsPanel.zOrder + 10;
@@ -521,19 +521,19 @@ namespace MoveIt
 
             UIAlignTools.AlignButtons.Clear();
 
-            //UIAlignTools.AlignButtons.Add("MoveIt_AlignMirrorBtn", atpContainer.AddUIComponent<UIButton>());
-            //UIButton alignMirror = UIAlignTools.AlignButtons["MoveIt_AlignMirrorBtn"];
-            //alignMirror.name = "MoveIt_AlignMirrorBtn";
-            //alignMirror.atlas = GetIconsAtlas();
-            //alignMirror.tooltip = "Align Mirror";
-            //alignMirror.playAudioEvents = true;
-            //alignMirror.size = new Vector2(36, 36);
-            //alignMirror.normalBgSprite = "OptionBase";
-            //alignMirror.hoveredBgSprite = "OptionBaseHovered";
-            //alignMirror.pressedBgSprite = "OptionBasePressed";
-            //alignMirror.disabledBgSprite = "OptionBaseDisabled";
-            //alignMirror.normalFgSprite = "AlignMirror";
-            //alignMirror.eventClicked += UIAlignTools.AlignToolsClicked;
+            UIAlignTools.AlignButtons.Add("MoveIt_AlignMirrorBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton alignMirror = UIAlignTools.AlignButtons["MoveIt_AlignMirrorBtn"];
+            alignMirror.name = "MoveIt_AlignMirrorBtn";
+            alignMirror.atlas = GetIconsAtlas();
+            alignMirror.tooltip = "Align Mirror";
+            alignMirror.playAudioEvents = true;
+            alignMirror.size = new Vector2(36, 36);
+            alignMirror.normalBgSprite = "OptionBase";
+            alignMirror.hoveredBgSprite = "OptionBaseHovered";
+            alignMirror.pressedBgSprite = "OptionBasePressed";
+            alignMirror.disabledBgSprite = "OptionBaseDisabled";
+            alignMirror.normalFgSprite = "AlignMirror";
+            alignMirror.eventClicked += UIAlignTools.AlignToolsClicked;
 
             UIAlignTools.AlignButtons.Add("MoveIt_AlignRandomBtn", atpContainer.AddUIComponent<UIButton>());
             UIButton alignRandom = UIAlignTools.AlignButtons["MoveIt_AlignRandomBtn"];
