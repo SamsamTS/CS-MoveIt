@@ -422,7 +422,7 @@ namespace MoveIt
             m_copy.name = "MoveIt_Copy";
             m_copy.group = m_tabStrip;
             m_copy.atlas = GetIconsAtlas();
-            m_copy.tooltip = "Copy";
+            m_copy.tooltip = "Copy (Alt+Click to duplicate in-place)";
             m_copy.playAudioEvents = true;
 
             m_copy.size = new Vector2(36, 36);
@@ -446,7 +446,23 @@ namespace MoveIt
                     }
                     else
                     {
-                        MoveItTool.instance.StartCloning();
+                        if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                        {
+                            if (Action.selection.Count > 0)
+                            {
+                                DuplicateAction action = new DuplicateAction();
+                                if (action.Count > 0)
+                                {
+                                    ActionQueue.instance.Push(action);
+                                    ActionQueue.instance.Do();
+                                }
+                                Debug.Log($"DUPLICATE");
+                            }
+                        }
+                        else
+                        { 
+                            MoveItTool.instance.StartCloning();
+                        }
                     }
                 }
             };

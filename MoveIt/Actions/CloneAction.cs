@@ -4,21 +4,26 @@ using System.Collections.Generic;
 
 namespace MoveIt
 {
-
     public class CloneAction : Action
     {
+        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+        protected static PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+        protected static TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
+        protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+        protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+
         public Vector3 moveDelta;
         public Vector3 center;
         public float angleDelta;
         public bool followTerrain;
 
-        public HashSet<InstanceState> savedStates = new HashSet<InstanceState>();
-        private HashSet<Instance> m_clones;
-        private HashSet<Instance> m_oldSelection;
+        public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
+        protected HashSet<Instance> m_clones;
+        protected HashSet<Instance> m_oldSelection;
 
-        private bool _isImport = false;
+        protected bool _isImport = false;
 
-        private Dictionary<Instance, Instance> m_clonedOrigin;
+        protected Dictionary<Instance, Instance> m_clonedOrigin;
 
         public CloneAction()
         {
@@ -32,7 +37,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    savedStates.Add(instance.GetState());
+                    m_states.Add(instance.GetState());
                 }
             }
         }
@@ -40,9 +45,6 @@ namespace MoveIt
         public static HashSet<Instance> GetCleanSelection(out Vector3 center)
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
-
-            NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
-            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
             InstanceID id = new InstanceID();
 
@@ -165,7 +167,7 @@ namespace MoveIt
             {
                 if (state.instance != null && state.Info.Prefab != null)
                 {
-                    savedStates.Add(state);
+                    m_states.Add(state);
                 }
             }
 
@@ -184,7 +186,7 @@ namespace MoveIt
             Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
             // Clone nodes first
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.id.Type == InstanceType.NetNode)
                 {
@@ -199,7 +201,7 @@ namespace MoveIt
             }
 
             // Clone everything else
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.id.Type != InstanceType.NetNode)
                 {
@@ -229,10 +231,10 @@ namespace MoveIt
 
             // Select clones
             selection = m_clones;
-            if (!_isImport)
-            {
-                MoveItTool.m_debugPanel.Update();
-            }
+            //if (!_isImport)
+            //{
+            //    MoveItTool.m_debugPanel.Update();
+            //}
 
             UpdateArea(GetTotalBounds(false));
         }
@@ -259,7 +261,7 @@ namespace MoveIt
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
         {
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (toReplace.ContainsKey(state.instance))
                 {
@@ -304,7 +306,7 @@ namespace MoveIt
 
             HashSet<InstanceState> newStates = new HashSet<InstanceState>();
 
-            foreach (InstanceState state in savedStates)
+            foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {
@@ -333,7 +335,7 @@ namespace MoveIt
         {
             get
             {
-                foreach (InstanceState state in savedStates)
+                foreach (InstanceState state in m_states)
                 {
                     yield return state.instance;
                 }
@@ -342,7 +344,7 @@ namespace MoveIt
 
         public int Count
         {
-            get { return savedStates.Count; }
+            get { return m_states.Count; }
         }
     }
 }

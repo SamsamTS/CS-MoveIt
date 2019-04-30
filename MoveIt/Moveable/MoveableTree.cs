@@ -85,7 +85,7 @@ namespace MoveIt
             }
         }
 
-        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
+        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, bool isMirror = false)
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
@@ -98,7 +98,7 @@ namespace MoveIt
             Move(newPosition, 0);
         }
 
-        public override void Move(Vector3 location, float angle)
+        public override void Move(Vector3 location, float angle, bool isMirror = false)
         {
             if (!isValid) return;
 

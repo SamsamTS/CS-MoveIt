@@ -83,7 +83,7 @@ namespace MoveIt
         }
 
         // deltaAngleRad is cumulative delta since Transform Action started, CCW
-        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain)
+        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngleRad, Vector3 center, bool followTerrain, bool isMirror = false)
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
@@ -99,7 +99,7 @@ namespace MoveIt
         }
 
         // angleRad is absolute angle, CCW
-        public override void Move(Vector3 location, float angleRad)
+        public override void Move(Vector3 location, float angleRad, bool isMirror = false)
         {
             //Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
             //    $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");

@@ -268,8 +268,9 @@ namespace MoveIt
                         action.followTerrain = followTerrain;
 
                         ActionQueue.instance.Push(action);
+                        ActionQueue.instance.Do();
 
-                        m_nextAction = ToolAction.Do;
+                        //m_nextAction = ToolAction.Do;
                     }
 
                     UIAlignTools.UpdateAlignTools();

@@ -63,6 +63,7 @@
     <Compile Include="Actions\CloneAction.cs" />
     <Compile Include="Actions\ConvertToPOAction.cs" />
     <Compile Include="Actions\AlignMirrorAction.cs" />
+    <Compile Include="Actions\DuplicateAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />

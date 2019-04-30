@@ -506,7 +506,7 @@ namespace MoveIt
                 Matrix4x4 matrix4x = default(Matrix4x4);
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
-                foreach (InstanceState state in action.savedStates)
+                foreach (InstanceState state in action.m_states)
                 {
                     state.instance.RenderCloneOverlay(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
                 }
@@ -522,7 +522,7 @@ namespace MoveIt
                 Matrix4x4 matrix4x = default(Matrix4x4);
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
-                foreach (InstanceState state in action.savedStates)
+                foreach (InstanceState state in action.m_states)
                 {
                     state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
                 }

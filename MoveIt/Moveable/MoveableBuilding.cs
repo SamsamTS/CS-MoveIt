@@ -268,7 +268,7 @@ namespace MoveIt
             }
         }
 
-        public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
+        public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, bool isMirror = false)
         {
             BuildingState state = instanceState as BuildingState;
 
@@ -412,7 +412,7 @@ namespace MoveIt
             Action.UpdateArea(bounds);
         }
 
-        public override void Move(Vector3 location, float angle)
+        public override void Move(Vector3 location, float angle, bool isMirror = false)
         {
             if (!isValid) return;
 
