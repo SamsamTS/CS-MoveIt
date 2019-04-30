@@ -19,7 +19,7 @@ namespace MoveIt
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
-        internal const string VersionName = "1.6-beta 2";
+        internal const string VersionName = "1.6-beta 3";
 
         internal bool Enabled = false;
         private bool _active = false;

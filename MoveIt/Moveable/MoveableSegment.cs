@@ -165,9 +165,12 @@ namespace MoveIt
 
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, bool isMirror = false)
         {
+            Vector3 oldPos = state.position;
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
 
             Move(newPosition, 0, isMirror);
+
+            //Debug.Log($"Position\nWas:{oldPos.x},{oldPos.z}\nNow:{newPosition.x},{newPosition.z}\nCenter:{center}");
         }
 
         public override void Move(Vector3 location, float angle, bool isMirror = false)
@@ -175,33 +178,47 @@ namespace MoveIt
             if (!isValid) return;
 
             ushort segment = id.NetSegment;
+            ushort startNode = segmentBuffer[segment].m_startNode;
+            ushort endNode = segmentBuffer[segment].m_endNode;
 
-            if (isMirror)
-            {
-                NetSegment seg = segmentBuffer[segment];
-                Vector3 buffer = seg.m_endDirection;
-                seg.m_endDirection = seg.m_startDirection;
-                seg.m_startDirection = buffer;
-                seg.m_endDirection.x = -seg.m_endDirection.x;
-                seg.m_endDirection.z = -seg.m_endDirection.z;
-                seg.m_startDirection.x = -seg.m_startDirection.x;
-                seg.m_startDirection.z = -seg.m_startDirection.z;
+            //if (isMirror)
+            //{
+            //    NetSegment seg = segmentBuffer[segment];
+            //    Vector3 oldStart = seg.m_startDirection, oldEnd = seg.m_endDirection;
 
-                //seg.m_middlePosition = GetControlPoint(state.instance.id.NetSegment);// matrix4x.MultiplyPoint(((SegmentState)state).middlePosition - center);
-            }
-            else
-            {
-                segmentBuffer[segment].m_startDirection = location - nodeBuffer[segmentBuffer[segment].m_startNode].m_position;
-                segmentBuffer[segment].m_endDirection = location - nodeBuffer[segmentBuffer[segment].m_endNode].m_position;
+            //    //Vector3 buffer = seg.m_endDirection;
+            //    //seg.m_endDirection = seg.m_startDirection;
+            //    //seg.m_startDirection = buffer;
+            //    seg.m_endDirection.x = -seg.m_endDirection.x;
+            //    //seg.m_endDirection.z = -seg.m_endDirection.z;
+            //    seg.m_startDirection.x = -seg.m_startDirection.x;
+            //    //seg.m_startDirection.z = -seg.m_startDirection.z;
 
-                CalculateSegmentDirections(ref segmentBuffer[segment], segment);
-            }
+            //    seg.m_middlePosition = GetControlPoint(segment);// matrix4x.MultiplyPoint(((SegmentState)state).middlePosition - center);
+
+            //    Debug.Log($"Mirroring segment\nOld - Start:{oldStart.x},{oldStart.z},  End:{oldEnd.x},{oldEnd.z}\n" +
+            //        $"Now - Start:{seg.m_startDirection.x},{seg.m_startDirection.z},  End:{seg.m_endDirection.x},{seg.m_endDirection.z}");
+            //}
+            //else
+            //{
+            //    segmentBuffer[segment].m_startDirection = location - nodeBuffer[startNode].m_position;
+            //    segmentBuffer[segment].m_endDirection = location - nodeBuffer[endNode].m_position;
+
+            //    CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+            //}
+            segmentBuffer[segment].m_startDirection = location - nodeBuffer[startNode].m_position;
+            segmentBuffer[segment].m_endDirection = location - nodeBuffer[endNode].m_position;
+
+            //Debug.Log($"Location:{location}\nNodes: {nodeBuffer[startNode].m_position} - {nodeBuffer[endNode].m_position}\n" +
+            //    $"{segmentBuffer[segment].m_startDirection}, {segmentBuffer[segment].m_endDirection}");
+
+            CalculateSegmentDirections(ref segmentBuffer[segment], segment);
 
             netManager.UpdateSegmentRenderer(segment, true);
             UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
-            netManager.UpdateNode(segmentBuffer[segment].m_startNode);
-            netManager.UpdateNode(segmentBuffer[segment].m_endNode);
+            netManager.UpdateNode(startNode);
+            netManager.UpdateNode(endNode);
         }
 
         public MoveableNode GetNodeByDistance(bool furthest = false)
