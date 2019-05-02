@@ -264,7 +264,7 @@ namespace MoveIt
                         //    $"Angle:{Mathf.Atan2(endPos.z - startPos.z, endPos.x - startPos.x)}");
 
                         action.mirrorPivot = ((endPos - startPos) / 2) + startPos;
-                        action.mirrorAngle = Mathf.Atan2(endPos.z - startPos.z, endPos.x - startPos.x);
+                        action.mirrorAngle = -Mathf.Atan2(endPos.x - startPos.x, endPos.z - startPos.z);
                         action.followTerrain = followTerrain;
 
                         ActionQueue.instance.Push(action);

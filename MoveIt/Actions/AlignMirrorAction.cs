@@ -14,7 +14,7 @@ namespace MoveIt
 
         public override void Do()
         {
-            const float TWO_PI = (float)Math.PI * 2;
+            //const float TWO_PI = (float)Math.PI * 2;
 
             Bounds originalBounds = GetTotalBounds(false);
             Matrix4x4 matrix4x = default(Matrix4x4);
@@ -40,39 +40,48 @@ namespace MoveIt
                         throw new NullReferenceException($"Original for cloned object not found.");
                     }
 
-                    float faceOldAngle = (state.angle + (Mathf.PI / 2)) % TWO_PI;
+                    state = instance.GetState();
+
+                    //float faceOldAngle = state.angle % TWO_PI;
                     //if (faceOldAngle < 0) faceOldAngle += TWO_PI;
 
-                    //float faceNewAngle = faceOldAngle - ((faceOldAngle - mirrorAngle) * 2);
-                    //faceNewAngle = faceNewAngle % TWO_PI;
-                    //if (faceNewAngle < 0) faceNewAngle += TWO_PI;
+                    //float faceDelta = (faceOldAngle - ((faceOldAngle - mirrorAngle) * 2) - faceOldAngle) % TWO_PI;
+                    float faceDelta = getMirrorFacingDelta(state.angle, mirrorPivot, mirrorAngle);
 
-                    //float faceDelta = faceNewAngle - faceOldAngle;
-
-                    float faceDelta = faceOldAngle - ((faceOldAngle - mirrorAngle) * 2) - faceOldAngle;
-
-                    Vector3 posOffset = state.position - mirrorPivot;
-                    float posAngle = Mathf.Atan2(posOffset.z, posOffset.x);
-                    float posDelta = -((posAngle - mirrorAngle) * 2);
+                    //Vector3 posOffset = state.position - mirrorPivot;
+                    //float posAngle = -Mathf.Atan2(posOffset.x, posOffset.z);
+                    //float posDelta = (mirrorAngle - posAngle) * 2;
+                    float posDelta = getMirrorPositionDelta(state.position, mirrorPivot, mirrorAngle);
 
                     matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
-                    instance.Transform(state, ref matrix4x, 0f, faceDelta, mirrorPivot, followTerrain, true);
-                    //Debug.Log($"{instance.Info.Name}\n" +
-                    //    $"Mirror:{mirrorPivot.x},{mirrorPivot.z}/{mirrorAngle} (follow:{followTerrain})\n" +
-                    //    $"Old:{faceOldAngle} - delta:{faceDelta}\n" +
-                    //    //$"Old:{faceOldAngle}, New:{faceNewAngle} - delta:{faceDelta}\n" +
-                    //    $"newAngle = {faceOldAngle} - (({faceOldAngle} - {mirrorAngle}) * 2)      [{faceOldAngle - mirrorAngle}]\n\n" +
-                    //    $"posOffset:{posOffset.x},{posOffset.z} / {posAngle} - delta:{posDelta}\n" +
-                    //    $"delta = -(({posAngle} - {mirrorAngle}) * 2)      [{posAngle - mirrorAngle}]");
+                    instance.Transform(state, ref matrix4x, 0f, faceDelta, mirrorPivot, followTerrain);
+                    Debug.Log($"{instance.Info.Name}\n" +
+                        $"Mirror:{mirrorPivot.x},{mirrorPivot.z}/{mirrorAngle} (follow:{followTerrain})\n\n" +
+                        $"Angle - Old:{state.angle}, New:{instance.angle}, Delta:{faceDelta}\n" +
+                        $"Position - Old:{state.position}, New:{instance.position}, Delta:{posDelta}");
+                        //$"Old:{faceOldAngle} - delta:{faceDelta}\n" +
+                        //$"newAngle = {faceOldAngle} - (({faceOldAngle} - {mirrorAngle}) * 2)      [{faceOldAngle - mirrorAngle}]\n\n" +
+                        //$"posOffset:{posOffset.x},{posOffset.z} / {posAngle} - delta:{posDelta}\n" +
+                        //$"delta = ({mirrorAngle} - {posAngle}) * 2");
                 }
             }
 
             bool fast = MoveItTool.fastMove != Event.current.shift;
             UpdateArea(originalBounds, !fast || containsNetwork);
             UpdateArea(GetTotalBounds(false), !fast);
+        }
 
-            //ActionQueue.instance.Invalidate();
+        public static float getMirrorFacingDelta(float startAngle, Vector3 mirrorOrigin, float mirrorAngle)
+        {
+            return (startAngle - ((startAngle - mirrorAngle) * 2) - startAngle) % ((float)Math.PI * 2);
+        }
+
+        public static float getMirrorPositionDelta(Vector3 start, Vector3 mirrorOrigin, float angle)
+        {
+            Vector3 offset = start - mirrorOrigin;
+            float posAngle = -Mathf.Atan2(offset.x, offset.z);
+            return (angle - posAngle) * 2;
         }
     }
 }

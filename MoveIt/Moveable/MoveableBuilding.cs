@@ -268,8 +268,10 @@ namespace MoveIt
             }
         }
 
-        public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, bool isMirror = false)
+        public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
+            //bool mirror = (ActionQueue.instance.current is AlignMirrorAction) ? true : false;
+
             BuildingState state = instanceState as BuildingState;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
@@ -284,12 +286,37 @@ namespace MoveIt
 
             Move(newPosition, state.angle + deltaAngle);
 
+            //Matrix4x4 matrixSub = default(Matrix4x4);
+            matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+
             if (state.subStates != null)
             {
                 foreach (InstanceState subState in state.subStates)
                 {
-                    Vector3 subPosition = subState.position - center;
-                    subPosition = matrix4x.MultiplyPoint(subPosition);
+                    string oldPos = $"{subState.position.x},{subState.position.z}";
+
+                    Vector3 subOffset = (subState.position - center) - (state.position - center);
+                    Vector3 subPosition = position + matrix4x.MultiplyPoint(subOffset);
+
+                    Debug.Log($"{center}\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {subOffset}\nNew Offset: {matrix4x.MultiplyPoint(subOffset)}");
+
+                    //if (mirror)
+                    //{
+                    //    Vector3 offset = (subState.position - center) - (state.position - center) + center;
+                    //    Vector3 newOffset = matrix4x.MultiplyPoint(offset);
+                    //    subPosition = newOffset;
+                    //    //float posDelta = AlignMirrorAction.getMirrorPositionDelta(subState.position, center, ((AlignMirrorAction)ActionQueue.instance.current).mirrorAngle);
+                    //    Debug.Log($"\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {offset}\n:New Offset: {newOffset}");
+                    //    //matrix4x.SetTRS(center, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                    //}
+                    //else
+                    //{
+                    //    subPosition = matrix4x.MultiplyPoint(subPosition);
+                    //}
+
+                    //Debug.Log($"{id.Building} {position.x},{position.y}\nsubState:{subState.prefabName} {subState.id}\n" +
+                    //    $"{subState.position - center} = {subState.position} - {center}\nNow:{subPosition}, Was:{oldPos}");
+
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
@@ -307,8 +334,12 @@ namespace MoveIt
                         {
                             foreach (InstanceState subSubState in bs.subStates)
                             {
-                                Vector3 subSubPosition = subSubState.position - center;
-                                subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
+                                Vector3 subSubOffset = (subSubState.position - center) - (state.position - center);
+                                Vector3 subSubPosition = position + matrix4x.MultiplyPoint(subSubOffset);
+
+                                Debug.Log($"subSubState:{subSubState.prefabName}");
+                                //Vector3 subSubPosition = subSubState.position - center;
+                                //subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
@@ -412,10 +443,10 @@ namespace MoveIt
             Action.UpdateArea(bounds);
         }
 
-        public override void Move(Vector3 location, float angle, bool isMirror = false)
+        public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
-
+            //Singleton<BuildingManager>.instance.RelocateBuilding(id.Building, location, angle);
             RelocateBuilding(id.Building, ref buildingBuffer[id.Building], location, angle);
         }
 

@@ -187,8 +187,8 @@ namespace MoveIt
 
         public abstract InstanceState GetState();
         public abstract void SetState(InstanceState state);
-        public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, bool isMirror = false);
-        public abstract void Move(Vector3 location, float angle, bool isMirror = false);
+        public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);
+        public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);
         public abstract Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes);
         public abstract Instance Clone(InstanceState state, Dictionary<ushort, ushort> clonedNodes);

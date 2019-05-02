@@ -16,7 +16,6 @@ namespace MoveIt
 
         public Vector3 startDirection;
         public Vector3 endDirection;
-        public Vector3 middlePosition;
 
         public bool smoothStart;
         public bool smoothEnd;
@@ -68,8 +67,7 @@ namespace MoveIt
                 endNode = segmentBuffer[segment].m_endNode,
 
                 startDirection = segmentBuffer[segment].m_startDirection,
-                endDirection = segmentBuffer[segment].m_endDirection,
-                middlePosition = segmentBuffer[segment].m_middlePosition
+                endDirection = segmentBuffer[segment].m_endDirection
             };
 
             state.startPosition = nodeBuffer[state.startNode].m_position;
@@ -163,17 +161,17 @@ namespace MoveIt
             return (segmentBuffer[segmentId].m_flags & NetSegment.Flags.Created) != NetSegment.Flags.None;
         }
 
-        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, bool isMirror = false)
+        public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
-            Vector3 oldPos = state.position;
+            //Vector3 oldPos = state.position;
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
 
-            Move(newPosition, 0, isMirror);
+            Move(newPosition, 0);
 
             //Debug.Log($"Position\nWas:{oldPos.x},{oldPos.z}\nNow:{newPosition.x},{newPosition.z}\nCenter:{center}");
         }
 
-        public override void Move(Vector3 location, float angle, bool isMirror = false)
+        public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
 
@@ -181,31 +179,6 @@ namespace MoveIt
             ushort startNode = segmentBuffer[segment].m_startNode;
             ushort endNode = segmentBuffer[segment].m_endNode;
 
-            //if (isMirror)
-            //{
-            //    NetSegment seg = segmentBuffer[segment];
-            //    Vector3 oldStart = seg.m_startDirection, oldEnd = seg.m_endDirection;
-
-            //    //Vector3 buffer = seg.m_endDirection;
-            //    //seg.m_endDirection = seg.m_startDirection;
-            //    //seg.m_startDirection = buffer;
-            //    seg.m_endDirection.x = -seg.m_endDirection.x;
-            //    //seg.m_endDirection.z = -seg.m_endDirection.z;
-            //    seg.m_startDirection.x = -seg.m_startDirection.x;
-            //    //seg.m_startDirection.z = -seg.m_startDirection.z;
-
-            //    seg.m_middlePosition = GetControlPoint(segment);// matrix4x.MultiplyPoint(((SegmentState)state).middlePosition - center);
-
-            //    Debug.Log($"Mirroring segment\nOld - Start:{oldStart.x},{oldStart.z},  End:{oldEnd.x},{oldEnd.z}\n" +
-            //        $"Now - Start:{seg.m_startDirection.x},{seg.m_startDirection.z},  End:{seg.m_endDirection.x},{seg.m_endDirection.z}");
-            //}
-            //else
-            //{
-            //    segmentBuffer[segment].m_startDirection = location - nodeBuffer[startNode].m_position;
-            //    segmentBuffer[segment].m_endDirection = location - nodeBuffer[endNode].m_position;
-
-            //    CalculateSegmentDirections(ref segmentBuffer[segment], segment);
-            //}
             segmentBuffer[segment].m_startDirection = location - nodeBuffer[startNode].m_position;
             segmentBuffer[segment].m_endDirection = location - nodeBuffer[endNode].m_position;
 

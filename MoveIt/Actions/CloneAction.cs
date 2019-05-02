@@ -208,6 +208,17 @@ namespace MoveIt
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes);
                     if (clone != null)
                     {
+                        //if (state.instance.id.Type == InstanceType.Building)
+                        //{
+                        //    MoveableBuilding mb = (MoveableBuilding)state.instance;
+                        //    Building b = (Building)mb.data;
+                        //    Building c = (Building)clone.data;
+                        //    InstanceID i1 = default(InstanceID);
+                        //    i1.NetNode = b.m_netNode;
+                        //    InstanceID i2 = default(InstanceID);
+                        //    i2.NetNode = c.m_netNode;
+                        //    Debug.Log($"SUBBUILDINGS\n{mb.id.Building}:{b.m_netNode} ({i1})\n{clone.id.Building}:{c.m_netNode} ({i2})");
+                        //}
                         m_clones.Add(clone);
                         clonedOrigin.Add(state.instance.id, clone.id);
                     }
