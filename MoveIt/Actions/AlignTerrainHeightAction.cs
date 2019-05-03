@@ -23,7 +23,20 @@ namespace MoveIt
             {
                 if (state.instance.isValid)
                 {
-                    state.instance.SetHeight();
+                    if (state.instance.id.Building > 0)
+                    {
+                        state.instance.SetHeight();
+                    }
+                }
+            }
+            foreach (InstanceState state in m_states)
+            {
+                if (state.instance.isValid)
+                {
+                    if (state.instance.id.Building == 0)
+                    {
+                        state.instance.SetHeight();
+                    }
                 }
             }
 

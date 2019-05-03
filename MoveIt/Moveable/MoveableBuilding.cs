@@ -278,12 +278,15 @@ namespace MoveIt
             newPosition.y = state.position.y + deltaHeight;
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            bool isFixed = GetFixedHeightFlag(id.Building);
+            if (!isFixed) AddFixedHeightFlag(id.Building);
 
             if (followTerrain)
             {
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
 
+            AddFixedHeightFlag(id.Building);
             Move(newPosition, state.angle + deltaAngle);
 
             //Matrix4x4 matrixSub = default(Matrix4x4);
@@ -293,29 +296,12 @@ namespace MoveIt
             {
                 foreach (InstanceState subState in state.subStates)
                 {
-                    string oldPos = $"{subState.position.x},{subState.position.z}";
+                    //string oldPos = $"{subState.position.x},{subState.position.z}";
 
                     Vector3 subOffset = (subState.position - center) - (state.position - center);
                     Vector3 subPosition = position + matrix4x.MultiplyPoint(subOffset);
 
-                    Debug.Log($"{center}\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {subOffset}\nNew Offset: {matrix4x.MultiplyPoint(subOffset)}");
-
-                    //if (mirror)
-                    //{
-                    //    Vector3 offset = (subState.position - center) - (state.position - center) + center;
-                    //    Vector3 newOffset = matrix4x.MultiplyPoint(offset);
-                    //    subPosition = newOffset;
-                    //    //float posDelta = AlignMirrorAction.getMirrorPositionDelta(subState.position, center, ((AlignMirrorAction)ActionQueue.instance.current).mirrorAngle);
-                    //    Debug.Log($"\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {offset}\n:New Offset: {newOffset}");
-                    //    //matrix4x.SetTRS(center, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-                    //}
-                    //else
-                    //{
-                    //    subPosition = matrix4x.MultiplyPoint(subPosition);
-                    //}
-
-                    //Debug.Log($"{id.Building} {position.x},{position.y}\nsubState:{subState.prefabName} {subState.id}\n" +
-                    //    $"{subState.position - center} = {subState.position} - {center}\nNow:{subPosition}, Was:{oldPos}");
+                    //Debug.Log($"{center}\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {subOffset}\nNew Offset: {matrix4x.MultiplyPoint(subOffset)}");
 
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
@@ -337,9 +323,6 @@ namespace MoveIt
                                 Vector3 subSubOffset = (subSubState.position - center) - (state.position - center);
                                 Vector3 subSubPosition = position + matrix4x.MultiplyPoint(subSubOffset);
 
-                                Debug.Log($"subSubState:{subSubState.prefabName}");
-                                //Vector3 subSubPosition = subSubState.position - center;
-                                //subSubPosition = matrix4x.MultiplyPoint(subSubPosition);
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 
                                 subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
@@ -356,6 +339,7 @@ namespace MoveIt
                 }
             }
 
+            if (!isFixed) RemoveFixedHeightFlag(id.Building);
             if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
             {
                 AddFixedHeightFlag(id.Building);
@@ -477,6 +461,13 @@ namespace MoveIt
             {
                 RemoveFixedHeightFlag(id.Building);
             }
+        }
+
+        public override void SetHeight()
+        {
+            Building b = (Building)data;
+            b.m_baseHeight = 0;
+            SetHeight(TerrainManager.instance.SampleOriginalRawHeightSmooth(position));
         }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
@@ -623,6 +614,11 @@ namespace MoveIt
         public void RemoveFixedHeightFlag(ushort building)
         {
             buildingBuffer[building].m_flags = buildingBuffer[building].m_flags & ~Building.Flags.FixedHeight;
+        }
+
+        public bool GetFixedHeightFlag(ushort building)
+        {
+            return (buildingBuffer[building].m_flags & Building.Flags.FixedHeight) == Building.Flags.FixedHeight;
         }
 
         public override Bounds GetBounds(bool ignoreSegments = true)
