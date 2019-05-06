@@ -121,8 +121,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Group.png" />
-    <EmbeddedResource Include="Icons\Load.png" />
     <EmbeddedResource Include="Icons\Save.png" />
+    <EmbeddedResource Include="Icons\Load.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Save_disabled.png" />

@@ -9,6 +9,7 @@ namespace MoveIt
     {
         public UILabel fileNameLabel;
 
+        public UIButton loadToPosition;
         public UIButton saveLoadButton;
         public UIButton deleteButton;
 
@@ -47,14 +48,31 @@ namespace MoveIt
             deleteButton.name = "MoveIt_DeleteFileButton";
             deleteButton.text = "X";
             deleteButton.size = new Vector2(40f, 30f);
-            deleteButton.relativePosition = new Vector3(430 - deleteButton.width - 8, 8);
-            deleteButton.tooltip = "Delete saved path";
+            deleteButton.relativePosition = new Vector3((UISaveWindow.instance != null ? 430 : 510) - deleteButton.width - 8, 8);
+            deleteButton.tooltip = "Delete saved selection";
 
             saveLoadButton = UIUtils.CreateButton(this);
             saveLoadButton.name = "MoveIt_SaveLoadFileButton";
             saveLoadButton.text = UISaveWindow.instance != null ? "Export" : "Import";
             saveLoadButton.size = new Vector2(80f, 30f);
             saveLoadButton.relativePosition = new Vector3(deleteButton.relativePosition.x - saveLoadButton.width - 8, 8);
+
+            if (UISaveWindow.instance == null)
+            {
+                loadToPosition = UIUtils.CreateButton(this);
+                loadToPosition.name = "MoveIt_loadToPosition";
+                loadToPosition.text = "Restore";
+                loadToPosition.tooltip = "Import the selection to the position it was exported";
+                loadToPosition.size = new Vector2(80f, 30f);
+                loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
+            }
+
+            loadToPosition.eventClicked += (c, p) =>
+            {
+                UILoadWindow.Close();
+                Destroy(loadToPosition);
+                MoveItTool.instance.Restore(fileNameLabel.text);
+            };
 
             saveLoadButton.eventClicked += (c, p) =>
             {

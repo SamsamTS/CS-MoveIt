@@ -289,8 +289,8 @@ namespace MoveIt
             AddFixedHeightFlag(id.Building);
             Move(newPosition, state.angle + deltaAngle);
 
-            //Matrix4x4 matrixSub = default(Matrix4x4);
-            matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+            Matrix4x4 matrixSub = default(Matrix4x4);
+            matrixSub.SetTRS(Vector3.zero, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             if (state.subStates != null)
             {
@@ -299,9 +299,9 @@ namespace MoveIt
                     //string oldPos = $"{subState.position.x},{subState.position.z}";
 
                     Vector3 subOffset = (subState.position - center) - (state.position - center);
-                    Vector3 subPosition = position + matrix4x.MultiplyPoint(subOffset);
+                    Vector3 subPosition = position + matrixSub.MultiplyPoint(subOffset);
 
-                    //Debug.Log($"{center}\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {subOffset}\nNew Offset: {matrix4x.MultiplyPoint(subOffset)}");
+                    //Debug.Log($"{center}\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {subOffset}\nNew Offset: {matrixSub.MultiplyPoint(subOffset)}");
 
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
@@ -321,7 +321,7 @@ namespace MoveIt
                             foreach (InstanceState subSubState in bs.subStates)
                             {
                                 Vector3 subSubOffset = (subSubState.position - center) - (state.position - center);
-                                Vector3 subSubPosition = position + matrix4x.MultiplyPoint(subSubOffset);
+                                Vector3 subSubPosition = position + matrixSub.MultiplyPoint(subSubOffset);
 
                                 subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
 

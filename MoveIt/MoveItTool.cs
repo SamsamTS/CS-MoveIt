@@ -797,6 +797,16 @@ namespace MoveIt
 
         public void Import(string filename)
         {
+            _import(filename, false);
+        }
+
+        public void Restore(string filename)
+        {
+            _import(filename, true);
+        }
+
+        private void _import(string filename, bool restore)
+        {
             lock (ActionQueue.instance)
             {
                 StopCloning();
@@ -840,8 +850,8 @@ namespace MoveIt
                     if (missingPrefabs.Count > 0)
                     {
                         DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
-                        
-                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n"+ string.Join("\n", missingPrefabs.ToArray()), false);
+
+                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n" + string.Join("\n", missingPrefabs.ToArray()), false);
 
                     }
 
@@ -858,8 +868,14 @@ namespace MoveIt
                     {
                         ActionQueue.instance.Push(action);
 
-                        ToolState = ToolStates.Cloning; // For clone
-                        //ActionQueue.instance.Do(); // For paste
+                        if (restore)
+                        {
+                            ActionQueue.instance.Do(); // For paste
+                        }
+                        else
+                        {
+                            ToolState = ToolStates.Cloning; // For clone
+                        }
 
                         UIToolOptionPanel.RefreshCloneButton();
                         UIToolOptionPanel.RefreshAlignHeightButton();
