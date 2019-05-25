@@ -164,7 +164,7 @@ namespace MoveIt
                     ActionQueue.instance.Invalidate();
                 }
 
-                if (e.shift)
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) //if (e.shift) - apparently fails in Linux
                 {
                     if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {

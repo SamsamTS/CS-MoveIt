@@ -57,22 +57,26 @@ namespace MoveIt
             saveLoadButton.size = new Vector2(80f, 30f);
             saveLoadButton.relativePosition = new Vector3(deleteButton.relativePosition.x - saveLoadButton.width - 8, 8);
 
-            if (UISaveWindow.instance == null)
+            if (UISaveWindow.instance == null) // Importing
             {
                 loadToPosition = UIUtils.CreateButton(this);
                 loadToPosition.name = "MoveIt_loadToPosition";
                 loadToPosition.text = "Restore";
                 loadToPosition.tooltip = "Import the selection to the position it was exported";
                 loadToPosition.size = new Vector2(80f, 30f);
-                loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
-            }
+                    loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
 
-            loadToPosition.eventClicked += (c, p) =>
+                loadToPosition.eventClicked += (c, p) =>
+                {
+                    UILoadWindow.Close();
+                    Destroy(loadToPosition);
+                    MoveItTool.instance.Restore(fileNameLabel.text);
+                };
+            }
+            else
             {
-                UILoadWindow.Close();
-                Destroy(loadToPosition);
-                MoveItTool.instance.Restore(fileNameLabel.text);
-            };
+                loadToPosition = null;
+            }
 
             saveLoadButton.eventClicked += (c, p) =>
             {
@@ -107,7 +111,16 @@ namespace MoveIt
                 });
             };
 
-            fileNameLabel.width = saveLoadButton.relativePosition.x - 16f;
+            if (UISaveWindow.instance == null) // Importing
+            {
+                fileNameLabel.width = loadToPosition.relativePosition.x - 16f;
+                Debug.Log($"IMPORT: {loadToPosition.relativePosition.x}");
+            }
+            else
+            {
+                fileNameLabel.width = saveLoadButton.relativePosition.x - 16f;
+                Debug.Log($"EXPORT: {saveLoadButton.relativePosition.x}");
+            }
         }
 
         public void Display(string data, int i)
