@@ -114,12 +114,10 @@ namespace MoveIt
             if (UISaveWindow.instance == null) // Importing
             {
                 fileNameLabel.width = loadToPosition.relativePosition.x - 16f;
-                Debug.Log($"IMPORT: {loadToPosition.relativePosition.x}");
             }
             else
             {
                 fileNameLabel.width = saveLoadButton.relativePosition.x - 16f;
-                Debug.Log($"EXPORT: {saveLoadButton.relativePosition.x}");
             }
         }
 

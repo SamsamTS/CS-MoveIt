@@ -114,10 +114,10 @@ namespace MoveIt
             set
             {
                 m_toolState = value;
-                //if (m_debugPanel != null)
-                //{
-                //    m_debugPanel.Update();
-                //}
+                if (m_debugPanel != null)
+                {
+                    m_debugPanel.Update();
+                }
             }
         }
         private AlignModes m_alignMode = AlignModes.Off;
@@ -285,6 +285,7 @@ namespace MoveIt
 
         protected override void OnDisable()
         {
+            Debug.Log($"OnDisable");
             lock (ActionQueue.instance)
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
@@ -303,6 +304,8 @@ namespace MoveIt
                 UpdateSegments();
 
                 ToolState = ToolStates.Default;
+                AlignMode = AlignModes.Off;
+                AlignToolPhase = 0;
 
                 if (UITipsWindow.instance != null)
                 {
@@ -323,7 +326,7 @@ namespace MoveIt
                 }
                 m_prevTool = null;
 
-                UIToolOptionPanel.RefreshAlignHeightButton();
+                UIAlignTools.UpdateAlignTools();
                 UIToolOptionPanel.RefreshCloneButton();
             }
         }
