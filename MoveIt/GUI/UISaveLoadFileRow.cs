@@ -64,10 +64,11 @@ namespace MoveIt
                 loadToPosition.text = "Restore";
                 loadToPosition.tooltip = "Import the selection to the position it was exported";
                 loadToPosition.size = new Vector2(80f, 30f);
-                    loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
+                loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
 
                 loadToPosition.eventClicked += (c, p) =>
                 {
+                    UIView.Find("DefaultTooltip")?.Hide();
                     UILoadWindow.Close();
                     Destroy(loadToPosition);
                     MoveItTool.instance.Restore(fileNameLabel.text);
@@ -80,6 +81,7 @@ namespace MoveIt
 
             saveLoadButton.eventClicked += (c, p) =>
             {
+                UIView.Find("DefaultTooltip")?.Hide();
                 if (UISaveWindow.instance != null)
                 {
                     UISaveWindow.Export(fileNameLabel.text);

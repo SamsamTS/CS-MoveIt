@@ -773,8 +773,6 @@ namespace MoveIt
             }
 
             #endregion
-
-            MoveItTool.m_debugPanel = new DebugPanel();
         }
 
         protected override void OnVisibilityChanged()

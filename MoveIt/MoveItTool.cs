@@ -225,7 +225,7 @@ namespace MoveIt
         private long m_leftClickTime;
 
         public ToolAction m_nextAction = ToolAction.None;
-
+        
         protected override void Awake()
         {
             ActionQueue.instance = new ActionQueue();
@@ -237,6 +237,7 @@ namespace MoveIt
 
             followTerrain = followTerrainModeEnabled;
 
+            m_debugPanel = new DebugPanel();
             PO = new PO_Manager();
             Filters.Picker = new PickerFilter();
         }
@@ -265,7 +266,7 @@ namespace MoveIt
 
             m_prevRenderZones = TerrainManager.instance.RenderZones;
             m_prevTool = m_toolController.CurrentTool;
-
+            
             m_toolController.CurrentTool = this;
 
             InfoManager.instance.SetCurrentMode(m_prevInfoMode, subInfoMode);
@@ -285,7 +286,6 @@ namespace MoveIt
 
         protected override void OnDisable()
         {
-            Debug.Log($"OnDisable");
             lock (ActionQueue.instance)
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
