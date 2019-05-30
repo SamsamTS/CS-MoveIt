@@ -11,7 +11,9 @@ namespace MoveIt
 
         private string[] m_tips =
         {
-            "New in 2.4.0: Hold Shift to move objects in a fast, low detail mode",
+            "New in 2.5.0: Restore exported selections to their original location",
+            "New in 2.5.0: Mirror Align objects by choosing a network to act as the mirror",
+            "Tip: Hold Shift to move objects in a fast, low detail mode",
             "Tip: Hold Alt to select a node or segment owned by a building",
             "Tip: Hold Alt to deselect objects using the marquee selection",
             "Tip: A building with an orange highlight will despawn when the simulation is running",
@@ -48,6 +50,10 @@ namespace MoveIt
             instance = this;
 
             Random.InitState(System.DateTime.Now.Second);
+            if (Random.Range(0, 2) == 0)
+            {
+                m_currentTip = 0;
+            }
             if (Random.Range(0, 8) == 0)
             {
                 m_currentTip = m_tips.Length - 2;

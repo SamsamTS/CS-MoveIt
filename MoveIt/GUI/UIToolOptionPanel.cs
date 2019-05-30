@@ -543,7 +543,7 @@ namespace MoveIt
             UIButton alignMirror = UIAlignTools.AlignButtons["MoveIt_AlignMirrorBtn"];
             alignMirror.name = "MoveIt_AlignMirrorBtn";
             alignMirror.atlas = GetIconsAtlas();
-            alignMirror.tooltip = "Align Mirror";
+            alignMirror.tooltip = "Align Mirror - Click on a network segment to\nset the mirror axis to create a mirrored\ncopy of selection";
             alignMirror.playAudioEvents = true;
             alignMirror.size = new Vector2(36, 36);
             alignMirror.normalBgSprite = "OptionBase";
@@ -557,7 +557,7 @@ namespace MoveIt
             UIButton alignRandom = UIAlignTools.AlignButtons["MoveIt_AlignRandomBtn"];
             alignRandom.name = "MoveIt_AlignRandomBtn";
             alignRandom.atlas = GetIconsAtlas();
-            alignRandom.tooltip = "Immediate rotate valid items randomly";
+            alignRandom.tooltip = "Random - Immediate rotate valid objects randomly";
             alignRandom.playAudioEvents = true;
             alignRandom.size = new Vector2(36, 36);
             alignRandom.normalBgSprite = "OptionBase";
@@ -571,7 +571,7 @@ namespace MoveIt
             UIButton alignGroup = UIAlignTools.AlignButtons["MoveIt_AlignGroupBtn"];
             alignGroup.name = "MoveIt_AlignGroupBtn";
             alignGroup.atlas = GetIconsAtlas();
-            alignGroup.tooltip = "Align as Group - rotate around a central point";
+            alignGroup.tooltip = "Align as Group - click on an object to rotate\nselection around a central point to face\nobject's direction";
             alignGroup.playAudioEvents = true;
             alignGroup.size = new Vector2(36, 36);
             alignGroup.normalBgSprite = "OptionBase";
@@ -585,7 +585,7 @@ namespace MoveIt
             UIButton alignIndividual = UIAlignTools.AlignButtons["MoveIt_AlignIndividualBtn"];
             alignIndividual.name = "MoveIt_AlignIndividualBtn";
             alignIndividual.atlas = GetIconsAtlas();
-            alignIndividual.tooltip = "Align In-Place - rotate selected items";
+            alignIndividual.tooltip = "Align In-Place - click on an object to\nrotate selected items to face that direction";
             alignIndividual.playAudioEvents = true;
             alignIndividual.size = new Vector2(36, 36);
             alignIndividual.normalBgSprite = "OptionBase";
@@ -599,7 +599,7 @@ namespace MoveIt
             UIButton alignSlope = UIAlignTools.AlignButtons["MoveIt_AlignSlopeBtn"];
             alignSlope.name = "MoveIt_AlignSlopeBtn";
             alignSlope.atlas = GetIconsAtlas();
-            alignSlope.tooltip = "Align Slope";
+            alignSlope.tooltip = "Align Slope - click on 2 objects to define\nthe slope axis to move selected objects\nup/down to that height";
             alignSlope.playAudioEvents = true;
             alignSlope.size = new Vector2(36, 36);
             alignSlope.normalBgSprite = "OptionBase";
@@ -613,7 +613,7 @@ namespace MoveIt
             UIButton alignTerrainHeight = UIAlignTools.AlignButtons["MoveIt_AlignTerrainHeightBtn"];
             alignTerrainHeight.name = "MoveIt_AlignTerrainHeightBtn";
             alignTerrainHeight.atlas = GetIconsAtlas();
-            alignTerrainHeight.tooltip = "Immediately Align to Terrain Height";
+            alignTerrainHeight.tooltip = "Immediately Align objects to Terrain Height";
             alignTerrainHeight.playAudioEvents = true;
             alignTerrainHeight.size = new Vector2(36, 36);
             alignTerrainHeight.normalBgSprite = "OptionBase";
@@ -627,7 +627,7 @@ namespace MoveIt
             UIButton alignHeight = UIAlignTools.AlignButtons["MoveIt_AlignHeightBtn"];
             alignHeight.name = "MoveIt_AlignHeightBtn";
             alignHeight.atlas = GetIconsAtlas();
-            alignHeight.tooltip = "Align Height";
+            alignHeight.tooltip = "Align Height - click on an object to move\nselected objects up/down to that height";
             alignHeight.playAudioEvents = true;
             alignHeight.size = new Vector2(36, 36);
             alignHeight.normalBgSprite = "OptionBase";
