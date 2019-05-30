@@ -12,6 +12,13 @@ namespace MoveIt
         public static Dictionary<string, UIButton> AlignButtons = new Dictionary<string, UIButton>();
         private static MoveItTool MIT = MoveItTool.instance;
 
+        public static void Initialise()
+        {
+            AlignToolsBtn = null;
+            AlignToolsPanel = null;
+            AlignButtons = new Dictionary<string, UIButton>();
+            MIT = MoveItTool.instance;
+        }
 
         public static void AlignToolsClicked(UIComponent c, UIMouseEventParameter p)
         {
@@ -102,7 +109,7 @@ namespace MoveIt
                     Debug.Log($"Invalid Align Tools call ({c.name})");
                     break;
             }
-            //Debug.Log($"{c.name} clicked, mode is {MoveItTool.alignMode}");
+            //Debug.Log($"{c.name} clicked, mode is {MIT.AlignMode} ({MIT.AlignToolPhase})");
         }
 
 

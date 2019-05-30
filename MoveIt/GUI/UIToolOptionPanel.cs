@@ -33,6 +33,8 @@ namespace MoveIt
 
         public override void Start()
         {
+            UIAlignTools.Initialise();
+
             instance = this;
 
             UICheckBox checkBox = null;

@@ -236,10 +236,6 @@ namespace MoveIt
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
 
             followTerrain = followTerrainModeEnabled;
-
-            m_debugPanel = new DebugPanel();
-            PO = new PO_Manager();
-            Filters.Picker = new PickerFilter();
         }
 
         protected override void OnEnable()

@@ -27,21 +27,29 @@ namespace MoveIt
                 ToolController toolController = GameObject.FindObjectOfType<ToolController>();
 
                 MoveItTool.instance = toolController.gameObject.AddComponent<MoveItTool>();
-
-                MoveItTool.stepOver = new StepOver();
-
-                UIFilters.FilterCBs.Clear();
-                UIFilters.NetworkCBs.Clear();
-
-                MoveItTool.filterBuildings = true;
-                MoveItTool.filterProps = true;
-                MoveItTool.filterDecals = true;
-                MoveItTool.filterSurfaces = true;
-                MoveItTool.filterTrees = true;
-                MoveItTool.filterNodes = true;
-                MoveItTool.filterSegments = true;
-                MoveItTool.filterNetworks = false;
             }
+            else
+            {
+                Debug.Log($"InstallMod with existing instance!");
+            }
+
+            MoveItTool.stepOver = new StepOver();
+            MoveItTool.m_debugPanel = new DebugPanel();
+
+            UIFilters.FilterCBs.Clear();
+            UIFilters.NetworkCBs.Clear();
+
+            MoveItTool.PO = new PO_Manager();
+            Filters.Picker = new PickerFilter();
+
+            MoveItTool.filterBuildings = true;
+            MoveItTool.filterProps = true;
+            MoveItTool.filterDecals = true;
+            MoveItTool.filterSurfaces = true;
+            MoveItTool.filterTrees = true;
+            MoveItTool.filterNodes = true;
+            MoveItTool.filterSegments = true;
+            MoveItTool.filterNetworks = false;
 
             IsGameLoaded = true;
         }
@@ -53,6 +61,7 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = null;
             UIAlignTools.AlignToolsBtn = null;
             Action.selection.Clear();
+            MoveItTool.PO = null;
             Filters.Picker = null;
 
             if (MoveItTool.instance != null)

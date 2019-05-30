@@ -244,7 +244,7 @@ namespace MoveIt
                     distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
                     heightOffset = distanceOffset / distance * heightDelta;
 
-                    state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 4000f));
+                    state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 1000f));
 
                     //msg += $"\nx-offset:{distanceOffset} h-offset:{heightOffset}";
                 }
