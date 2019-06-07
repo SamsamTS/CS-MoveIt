@@ -58,9 +58,10 @@ namespace MoveIt
                     selection.Add(mpo);
                     selection.Remove(instance);
                     instance.Delete();
-                    MoveItTool.m_debugPanel.Update();
                 }
             }
+
+            MoveItTool.m_debugPanel.Update();
         }
 
         public override void Undo()

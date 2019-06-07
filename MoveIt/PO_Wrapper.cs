@@ -197,6 +197,7 @@ namespace MoveIt
             {
                 return false;
             }
+
             return true;
         }
 
@@ -214,7 +215,7 @@ namespace MoveIt
                 }
             }
 
-            return "PO is not available. To use these options please subscribe to PO and enable it, then \nrestart Cities Skylines.\n ";
+            return "PO is not available. To use these options please quit Cities Skylines and subscribe to PO.\n ";
         }
 
         internal static string getVersion()

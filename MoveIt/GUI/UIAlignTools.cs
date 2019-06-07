@@ -116,6 +116,11 @@ namespace MoveIt
         // Updates the UI based on the current state
         public static void UpdateAlignTools()
         {
+            if (AlignToolsBtn == null)
+            { // Button isn't created yet
+                return;
+            }
+
             AlignToolsBtn.normalFgSprite = "AlignTools";
             AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlope";
 
