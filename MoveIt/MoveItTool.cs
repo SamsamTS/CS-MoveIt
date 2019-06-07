@@ -228,6 +228,8 @@ namespace MoveIt
         
         protected override void Awake()
         {
+            MoveItTool.stepOver = new StepOver();
+            MoveItTool.m_debugPanel = new DebugPanel();
             ActionQueue.instance = new ActionQueue();
 
             m_toolController = FindObjectOfType<ToolController>();
@@ -236,11 +238,11 @@ namespace MoveIt
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
 
             followTerrain = followTerrainModeEnabled;
-        }
+       }
 
         protected override void OnEnable()
         {
-            if (UIToolOptionPanel.instance == null)
+           if (UIToolOptionPanel.instance == null)
             {
                 UIComponent TSBar = UIView.GetAView().FindUIComponent<UIComponent>("TSBar");
                 TSBar.AddUIComponent<UIToolOptionPanel>();
@@ -282,7 +284,7 @@ namespace MoveIt
 
         protected override void OnDisable()
         {
-            lock (ActionQueue.instance)
+           lock (ActionQueue.instance)
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
@@ -325,7 +327,7 @@ namespace MoveIt
                 UIAlignTools.UpdateAlignTools();
                 UIToolOptionPanel.RefreshCloneButton();
             }
-        }
+       }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {

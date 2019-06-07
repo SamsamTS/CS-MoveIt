@@ -244,7 +244,7 @@ namespace MoveIt
         protected static void UpdateSegmentBlocks(ushort segment, ref NetSegment data)
         {
             MoveItTool.instance.segmentsToUpdate.Add(segment);
-            MoveItTool.instance.segmentUpdateCountdown = 50;
+            MoveItTool.instance.segmentUpdateCountdown = 10;
         }
 
         protected static void CalculateSegmentDirections(ref NetSegment segment, ushort segmentID)

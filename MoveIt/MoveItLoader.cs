@@ -33,9 +33,6 @@ namespace MoveIt
                 Debug.Log($"InstallMod with existing instance!");
             }
 
-            MoveItTool.stepOver = new StepOver();
-            MoveItTool.m_debugPanel = new DebugPanel();
-
             UIFilters.FilterCBs.Clear();
             UIFilters.NetworkCBs.Clear();
 
@@ -52,7 +49,7 @@ namespace MoveIt
             MoveItTool.filterNetworks = false;
 
             IsGameLoaded = true;
-        }
+       }
 
         public static void UninstallMod()
         {

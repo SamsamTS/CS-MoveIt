@@ -557,7 +557,7 @@ namespace MoveIt
             UIButton alignRandom = UIAlignTools.AlignButtons["MoveIt_AlignRandomBtn"];
             alignRandom.name = "MoveIt_AlignRandomBtn";
             alignRandom.atlas = GetIconsAtlas();
-            alignRandom.tooltip = "Random - Immediate rotate valid objects randomly";
+            alignRandom.tooltip = "Random - Immediately rotate valid objects randomly";
             alignRandom.playAudioEvents = true;
             alignRandom.size = new Vector2(36, 36);
             alignRandom.normalBgSprite = "OptionBase";

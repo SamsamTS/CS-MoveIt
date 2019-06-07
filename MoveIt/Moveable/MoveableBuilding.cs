@@ -603,7 +603,13 @@ namespace MoveIt
 
         public override void Delete()
         {
-            if (isValid) BuildingManager.instance.ReleaseBuilding(id.Building);
+            if (isValid)
+            {
+                SimulationManager.instance.AddAction(() =>
+                {
+                    BuildingManager.instance.ReleaseBuilding(id.Building);
+                });
+            }
         }
 
         public void AddFixedHeightFlag(ushort building)

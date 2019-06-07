@@ -54,6 +54,22 @@ namespace MoveIt
                 selectProc = PO.Active ? filterProcs : false;
             }
 
+            if (AlignMode == AlignModes.Group || AlignMode == AlignModes.Inplace)
+            {
+                selectNodes = false;
+                selectTrees = false;
+            }
+            else if (AlignMode == AlignModes.Mirror)
+            {
+                selectBuilding = false;
+                selectProps = false;
+                selectDecals = false;
+                selectSurfaces = false;
+                selectProc = false;
+                selectTrees = false;
+                selectNodes = false;
+            }
+
             float smallestDist = 640000f;
 
             do
