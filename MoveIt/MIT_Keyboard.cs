@@ -23,7 +23,7 @@ namespace MoveIt
                     }
                 }
 
-                if (OptionsKeymapping.copy.IsPressed(e))
+                if (OptionsKeymapping.clone.IsPressed(e))
                 {
                     if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                     {
@@ -64,6 +64,14 @@ namespace MoveIt
                     {
                         tunnelVisible = true;
                         UIToolOptionPanel.instance.underground.activeStateIndex = 1;
+                    }
+                }
+                else if (OptionsKeymapping.viewDebug.IsPressed(e))
+                {
+                    showDebugPanel.value = !showDebugPanel;
+                    if (m_debugPanel != null)
+                    {
+                        m_debugPanel.Visible(showDebugPanel);
                     }
                 }
                 else if (OptionsKeymapping.activatePO.IsPressed(e))

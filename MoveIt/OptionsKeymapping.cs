@@ -22,10 +22,11 @@ namespace MoveIt
             AddKeymapping("Rotate Clockwise", turnPos);
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
-            AddKeymapping("Copy", copy);
+            AddKeymapping("Clone", clone);
             AddKeymapping("Bulldoze", bulldoze);
             AddKeymapping("Toggle Grid View", viewGrid);
             AddKeymapping("Toggle Underground View", viewUnderground);
+            AddKeymapping("Toggle Debug Panel", viewDebug);
             AddKeymapping("Step Over", stepOverKey);
             AddKeymapping("Align Heights", alignHeights);
             AddKeymapping("Align Slope", alignSlope);
@@ -71,10 +72,11 @@ namespace MoveIt
         public static readonly SavedInputKey undo = new SavedInputKey("undo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
 
-        public static readonly SavedInputKey copy = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
+        public static readonly SavedInputKey clone = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
         public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
-        public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
-        public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, true), true);
+        public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
+        public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
 
         public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);
