@@ -335,6 +335,11 @@ namespace MoveIt
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
+            if (!enabled)
+            {
+                return;
+            }
+
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
             {
                 // Reset all PO

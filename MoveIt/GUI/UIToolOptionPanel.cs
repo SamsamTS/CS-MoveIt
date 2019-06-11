@@ -290,6 +290,8 @@ namespace MoveIt
                 Filters.Picker = new PickerFilter();
 
                 Filters.SetFilter("Picker", false);
+                MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
+                UIFilters.UpdatePickerButton(1);
             }
 
             #region Standard Filters
@@ -417,6 +419,8 @@ namespace MoveIt
                     cb.isChecked = newChecked;
                     Filters.SetAnyFilter(cb.name, newChecked);
                 }
+
+                UIFilters.RefreshFilters();
             };
             
             #region Copy
