@@ -176,6 +176,8 @@ namespace MoveIt
             Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
             Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
+            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+
             // Recreate nodes
             foreach (InstanceState state in m_states)
             {
@@ -206,6 +208,14 @@ namespace MoveIt
 
                     MoveableBuilding cb = clone as MoveableBuilding;
                     ushort cloneNodeId = ((Building)cb.data).m_netNode;
+
+                    ushort cloneId = cb.id.Building;
+                    //Debug.Log($"Before [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
+                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.BurnedDown;
+                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
+                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
+                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
+                    //Debug.Log($"After [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
 
                     if (cloneNodeId != 0)
                     {

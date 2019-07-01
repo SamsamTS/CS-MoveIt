@@ -505,6 +505,10 @@ namespace MoveIt
                 {
                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
                 }
+                if ((state.flags & Building.Flags.Historical) != Building.Flags.None)
+                {
+                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Historical;
+                }
 
                 // TODO: when should the flag be set?
                 if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
