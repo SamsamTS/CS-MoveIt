@@ -5,6 +5,21 @@ using System.Collections.Generic;
 
 namespace MoveIt
 {
+    public class CycleAction : BulldozeAction
+    {
+        public override void Do()
+        {
+            DoImplementation(true);
+            UndoImplementation(true);
+        }
+
+        public override void Undo()
+        {
+            ;
+        }
+    }
+
+
     public class BulldozeAction : Action
     {
         private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
@@ -138,13 +153,20 @@ namespace MoveIt
 
         public override void Do()
         {
+            DoImplementation(false);
+        }
+
+        public void DoImplementation(bool skipPO = false)
+        { 
             m_oldSelection = selection;
 
             Bounds bounds = GetTotalBounds(false);
 
             foreach (InstanceState state in m_states)
             {
+                if (skipPO && state is ProcState) continue;
                 if (state is BuildingState) continue;
+                Debug.Log(state.GetType());
 
                 if (state.instance.isValid)
                 {
@@ -155,6 +177,7 @@ namespace MoveIt
             // Remove buildings last so attached nodes are cleaned up
             foreach (InstanceState state in m_states)
             {
+                if (skipPO && state is ProcState) continue;
                 if (!(state is BuildingState)) continue;
 
                 if (state.instance.isValid)
@@ -170,6 +193,11 @@ namespace MoveIt
         }
 
         public override void Undo()
+        {
+            UndoImplementation(false);
+        }
+
+        public void UndoImplementation(bool reset = false)
         {
             if (m_states == null) return;
 
@@ -209,13 +237,16 @@ namespace MoveIt
                     MoveableBuilding cb = clone as MoveableBuilding;
                     ushort cloneNodeId = ((Building)cb.data).m_netNode;
 
-                    ushort cloneId = cb.id.Building;
-                    //Debug.Log($"Before [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
-                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.BurnedDown;
-                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
-                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
-                    buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
-                    //Debug.Log($"After [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
+                    if (reset)
+                    {
+                        ushort cloneId = cb.id.Building;
+                        //Debug.Log($"Before [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
+                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.BurnedDown;
+                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
+                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
+                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
+                        //Debug.Log($"After [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
+                    }
 
                     if (cloneNodeId != 0)
                     {
@@ -351,6 +382,10 @@ namespace MoveIt
                 }
             }
 
+            if (m_oldSelection == null)
+            {
+                return;
+            }
             foreach (Instance instance in toReplace.Keys)
             {
                 if (m_oldSelection.Remove(instance))

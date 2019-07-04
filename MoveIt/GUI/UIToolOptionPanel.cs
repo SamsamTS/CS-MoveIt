@@ -462,7 +462,6 @@ namespace MoveIt
                                     ActionQueue.instance.Push(action);
                                     ActionQueue.instance.Do();
                                 }
-                                Debug.Log($"DUPLICATE");
                             }
                         }
                         else
@@ -497,7 +496,14 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    MoveItTool.instance.StartBulldoze();
+                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                    {
+                        MoveItTool.instance.StartCycle();
+                    }
+                    else
+                    {
+                        MoveItTool.instance.StartBulldoze();
+                    }
                 }
             };
             #endregion

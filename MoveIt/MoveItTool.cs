@@ -756,6 +756,20 @@ namespace MoveIt
             }
         }
 
+        public void StartCycle()
+        {
+            if (ToolState != ToolStates.Default) return;
+
+            if (Action.selection.Count > 0)
+            {
+                lock (ActionQueue.instance)
+                {
+                    ActionQueue.instance.Push(new CycleAction());
+                }
+                m_nextAction = ToolAction.Do;
+            }
+        }
+
         public static bool IsExportSelectionValid()
         {
             return CloneAction.GetCleanSelection(out Vector3 center).Count > 0;

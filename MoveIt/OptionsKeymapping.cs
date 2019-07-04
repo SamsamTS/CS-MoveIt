@@ -24,6 +24,7 @@ namespace MoveIt
             AddKeymapping("Redo", redo);
             AddKeymapping("Clone", clone);
             AddKeymapping("Bulldoze", bulldoze);
+            AddKeymapping("Reset Objects", cycle);
             AddKeymapping("Toggle Grid View", viewGrid);
             AddKeymapping("Toggle Underground View", viewUnderground);
             AddKeymapping("Toggle Debug Panel", viewDebug);
@@ -74,6 +75,7 @@ namespace MoveIt
 
         public static readonly SavedInputKey clone = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
         public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
+        public static readonly SavedInputKey cycle = new SavedInputKey("cycle", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, true), true);
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);

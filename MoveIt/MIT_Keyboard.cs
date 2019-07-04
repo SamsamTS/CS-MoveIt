@@ -40,6 +40,10 @@ namespace MoveIt
                 {
                     StartBulldoze();
                 }
+                else if (OptionsKeymapping.cycle.IsPressed(e))
+                {
+                    StartCycle();
+                }
                 else if (OptionsKeymapping.viewGrid.IsPressed(e))
                 {
                     if (gridVisible)
