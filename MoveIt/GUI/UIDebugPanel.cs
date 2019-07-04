@@ -29,19 +29,6 @@ namespace MoveIt
             Panel.isVisible = show;
         }
 
-        //internal void UpdateVisible()
-        //{
-        //    if (MoveItTool.showDebugPanel)
-        //    {
-        //        Panel.isVisible = true;
-        //    }
-        //    else
-        //    {
-        //        Panel.isVisible = false;
-        //    }
-        //}
-
-
         internal void Update(InstanceID instanceId)
         {
             id = instanceId;
@@ -50,7 +37,7 @@ namespace MoveIt
 
         internal void Update()
         {
-            if (!MoveItTool.showDebugPanel) // Should be .value?
+            if (!MoveItTool.showDebugPanel)
             {
                 return;
             }

@@ -166,7 +166,6 @@ namespace MoveIt
             {
                 if (skipPO && state is ProcState) continue;
                 if (state is BuildingState) continue;
-                Debug.Log(state.GetType());
 
                 if (state.instance.isValid)
                 {

@@ -37,7 +37,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.5.0";
+        public const string version = "2.6.0 (dev)";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");

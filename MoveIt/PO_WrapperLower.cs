@@ -25,6 +25,36 @@ namespace MoveIt
             }
         }
 
+        internal Assembly POAssembly = null;
+        internal Type tPOLogic = null, tPOMod = null, tPO = null;
+        internal object POLogic = null;
+
+        internal PO_LogicEnabled()
+        {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.FullName.Length >= 17 && assembly.FullName.Substring(0, 17) == "ProceduralObjects")
+                {
+                    POAssembly = assembly;
+                    break;
+                }
+            }
+
+            if (POAssembly == null)
+            {
+                throw new NullReferenceException("PO Assembly not found [PO-F3]");
+            }
+
+            tPOLogic = POAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
+            tPOMod = POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
+            tPO = POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+            POLogic = tPOMod.GetField("gameLogicObject", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            Debug.Log($"POLogic:{(POLogic == null ? "null" : $"{POLogic} <{POLogic.GetType()}>")}");
+            Debug.Log($"tPO:{(tPO == null ? "null" : $"{tPO} <{tPO.GetType()}>")}");
+        }
+
+        protected Type _tPOLogic = null;
+
         public List<IPO_Object> Objects
         {
             get
@@ -65,6 +95,9 @@ namespace MoveIt
 
         public void Delete(IPO_Object obj)
         {
+            //object poList = tPOLogic.GetField("proceduralObjects", BindingFlags.Public | BindingFlags.Instance).GetValue(POLogic);
+            //object poSelList = tPOLogic.GetField("pObjSelection", BindingFlags.Public | BindingFlags.Instance).GetValue(POLogic);
+            //Debug.Log($"\npoList:{poList}\npoSelList:{poSelList}");
             Logic.proceduralObjects.Remove((ProceduralObject)obj.GetProceduralObject());
             Logic.pObjSelection.Remove((ProceduralObject)obj.GetProceduralObject());
         }
@@ -137,7 +170,7 @@ namespace MoveIt
                 }
                 if (poAssembly == null)
                 {
-                    return "(Failed [POF1])";
+                    return "(Failed [PO-F1])";
                 }
 
                 Type tPO = poAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
@@ -150,7 +183,7 @@ namespace MoveIt
                 Debug.Log($"PO INTERATION FAILED\n" + e);
             }
 
-            return "(Failed [POF2])";
+            return "(Failed [PO-F2])";
         }
     }
 

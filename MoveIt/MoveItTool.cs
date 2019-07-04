@@ -246,6 +246,8 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
+            PO = new PO_Manager();
+
             if (UIToolOptionPanel.instance == null)
             {
                 UIComponent TSBar = UIView.GetAView().FindUIComponent<UIComponent>("TSBar");
@@ -330,6 +332,7 @@ namespace MoveIt
 
                 UIAlignTools.UpdateAlignTools();
                 UIToolOptionPanel.RefreshCloneButton();
+                MoveItTool.PO = null;
             }
         }
 

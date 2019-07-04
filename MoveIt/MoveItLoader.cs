@@ -39,7 +39,6 @@ namespace MoveIt
             UIFilters.FilterCBs.Clear();
             UIFilters.NetworkCBs.Clear();
 
-            MoveItTool.PO = new PO_Manager();
             Filters.Picker = new PickerFilter();
 
             MoveItTool.filterBuildings = true;
@@ -61,7 +60,6 @@ namespace MoveIt
             UIAlignTools.AlignToolsPanel = null;
             UIAlignTools.AlignToolsBtn = null;
             Action.selection.Clear();
-            MoveItTool.PO = null;
             Filters.Picker = null;
 
             if (MoveItTool.instance != null)
