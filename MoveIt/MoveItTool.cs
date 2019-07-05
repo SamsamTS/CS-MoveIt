@@ -246,7 +246,10 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
-            PO = new PO_Manager();
+            if (PO == null)
+            {
+                PO = new PO_Manager();
+            }
 
             if (UIToolOptionPanel.instance == null)
             {
@@ -332,7 +335,6 @@ namespace MoveIt
 
                 UIAlignTools.UpdateAlignTools();
                 UIToolOptionPanel.RefreshCloneButton();
-                MoveItTool.PO = null;
             }
         }
 
@@ -759,7 +761,7 @@ namespace MoveIt
             }
         }
 
-        public void StartCycle()
+        public void StartReset()
         {
             if (ToolState != ToolStates.Default) return;
 
@@ -767,7 +769,7 @@ namespace MoveIt
             {
                 lock (ActionQueue.instance)
                 {
-                    ActionQueue.instance.Push(new CycleAction());
+                    ActionQueue.instance.Push(new ResetAction());
                 }
                 m_nextAction = ToolAction.Do;
             }

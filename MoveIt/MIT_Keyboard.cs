@@ -40,9 +40,9 @@ namespace MoveIt
                 {
                     StartBulldoze();
                 }
-                else if (OptionsKeymapping.cycle.IsPressed(e))
+                else if (OptionsKeymapping.reset.IsPressed(e))
                 {
-                    StartCycle();
+                    StartReset();
                 }
                 else if (OptionsKeymapping.viewGrid.IsPressed(e))
                 {

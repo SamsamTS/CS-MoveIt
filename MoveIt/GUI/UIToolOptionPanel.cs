@@ -498,7 +498,7 @@ namespace MoveIt
                 {
                     if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
                     {
-                        MoveItTool.instance.StartCycle();
+                        MoveItTool.instance.StartReset();
                     }
                     else
                     {

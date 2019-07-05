@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MoveIt
 {
-    public class CycleAction : BulldozeAction
+    public class ResetAction : BulldozeAction
     {
         public override void Do()
         {

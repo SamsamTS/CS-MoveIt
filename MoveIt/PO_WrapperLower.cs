@@ -25,12 +25,15 @@ namespace MoveIt
             }
         }
 
-        internal Assembly POAssembly = null;
+        internal static Assembly POAssembly = null;
         internal Type tPOLogic = null, tPOMod = null, tPO = null;
         internal object POLogic = null;
 
+        private BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+
         internal PO_LogicEnabled()
         {
+            POAssembly = null;
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 if (assembly.FullName.Length >= 17 && assembly.FullName.Substring(0, 17) == "ProceduralObjects")
@@ -48,9 +51,10 @@ namespace MoveIt
             tPOLogic = POAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
             tPOMod = POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
             tPO = POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
-            POLogic = tPOMod.GetField("gameLogicObject", BindingFlags.Public | BindingFlags.Static).GetValue(null);
-            Debug.Log($"POLogic:{(POLogic == null ? "null" : $"{POLogic} <{POLogic.GetType()}>")}");
-            Debug.Log($"tPO:{(tPO == null ? "null" : $"{tPO} <{tPO.GetType()}>")}");
+            //POLogic = (object)tPOMod.GetField("gameLogicObject", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            POLogic = UnityEngine.Object.FindObjectOfType(tPOLogic);
+            //Debug.Log($"POLogic:{(POLogic == null ? "null" : $"{POLogic} <{POLogic.GetType()}>")}");
+            //Debug.Log($"tPO:{(tPO == null ? "null" : $"{tPO} <{tPO.GetType()}>")}");
         }
 
         protected Type _tPOLogic = null;
@@ -59,18 +63,36 @@ namespace MoveIt
         {
             get
             {
-                List<ProceduralObject> objectList = Logic.proceduralObjects;
+                List<IPO_Object> objects = new List<IPO_Object>();
+
+                var objectList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
                 if (MoveItTool.POOnlySelectedAreVisible)
                 {
-                    objectList = Logic.pObjSelection;
+                    objectList = tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic);
                 }
-                List<IPO_Object> objects = new List<IPO_Object>();
-                foreach (ProceduralObject obj in objectList)
+
+                int count = (int)objectList.GetType().GetProperty("Count").GetValue(objectList, null);
+                for (int i = 0; i < count; i++)
                 {
-                    IPO_Object o = new PO_ObjectEnabled(obj);
+                    var v = objectList.GetType().GetMethod("get_Item").Invoke(objectList, new object[] { i });
+                    IPO_Object o = new PO_ObjectEnabled((ProceduralObject)v);
                     objects.Add(o);
                 }
+
                 return objects;
+
+                //List<ProceduralObject> objectList = Logic.proceduralObjects;
+                //if (MoveItTool.POOnlySelectedAreVisible)
+                //{
+                //    objectList = Logic.pObjSelection;
+                //}
+                //List<IPO_Object> objects = new List<IPO_Object>();
+                //foreach (ProceduralObject obj in objectList)
+                //{
+                //    IPO_Object o = new PO_ObjectEnabled(obj);
+                //    objects.Add(o);
+                //}
+                //return objects;
             }
         }
 
@@ -95,11 +117,15 @@ namespace MoveIt
 
         public void Delete(IPO_Object obj)
         {
-            //object poList = tPOLogic.GetField("proceduralObjects", BindingFlags.Public | BindingFlags.Instance).GetValue(POLogic);
-            //object poSelList = tPOLogic.GetField("pObjSelection", BindingFlags.Public | BindingFlags.Instance).GetValue(POLogic);
-            //Debug.Log($"\npoList:{poList}\npoSelList:{poSelList}");
-            Logic.proceduralObjects.Remove((ProceduralObject)obj.GetProceduralObject());
-            Logic.pObjSelection.Remove((ProceduralObject)obj.GetProceduralObject());
+            var poList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
+            var poSelList = tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic);
+            Debug.Log($"{POLogic}\npoList:{poList}\npoSelList:{poSelList}");
+
+            poList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poList, new object[] { obj.GetProceduralObject() });
+            poSelList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poSelList, new object[] { obj.GetProceduralObject() });
+
+            //Logic.proceduralObjects.Remove((ProceduralObject)obj.GetProceduralObject());
+            //Logic.pObjSelection.Remove((ProceduralObject)obj.GetProceduralObject());
         }
 
         public IPO_Object ConvertToPO(Instance instance)
@@ -196,8 +222,14 @@ namespace MoveIt
         public bool Selected { get; set; }
         private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
+        internal Type tPOLogic = null, tPOMod = null, tPO = null;
+
         public Vector3 Position { get => procObj.m_position; set => procObj.m_position = value; }
-        private Quaternion Rotation { get => procObj.m_rotation; set => procObj.m_rotation = value; }
+        private Quaternion Rotation
+        {
+            get => (Quaternion)tPO.GetField("m_rotation").GetValue(procObj);
+            set => tPO.GetField("m_rotation").SetValue(procObj, value);
+        }
 
         public string Name
         {
@@ -223,7 +255,13 @@ namespace MoveIt
             {
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
-                procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
+                //tPO.GetField("m_rotation").GetValue(procObj).GetType().GetProperty("eulerAngles").SetValue(tPO.GetField("m_rotation").GetValue(procObj), new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z), null);
+
+                Quaternion q = Rotation;
+                q.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
+                Rotation = q;
+
+                //procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
             }
         }
 
@@ -247,6 +285,10 @@ namespace MoveIt
 
         public PO_ObjectEnabled(ProceduralObject obj)
         {
+            tPOLogic = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
+            tPOMod = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
+            tPO = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+
             procObj = obj;
             ProcId = obj.id;
         }

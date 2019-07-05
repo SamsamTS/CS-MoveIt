@@ -107,7 +107,7 @@ namespace MoveIt
             }
             MoveItTool.m_debugPanel.Update();
 
-            //Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
+            Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
             visibleObjects = newVisible;
             visibleIds = newIds;
@@ -277,7 +277,10 @@ namespace MoveIt
     internal interface IPO_Object
     {
         bool Selected { get; set; }
-        uint Id { get; set; } // The InstanceID.NetLane value
+        /// <summary>
+        /// The InstanceID.NetLane value
+        /// </summary>
+        uint Id { get; set; }
         Vector3 Position { get; set; }
         float Angle { get; set; }
         IInfo Info { get; set; }
