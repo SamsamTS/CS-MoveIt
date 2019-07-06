@@ -763,6 +763,11 @@ namespace MoveIt
                     MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
                     if (MoveItTool.PO.Active)
                     {
+                        if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
+                        {
+                            MoveItTool.instance.StopCloning();
+                        }
+
                         MoveItTool.PO.ToolEnabled();
                         ActionQueue.instance.Push(new TransformAction());
                     }
