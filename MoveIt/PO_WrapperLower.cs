@@ -1,7 +1,4 @@
-﻿using ColossalFramework.UI;
-using ProceduralObjects;
-using ProceduralObjects.Classes;
-using ColossalFramework;
+﻿using ColossalFramework;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -14,17 +11,6 @@ namespace MoveIt
 {
     internal class PO_LogicEnabled : IPO_Logic
     {
-        //private ProceduralObjectsLogic logic = null;
-        //public ProceduralObjectsLogic Logic
-        //{
-        //    get
-        //    {
-        //        if (logic == null)
-        //            logic = UnityEngine.Object.FindObjectOfType<ProceduralObjectsLogic>();
-        //        return logic;
-        //    }
-        //}
-
         internal static Assembly POAssembly = null;
         internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null;
         internal object POLogic = null;
@@ -54,10 +40,7 @@ namespace MoveIt
             tPInfo = POAssembly.GetType("ProceduralObjects.Classes.ProceduralInfo");
             tPUtils = POAssembly.GetType("ProceduralObjects.Classes.ProceduralUtils");
             tVertex = POAssembly.GetType("ProceduralObjects.Classes.Vertex");
-            //POLogic = (object)tPOMod.GetField("gameLogicObject", BindingFlags.Public | BindingFlags.Static).GetValue(null);
             POLogic = UnityEngine.Object.FindObjectOfType(tPOLogic);
-            //Debug.Log($"POLogic:{(POLogic == null ? "null" : $"{POLogic} <{POLogic.GetType()}>")}");
-            //Debug.Log($"tPO:{(tPO == null ? "null" : $"{tPO} <{tPO.GetType()}>")}");
         }
 
         protected Type _tPOLogic = null;
@@ -83,39 +66,60 @@ namespace MoveIt
                 }
 
                 return objects;
-
-                //List<ProceduralObject> objectList = Logic.proceduralObjects;
-                //if (MoveItTool.POOnlySelectedAreVisible)
-                //{
-                //    objectList = Logic.pObjSelection;
-                //}
-                //List<IPO_Object> objects = new List<IPO_Object>();
-                //foreach (ProceduralObject obj in objectList)
-                //{
-                //    IPO_Object o = new PO_ObjectEnabled(obj);
-                //    objects.Add(o);
-                //}
-                //return objects;
             }
         }
 
         public uint Clone(uint originalId, Vector3 position)
         {
+            Type tCPO = POAssembly.GetType("ProceduralObjects.Classes.CacheProceduralObject");
+            var cache = Activator.CreateInstance(tCPO, new[] { GetPOById(originalId).GetProceduralObject() });
+
             //int id = (int)originalId - 1;
             //var cache = new CacheProceduralObject(Logic.proceduralObjects[id]);
+
+            uint newId = 0;
+            for (int i = 1; i < int.MaxValue; i++)
+            {
+                bool found = false;
+                foreach (IPO_Object o in Objects)
+                {
+                    if (o.Id == i)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    newId = (uint)i;
+                    break;
+                }
+            }
+            if (newId == 0)
+            {
+                throw new Exception($"Failed to find new ID for clone of {originalId}!");
+            }
+
+            Debug.Log($"Count: {Objects.Count}, New ID: {newId}");
 
             //int newId = Logic.proceduralObjects.GetNextUnusedId();
             //Debug.Log($"Cloning {originalId - 1} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
 
-            ////PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
-            ////Debug.Log($"{propInfo.m_material.color}, {propInfo.m_material.mainTexture}, {propInfo.m_material.shader}");
+            string basePrefabName = (string)tCPO.GetField("basePrefabName").GetValue(cache);
+            PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == basePrefabName);
+            Debug.Log($"propInfo:{propInfo}");
+            //PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
+
+            //var obj = tPOLogic.GetMethod("PlaceCacheObject", new Type[] { tCPO, typeof(bool) }).Invoke(POLogic, new[] { cache, false });
+            //Debug.Log(tPO.GetField("id").GetValue(obj));
+            //tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic), new[] { obj });
 
             //var obj = Logic.PlaceCacheObject(cache, false);
-            ////ProceduralObject obj = new ProceduralObject(cache, newId, position);
-            ////Logic.proceduralObjects.Add(obj);
+            //ProceduralObject obj = new ProceduralObject(cache, newId, position);
+            //Logic.proceduralObjects.Add(obj);
 
-            //return (uint)obj.id + 1;
-            return 0;
+            return newId;
+            //return 0;
         }
 
         public void Delete(IPO_Object obj)
@@ -125,9 +129,17 @@ namespace MoveIt
 
             poList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poList, new object[] { obj.GetProceduralObject() });
             poSelList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poSelList, new object[] { obj.GetProceduralObject() });
+        }
 
-            //Logic.proceduralObjects.Remove((ProceduralObject)obj.GetProceduralObject());
-            //Logic.pObjSelection.Remove((ProceduralObject)obj.GetProceduralObject());
+        internal IPO_Object GetPOById(uint id)
+        {
+            foreach (IPO_Object po in Objects)
+            {
+                if (po.Id == id)
+                    return po;
+            }
+
+            return null;
         }
 
         private object AvailableProcInfos
@@ -143,14 +155,7 @@ namespace MoveIt
             if ((int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null) == 0)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
 
-            // Most code lifted from PO
-
-            //if (Logic.availableProceduralInfos == null)
-            //    Logic.availableProceduralInfos = ProceduralUtils.CreateProceduralInfosList();
-            //if (Logic.availableProceduralInfos.Count == 0)
-            //    Logic.availableProceduralInfos = ProceduralUtils.CreateProceduralInfosList();
-
-            //Debug.Log($"ConvertToPO:\n{instance.Info.Prefab.name} <{instance.Info.Prefab.GetType()}>");
+            // Most code adapted from PO
 
             try
             {
@@ -183,31 +188,10 @@ namespace MoveIt
                     }
                     else
                     {
-                        //string msg = $"{tPInfo}\n";
-                        //foreach (MethodInfo mi in tPOLogic.GetMethods(flags))
-                        //{
-                        //    msg += $"{mi} - {mi.Name} <{mi.ReturnType}>\n";
-                        //}
-                        //Debug.Log(msg);
-
                         tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
                         var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
                         tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
                     }
-
-                    //ProceduralInfo info = Logic.availableProceduralInfos.Where(pInf => pInf.propPrefab != null).FirstOrDefault(pInf => pInf.propPrefab == (PropInfo)instance.Info.Prefab);
-                    //if (info.isBasicShape && Logic.basicTextures.Count > 0)
-                    //{
-                    //    Logic.currentlyEditingObject = null;
-                    //    Logic.chosenProceduralInfo = info;
-                    //}
-                    //else
-                    //{
-                    //    Logic.SpawnObject(info);
-                    //    // PO 1.5: Logic.temp_storageVertex = Vertex.CreateVertexList(Logic.currentlyEditingObject);
-                    //    Logic.tempVerticesBuffer = Vertex.CreateVertexList(Logic.currentlyEditingObject);
-                    //}
-
                 }
                 else if (instance is MoveableBuilding mb)
                 {
@@ -236,29 +220,20 @@ namespace MoveIt
                     {
                         tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
                         var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
-                        tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
+                        if (tPOLogic.GetField("tempVerticesBuffer") != null)
+                        { // 1.6
+                            tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
+                        }
+                        else
+                        { // 1.5
+                            tPOLogic.GetField("temp_storageVertex").SetValue(POLogic, v);
+                        }
                     }
-
-
-                    //ProceduralInfo info = Logic.availableProceduralInfos.Where(pInf => pInf.buildingPrefab != null).FirstOrDefault(pInf => pInf.buildingPrefab == (BuildingInfo)instance.Info.Prefab);
-                    //if (info.isBasicShape && Logic.basicTextures.Count > 0)
-                    //{
-                    //    Logic.chosenProceduralInfo = info;
-                    //}
-                    //else
-                    //{
-                    //    Logic.SpawnObject(info);
-                    //    Logic.tempVerticesBuffer = Vertex.CreateVertexList(Logic.currentlyEditingObject);
-                    //}
                 }
 
                 object poObj = tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic);
                 tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic), new[] { poObj });
                 return new PO_ObjectEnabled(poObj);
-
-                //ProceduralObject poObj = Logic.currentlyEditingObject;
-                //Logic.pObjSelection.Add(poObj);
-                //return new PO_ObjectEnabled(poObj);
             }
             catch (NullReferenceException)
             {
@@ -346,13 +321,10 @@ namespace MoveIt
             {
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
-                //tPO.GetField("m_rotation").GetValue(procObj).GetType().GetProperty("eulerAngles").SetValue(tPO.GetField("m_rotation").GetValue(procObj), new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z), null);
-
+                
                 Quaternion q = Rotation;
                 q.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
                 Rotation = q;
-
-                //procObj.m_rotation.eulerAngles = new Vector3(Rotation.eulerAngles.x, a, Rotation.eulerAngles.z);
             }
         }
 
@@ -376,7 +348,7 @@ namespace MoveIt
 
         public PO_ObjectEnabled(object obj)
         {
-            tPOLogic = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
+            tPOLogic = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.3Logic");
             tPOMod = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
             tPO = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
 

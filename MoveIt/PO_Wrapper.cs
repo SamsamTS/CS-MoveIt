@@ -86,9 +86,8 @@ namespace MoveIt
             removed.ExceptWith(newIds);
             HashSet<uint> added = new HashSet<uint>(newIds);
             added.ExceptWith(visibleIds);
-            HashSet<uint> newSelectedIds = new HashSet<uint>(selectedIds);
-            newSelectedIds.IntersectWith(newIds);
 
+            HashSet<uint> newSelectedIds = new HashSet<uint>();
             List<Instance> toRemove = new List<Instance>();
             foreach (Instance instance in Action.selection)
             {
@@ -98,6 +97,10 @@ namespace MoveIt
                     if (removed.Contains(id))
                     {
                         toRemove.Add(instance);
+                    }
+                    else
+                    {
+                        newSelectedIds.Add(id);
                     }
                 }
             }
@@ -171,10 +174,10 @@ namespace MoveIt
             {
                 return false;
             }
-            if (getVersion() != VersionName)
-            {
-                return false;
-            }
+            //if (getVersion() != VersionName)
+            //{
+            //    return false;
+            //}
             return true;
         }
 

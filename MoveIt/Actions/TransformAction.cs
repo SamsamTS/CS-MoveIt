@@ -60,7 +60,7 @@ namespace MoveIt
 
             bool fast = MoveItTool.fastMove != Event.current.shift;
             UpdateArea(originalBounds, !fast || containsNetwork);
-            UpdateArea(GetTotalBounds(false), !fast);
+            UpdateArea(GetTotalBounds(false), !fast || containsNetwork);
         }
 
         public override void Undo()
@@ -72,8 +72,8 @@ namespace MoveIt
                 state.instance.SetState(state);
             }
 
-            UpdateArea(bounds);
-            UpdateArea(GetTotalBounds(false));
+            UpdateArea(bounds, true);
+            UpdateArea(GetTotalBounds(false), true);
         }
 
         public void InitialiseDrag()
