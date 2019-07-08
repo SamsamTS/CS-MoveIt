@@ -240,7 +240,7 @@ namespace MoveIt
                 Assembly mtAssembly = null;
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "000_ModTools")
+                    if (assembly.FullName.Length >= 8 && assembly.FullName.Substring(0, 8) == "ModTools")
                     {
                         mtAssembly = assembly;
                         break;
@@ -251,16 +251,16 @@ namespace MoveIt
                     return;
                 }
 
-                tModTools = mtAssembly.GetType("ModTools.ModTools");
-                tSceneExplorer = mtAssembly.GetType("ModTools.SceneExplorer");
-                tReferenceChain = mtAssembly.GetType("ModTools.ReferenceChain");
+                tModTools = mtAssembly.GetType("ModTools.MainWindow");
+                tSceneExplorer = mtAssembly.GetType("ModTools.Explorer.SceneExplorer");
+                tReferenceChain = mtAssembly.GetType("ModTools.Explorer.ReferenceChain");
 
-                ModTools = tModTools.GetField("instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-                SceneExplorer = tModTools.GetField("sceneExplorer", flags).GetValue(ModTools);
+                ModTools = tModTools.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
+                SceneExplorer = tModTools.GetProperty("SceneExplorer", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ModTools, null);
 
                 //Debug.Log($"\ntModTools:{tModTools}, tSceneExplorer:{tSceneExplorer}, tReferenceChain:{tReferenceChain}");
-                //Debug.Log($"Fields:{tModTools.GetFields().Length}, Props:{tModTools.GetProperties().Length}, Methods:{tModTools.GetMethods().Length}");
-                //Debug.Log($"{ModTools} ({ModTools.GetType()})\n{SceneExplorer} ({SceneExplorer.GetType()})");
+                //Debug.Log($"\n{ModTools} ({ModTools.GetType()})\n{SceneExplorer} <{SceneExplorer.GetType()}>");
+                //Debug.Log($"\nFields:{tModTools.GetFields().Length}, Props:{tModTools.GetProperties().Length}, Methods:{tModTools.GetMethods().Length}");
 
                 rcBuildings = Activator.CreateInstance(tReferenceChain);
                 rcBuildings = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(GameObject) }, null).Invoke(rcBuildings, new object[] { BuildingManager.instance.gameObject });
@@ -338,36 +338,37 @@ namespace MoveIt
 
             try
             {
-                object rc;
+                object rc = null;
                 Type[] t = new Type[] { tReferenceChain };
 
                 if (Id.Building > 0)
                 {
                     rc = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(ushort) }, null).Invoke(rcBuildings, new object[] { Id.Building });
-                    tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
+                    //Debug.Log(tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc }));
                 }
                 else if (Id.Prop > 0)
                 {
                     rc = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(ushort) }, null).Invoke(rcProps, new object[] { Id.Prop });
-                    tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
+                    //tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
                 }
                 else if (Id.Tree > 0)
                 {
-                    rc = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(uint) }, null).Invoke(rcTrees, new object[] { Id.Tree });
-                    tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
+                    rc = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(int) }, null).Invoke(rcTrees, new object[] { (int)Id.Tree });
+                    //tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
                 }
                 else if (Id.NetNode > 0)
                 {
                     rc = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(ushort) }, null).Invoke(rcNodes, new object[] { Id.NetNode });
-                    tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
+                    //tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
                 }
                 else if (Id.NetSegment > 0)
                 {
                     rc = tReferenceChain.GetMethod("Add", flags, null, new Type[] { typeof(ushort) }, null).Invoke(rcSegments, new object[] { Id.NetSegment });
-                    tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
+                    //tSceneExplorer.GetMethod("ExpandFromRefChain", flags, null, t, null).Invoke(SceneExplorer, new object[] { rc });
                 }
 
-                tSceneExplorer.GetProperty("visible", BindingFlags.Public | BindingFlags.Instance).SetValue(SceneExplorer, true, null);
+                tSceneExplorer.GetMethod("Show").Invoke(SceneExplorer, new[] { rc });
+                //tSceneExplorer.GetProperty("visible", BindingFlags.Public | BindingFlags.Instance).SetValue(SceneExplorer, true, null);
             }
             catch (ReflectionTypeLoadException)
             {
