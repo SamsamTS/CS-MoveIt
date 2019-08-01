@@ -75,7 +75,7 @@ namespace MoveIt
 
         public static readonly SavedInputKey clone = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
         public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
-        public static readonly SavedInputKey reset = new SavedInputKey("cycle", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey reset = new SavedInputKey("reset", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.V, true, true, false), true);
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);

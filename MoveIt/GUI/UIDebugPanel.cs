@@ -154,7 +154,7 @@ namespace MoveIt
             Panel.atlas = ResourceLoader.GetAtlas("Ingame");
             Panel.backgroundSprite = "SubcategoriesPanel";
             Panel.size = new Vector2(300, 107);
-            Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 370, 3);
+            Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 412, 3);
             Panel.clipChildren = true;
             Panel.isVisible = MoveItTool.showDebugPanel;
 

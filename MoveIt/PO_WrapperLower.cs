@@ -119,7 +119,6 @@ namespace MoveIt
             //Logic.proceduralObjects.Add(obj);
 
             return newId;
-            //return 0;
         }
 
         public void Delete(IPO_Object obj)
@@ -155,7 +154,7 @@ namespace MoveIt
             if ((int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null) == 0)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
 
-            // Most code adapted from PO
+            // Most code adapted from PO, by Simon Ryr
 
             try
             {
@@ -182,7 +181,6 @@ namespace MoveIt
                     if ((bool)procInfo.GetType().GetField("isBasicShape").GetValue(procInfo) && 
                         (int)tPOLogic.GetField("basicTextures").GetValue(POLogic).GetType().GetProperty("Count").GetValue(tPOLogic.GetField("basicTextures").GetValue(POLogic), null) > 0)
                     {
-                        Debug.Log("FFF");
                         tPOLogic.GetField("currentlyEditingObject").SetValue(POLogic, null);
                         tPOLogic.GetField("chosenProceduralInfo").SetValue(POLogic, procInfo);
                     }
@@ -190,7 +188,14 @@ namespace MoveIt
                     {
                         tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
                         var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
-                        tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
+                        if (tPOLogic.GetField("tempVerticesBuffer") != null)
+                        { // 1.6
+                            tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
+                        }
+                        else
+                        { // 1.5
+                            tPOLogic.GetField("temp_storageVertex").SetValue(POLogic, v);
+                        }
                     }
                 }
                 else if (instance is MoveableBuilding mb)
@@ -287,8 +292,10 @@ namespace MoveIt
         public Vector3 Position
         {
             get => (Vector3)tPO.GetField("m_position").GetValue(procObj);
-            set => tPO.GetField("m_position").SetValue(procObj, value);
-
+            set
+            {
+                tPO.GetField("m_position").SetValue(procObj, value);
+            }
         }
         private Quaternion Rotation
         {
