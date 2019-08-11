@@ -19,7 +19,8 @@ namespace MoveIt
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
-        internal const string VersionName = "1.6-b3";
+        //internal const string VersionName = "1.6-b3";
+        internal static readonly string[] VersionNames = { "1.5.5", "1.6-b3" };
 
         internal bool Enabled = false;
         private bool _active = false;
@@ -75,6 +76,7 @@ namespace MoveIt
         {
             Dictionary<uint, IPO_Object> newVisible = new Dictionary<uint, IPO_Object>();
             HashSet<uint> newIds = new HashSet<uint>();
+            UIToolOptionPanel.instance.ShowPOWarning();
 
             foreach (IPO_Object obj in Logic.Objects)
             {
@@ -110,7 +112,7 @@ namespace MoveIt
             }
             MoveItTool.m_debugPanel.Update();
 
-            Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
+            //Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
             visibleObjects = newVisible;
             visibleIds = newIds;
@@ -208,13 +210,14 @@ namespace MoveIt
         {
             if (isPOInstalled())
             {
-                if (PO_LogicEnabled.getVersion() == VersionName)
+                if (VersionNames.Contains<string>(PO_LogicEnabled.getVersion()))
+                //if (PO_LogicEnabled.getVersion() == VersionName)
                 {
                     return $"PO version {PO_LogicEnabled.getVersion()} found, integration enabled!\n ";
                 }
                 else
                 {
-                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion()} (required: {VersionName})\n ";
+                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion()} (required: 1.5.5 or 1.6b3)\n ";
                 }
             }
 

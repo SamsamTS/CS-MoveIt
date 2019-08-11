@@ -163,18 +163,23 @@ namespace MoveIt
                     UILabel poWarning = panel.AddUIComponent<UILabel>();
                     poWarning.name = "poWarning";
                     poWarning.text = "Procedural Objects (PO) support is in beta. At present you can not clone PO objects, \n" +
-                        "redo Convert-to-PO actions or undo Bulldoze actions. This means if you delete PO objects \n" +
-                        "with Move It, they are immediately PERMANENTLY gone.\n ";
+                        "redo Convert-to-PO actions or undo Bulldoze actions. This means if you delete PO \n" +
+                        "objects with Move It, they are immediately PERMANENTLY gone.\n ";
 
-                    checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                    checkBox = (UICheckBox)group.AddCheckbox("Hide the PO warning box", !MoveItTool.POShowWarningToggle.value, (b) =>
                     {
-                        MoveItTool.POOnlySelectedAreVisible.value = b;
-                        if (MoveItTool.PO != null)
-                        {
-                            MoveItTool.PO.ToolEnabled();
-                        }
+                        MoveItTool.POShowWarningToggle.value = !b;
                     });
-                    checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
+
+                    //checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                    //{
+                    //    MoveItTool.POOnlySelectedAreVisible.value = b;
+                    //    if (MoveItTool.PO != null)
+                    //    {
+                    //        MoveItTool.PO.ToolEnabled();
+                    //    }
+                    //});
+                    //checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
 
                     checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
                     {

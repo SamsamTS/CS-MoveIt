@@ -53,8 +53,9 @@ namespace MoveIt
         public static MoveItTool instance;
         public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true); 
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
-        public static SavedBool POOnlySelectedAreVisible = new SavedBool("POOnlySelectedAreVisible", settingsFileName, true, true);
+        public static SavedBool POOnlySelectedAreVisible = new SavedBool("POOnlySelectedAreVisible", settingsFileName, false, true); // Presently unused
         public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
+        public static SavedBool POShowWarningToggle = new SavedBool("POShowWarningToggle", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
