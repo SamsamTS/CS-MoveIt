@@ -71,54 +71,64 @@ namespace MoveIt
 
         public uint Clone(uint originalId, Vector3 position)
         {
-            Type tCPO = POAssembly.GetType("ProceduralObjects.Classes.CacheProceduralObject");
-            var cache = Activator.CreateInstance(tCPO, new[] { GetPOById(originalId).GetProceduralObject() });
+            return 0;
+            //var original = GetPOById(originalId).GetProceduralObject();
+            //Debug.Log($"Original:{original}");
+            //var clone = tPOLogic.GetMethod("CloneObject", new Type[] { tPO }).Invoke(POLogic, new[] { original });
+            //Debug.Log($"Clone:{clone}");
+            //uint cloneId = ((uint) tPO.GetField("id").GetValue(clone)) + 1;
+            //Debug.Log($"cloneId:{cloneId}");
+            //return cloneId;
+            
 
-            //int id = (int)originalId - 1;
-            //var cache = new CacheProceduralObject(Logic.proceduralObjects[id]);
+            //Type tCPO = POAssembly.GetType("ProceduralObjects.Classes.CacheProceduralObject");
+            //var cache = Activator.CreateInstance(tCPO, new[] { GetPOById(originalId).GetProceduralObject() });
 
-            uint newId = 0;
-            for (int i = 1; i < int.MaxValue; i++)
-            {
-                bool found = false;
-                foreach (IPO_Object o in Objects)
-                {
-                    if (o.Id == i)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    newId = (uint)i;
-                    break;
-                }
-            }
-            if (newId == 0)
-            {
-                throw new Exception($"Failed to find new ID for clone of {originalId}!");
-            }
+            ////int id = (int)originalId - 1;
+            ////var cache = new CacheProceduralObject(Logic.proceduralObjects[id]);
 
-            Debug.Log($"Count: {Objects.Count}, New ID: {newId}");
+            //uint newId = 0;
+            //for (int i = 1; i < int.MaxValue; i++)
+            //{
+            //    bool found = false;
+            //    foreach (IPO_Object o in Objects)
+            //    {
+            //        if (o.Id == i)
+            //        {
+            //            found = true;
+            //            break;
+            //        }
+            //    }
+            //    if (!found)
+            //    {
+            //        newId = (uint)i;
+            //        break;
+            //    }
+            //}
+            //if (newId == 0)
+            //{
+            //    throw new Exception($"Failed to find new ID for clone of {originalId}!");
+            //}
 
-            //int newId = Logic.proceduralObjects.GetNextUnusedId();
-            //Debug.Log($"Cloning {originalId - 1} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
+            //Debug.Log($"Count: {Objects.Count}, New ID: {newId}");
 
-            string basePrefabName = (string)tCPO.GetField("basePrefabName").GetValue(cache);
-            PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == basePrefabName);
-            Debug.Log($"propInfo:{propInfo}");
-            //PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
+            ////int newId = Logic.proceduralObjects.GetNextUnusedId();
+            ////Debug.Log($"Cloning {originalId - 1} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
+
+            //string basePrefabName = (string)tCPO.GetField("basePrefabName").GetValue(cache);
+            //PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == basePrefabName);
+            //Debug.Log($"propInfo:{propInfo}");
+            ////PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
 
             //var obj = tPOLogic.GetMethod("PlaceCacheObject", new Type[] { tCPO, typeof(bool) }).Invoke(POLogic, new[] { cache, false });
-            //Debug.Log(tPO.GetField("id").GetValue(obj));
-            //tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic), new[] { obj });
+            ////Debug.Log(tPO.GetField("id").GetValue(obj));
+            ////tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic), new[] { obj });
 
-            //var obj = Logic.PlaceCacheObject(cache, false);
-            //ProceduralObject obj = new ProceduralObject(cache, newId, position);
-            //Logic.proceduralObjects.Add(obj);
+            ////var obj = Logic.PlaceCacheObject(cache, false);
+            ////ProceduralObject obj = new ProceduralObject(cache, newId, position);
+            ////Logic.proceduralObjects.Add(obj);
 
-            return newId;
+            //return newId;
         }
 
         public void Delete(IPO_Object obj)
@@ -154,7 +164,7 @@ namespace MoveIt
             if ((int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null) == 0)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
 
-            // Most code adapted from PO, by Simon Ryr
+            // Most code adapted from PO ProceduralObjectsLogic.ConvertToProcedural, by Simon Ryr
 
             try
             {

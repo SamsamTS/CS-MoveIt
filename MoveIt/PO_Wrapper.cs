@@ -20,7 +20,7 @@ namespace MoveIt
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
         //internal const string VersionName = "1.6-b3";
-        internal static readonly string[] VersionNames = { "1.5.5", "1.6-b3" };
+        internal static readonly string[] VersionNames = { "1.5.5", "1.6-b3", "1.6-b4" };
 
         internal bool Enabled = false;
         private bool _active = false;
@@ -210,14 +210,14 @@ namespace MoveIt
         {
             if (isPOInstalled())
             {
-                if (VersionNames.Contains<string>(PO_LogicEnabled.getVersion()))
+                if (VersionNames.Contains(PO_LogicEnabled.getVersion()))
                 //if (PO_LogicEnabled.getVersion() == VersionName)
                 {
                     return $"PO version {PO_LogicEnabled.getVersion()} found, integration enabled!\n ";
                 }
                 else
                 {
-                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion()} (required: 1.5.5 or 1.6b3)\n ";
+                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion()} (required: 1.5.5, 1.6-b3 or 1.6-b4)\n ";
                 }
             }
 

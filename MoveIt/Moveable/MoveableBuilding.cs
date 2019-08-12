@@ -173,8 +173,6 @@ namespace MoveIt
                 state.subStates = subStates.ToArray();
 
             return state;
-
-
         }
 
         public override void SetState(InstanceState state)
