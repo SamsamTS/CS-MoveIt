@@ -67,9 +67,9 @@ namespace MoveIt
             }
         }
 
-        internal uint Clone(uint originalId, Vector3 position)
+        internal IPO_Object Clone(uint originalId)
         {
-            return Logic.Clone(originalId, position);
+            return Logic.Clone(originalId);
         }
 
         internal bool ToolEnabled()
@@ -247,7 +247,7 @@ namespace MoveIt
     internal interface IPO_Logic
     {
         List<IPO_Object> Objects { get; }
-        uint Clone(uint originalId, Vector3 position);
+        IPO_Object Clone(uint originalId);
         IPO_Object ConvertToPO(Instance instance);
         void Delete(IPO_Object obj);
     }
@@ -262,7 +262,7 @@ namespace MoveIt
             }
         }
 
-        public uint Clone(uint originalId, Vector3 position)
+        public IPO_Object Clone(uint originalId)
         {
             throw new NotImplementedException($"Trying to clone {originalId} despite no PO!");
         }
@@ -294,6 +294,7 @@ namespace MoveIt
         void SetPositionY(float h);
         float GetDistance(Vector3 location);
         void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
+        void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position);
         string DebugQuaternion();
     }
 
@@ -339,6 +340,8 @@ namespace MoveIt
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
         { }
 
+        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position)
+        { }
 
         public string DebugQuaternion()
         {

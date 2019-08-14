@@ -2,7 +2,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Reflection;
 
 // Low level PO wrapper, only accessed by high level
@@ -69,17 +69,53 @@ namespace MoveIt
             }
         }
 
-        public uint Clone(uint originalId, Vector3 position)
+        public IPO_Object Clone(uint originalId)
         {
-            return 0;
+            const uint MaxAttempts = 100;
+            Type tPOMoveIt = POAssembly.GetType("ProceduralObjects.Classes.PO_MoveIt");
+
+            var original = GetPOById(originalId).GetProceduralObject();
+            tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { original });
+
+            Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
+            object[] paramList = new[] { original, null, null };
+            MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null );
+
+            uint c = 0;
+            while (!(bool)retrieve.Invoke(null, paramList) && c < MaxAttempts)
+            {
+                Thread.Sleep(10);
+                if (c % 10 == 0)
+                {
+                    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
+                    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
+                    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
+                    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
+                    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
+
+                    Debug.Log($"{c} {originalId} - in queue:{queueCount} done:{doneCount}");
+                }
+                c++;
+            }
+
+            if (c == MaxAttempts && (uint)paramList[2] == 0)
+            {
+                throw new Exception($"Failed to clone object #{originalId}!");
+            }
+
+            IPO_Object obj = new PO_ObjectEnabled(paramList[1]);
+            return obj;
+
+
             //var original = GetPOById(originalId).GetProceduralObject();
             //Debug.Log($"Original:{original}");
+            //Debug.Log($"{tPOLogic.GetMethod("CloneObject", new Type[] { tPO })}");
             //var clone = tPOLogic.GetMethod("CloneObject", new Type[] { tPO }).Invoke(POLogic, new[] { original });
             //Debug.Log($"Clone:{clone}");
-            //uint cloneId = ((uint) tPO.GetField("id").GetValue(clone)) + 1;
+            //uint cloneId = ((uint)tPO.GetField("id").GetValue(clone)) + 1;
             //Debug.Log($"cloneId:{cloneId}");
             //return cloneId;
-            
+
 
             //Type tCPO = POAssembly.GetType("ProceduralObjects.Classes.CacheProceduralObject");
             //var cache = Activator.CreateInstance(tCPO, new[] { GetPOById(originalId).GetProceduralObject() });
@@ -385,9 +421,14 @@ namespace MoveIt
 
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
         {
+            RenderOverlay(cameraInfo, color, Position);
+        }
+
+        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position)
+        {
             float size = 4f;
             Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
-            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, Position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
+            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
         }
 
         public string DebugQuaternion()

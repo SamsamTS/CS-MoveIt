@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using ColossalFramework.Math;
 using System.Collections.Generic;
 
 namespace MoveIt
@@ -125,15 +126,19 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            Instance cloneInstance = null;
-            uint clone = MoveItTool.PO.Clone(m_procObj.Id, newPosition);
-            //uint clone = 999;
-            Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone}");
+            IPO_Object clone = MoveItTool.PO.Clone(m_procObj.Id);
+            Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone.Id}");
 
-            InstanceID cloneID = default(InstanceID);
-            cloneID.NetLane = clone;
-            //cloneInstance = new MoveableProc(cloneID);
-            
+            InstanceID cloneID = default;
+            cloneID.NetLane = clone.Id;
+
+            MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
+            MoveableProc cloneInstance = new MoveableProc(cloneID)
+            {
+                position = newPosition,
+                angle = state.angle + deltaAngle
+            };
+
             return cloneInstance;
         }
 
@@ -160,7 +165,21 @@ namespace MoveIt
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
-        { }
+        {
+            if (!isValid) return;
+
+            ProcState state = instanceState as ProcState;
+
+            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+            newPosition.y = state.position.y + deltaPosition.y;
+
+            if (followTerrain)
+            {
+                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            }
+
+            m_procObj.RenderOverlay(cameraInfo, toolColor, newPosition);
+        }
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         { }

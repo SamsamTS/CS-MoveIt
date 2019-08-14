@@ -524,7 +524,13 @@ namespace MoveIt
 
                 foreach (InstanceState state in action.m_states)
                 {
-                    state.instance.RenderCloneOverlay(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
+                    Color color = m_hoverColor;
+                    if (state is ProcState)
+                    {
+                        color = m_POhoverColor;
+                    }
+
+                    state.instance.RenderCloneOverlay(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, color);
                 }
             }
         }

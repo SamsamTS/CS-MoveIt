@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using ColossalFramework;
+﻿using ColossalFramework;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -258,6 +259,7 @@ namespace MoveIt
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
                         //Debug.Log($"After [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
+                        Thread.Sleep(50);
                     }
 
                     if (cloneNodeId != 0)
