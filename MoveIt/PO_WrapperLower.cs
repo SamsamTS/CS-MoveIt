@@ -2,22 +2,24 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Collections;
 using System.Reflection;
 
 // Low level PO wrapper, only accessed by high level
 
 namespace MoveIt
 {
-    internal class PO_LogicEnabled : IPO_Logic
+    internal class PO_LogicEnabled : MonoBehaviour, IPO_Logic
     {
         internal static Assembly POAssembly = null;
-        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null;
+        protected Type _tPOLogic = null;
+        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null;
         internal object POLogic = null;
+        private bool waitActive;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
-        internal PO_LogicEnabled()
+        private void Start()
         {
             POAssembly = null;
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -40,10 +42,9 @@ namespace MoveIt
             tPInfo = POAssembly.GetType("ProceduralObjects.Classes.ProceduralInfo");
             tPUtils = POAssembly.GetType("ProceduralObjects.Classes.ProceduralUtils");
             tVertex = POAssembly.GetType("ProceduralObjects.Classes.Vertex");
+            tPOMoveIt = POAssembly.GetType("ProceduralObjects.Classes.PO_MoveIt");
             POLogic = UnityEngine.Object.FindObjectOfType(tPOLogic);
         }
-
-        protected Type _tPOLogic = null;
 
         public List<IPO_Object> Objects
         {
@@ -71,8 +72,7 @@ namespace MoveIt
 
         public IPO_Object Clone(uint originalId)
         {
-            const uint MaxAttempts = 100;
-            Type tPOMoveIt = POAssembly.GetType("ProceduralObjects.Classes.PO_MoveIt");
+            const uint MaxAttempts = 100_000_000;
 
             var original = GetPOById(originalId).GetProceduralObject();
             tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { original });
@@ -81,11 +81,12 @@ namespace MoveIt
             object[] paramList = new[] { original, null, null };
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null );
 
+            Debug.Log($"AAA {Time.time}");
             uint c = 0;
-            while (!(bool)retrieve.Invoke(null, paramList) && c < MaxAttempts)
+            StartCoroutine(Wait());
+            while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
             {
-                Thread.Sleep(10);
-                if (c % 10 == 0)
+                if (c % 100 == 0)
                 {
                     BindingFlags f = BindingFlags.Static | BindingFlags.Public;
                     object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
@@ -97,74 +98,22 @@ namespace MoveIt
                 }
                 c++;
             }
+            Debug.Log($"BBB {Time.time}");
 
-            if (c == MaxAttempts && (uint)paramList[2] == 0)
+            if (c == MaxAttempts)
             {
-                throw new Exception($"Failed to clone object #{originalId}!");
+                throw new Exception($"Failed to clone object #{originalId}! [PO-F4]");
             }
 
             IPO_Object obj = new PO_ObjectEnabled(paramList[1]);
             return obj;
+        }
 
-
-            //var original = GetPOById(originalId).GetProceduralObject();
-            //Debug.Log($"Original:{original}");
-            //Debug.Log($"{tPOLogic.GetMethod("CloneObject", new Type[] { tPO })}");
-            //var clone = tPOLogic.GetMethod("CloneObject", new Type[] { tPO }).Invoke(POLogic, new[] { original });
-            //Debug.Log($"Clone:{clone}");
-            //uint cloneId = ((uint)tPO.GetField("id").GetValue(clone)) + 1;
-            //Debug.Log($"cloneId:{cloneId}");
-            //return cloneId;
-
-
-            //Type tCPO = POAssembly.GetType("ProceduralObjects.Classes.CacheProceduralObject");
-            //var cache = Activator.CreateInstance(tCPO, new[] { GetPOById(originalId).GetProceduralObject() });
-
-            ////int id = (int)originalId - 1;
-            ////var cache = new CacheProceduralObject(Logic.proceduralObjects[id]);
-
-            //uint newId = 0;
-            //for (int i = 1; i < int.MaxValue; i++)
-            //{
-            //    bool found = false;
-            //    foreach (IPO_Object o in Objects)
-            //    {
-            //        if (o.Id == i)
-            //        {
-            //            found = true;
-            //            break;
-            //        }
-            //    }
-            //    if (!found)
-            //    {
-            //        newId = (uint)i;
-            //        break;
-            //    }
-            //}
-            //if (newId == 0)
-            //{
-            //    throw new Exception($"Failed to find new ID for clone of {originalId}!");
-            //}
-
-            //Debug.Log($"Count: {Objects.Count}, New ID: {newId}");
-
-            ////int newId = Logic.proceduralObjects.GetNextUnusedId();
-            ////Debug.Log($"Cloning {originalId - 1} to {newId}(?), {position}\n{cache.baseInfoType}: {cache}");
-
-            //string basePrefabName = (string)tCPO.GetField("basePrefabName").GetValue(cache);
-            //PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == basePrefabName);
-            //Debug.Log($"propInfo:{propInfo}");
-            ////PropInfo propInfo = Resources.FindObjectsOfTypeAll<PropInfo>().FirstOrDefault((PropInfo info) => info.name == cache.basePrefabName);
-
-            //var obj = tPOLogic.GetMethod("PlaceCacheObject", new Type[] { tCPO, typeof(bool) }).Invoke(POLogic, new[] { cache, false });
-            ////Debug.Log(tPO.GetField("id").GetValue(obj));
-            ////tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic), new[] { obj });
-
-            ////var obj = Logic.PlaceCacheObject(cache, false);
-            ////ProceduralObject obj = new ProceduralObject(cache, newId, position);
-            ////Logic.proceduralObjects.Add(obj);
-
-            //return newId;
+        private IEnumerator Wait()
+        {
+            Debug.Log($"CCC {Time.time}");
+            yield return new WaitForSeconds(10.1f);
+            Debug.Log($"DDD {Time.time}");
         }
 
         public void Delete(IPO_Object obj)

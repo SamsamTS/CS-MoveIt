@@ -11,6 +11,7 @@ namespace MoveIt
     internal class PO_Manager
     {
         private IPO_Logic Logic;
+        private static GameObject POGameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         private HashSet<uint> selectedIds = new HashSet<uint>();
@@ -58,7 +59,10 @@ namespace MoveIt
             if (isPOEnabled())
             {
                 Enabled = true;
-                Logic = new PO_LogicEnabled();
+                //Logic = new PO_LogicEnabled();
+                POGameObject = new GameObject("PO_LogicEnabled");
+                POGameObject.AddComponent<PO_LogicEnabled>();
+                Logic = POGameObject.GetComponent<PO_LogicEnabled>();
             }
             else
             {
