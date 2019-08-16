@@ -126,20 +126,23 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            IPO_Object clone = MoveItTool.PO.Clone(m_procObj.Id);
-            Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone.Id}");
+            MoveItTool.PO.Clone(m_procObj.Id, newPosition, state.angle + deltaAngle);
+            return null;
 
-            InstanceID cloneID = default;
-            cloneID.NetLane = clone.Id;
+            //IPO_Object clone = MoveItTool.PO.Clone(m_procObj.Id);
+            //Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone.Id}");
 
-            MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
-            MoveableProc cloneInstance = new MoveableProc(cloneID)
-            {
-                position = newPosition,
-                angle = state.angle + deltaAngle
-            };
+            //InstanceID cloneID = default;
+            //cloneID.NetLane = clone.Id;
 
-            return cloneInstance;
+            //MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
+            //MoveableProc cloneInstance = new MoveableProc(cloneID)
+            //{
+            //    position = newPosition,
+            //    angle = state.angle + deltaAngle
+            //};
+
+            //return cloneInstance;
         }
 
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)

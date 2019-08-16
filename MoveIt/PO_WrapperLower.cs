@@ -15,7 +15,6 @@ namespace MoveIt
         protected Type _tPOLogic = null;
         internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null;
         internal object POLogic = null;
-        private bool waitActive;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -43,7 +42,7 @@ namespace MoveIt
             tPUtils = POAssembly.GetType("ProceduralObjects.Classes.ProceduralUtils");
             tVertex = POAssembly.GetType("ProceduralObjects.Classes.Vertex");
             tPOMoveIt = POAssembly.GetType("ProceduralObjects.Classes.PO_MoveIt");
-            POLogic = UnityEngine.Object.FindObjectOfType(tPOLogic);
+            POLogic = FindObjectOfType(tPOLogic);
         }
 
         public List<IPO_Object> Objects
@@ -70,50 +69,68 @@ namespace MoveIt
             }
         }
 
-        public IPO_Object Clone(uint originalId)
+        public void Clone(uint originalId, Vector3 position, float angle)
         {
-            const uint MaxAttempts = 100_000_000;
+            MoveItTool.POProcessing = true;
+            tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { GetPOById(originalId).GetProceduralObject() });
+            StartCoroutine(RetrieveClone(originalId, position, angle));
+        }
+
+        public IEnumerator<object> RetrieveClone(uint originalId, Vector3 position, float angle)
+        {
+            const uint MaxAttempts = 1000_000;
 
             var original = GetPOById(originalId).GetProceduralObject();
-            tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { original });
-
             Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
             object[] paramList = new[] { original, null, null };
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null );
 
-            Debug.Log($"AAA {Time.time}");
             uint c = 0;
-            StartCoroutine(Wait());
             while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
             {
-                if (c % 100 == 0)
-                {
-                    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
-                    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
-                    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
-                    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
-                    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
+                //if (c % 100 == 0)
+                //{
+                //    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
+                //    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
+                //    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
+                //    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
+                //    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
 
-                    Debug.Log($"{c} {originalId} - in queue:{queueCount} done:{doneCount}");
-                }
+                //    Debug.Log($"{c} #{originalId} - in queue:{queueCount} done:{doneCount}");
+                //}
                 c++;
+                yield return new WaitForSeconds(0.01f);
             }
-            Debug.Log($"BBB {Time.time}");
 
             if (c == MaxAttempts)
             {
                 throw new Exception($"Failed to clone object #{originalId}! [PO-F4]");
             }
 
-            IPO_Object obj = new PO_ObjectEnabled(paramList[1]);
-            return obj;
-        }
+            IPO_Object clone = new PO_ObjectEnabled(paramList[1]);
 
-        private IEnumerator Wait()
-        {
-            Debug.Log($"CCC {Time.time}");
-            yield return new WaitForSeconds(10.1f);
-            Debug.Log($"DDD {Time.time}");
+            InstanceID cloneID = default;
+            cloneID.NetLane = clone.Id;
+            MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
+
+            MoveableProc cloneInstance = new MoveableProc(cloneID)
+            {
+                position = position,
+                angle = angle
+            };
+
+            Action.selection.Add(cloneInstance);
+            //MoveItTool.PO.SelectionAdd(cloneInstance);
+            string msg = "";
+            foreach (Instance i in Action.selection)
+            {
+                msg += i + ", ";
+            }
+            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
+            //MoveItTool.instance.m_nextAction = MoveItTool.ToolAction.Do;
+            MoveItTool.POProcessing = false;
+
+            Debug.Log($"Cloned {originalId} to #{clone.Id} ({cloneInstance.id.NetLane})\n{msg}");
         }
 
         public void Delete(IPO_Object obj)

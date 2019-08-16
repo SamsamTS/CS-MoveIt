@@ -71,9 +71,9 @@ namespace MoveIt
             }
         }
 
-        internal IPO_Object Clone(uint originalId)
+        internal void Clone(uint originalId, Vector3 position, float angle)
         {
-            return Logic.Clone(originalId);
+            Logic.Clone(originalId, position, angle);
         }
 
         internal bool ToolEnabled()
@@ -129,40 +129,40 @@ namespace MoveIt
             return false;
         }
 
-        internal void SelectionAdd(HashSet<Instance> instances)
-        {
-            foreach (Instance i in instances)
-            {
-                SelectionAdd(i);
-            }
-        }
+        //internal void SelectionAdd(HashSet<Instance> instances)
+        //{
+        //    foreach (Instance i in instances)
+        //    {
+        //        SelectionAdd(i);
+        //    }
+        //}
 
-        internal void SelectionAdd(Instance instance)
-        {
-            if (instance.id.NetLane <= 0) return;
+        //internal void SelectionAdd(Instance instance)
+        //{
+        //    if (instance.id.NetLane <= 0) return;
 
-            selectedIds.Add(instance.id.NetLane);
-        }
+        //    selectedIds.Add(instance.id.NetLane);
+        //}
 
-        internal void SelectionRemove(HashSet<Instance> instances)
-        {
-            foreach (Instance i in instances)
-            {
-                SelectionRemove(i);
-            }
-        }
+        //internal void SelectionRemove(HashSet<Instance> instances)
+        //{
+        //    foreach (Instance i in instances)
+        //    {
+        //        SelectionRemove(i);
+        //    }
+        //}
 
-        internal void SelectionRemove(Instance instance)
-        {
-            if (instance.id.NetLane <= 0) return;
+        //internal void SelectionRemove(Instance instance)
+        //{
+        //    if (instance.id.NetLane <= 0) return;
 
-            selectedIds.Remove(instance.id.NetLane);
-        }
+        //    selectedIds.Remove(instance.id.NetLane);
+        //}
 
-        internal void SelectionClear()
-        {
-            selectedIds.Clear();
-        }
+        //internal void SelectionClear()
+        //{
+        //    selectedIds.Clear();
+        //}
 
         internal void Delete(IPO_Object obj)
         {
@@ -251,7 +251,7 @@ namespace MoveIt
     internal interface IPO_Logic
     {
         List<IPO_Object> Objects { get; }
-        IPO_Object Clone(uint originalId);
+        void Clone(uint originalId, Vector3 position, float angle);
         IPO_Object ConvertToPO(Instance instance);
         void Delete(IPO_Object obj);
     }
@@ -266,7 +266,7 @@ namespace MoveIt
             }
         }
 
-        public IPO_Object Clone(uint originalId)
+        public void Clone(uint originalId, Vector3 position, float angle)
         {
             throw new NotImplementedException($"Trying to clone {originalId} despite no PO!");
         }

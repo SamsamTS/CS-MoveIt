@@ -40,8 +40,11 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
                 action.followTerrain = followTerrain;
 
-                ToolState = ToolStates.Default;
-                m_nextAction = ToolAction.Do;
+                if (!POProcessing)
+                {
+                    ToolState = ToolStates.Default;
+                    m_nextAction = ToolAction.Do;
+                }
             }
         }
 
@@ -97,7 +100,7 @@ namespace MoveIt
                 if (e.alt)
                 {
                     Action.selection.ExceptWith(m_marqueeInstances);
-                    PO.SelectionRemove(m_marqueeInstances);
+                    //PO.SelectionRemove(m_marqueeInstances);
                     m_debugPanel.Update();
                 }
                 else
@@ -107,7 +110,7 @@ namespace MoveIt
                         Action.selection.Clear();
                     }
                     Action.selection.UnionWith(m_marqueeInstances);
-                    PO.SelectionAdd(m_marqueeInstances);
+                    //PO.SelectionAdd(m_marqueeInstances);
                     m_debugPanel.Update();
                 }
 
@@ -189,18 +192,18 @@ namespace MoveIt
                         if (Action.selection.Contains(m_hoverInstance))
                         {
                             Action.selection.Remove(m_hoverInstance);
-                            PO.SelectionRemove(m_hoverInstance);
+                            //PO.SelectionRemove(m_hoverInstance);
                         }
                         else
                         {
                             Action.selection.Add(m_hoverInstance);
-                            PO.SelectionAdd(m_hoverInstance);
+                            //PO.SelectionAdd(m_hoverInstance);
                         }
                     }
                 }
                 else
                 {
-                    PO.SelectionClear();
+                    //PO.SelectionClear();
 
                     if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
@@ -222,7 +225,7 @@ namespace MoveIt
                     {
                         Action.selection.Clear();
                         Action.selection.Add(m_hoverInstance);
-                        PO.SelectionAdd(m_hoverInstance);
+                        //PO.SelectionAdd(m_hoverInstance);
                     }
                 }
 
@@ -446,7 +449,7 @@ namespace MoveIt
                 {
                     ActionQueue.instance.Push(new SelectAction());
                     Action.selection.Add(m_lastInstance);
-                    PO.SelectionAdd(m_lastInstance);
+                    //PO.SelectionAdd(m_lastInstance);
 
                     action = new TransformAction();
                     ActionQueue.instance.Push(action);

@@ -44,7 +44,7 @@ namespace MoveIt
                 selection.Remove(i);
             }
 
-            MoveItTool.PO.SelectionClear();
+            //MoveItTool.PO.SelectionClear();
             MoveItTool.m_debugPanel.Update();
         }
 
@@ -54,7 +54,7 @@ namespace MoveIt
 
             bool init = false;
 
-            foreach (Instance instance in Action.selection)
+            foreach (Instance instance in selection)
             {
                 if (!excludeNetworks || (instance.id.Building > 0 || instance.id.Prop > 0 || instance.id.NetLane > 0 || instance.id.Tree > 0))
                 {

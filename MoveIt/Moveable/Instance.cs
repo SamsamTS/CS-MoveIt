@@ -261,5 +261,39 @@ namespace MoveIt
                 segment.m_endDirection = segment.FindDirection(segmentID, segment.m_endNode);
             }
         }
+
+        public override string ToString()
+        {
+            string msg = "";
+
+            switch (id.Type)
+            {
+                case InstanceType.Building:
+                    msg += "B" + id.Building;
+                    break;
+
+                case InstanceType.Prop:
+                    msg += "P" + id.Prop;
+                    break;
+
+                case InstanceType.Tree:
+                    msg += "T" + id.Tree;
+                    break;
+
+                case InstanceType.NetLane:
+                    msg += "PO" + id.NetLane;
+                    break;
+
+                case InstanceType.NetNode:
+                    msg += "N" + id.NetNode;
+                    break;
+
+                case InstanceType.NetSegment:
+                    msg += "S" + id.NetSegment;
+                    break;
+            }
+
+            return msg;
+        }
     }
 }

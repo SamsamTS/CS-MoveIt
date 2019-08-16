@@ -103,6 +103,7 @@ namespace MoveIt
 
         internal static bool HidePO = false;
         internal static PO_Manager PO = null;
+        internal static bool POProcessing = false;
 
         private const float XFACTOR = 0.263671875f;
         private const float YFACTOR = 0.015625f;
@@ -201,15 +202,15 @@ namespace MoveIt
             }
         }
 
-        public HashSet<Instance> selection
-        {
-            get { return Action.selection; }
-        }
+        //public HashSet<Instance> selection
+        //{
+        //    get { return Action.selection; }
+        //}
 
         private UIMoveItButton m_button;
         private UIComponent m_pauseMenu;
 
-        private Quad3 m_selection;
+        private Quad3 m_selection; // Marquee selection box
         public Instance m_hoverInstance;
         private Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
@@ -580,6 +581,7 @@ namespace MoveIt
                             }
                         case ToolAction.Do:
                             {
+                                Debug.Log($"EEE {MoveItTool.POProcessing} {ToolState}");
                                 ActionQueue.instance.Do();
 
                                 if (ActionQueue.instance.current is CloneAction)

@@ -177,9 +177,11 @@ namespace MoveIt
 
         public override void Do()
         {
+            if (MoveItTool.POProcessing) return;
+
             m_clones = new HashSet<Instance>();
 
-            Matrix4x4 matrix4x = default(Matrix4x4);
+            Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             Dictionary<Instance, Instance> clonedOrigin = new Dictionary<Instance, Instance>();
@@ -206,6 +208,7 @@ namespace MoveIt
                 if (state.instance.id.Type != InstanceType.NetNode)
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes);
+                    // Cloned PO returns null, because it is delayed
                     if (clone != null)
                     {
                         //if (state.instance.id.Type == InstanceType.Building)
