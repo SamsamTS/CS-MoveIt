@@ -69,14 +69,14 @@ namespace MoveIt
             }
         }
 
-        public void Clone(uint originalId, Vector3 position, float angle)
+        public void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
             MoveItTool.POProcessing = true;
             tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { GetPOById(originalId).GetProceduralObject() });
-            StartCoroutine(RetrieveClone(originalId, position, angle));
+            StartCoroutine(RetrieveClone(originalId, position, angle, action));
         }
 
-        public IEnumerator<object> RetrieveClone(uint originalId, Vector3 position, float angle)
+        public IEnumerator<object> RetrieveClone(uint originalId, Vector3 position, float angle, Action action)
         {
             const uint MaxAttempts = 1000_000;
 
@@ -99,7 +99,7 @@ namespace MoveIt
                 //    Debug.Log($"{c} #{originalId} - in queue:{queueCount} done:{doneCount}");
                 //}
                 c++;
-                yield return new WaitForSeconds(0.01f);
+                yield return new WaitForSeconds(0.05f);
             }
 
             if (c == MaxAttempts)
@@ -120,17 +120,14 @@ namespace MoveIt
             };
 
             Action.selection.Add(cloneInstance);
+            ((CloneAction)action).m_clones.Add(cloneInstance);
             //MoveItTool.PO.SelectionAdd(cloneInstance);
-            string msg = "";
-            foreach (Instance i in Action.selection)
-            {
-                msg += i + ", ";
-            }
-            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
-            //MoveItTool.instance.m_nextAction = MoveItTool.ToolAction.Do;
-            MoveItTool.POProcessing = false;
 
-            Debug.Log($"Cloned {originalId} to #{clone.Id} ({cloneInstance.id.NetLane})\n{msg}");
+            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
+
+            yield return new WaitForSeconds(0.25f);
+            Debug.Log($"Cloned {originalId} to #{clone.Id}");
+            MoveItTool.POProcessing = false;
         }
 
         public void Delete(IPO_Object obj)

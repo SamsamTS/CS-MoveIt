@@ -16,7 +16,7 @@ namespace MoveIt
             {
                 if (marqueeSelection && (m_hoverInstance == null || !Action.selection.Contains(m_hoverInstance)))
                 {
-                    m_selection = default(Quad3);
+                    m_selection = default;
                     m_marqueeInstances = null;
 
                     ToolState = ToolStates.DrawingSelection;

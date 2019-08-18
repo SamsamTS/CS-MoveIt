@@ -190,7 +190,7 @@ namespace MoveIt
         public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);
         public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);
-        public abstract Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes);
+        public abstract Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action);
         public abstract Instance Clone(InstanceState state, Dictionary<ushort, ushort> clonedNodes);
         public abstract void Delete();
         public abstract Bounds GetBounds(bool ignoreSegments = true);

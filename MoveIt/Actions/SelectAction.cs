@@ -8,11 +8,11 @@ namespace MoveIt
         private HashSet<Instance> m_oldSelection;
         private HashSet<Instance> m_newSelection;
 
-        public SelectAction(bool copy = false)
+        public SelectAction(bool append = false)
         {
             m_oldSelection = selection;
 
-            if (copy && selection != null)
+            if (append && selection != null)
             {
                 m_newSelection = new HashSet<Instance>(selection);
             }
@@ -27,7 +27,7 @@ namespace MoveIt
 
         public void Add(Instance instance)
         {
-            Debug.Log($"Adding:{MoveItTool.InstanceIDDebug(instance.id)}");
+            Debug.Log($"Adding:{instance.id}");
             if (!selection.Contains(instance))
             {
                 m_newSelection.Add(instance);
@@ -41,6 +41,8 @@ namespace MoveIt
 
         public override void Do()
         {
+            if (MoveItTool.POProcessing) return;
+
             selection = m_newSelection;
             MoveItTool.m_debugPanel.Update();
         }

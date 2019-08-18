@@ -103,7 +103,19 @@ namespace MoveIt
 
         internal static bool HidePO = false;
         internal static PO_Manager PO = null;
-        internal static bool POProcessing = false;
+        internal static uint _POProcessing = 0;
+        internal static bool POProcessing
+        {
+            get => _POProcessing > 0;
+            set
+            {
+                if (value)
+                    _POProcessing++;
+                else
+                    _POProcessing--;
+                //Debug.Log($"POProcessing {_POProcessing} Setting:{value}");
+            }
+        }
 
         private const float XFACTOR = 0.263671875f;
         private const float YFACTOR = 0.015625f;
@@ -212,7 +224,7 @@ namespace MoveIt
 
         private Quad3 m_selection; // Marquee selection box
         public Instance m_hoverInstance;
-        private Instance m_lastInstance;
+        internal Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
         private Vector3 m_startPosition;
@@ -520,7 +532,7 @@ namespace MoveIt
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
-                Matrix4x4 matrix4x = default(Matrix4x4);
+                Matrix4x4 matrix4x = default;
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                 foreach (InstanceState state in action.m_states)
@@ -581,7 +593,6 @@ namespace MoveIt
                             }
                         case ToolAction.Do:
                             {
-                                Debug.Log($"EEE {MoveItTool.POProcessing} {ToolState}");
                                 ActionQueue.instance.Do();
 
                                 if (ActionQueue.instance.current is CloneAction)

@@ -114,7 +114,7 @@ namespace MoveIt
             m_procObj.SetPositionY(height);
         }
 
-        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             ProcState state = instanceState as ProcState;
 
@@ -126,7 +126,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            MoveItTool.PO.Clone(m_procObj.Id, newPosition, state.angle + deltaAngle);
+            MoveItTool.PO.Clone(m_procObj.Id, newPosition, state.angle + deltaAngle, action);
             return null;
 
             //IPO_Object clone = MoveItTool.PO.Clone(m_procObj.Id);

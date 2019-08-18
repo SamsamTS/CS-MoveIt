@@ -468,7 +468,7 @@ namespace MoveIt
             SetHeight(TerrainManager.instance.SampleOriginalRawHeightSmooth(position));
         }
 
-        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             BuildingState state = instanceState as BuildingState;
 

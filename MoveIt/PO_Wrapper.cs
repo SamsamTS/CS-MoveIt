@@ -14,7 +14,7 @@ namespace MoveIt
         private static GameObject POGameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
-        private HashSet<uint> selectedIds = new HashSet<uint>();
+        //private HashSet<uint> selectedIds = new HashSet<uint>();
         internal Dictionary<uint, IPO_Object> visibleObjects = new Dictionary<uint, IPO_Object>();
 
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
@@ -71,9 +71,9 @@ namespace MoveIt
             }
         }
 
-        internal void Clone(uint originalId, Vector3 position, float angle)
+        internal void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
-            Logic.Clone(originalId, position, angle);
+            Logic.Clone(originalId, position, angle, action);
         }
 
         internal bool ToolEnabled()
@@ -93,7 +93,7 @@ namespace MoveIt
             HashSet<uint> added = new HashSet<uint>(newIds);
             added.ExceptWith(visibleIds);
 
-            HashSet<uint> newSelectedIds = new HashSet<uint>();
+            // HashSet<uint> newSelectedIds = new HashSet<uint>();
             List<Instance> toRemove = new List<Instance>();
             foreach (Instance instance in Action.selection)
             {
@@ -106,7 +106,7 @@ namespace MoveIt
                     }
                     else
                     {
-                        newSelectedIds.Add(id);
+                        //newSelectedIds.Add(id);
                     }
                 }
             }
@@ -120,7 +120,7 @@ namespace MoveIt
 
             visibleObjects = newVisible;
             visibleIds = newIds;
-            selectedIds = newSelectedIds;
+            //selectedIds = newSelectedIds;
 
             // Has anything changed?
             if (added.Count > 0 || removed.Count > 0)
@@ -251,7 +251,7 @@ namespace MoveIt
     internal interface IPO_Logic
     {
         List<IPO_Object> Objects { get; }
-        void Clone(uint originalId, Vector3 position, float angle);
+        void Clone(uint originalId, Vector3 position, float angle, Action action);
         IPO_Object ConvertToPO(Instance instance);
         void Delete(IPO_Object obj);
     }
@@ -266,7 +266,7 @@ namespace MoveIt
             }
         }
 
-        public void Clone(uint originalId, Vector3 position, float angle)
+        public void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
             throw new NotImplementedException($"Trying to clone {originalId} despite no PO!");
         }

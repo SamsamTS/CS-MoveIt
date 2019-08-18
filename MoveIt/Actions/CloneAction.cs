@@ -18,8 +18,8 @@ namespace MoveIt
         public bool followTerrain;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
-        protected HashSet<Instance> m_clones;
-        protected HashSet<Instance> m_oldSelection;
+        internal HashSet<Instance> m_clones;
+        internal HashSet<Instance> m_oldSelection;
 
         protected bool _isImport = false;
 
@@ -177,8 +177,12 @@ namespace MoveIt
 
         public override void Do()
         {
-            if (MoveItTool.POProcessing) return;
+            if (MoveItTool.POProcessing)
+            {
+                return;
+            }
 
+            MoveItTool.instance.m_lastInstance = null;
             m_clones = new HashSet<Instance>();
 
             Matrix4x4 matrix4x = default;
@@ -192,7 +196,7 @@ namespace MoveIt
             {
                 if (state.instance.id.Type == InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes);
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes, this);
                     if (clone != null)
                     {
                         m_clones.Add(clone);
@@ -207,7 +211,7 @@ namespace MoveIt
             {
                 if (state.instance.id.Type != InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes);
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes, this);
                     // Cloned PO returns null, because it is delayed
                     if (clone != null)
                     {
