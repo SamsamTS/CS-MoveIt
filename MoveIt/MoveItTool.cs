@@ -990,7 +990,7 @@ namespace MoveIt
             int c = 0;
             foreach (Bounds b in outerList)
             {
-                b.Expand(64f);
+                b.Expand(128f);
             }
 
             do

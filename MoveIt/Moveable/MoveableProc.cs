@@ -185,6 +185,17 @@ namespace MoveIt
         }
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
-        { }
+        {
+            PrefabInfo pi = m_procObj.Info.Prefab;
+
+            if (pi is BuildingInfo)
+            {
+                MoveableBuilding.RenderCloneGeometryImplementation(instanceState, ref matrix4x, deltaPosition, deltaAngle, center, followTerrain, cameraInfo);
+            }
+            else
+            {
+                MoveableProp.RenderCloneGeometryImplementation(instanceState, ref matrix4x, deltaPosition, deltaAngle, center, followTerrain, cameraInfo);
+            }
+        }
     }
 }

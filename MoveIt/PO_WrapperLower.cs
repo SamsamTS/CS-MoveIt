@@ -290,7 +290,7 @@ namespace MoveIt
 
     internal class PO_ObjectEnabled : IPO_Object
     {
-        private object procObj;
+        internal object procObj;
 
         public uint Id { get; set; } // The InstanceID.NetLane value
         public bool Selected { get; set; }
@@ -404,6 +404,7 @@ namespace MoveIt
     public class Info_POEnabled : IInfo
     {
         private PO_ObjectEnabled _obj = null;
+        private PrefabInfo _Prefab = null;
 
         public Info_POEnabled(object i)
         {
@@ -412,6 +413,21 @@ namespace MoveIt
 
         public string Name => _obj.Name;
 
-        public PrefabInfo Prefab { get; set; } = null;
+        public PrefabInfo Prefab
+        {
+            get
+            {
+                _Prefab = (PrefabInfo)_obj.tPO.GetField("_baseBuilding").GetValue(_obj.procObj);
+                if (_Prefab == null)
+                {
+                    _Prefab = (PrefabInfo)_obj.tPO.GetField("_baseProp").GetValue(_obj.procObj);
+                }
+                return _Prefab;
+            }
+            set
+            {
+                _Prefab = value;
+            }
+        }
     }
 }

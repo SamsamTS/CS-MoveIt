@@ -229,21 +229,26 @@ namespace MoveIt
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            PropState state = instanceState as PropState;
+            RenderCloneGeometryImplementation(instanceState, ref matrix4x, deltaPosition, deltaAngle, center, followTerrain, cameraInfo);
+        }
 
-            PropInfo info = state.Info.Prefab as PropInfo;
-            Randomizer randomizer = new Randomizer(state.instance.id.Prop);
+        public static void RenderCloneGeometryImplementation(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo)
+        {
+            InstanceID id = instanceState.instance.id;
+
+            PropInfo info = instanceState.Info.Prefab as PropInfo;
+            Randomizer randomizer = new Randomizer(id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
-            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
-            newPosition.y = state.position.y + deltaPosition.y;
+            Vector3 newPosition = matrix4x.MultiplyPoint(instanceState.position - center);
+            newPosition.y = instanceState.position.y + deltaPosition.y;
 
             if (followTerrain)
             {
-                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+                newPosition.y = newPosition.y - instanceState.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             }
 
-            float newAngle = state.angle + deltaAngle;
+            float newAngle = instanceState.angle + deltaAngle;
             
             if (info.m_requireHeightMap)
             {

@@ -755,32 +755,35 @@ namespace MoveIt
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            BuildingState state = instanceState as BuildingState;
+            RenderCloneGeometryImplementation(instanceState, ref matrix4x, deltaPosition, deltaAngle, center, followTerrain, cameraInfo);
+        }
 
-            BuildingInfo buildingInfo = state.Info.Prefab as BuildingInfo;
-            Color color = GetColor(state.instance.id.Building, buildingInfo);
+        public static void RenderCloneGeometryImplementation(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo)
+        {
+            BuildingInfo info = instanceState.Info.Prefab as BuildingInfo;
+            Color color = GetColor(instanceState.instance.id.Building, info);
 
-            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
-            newPosition.y = state.position.y + deltaPosition.y;
+            Vector3 newPosition = matrix4x.MultiplyPoint(instanceState.position - center);
+            newPosition.y = instanceState.position.y + deltaPosition.y;
 
             if (followTerrain)
             {
-                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+                newPosition.y = newPosition.y - instanceState.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             }
 
-            float newAngle = state.angle + deltaAngle;
+            float newAngle = instanceState.angle + deltaAngle;
 
-            buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, newPosition, newAngle, 0);
-            BuildingTool.RenderGeometry(cameraInfo, buildingInfo, state.length, newPosition, newAngle, false, color);
-            if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
+            info.m_buildingAI.RenderBuildGeometry(cameraInfo, newPosition, newAngle, 0);
+            BuildingTool.RenderGeometry(cameraInfo, info, info.GetLength(), newPosition, newAngle, false, color);
+            if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
             {
-                Matrix4x4 subMatrix4x = default(Matrix4x4);
+                Matrix4x4 subMatrix4x = default;
                 subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-                for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
+                for (int i = 0; i < info.m_subBuildings.Length; i++)
                 {
-                    BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
-                    Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
-                    float angle = buildingInfo.m_subBuildings[i].m_angle * Mathf.Deg2Rad + newAngle;
+                    BuildingInfo buildingInfo2 = info.m_subBuildings[i].m_buildingInfo;
+                    Vector3 position = subMatrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
+                    float angle = info.m_subBuildings[i].m_angle * Mathf.Deg2Rad + newAngle;
                     buildingInfo2.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
                     BuildingTool.RenderGeometry(cameraInfo, buildingInfo2, 0, position, angle, true, color);
                 }
@@ -809,7 +812,7 @@ namespace MoveIt
             }
         }
 
-        private Color GetColor(ushort buildingID, BuildingInfo info)
+        internal static Color GetColor(ushort buildingID, BuildingInfo info)
         {
             if (!info.m_useColorVariations)
             {
