@@ -17,13 +17,17 @@ namespace MoveIt
         public float angleDelta;
         public bool followTerrain;
 
-        public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
-        internal HashSet<Instance> m_clones;
-        internal HashSet<Instance> m_oldSelection;
+        public HashSet<InstanceState> m_states = new HashSet<InstanceState>(); // the InstanceStates to be cloned
+        internal HashSet<Instance> m_clones; // the resulting Instances
+        internal HashSet<Instance> m_oldSelection; // The selection before cloning
 
         protected bool _isImport = false;
 
-        protected Dictionary<Instance, Instance> m_clonedOrigin;
+        protected Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
+        protected Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
+        protected Dictionary<ushort, ushort> m_nodeOrigToclone; // Map of node clones to connect cloned segments
+
+        protected Matrix4x4 matrix4x = default;
 
         public CloneAction()
         {
@@ -184,24 +188,22 @@ namespace MoveIt
 
             MoveItTool.instance.m_lastInstance = null;
             m_clones = new HashSet<Instance>();
+            m_origToCloneUpdate = new Dictionary<Instance, Instance>();
+            m_nodeOrigToclone = new Dictionary<ushort, ushort>();
 
-            Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-
-            Dictionary<Instance, Instance> clonedOrigin = new Dictionary<Instance, Instance>();
-            Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
             // Clone nodes first
             foreach (InstanceState state in m_states)
             {
                 if (state.instance.id.Type == InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes, this);
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToclone, this);
                     if (clone != null)
                     {
                         m_clones.Add(clone);
-                        clonedOrigin.Add(state.instance.id, clone.id);
-                        clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
+                        m_origToCloneUpdate.Add(state.instance.id, clone.id);
+                        m_nodeOrigToclone.Add(state.instance.id.NetNode, clone.id.NetNode);
                     }
                 }
             }
@@ -211,7 +213,7 @@ namespace MoveIt
             {
                 if (state.instance.id.Type != InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, clonedNodes, this);
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToclone, this);
                     // Cloned PO returns null, because it is delayed
                     if (clone != null)
                     {
@@ -227,25 +229,25 @@ namespace MoveIt
                         //    Debug.Log($"SUBBUILDINGS\n{mb.id.Building}:{b.m_netNode} ({i1})\n{clone.id.Building}:{c.m_netNode} ({i2})");
                         //}
                         m_clones.Add(clone);
-                        clonedOrigin.Add(state.instance.id, clone.id);
+                        m_origToCloneUpdate.Add(state.instance.id, clone.id);
                     }
                 }
             }
 
-            if (m_clonedOrigin != null)
+            if (m_origToClone != null)
             {
                 Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
 
-                foreach (Instance key in m_clonedOrigin.Keys)
+                foreach (Instance key in m_origToClone.Keys)
                 {
-                    toReplace.Add(m_clonedOrigin[key], clonedOrigin[key]);
-                    DebugUtils.Log("To replace: " + m_clonedOrigin[key].id.RawData + " -> " + clonedOrigin[key].id.RawData);
+                    toReplace.Add(m_origToClone[key], m_origToCloneUpdate[key]);
+                    DebugUtils.Log("To replace: " + m_origToClone[key].id.RawData + " -> " + m_origToCloneUpdate[key].id.RawData);
                 }
 
                 ActionQueue.instance.ReplaceInstancesForward(toReplace);
             }
 
-            m_clonedOrigin = clonedOrigin;
+            m_origToClone = m_origToCloneUpdate;
 
             // Select clones
             selection = m_clones;
@@ -297,23 +299,23 @@ namespace MoveIt
                 }
             }
 
-            if (m_clonedOrigin != null)
+            if (m_origToClone != null)
             {
                 Dictionary<Instance, Instance> clonedOrigin = new Dictionary<Instance, Instance>();
 
-                foreach (Instance key in m_clonedOrigin.Keys)
+                foreach (Instance key in m_origToClone.Keys)
                 {
                     if (toReplace.ContainsKey(key))
                     {
-                        clonedOrigin.Add(toReplace[key], m_clonedOrigin[key]);
+                        clonedOrigin.Add(toReplace[key], m_origToClone[key]);
                         DebugUtils.Log("CloneAction Replacing: " + key.id.RawData + " -> " + toReplace[key].id.RawData);
                     }
                     else
                     {
-                        clonedOrigin.Add(key, m_clonedOrigin[key]);
+                        clonedOrigin.Add(key, m_origToClone[key]);
                     }
                 }
-                m_clonedOrigin = clonedOrigin;
+                m_origToClone = clonedOrigin;
             }
         }
 

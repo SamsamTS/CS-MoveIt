@@ -25,7 +25,7 @@ namespace MoveIt
                 {
                     InstanceState state = null;
 
-                    foreach (KeyValuePair<Instance, Instance> pair in m_clonedOrigin)
+                    foreach (KeyValuePair<Instance, Instance> pair in m_origToClone)
                     {
                         if (pair.Value.id.RawData == instance.id.RawData)
                         {               
