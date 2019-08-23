@@ -72,6 +72,7 @@ namespace MoveIt
         public void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
             MoveItTool.POProcessing = true;
+            Debug.Log($"Starting clone: #{originalId}");
             tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { GetPOById(originalId).GetProceduralObject() });
             StartCoroutine(RetrieveClone(originalId, position, angle, action));
         }
@@ -79,6 +80,7 @@ namespace MoveIt
         public IEnumerator<object> RetrieveClone(uint originalId, Vector3 position, float angle, Action action)
         {
             const uint MaxAttempts = 1000_000;
+            Debug.Log($"Processing clone: #{originalId}");
 
             var original = GetPOById(originalId).GetProceduralObject();
             Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
@@ -88,16 +90,16 @@ namespace MoveIt
             uint c = 0;
             while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
             {
-                //if (c % 100 == 0)
-                //{
-                //    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
-                //    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
-                //    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
-                //    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
-                //    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
+                if (c % 100 == 0)
+                {
+                    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
+                    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
+                    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
+                    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
+                    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
 
-                //    Debug.Log($"{c} #{originalId} - in queue:{queueCount} done:{doneCount}");
-                //}
+                    Debug.Log($"{c} #{originalId} - in queue:{queueCount} done:{doneCount}");
+                }
                 c++;
                 yield return new WaitForSeconds(0.05f);
             }

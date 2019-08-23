@@ -25,7 +25,7 @@ namespace MoveIt
 
         protected Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
         protected Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
-        protected Dictionary<ushort, ushort> m_nodeOrigToclone; // Map of node clones to connect cloned segments
+        protected Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
 
         protected Matrix4x4 matrix4x = default;
 
@@ -136,7 +136,7 @@ namespace MoveIt
             if (newSelection.Count > 0)
             {
                 // Calculate center
-                Bounds totalBounds = default(Bounds);
+                Bounds totalBounds = default;
                 bool init = false;
 
                 foreach (Instance instance in newSelection)
@@ -189,7 +189,7 @@ namespace MoveIt
             MoveItTool.instance.m_lastInstance = null;
             m_clones = new HashSet<Instance>();
             m_origToCloneUpdate = new Dictionary<Instance, Instance>();
-            m_nodeOrigToclone = new Dictionary<ushort, ushort>();
+            m_nodeOrigToClone = new Dictionary<ushort, ushort>();
 
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
@@ -198,12 +198,12 @@ namespace MoveIt
             {
                 if (state.instance.id.Type == InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToclone, this);
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                     if (clone != null)
                     {
                         m_clones.Add(clone);
                         m_origToCloneUpdate.Add(state.instance.id, clone.id);
-                        m_nodeOrigToclone.Add(state.instance.id.NetNode, clone.id.NetNode);
+                        m_nodeOrigToClone.Add(state.instance.id.NetNode, clone.id.NetNode);
                     }
                 }
             }
@@ -213,7 +213,7 @@ namespace MoveIt
             {
                 if (state.instance.id.Type != InstanceType.NetNode)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToclone, this);
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                     // Cloned PO returns null, because it is delayed
                     if (clone != null)
                     {
