@@ -6,6 +6,7 @@ namespace MoveIt
     public class MoveItLoader : LoadingExtensionBase
     {
         public static bool IsGameLoaded { get; private set; } = false;
+        private static GameObject DebugGameObject;
 
         public override void OnLevelLoaded(LoadMode mode)
         {
@@ -24,7 +25,7 @@ namespace MoveIt
             if (MoveItTool.instance == null)
             {
                 // Creating the instance
-                ToolController toolController = GameObject.FindObjectOfType<ToolController>();
+                ToolController toolController = Object.FindObjectOfType<ToolController>();
 
                 MoveItTool.instance = toolController.gameObject.AddComponent<MoveItTool>();
             }
@@ -35,6 +36,10 @@ namespace MoveIt
 
             MoveItTool.stepOver = new StepOver();
             MoveItTool.m_debugPanel = new DebugPanel();
+
+            DebugGameObject = new GameObject("MIT_DebugPanel");
+            DebugGameObject.AddComponent<DebugPanel>();
+            MoveItTool.m_debugPanel = DebugGameObject.GetComponent<DebugPanel>();
 
             UIFilters.FilterCBs.Clear();
             UIFilters.NetworkCBs.Clear();
@@ -56,6 +61,7 @@ namespace MoveIt
         public static void UninstallMod()
         {
             MoveItTool.m_debugPanel = null;
+            Object.Destroy(DebugGameObject);
             UIToolOptionPanel.instance = null;
             UIAlignTools.AlignToolsPanel = null;
             UIAlignTools.AlignToolsBtn = null;

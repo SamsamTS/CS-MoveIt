@@ -792,13 +792,6 @@ namespace MoveIt
             #endregion
         }
 
-        internal void ShowPOWarning()
-        {
-            if (!MoveItTool.POShowWarningToggle) return;
-
-            UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Warning!", "PO support is incomplete. View the Move It options page for more information.", false);
-        }
-
         protected override void OnVisibilityChanged()
         {
             if (isVisible)

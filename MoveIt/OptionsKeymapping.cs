@@ -43,8 +43,8 @@ namespace MoveIt
     {
         private void Awake()
         {
-            AddKeymapping("Toggle PO Active/Inactive", activatePO);
-            AddKeymapping("Convert selected objects to PO", convertToPO);
+            AddKeymapping("  Toggle PO Active/Inactive", activatePO);
+            AddKeymapping("  Convert selected objects to PO", convertToPO);
         }
     }
 

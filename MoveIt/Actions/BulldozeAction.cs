@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -128,7 +129,7 @@ namespace MoveIt
                             }
                             if (toDelete)
                             {
-                                InstanceID instanceId = default(InstanceID);
+                                InstanceID instanceId = default;
                                 instanceId.NetNode = id;
                                 MoveableNode mn = new MoveableNode(instanceId);
                                 if (newSelection.Contains(mn)) continue;
@@ -154,11 +155,28 @@ namespace MoveIt
 
         public override void Do()
         {
-            DoImplementation(false);
+            int po = 0;
+            foreach (InstanceState state in m_states)
+            {
+                if (state is ProcState)
+                    po++;
+            }
+            if (!MoveItTool.POShowDeleteWarning || po == 0)
+            {
+                DoImplementation(false);
+                return;
+            }
+
+            ConfirmPanel panel = UIView.library.ShowModal<ConfirmPanel>("ConfirmPanel", delegate(UIComponent comp, int value)
+            {
+                if (value == 1)
+                    DoImplementation(false);
+            });
+            panel.SetMessage("Deleting PO", "Procedural Objects can not be undeleted. Are you sure?");
         }
 
         public void DoImplementation(bool skipPO = false)
-        { 
+        {
             m_oldSelection = selection;
 
             Bounds bounds = GetTotalBounds(false);
@@ -224,6 +242,7 @@ namespace MoveIt
             {
                 if (state.instance.id.Type == InstanceType.NetNode) continue;
                 if (state.instance.id.Type == InstanceType.NetSegment) continue;
+                if (state is ProcState) continue;
 
                 Instance clone = state.instance.Clone(state, clonedNodes);
                 toReplace.Add(state.instance, clone);
@@ -358,7 +377,12 @@ namespace MoveIt
                 ReplaceInstances(toReplace);
                 ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
-                selection = m_oldSelection;
+                selection = new HashSet<Instance>();
+                foreach (Instance i in m_oldSelection)
+                {
+                    if (i is MoveableProc) continue;
+                    selection.Add(i);
+                }
                 MoveItTool.m_debugPanel.Update();
             }
         }

@@ -37,7 +37,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.6.0 (dev)";
+        public const string version = "2.6.0";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -124,7 +124,7 @@ namespace MoveIt
 
                 group.AddSpace(15);
 
-                UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", _cleanGhostNodes);
+                UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", MoveItTool.CleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
 
                 group.AddSpace(20);
@@ -162,13 +162,13 @@ namespace MoveIt
 
                     UILabel poWarning = panel.AddUIComponent<UILabel>();
                     poWarning.name = "poWarning";
-                    poWarning.text = "Procedural Objects (PO) support is in beta. At present you can not clone PO objects, \n" +
-                        "redo Convert-to-PO actions or undo Bulldoze actions. This means if you delete PO \n" +
-                        "objects with Move It, they are immediately PERMANENTLY gone.\n ";
+                    poWarning.text = "      Please note, you can not redo Convert-to-PO actions or undo Bulldoze \n" +
+                        "      actions. This means if you delete PO objects with Move It, they are \n" +
+                        "      immediately PERMANENTLY gone.\n ";
 
-                    checkBox = (UICheckBox)group.AddCheckbox("Hide the PO warning box", !MoveItTool.POShowWarningToggle.value, (b) =>
+                    checkBox = (UICheckBox)group.AddCheckbox("Hide the PO deletion warning", !MoveItTool.POShowDeleteWarning.value, (b) =>
                     {
-                        MoveItTool.POShowWarningToggle.value = !b;
+                        MoveItTool.POShowDeleteWarning.value = !b;
                     });
 
                     //checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
@@ -203,54 +203,6 @@ namespace MoveIt
                 DebugUtils.Log("OnSettingsUI failed");
                 DebugUtils.LogException(e);
             }
-        }
-
-        private void _cleanGhostNodes()
-        {
-            if (!MoveItLoader.IsGameLoaded)
-            {
-                ExceptionPanel notLoaded = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                notLoaded.SetMessage("Not In-Game", "Use this button when in-game to remove ghost nodes (nodes with no segments attached, which were previously created by Move It)", false);
-                return;
-            }
-
-            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-            string message;
-            int count = 0;
-
-            for (ushort nodeId = 0; nodeId < Singleton<NetManager>.instance.m_nodes.m_buffer.Length; nodeId++)
-            {
-                NetNode node = Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
-                if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.None) continue;
-                if ((node.m_flags & NetNode.Flags.Untouchable) != NetNode.Flags.None) continue;
-                bool hasSegments = false;
-
-                for (int i = 0; i < 8; i++)
-                {
-                    if (node.GetSegment(i) > 0)
-                    {
-                        hasSegments = true;
-                        break;
-                    }
-                }
-
-                if (!hasSegments)
-                {
-                    count++;
-                    //Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
-                    Singleton<NetManager>.instance.ReleaseNode(nodeId);
-                }
-            }
-            if (count > 0)
-            {
-                ActionQueue.instance.Clear();
-                message = $"Removed {count} ghost node{(count == 1 ? "" : "s")}!";
-            }
-            else
-            {
-                message = "No ghost nodes found, nothing has been changed.";
-            }
-            panel.SetMessage("Removing Ghost Nodes", message, false);
         }
     }
 }

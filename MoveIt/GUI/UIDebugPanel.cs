@@ -3,11 +3,12 @@ using ColossalFramework.UI;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MoveIt
 {
-    internal class DebugPanel
+    internal class DebugPanel : MonoBehaviour
     {
         internal UIPanel Panel;
         private UILabel HoverLarge, HoverSmall, ToolStatus, SelectedLarge, SelectedSmall;
@@ -36,6 +37,12 @@ namespace MoveIt
                 return;
             }
 
+            StartCoroutine(UpdateDo());
+        }
+
+        internal IEnumerator<object> UpdateDo()
+        {
+            yield return new WaitForSeconds(0.05f);
             ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase})";
 
             SelectedLarge.text = $"Objects Selected: {Action.selection.Count}";
@@ -88,17 +95,17 @@ namespace MoveIt
             // End with updating the hovered item
             if (id == null)
             {
-                return;
+                yield break;
             }
             if (id == InstanceID.Empty)
             {
                 lastId = id;
                 HoverLarge.textColor = new Color32(255, 255, 255, 255);
-                return;
+                yield break;
             }
             if (lastId == id)
             {
-                return;
+                yield break;
             }
 
             HoverLarge.textColor = new Color32(127, 217, 255, 255);

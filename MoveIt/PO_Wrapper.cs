@@ -60,7 +60,7 @@ namespace MoveIt
             {
                 Enabled = true;
                 //Logic = new PO_LogicEnabled();
-                POGameObject = new GameObject("PO_LogicEnabled");
+                POGameObject = new GameObject("MIT_POLogic");
                 POGameObject.AddComponent<PO_LogicEnabled>();
                 Logic = POGameObject.GetComponent<PO_LogicEnabled>();
             }
@@ -80,7 +80,6 @@ namespace MoveIt
         {
             Dictionary<uint, IPO_Object> newVisible = new Dictionary<uint, IPO_Object>();
             HashSet<uint> newIds = new HashSet<uint>();
-            UIToolOptionPanel.instance.ShowPOWarning();
 
             foreach (IPO_Object obj in Logic.Objects)
             {

@@ -55,7 +55,7 @@ namespace MoveIt
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool POOnlySelectedAreVisible = new SavedBool("POOnlySelectedAreVisible", settingsFileName, false, true); // Presently unused
         public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
-        public static SavedBool POShowWarningToggle = new SavedBool("POShowWarningToggle", settingsFileName, true, true);
+        public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
@@ -128,10 +128,10 @@ namespace MoveIt
             set
             {
                 m_toolState = value;
-                //if (m_debugPanel != null)
-                //{
-                //    m_debugPanel.Update();
-                //}
+                if (m_debugPanel != null)
+                {
+                    m_debugPanel.Update();
+                }
             }
         }
         private AlignModes m_alignMode = AlignModes.Off;
@@ -1045,6 +1045,55 @@ namespace MoveIt
             while (true);
 
             return innerList;
+        }
+
+
+        internal static void CleanGhostNodes()
+        {
+            if (!MoveItLoader.IsGameLoaded)
+            {
+                ExceptionPanel notLoaded = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                notLoaded.SetMessage("Not In-Game", "Use this button when in-game to remove ghost nodes (nodes with no segments attached, which were previously created by Move It)", false);
+                return;
+            }
+
+            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+            string message;
+            int count = 0;
+
+            for (ushort nodeId = 0; nodeId < Singleton<NetManager>.instance.m_nodes.m_buffer.Length; nodeId++)
+            {
+                NetNode node = Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
+                if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.None) continue;
+                if ((node.m_flags & NetNode.Flags.Untouchable) != NetNode.Flags.None) continue;
+                bool hasSegments = false;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if (node.GetSegment(i) > 0)
+                    {
+                        hasSegments = true;
+                        break;
+                    }
+                }
+
+                if (!hasSegments)
+                {
+                    count++;
+                    //Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
+                    Singleton<NetManager>.instance.ReleaseNode(nodeId);
+                }
+            }
+            if (count > 0)
+            {
+                ActionQueue.instance.Clear();
+                message = $"Removed {count} ghost node{(count == 1 ? "" : "s")}!";
+            }
+            else
+            {
+                message = "No ghost nodes found, nothing has been changed.";
+            }
+            panel.SetMessage("Removing Ghost Nodes", message, false);
         }
     }
 }

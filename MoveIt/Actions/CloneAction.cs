@@ -253,7 +253,7 @@ namespace MoveIt
             selection = m_clones;
             //if (!_isImport)
             //{
-            //    MoveItTool.m_debugPanel.Update();
+                MoveItTool.m_debugPanel.Update();
             //}
 
             UpdateArea(GetTotalBounds(false));
