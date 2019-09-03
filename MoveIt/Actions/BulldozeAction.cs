@@ -155,13 +155,16 @@ namespace MoveIt
 
         public override void Do()
         {
-            int po = 0;
+            bool po = false;
             foreach (InstanceState state in m_states)
             {
                 if (state is ProcState)
-                    po++;
+                {
+                    po = true;
+                    break;
+                }
             }
-            if (!MoveItTool.POShowDeleteWarning || po == 0)
+            if (!MoveItTool.POShowDeleteWarning || !po)
             {
                 DoImplementation(false);
                 return;

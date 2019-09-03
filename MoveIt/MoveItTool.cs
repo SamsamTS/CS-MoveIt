@@ -85,8 +85,8 @@ namespace MoveIt
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
 
-        public int aeraUpdateCountdown = -1;
-        public HashSet<Bounds> aerasToUpdate = new HashSet<Bounds>();
+        public int areaUpdateCountdown = -1;
+        public HashSet<Bounds> areasToUpdate = new HashSet<Bounds>();
 
         internal static Color m_hoverColor = new Color32(0, 181, 255, 255);
         internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
@@ -615,14 +615,14 @@ namespace MoveIt
                         segmentUpdateCountdown--;
                     }
 
-                    if (aeraUpdateCountdown == 0)
+                    if (areaUpdateCountdown == 0)
                     {
                         UpdateAreas();
                     }
 
-                    if (!inputHeld && aeraUpdateCountdown >= 0)
+                    if (!inputHeld && areaUpdateCountdown >= 0)
                     {
-                        aeraUpdateCountdown--;
+                        areaUpdateCountdown--;
                     }
                 }
                 catch (Exception e)
@@ -638,7 +638,7 @@ namespace MoveIt
         public void UpdateAreas()
         {
             //string msg = "";
-            foreach (Bounds bounds in MergeBounds(aerasToUpdate))
+            foreach (Bounds bounds in MergeBounds(areasToUpdate))
             {
                 //msg += $"SimStep: {bounds}\n";
 
@@ -647,7 +647,7 @@ namespace MoveIt
             }
             //Debug.Log(msg);
 
-            aerasToUpdate.Clear();
+            areasToUpdate.Clear();
         }
 
         public void UpdateSegments()
@@ -1046,7 +1046,6 @@ namespace MoveIt
 
             return innerList;
         }
-
 
         internal static void CleanGhostNodes()
         {

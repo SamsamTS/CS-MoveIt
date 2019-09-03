@@ -618,31 +618,37 @@ namespace MoveIt
 
             if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Water)
             {
-                itemLayers = itemLayers | ItemClass.Layer.WaterPipes;
+                itemLayers |= ItemClass.Layer.WaterPipes;
             }
-
-            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
             {
-                itemLayers = itemLayers | ItemClass.Layer.MetroTunnels;
+                itemLayers |= ItemClass.Layer.MetroTunnels;
             }
-
-            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground)
+            else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground)
             {
-                itemLayers = ItemClass.Layer.MetroTunnels;
+                itemLayers = ItemClass.Layer.MetroTunnels; // Removes Default assignment
+            }
+            //else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            //{
+            //    itemLayers |= ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths | ItemClass.Layer.BlimpPaths;
+            //}
+            else
+            {
+                itemLayers |= ItemClass.Layer.Markers;
             }
 
             return itemLayers;
         }
 
-        private bool IsDecal(PropInfo prop)
-        {
-            if (prop != null && prop.m_material != null)
-            {
-                return (prop.m_material.shader == shaderBlend || prop.m_material.shader == shaderSolid);
-            }
+        //private bool IsDecal(PropInfo prop)
+        //{
+        //    if (prop != null && prop.m_material != null)
+        //    {
+        //        return (prop.m_material.shader == shaderBlend || prop.m_material.shader == shaderSolid);
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         private bool IsBuildingValid(ref Building building, ItemClass.Layer itemLayers)
         {

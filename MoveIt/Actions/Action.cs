@@ -81,8 +81,8 @@ namespace MoveIt
             }
 
             bounds.Expand(64f);
-            MoveItTool.instance.aerasToUpdate.Add(bounds);
-            MoveItTool.instance.aeraUpdateCountdown = 50;
+            MoveItTool.instance.areasToUpdate.Add(bounds);
+            MoveItTool.instance.areaUpdateCountdown = 40;
 
             Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
