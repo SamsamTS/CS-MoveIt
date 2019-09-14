@@ -6,11 +6,13 @@ namespace MoveIt
     public class MoveItLoader : LoadingExtensionBase
     {
         public static bool IsGameLoaded { get; private set; } = false;
+        public static LoadMode loadMode;
         private static GameObject DebugGameObject;
 
         public override void OnLevelLoaded(LoadMode mode)
         {
             base.OnLevelLoaded(mode);
+            loadMode = mode;
             InstallMod();
         }
 

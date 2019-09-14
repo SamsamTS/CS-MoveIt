@@ -34,8 +34,6 @@ namespace MoveIt
                         StartCloning();
                     }
                 }
-                //else if (OptionsKeymapping.testKey.IsPressed(e))
-                //{ }
                 else if (OptionsKeymapping.bulldoze.IsPressed(e))
                 {
                     StartBulldoze();

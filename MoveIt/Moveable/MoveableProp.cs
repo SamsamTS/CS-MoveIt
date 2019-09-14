@@ -9,6 +9,7 @@ namespace MoveIt
     public class PropState : InstanceState
     {
         public bool single;
+        public bool fixedHeight;
     }
 
     public class MoveableProp : Instance
@@ -44,16 +45,18 @@ namespace MoveIt
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
             state.single = PropManager.instance.m_props.m_buffer[prop].Single;
+            state.fixedHeight = PropManager.instance.m_props.m_buffer[prop].FixedHeight;
 
             return state;
         }
 
         public override void SetState(InstanceState state)
         {
-            if (!(state is InstanceState propState)) return;
+            if (!(state is PropState propState)) return;
 
             ushort prop = id.Prop;
             PropManager.instance.m_props.m_buffer[prop].Angle = propState.angle;
+            PropManager.instance.m_props.m_buffer[prop].FixedHeight = propState.fixedHeight;
             PropManager.instance.MoveProp(prop, propState.position);
             PropManager.instance.UpdatePropRenderer(prop, true);
         }
@@ -99,6 +102,11 @@ namespace MoveIt
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
+
+            if (!PropManager.instance.m_props.m_buffer[id.Prop].FixedHeight && deltaHeight != 0 && (MoveItLoader.loadMode == ICities.LoadMode.LoadAsset || MoveItLoader.loadMode == ICities.LoadMode.NewAsset))
+            {
+                PropManager.instance.m_props.m_buffer[id.Prop].FixedHeight = true;
+            }
 
             if (followTerrain)
             {
@@ -147,8 +155,9 @@ namespace MoveIt
             if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 state.Info.Prefab as PropInfo, newPosition, state.angle + deltaAngle, state.single))
             {
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.Prop = clone;
+                buffer[clone].FixedHeight = state.fixedHeight;
                 cloneInstance = new MoveableProp(cloneID);
             }
 
@@ -164,7 +173,7 @@ namespace MoveIt
             if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 state.Info.Prefab as PropInfo, state.position, state.angle, state.single))
             {
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.Prop = clone;
                 cloneInstance = new MoveableProp(cloneID);
             }

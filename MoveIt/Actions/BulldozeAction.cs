@@ -250,9 +250,13 @@ namespace MoveIt
                 Instance clone = state.instance.Clone(state, clonedNodes);
                 toReplace.Add(state.instance, clone);
 
-                // Add attached nodes to the clonedNode list so other segments reconnect
-                if (state.instance.id.Type == InstanceType.Building)
+                if (state.instance.id.Type == InstanceType.Prop)
                 {
+                    PropManager.instance.m_props.m_buffer[clone.id.Prop].FixedHeight = ((PropState)state).fixedHeight;
+                }
+                else if (state.instance.id.Type == InstanceType.Building)
+                {
+                    // Add attached nodes to the clonedNode list so other segments reconnect
                     BuildingState buildingState = state as BuildingState;
                     List<ushort> origNodeIds = new List<ushort>();
 
@@ -262,20 +266,7 @@ namespace MoveIt
                     if (reset)
                     {
                         ushort cloneId = cb.id.Building;
-                        //Debug.Log($"Before [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
 
-                        //Building.Flags[] warehouseFlags = { Building.Flags.Filling, Building.Flags.Downgrading, Building.Flags.LevelUpEducation, 
-                        //    Building.Flags.Content12_Forbid, Building.Flags.Content04_Forbid, Building.Flags.Content14, Building.Flags.Content05, 
-                        //    Building.Flags.Content13, Building.Flags.Content06, Building.Flags.Content10, Building.Flags.Content09, Building.Flags.Loading2,
-                        //    Building.Flags.Content11_Forbid, Building.Flags.LevelUpLandValue, Building.Flags.Content03_Forbid, Building.Flags.Content07};
-
-                        //foreach (Building.Flags f in warehouseFlags)
-                        //{
-                        //    if ((buildingState.flags & f) == f)
-                        //    {
-                        //        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | f;
-                        //    }
-                        //}
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.BurnedDown;
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
