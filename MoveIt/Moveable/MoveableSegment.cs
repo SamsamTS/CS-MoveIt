@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System;
-using System.Reflection;
+﻿using ColossalFramework.Math;
 using System.Collections.Generic;
-using ColossalFramework.Math;
+using System.Reflection;
+using System.Xml.Serialization;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -22,7 +22,20 @@ namespace MoveIt
 
         public bool invert;
 
-        public object NS_SkinModifiers;
+        [XmlIgnore]
+        public object NS_Modifiers;
+
+        public string NS_ModifiersBase64
+        {
+            get
+            {
+                return MoveItTool.NS.EncodeModifiers(NS_Modifiers);
+            }
+            set
+            {
+                NS_Modifiers = MoveItTool.NS.DecodeModifiers(value);
+            }
+        }
 
         public override void ReplaceInstance(Instance instance)
         {
@@ -33,12 +46,6 @@ namespace MoveIt
             startNode = segmentBuffer[instance.id.NetSegment].m_startNode;
             endNode = segmentBuffer[instance.id.NetSegment].m_endNode;
         }
-
-        //~SegmentState()
-        //{
-        //    MoveItTool.NS.RemoveSegmentStateSkin(NSskin);
-        //    Debug.Log($"AAA Removing SegState!");
-        //}
     }
 
     public class MoveableSegment : Instance
@@ -77,7 +84,7 @@ namespace MoveIt
                 startDirection = segmentBuffer[segment].m_startDirection,
                 endDirection = segmentBuffer[segment].m_endDirection,
 
-                NS_SkinModifiers = MoveItTool.NS.GetSegmentStateSkin(segment),
+                NS_Modifiers = MoveItTool.NS.GetSegmentStateSkin(segment),
             };
 
             state.startPosition = nodeBuffer[state.startNode].m_position;

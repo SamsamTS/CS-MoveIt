@@ -1,19 +1,16 @@
 ﻿using ColossalFramework.Plugins;
-using ColossalFramework.IO;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-// Network Skins wrapper, supports 2.0-beta
+// Network Skins wrapper, supports 2.0
 
 namespace MoveIt
 {
     internal class NS_Manager
     {
-        //private static GameObject gameObject;
-        //private INS_Logic Logic;
         internal bool Enabled = false;
         internal static readonly string[] VersionNames = { "2.0" };
         internal readonly Type tNS, tNSM, tNSModifier, tListSkins, tListMods, tDictMods;
@@ -25,9 +22,6 @@ namespace MoveIt
             if (isModInstalled())
             {
                 Enabled = true;
-                //gameObject = new GameObject("MIT_NSLogic");
-                //gameObject.AddComponent<NS_Logic>();
-                //Logic = gameObject.GetComponent<NS_Logic>();
 
                 Assembly = null;
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -52,21 +46,12 @@ namespace MoveIt
                 tListMods = typeof(List<>).MakeGenericType(new Type[] { tNSModifier });
                 tDictMods = typeof(Dictionary<,>).MakeGenericType(new Type[] { typeof(NetInfo), tListMods });
 
-
                 NSM = tNSM.GetProperty("instance", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
-
-
-                //Type tNSPC = Assembly.GetType("NetworkSkins.GUI.NetworkSkinPanelController");
-                //Type tCPC = Assembly.GetType("NetworkSkins.GUI.Colors.ColorPanelController");
-                //var ColorPanel = tNSPC.GetField("Color", BindingFlags.Public | BindingFlags.Instance).GetValue(tNSPC.GetField("Instance", BindingFlags.Public | BindingFlags.Static).GetValue(null));
-                //tModifierDict = tCPC.GetProperty("Modifiers", BindingFlags.Public | BindingFlags.Instance).GetValue(ColorPanel, null).GetType();
-                //Debug.Log($"tModifierDict:{tModifierDict}");
 
             }
             else
             {
                 Enabled = false;
-                //Logic = new NS_LogicDisabled();
             }
         }
 
@@ -75,7 +60,7 @@ namespace MoveIt
             if (!Enabled) return;
 
             BindingFlags f = BindingFlags.Public | BindingFlags.Instance;
-            object modifiers = state.NS_SkinModifiers;
+            object modifiers = state.NS_Modifiers;
 
             object modDict = Activator.CreateInstance(tDictMods);
             tDictMods.GetMethod("Add", f, null, new Type[] { typeof(NetInfo), tListMods }, null).Invoke(modDict, new[] { (NetInfo)state.Info.Prefab, modifiers });
@@ -84,55 +69,6 @@ namespace MoveIt
             tNSM.GetMethod("SetActiveModifiers", f, null, new Type[] { tDictMods }, null).Invoke(NSM, new[] { modDict });
             tNSM.GetMethod("OnSegmentPlaced", f, null, new Type[] { typeof(ushort) }, null).Invoke(NSM, new object[] { id });
         }
-
-        public void SetNodeSkin(ushort id, NodeState state)
-        {
-            if (!Enabled) return;
-
-            //BindingFlags f = BindingFlags.Public | BindingFlags.Instance;
-            //object modifiers = state.NS_SkinModifiers;
-
-            //object modDict = Activator.CreateInstance(tDictMods);
-            //tDictMods.GetMethod("Add", f, null, new Type[] { typeof(NetInfo), tListMods }, null).Invoke(modDict, new[] { (NetInfo)state.Info.Prefab, modifiers });
-            ////Debug.Log($"modList:{modDict} (length:{tDictMods.GetProperty("Count").GetValue(modDict, null)})");
-
-            //Debug.Log($"modifiers:{modifiers??"<null>"}");
-
-            //object skin;
-            //if (modifiers == null)
-            //{
-            //    skin = null;
-            //}
-            //else
-            //{
-            //    skin = tNS.GetMethod("GetMatchingSkinFromList", BindingFlags.Public | BindingFlags.Static, null, new Type[] { tListSkins, typeof(NetInfo), tListMods }, null)
-            //        .Invoke(null, new[] { tNSM.GetField("AppliedSkins", f).GetValue(NSM), (NetInfo)state.Info.Prefab, modifiers });
-            //    if (skin == null)
-            //    {
-            //        skin = Activator.CreateInstance(tNS, new[] { state.Info.Prefab, modifiers });
-            //    }
-            //}
-
-            //Debug.Log($"skin:{skin??"<null>"}");
-
-            //tNSM.GetMethod("UpdateNodeSkin", f, null, new Type[] { typeof(ushort), tNS }, null).Invoke(NSM, new object[] { id, skin });
-        }
-
-        //public void RemoveSegmentSkin(ushort id)
-        //{
-        //    if (!Enabled) return;
-
-        //    BindingFlags f = BindingFlags.Public | BindingFlags.Instance;
-        //    //tNSM.GetMethod("OnSegmentRelease", f, null, new Type[] { typeof(ushort) }, null).Invoke(NSM, new object[] { id });
-        //}
-
-        //public void RemoveNodeSkin(ushort id)
-        //{
-        //    if (!Enabled) return;
-
-        //    BindingFlags f = BindingFlags.Public | BindingFlags.Instance;
-        //    //tNSM.GetMethod("OnNodeRelease", f, null, new Type[] { typeof(ushort) }, null).Invoke(NSM, new object[] { id });
-        //}
 
         public object GetSegmentStateSkin(ushort id)
         {
@@ -252,20 +188,30 @@ namespace MoveIt
 
             return "(Failed [NS-F3])";
         }
+
+
+        public string EncodeModifiers(object obj)
+        {
+            if (!Enabled) return null;
+
+            Type t = Assembly.GetType("NetworkSkins.Skins.Serialization.ModifierDataSerializer");
+
+            var bytes = (byte[])t.GetMethod("Serialize", BindingFlags.Public | BindingFlags.Static, null, new Type[] { tListMods }, null).Invoke(null, new[] { obj });
+            var base64 = Convert.ToBase64String(bytes);
+
+            return base64;
+        }
+
+        public object DecodeModifiers(string base64String)
+        {
+            if (!Enabled) return null;
+
+            Type t = Assembly.GetType("NetworkSkins.Skins.Serialization.ModifierDataSerializer");
+
+            var bytes = Convert.FromBase64String(base64String);
+            var modifiers = t.GetMethod("Deserialize", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(byte[]) }, null).Invoke(null, new[] { bytes });
+
+            return modifiers;
+        }
     }
-
-
-    //internal interface INS_Logic
-    //{
-    //}
-
-    //internal class NS_Logic : MonoBehaviour, INS_Logic
-    //{
-
-    //}
-
-    //internal class NS_LogicDisabled : INS_Logic
-    //{
-
-    //}
 }
