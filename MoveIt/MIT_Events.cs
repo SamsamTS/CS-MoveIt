@@ -101,7 +101,7 @@ namespace MoveIt
                 {
                     Action.selection.ExceptWith(m_marqueeInstances);
                     //PO.SelectionRemove(m_marqueeInstances);
-                    m_debugPanel.Update();
+                    m_debugPanel.UpdatePanel();
                 }
                 else
                 {
@@ -111,7 +111,7 @@ namespace MoveIt
                     }
                     Action.selection.UnionWith(m_marqueeInstances);
                     //PO.SelectionAdd(m_marqueeInstances);
-                    m_debugPanel.Update();
+                    m_debugPanel.UpdatePanel();
                 }
 
                 m_marqueeInstances = null;
@@ -229,7 +229,7 @@ namespace MoveIt
                     }
                 }
 
-                m_debugPanel.Update();
+                m_debugPanel.UpdatePanel();
                 ToolState = ToolStates.Default;
             }
             else if (ToolState == ToolStates.Aligning)
@@ -396,7 +396,7 @@ namespace MoveIt
                 {
                     Action.selection.Clear();
                     ActionQueue.instance.Invalidate();
-                    m_debugPanel.Update();
+                    m_debugPanel.UpdatePanel();
                 }
             }
             else if (ToolState == ToolStates.Cloning)
@@ -458,7 +458,7 @@ namespace MoveIt
                 m_startPosition = action.moveDelta;
 
                 ToolState = ToolStates.MouseDragging;
-                m_debugPanel.Update();
+                m_debugPanel.UpdatePanel();
                 action.InitialiseDrag();
             }
         }

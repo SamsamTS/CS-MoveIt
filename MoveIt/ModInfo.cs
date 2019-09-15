@@ -150,6 +150,9 @@ namespace MoveIt
                 debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
 
                 group.AddSpace(5);
+                UILabel nsLabel = panel.AddUIComponent<UILabel>();
+                nsLabel.name = "nsLabel";
+                nsLabel.text = NS_Manager.getVersionText();
 
                 if (!MoveItTool.HidePO)
                 {

@@ -56,7 +56,7 @@ namespace MoveIt
                             ushort segment = netManager.m_nodes.m_buffer[instance.id.NetNode].GetSegment(i);
                             if (segment != 0)
                             {
-                                InstanceID instanceID = default(InstanceID);
+                                InstanceID instanceID = default;
                                 instanceID.NetSegment = segment;
 
                                 if (selection.Contains(instanceID)) continue;
@@ -82,7 +82,7 @@ namespace MoveIt
                                 if (segmentId != 0 && MoveableSegment.isSegmentValid(segmentId) && 
                                         ((netManager.m_segments.m_buffer[segmentId].m_flags & NetSegment.Flags.Untouchable) == NetSegment.Flags.None))
                                 {
-                                    InstanceID instanceID = default(InstanceID);
+                                    InstanceID instanceID = default;
                                     instanceID.NetSegment = segmentId;
 
                                     if (selection.Contains(instanceID)) continue;
@@ -141,7 +141,41 @@ namespace MoveIt
                 }
             }
 
+            // Sort segments by buildIndex
+            HashSet<Instance> sorted = new HashSet<Instance>();
+            List<uint> indexes = new List<uint>();
             foreach (Instance instance in newSelection)
+            {
+                if (instance.id.Type != InstanceType.NetSegment)
+                {
+                    sorted.Add(instance);
+                }
+                else
+                {
+                    uint bi = ((NetSegment)instance.data).m_buildIndex;
+                    if (!indexes.Contains(bi))
+                        indexes.Add(bi);
+                }
+            }
+
+            indexes.Sort();
+
+            foreach (uint i in indexes)
+            {
+                foreach (Instance instance in newSelection)
+                {
+                    if (instance.id.Type == InstanceType.NetSegment)
+                    {
+                        if (((NetSegment)instance.data).m_buildIndex == i)
+                        {
+                            sorted.Add(instance);
+                        }
+                    }
+                }
+            }
+
+
+            foreach (Instance instance in sorted)
             {
                 m_states.Add(instance.GetState());
             }
@@ -149,6 +183,7 @@ namespace MoveIt
             {
                 m_states.Add(instance.GetState());
             }
+
 
             //Debug.Log(msg + $"Final Selection: {m_states.Count}");
         }
@@ -210,7 +245,7 @@ namespace MoveIt
             UpdateArea(bounds);
 
             selection = new HashSet<Instance>();
-            MoveItTool.m_debugPanel.Update();
+            MoveItTool.m_debugPanel.UpdatePanel();
         }
 
         public override void Undo()
@@ -335,34 +370,33 @@ namespace MoveIt
             // Recreate segments
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.id.Type == InstanceType.NetSegment)
+                if (state is SegmentState segmentState)
                 {
-                    SegmentState segState = state as SegmentState;
-
-                    if (!clonedNodes.ContainsKey(segState.startNode))
+                    if (!clonedNodes.ContainsKey(segmentState.startNode))
                     {
                         InstanceID instanceID = InstanceID.Empty;
-                        instanceID.NetNode = segState.startNode;
+                        instanceID.NetNode = segmentState.startNode;
 
                         // Don't clone if node is missing
                         if (!((Instance)instanceID).isValid) continue;
 
-                        clonedNodes.Add(segState.startNode, segState.startNode);
+                        clonedNodes.Add(segmentState.startNode, segmentState.startNode);
                     }
 
-                    if (!clonedNodes.ContainsKey(segState.endNode))
+                    if (!clonedNodes.ContainsKey(segmentState.endNode))
                     {
                         InstanceID instanceID = InstanceID.Empty;
-                        instanceID.NetNode = segState.endNode;
+                        instanceID.NetNode = segmentState.endNode;
 
                         // Don't clone if node is missing
                         if (!((Instance)instanceID).isValid) continue;
 
-                        clonedNodes.Add(segState.endNode, segState.endNode);
+                        clonedNodes.Add(segmentState.endNode, segmentState.endNode);
                     }
 
                     Instance clone = state.instance.Clone(state, clonedNodes);
                     toReplace.Add(state.instance, clone);
+                    MoveItTool.NS.SetSegmentSkin(clone.id.NetSegment, segmentState);
                 }
             }
 
@@ -377,7 +411,7 @@ namespace MoveIt
                     if (i is MoveableProc) continue;
                     selection.Add(i);
                 }
-                MoveItTool.m_debugPanel.Update();
+                MoveItTool.m_debugPanel.UpdatePanel();
             }
         }
 

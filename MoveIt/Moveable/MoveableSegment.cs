@@ -22,6 +22,8 @@ namespace MoveIt
 
         public bool invert;
 
+        public object NS_SkinModifiers;
+
         public override void ReplaceInstance(Instance instance)
         {
             base.ReplaceInstance(instance);
@@ -31,6 +33,12 @@ namespace MoveIt
             startNode = segmentBuffer[instance.id.NetSegment].m_startNode;
             endNode = segmentBuffer[instance.id.NetSegment].m_endNode;
         }
+
+        //~SegmentState()
+        //{
+        //    MoveItTool.NS.RemoveSegmentStateSkin(NSskin);
+        //    Debug.Log($"AAA Removing SegState!");
+        //}
     }
 
     public class MoveableSegment : Instance
@@ -67,7 +75,9 @@ namespace MoveIt
                 endNode = segmentBuffer[segment].m_endNode,
 
                 startDirection = segmentBuffer[segment].m_startDirection,
-                endDirection = segmentBuffer[segment].m_endDirection
+                endDirection = segmentBuffer[segment].m_endDirection,
+
+                NS_SkinModifiers = MoveItTool.NS.GetSegmentStateSkin(segment),
             };
 
             state.startPosition = nodeBuffer[state.startNode].m_position;
@@ -94,6 +104,8 @@ namespace MoveIt
 
             netManager.UpdateNode(segmentBuffer[segment].m_startNode);
             netManager.UpdateNode(segmentBuffer[segment].m_endNode);
+
+            MoveItTool.NS.SetSegmentSkin(segment, segmentState);
         }
 
         public override Vector3 position
@@ -255,7 +267,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.NetSegment = clone;
                 cloneInstance = new MoveableSegment(cloneID);
             }

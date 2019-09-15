@@ -16,6 +16,8 @@ namespace MoveIt
         [XmlElement("segmentsSave")]
         public SegmentSave[] segmentsSave = new SegmentSave[8];
 
+        public object NS_SkinModifiers;
+
         public struct SegmentSave
         {
             public Vector3 startDirection;
@@ -103,6 +105,8 @@ namespace MoveIt
 
             state.instance = this;
             state.Info = Info;
+
+            state.NS_SkinModifiers = MoveItTool.NS.GetNodeStateSkin(node);
 
             state.position = nodeBuffer[node].m_position;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);

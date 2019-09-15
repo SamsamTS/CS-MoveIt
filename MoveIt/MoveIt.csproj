@@ -73,8 +73,9 @@
     <Compile Include="MIT_Keyboard.cs" />
     <Compile Include="MIT_OnToolUpdate.cs" />
     <Compile Include="Moveable\MoveableProc.cs" />
-    <Compile Include="PO_WrapperLower.cs" />
-    <Compile Include="PO_Wrapper.cs" />
+    <Compile Include="Integration\PO_WrapperLower.cs" />
+    <Compile Include="Integration\PO_Wrapper.cs" />
+    <Compile Include="Integration\NetworkSkins.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="GUI\UIFastList.cs" />
     <Compile Include="GUI\UISaveLoadFileRow.cs" />

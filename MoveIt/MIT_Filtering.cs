@@ -304,7 +304,7 @@ namespace MoveIt
             while (repeatSearch);
 
             //Debug.Log($"Id={InstanceIDDebug(id)}");
-            if (m_debugPanel != null) m_debugPanel.Update(id);
+            if (m_debugPanel != null) m_debugPanel.UpdatePanel(id);
 
             m_hoverInstance = id;
         }

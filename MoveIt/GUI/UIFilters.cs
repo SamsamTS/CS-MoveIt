@@ -188,7 +188,7 @@ namespace MoveIt
                     break;
             }
 
-            MoveItTool.m_debugPanel.Update();
+            MoveItTool.m_debugPanel.UpdatePanel();
         }
 
         internal static void POToggled()

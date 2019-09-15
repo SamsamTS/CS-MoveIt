@@ -61,7 +61,7 @@ namespace MoveIt
                 }
             }
 
-            MoveItTool.m_debugPanel.Update();
+            MoveItTool.m_debugPanel.UpdatePanel();
         }
 
         public override void Undo()
@@ -86,7 +86,7 @@ namespace MoveIt
             ActionQueue.instance.ReplaceInstancesBackward(toReplace);
 
             selection = m_oldSelection;
-            MoveItTool.m_debugPanel.Update();
+            MoveItTool.m_debugPanel.UpdatePanel();
         }
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)

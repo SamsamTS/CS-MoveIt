@@ -11,7 +11,7 @@ namespace MoveIt
     internal class PO_Manager
     {
         private IPO_Logic Logic;
-        private static GameObject POGameObject;
+        private static GameObject gameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         //private HashSet<uint> selectedIds = new HashSet<uint>();
@@ -21,7 +21,8 @@ namespace MoveIt
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
         //internal const string VersionName = "1.6-b3";
-        internal static readonly string[] VersionNames = { "1.5.5", "1.6-b3", "1.6-b4" };
+        //internal static readonly string[] VersionNames = { "1.5.5", "1.6-b3", "1.6-b4" };
+        internal static readonly string[] VersionNames = { "1.6" };
 
         internal bool Enabled = false;
         private bool _active = false;
@@ -56,13 +57,13 @@ namespace MoveIt
 
         private void InitialiseLogic()
         {
-            if (isPOEnabled())
+            if (isModEnabled())
             {
                 Enabled = true;
                 //Logic = new PO_LogicEnabled();
-                POGameObject = new GameObject("MIT_POLogic");
-                POGameObject.AddComponent<PO_LogicEnabled>();
-                Logic = POGameObject.GetComponent<PO_LogicEnabled>();
+                gameObject = new GameObject("MIT_POLogic");
+                gameObject.AddComponent<PO_LogicEnabled>();
+                Logic = gameObject.GetComponent<PO_LogicEnabled>();
             }
             else
             {
@@ -113,7 +114,7 @@ namespace MoveIt
             {
                 Action.selection.Remove(instance);
             }
-            MoveItTool.m_debugPanel.Update();
+            MoveItTool.m_debugPanel.UpdatePanel();
 
             //Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
@@ -173,9 +174,9 @@ namespace MoveIt
             return Logic.ConvertToPO(instance);
         }
 
-        internal static bool isPOEnabled()
+        internal static bool isModEnabled()
         {
-            if (!isPOInstalled())
+            if (!isModInstalled())
             {
                 return false;
             }
@@ -186,7 +187,7 @@ namespace MoveIt
             return true;
         }
 
-        internal static bool isPOInstalled()
+        internal static bool isModInstalled()
         {
             //string msg = "";
             //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
@@ -211,16 +212,16 @@ namespace MoveIt
 
         internal static string getVersionText()
         {
-            if (isPOInstalled())
+            if (isModInstalled())
             {
-                if (VersionNames.Contains(PO_LogicEnabled.getVersion()))
+                if (VersionNames.Contains(PO_LogicEnabled.getVersion().Substring(0, 3)))
                 //if (PO_LogicEnabled.getVersion() == VersionName)
                 {
-                    return $"PO version {PO_LogicEnabled.getVersion()} found, integration enabled!\n ";
+                    return $"PO version {PO_LogicEnabled.getVersion().Substring(0, 3)} found, integration enabled!\n ";
                 }
                 else
                 {
-                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion()} (required: 1.5.5, 1.6-b3 or 1.6-b4)\n ";
+                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion().Substring(0, 3)} (required: 1.6)\n ";
                 }
             }
 

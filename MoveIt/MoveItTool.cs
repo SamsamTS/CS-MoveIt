@@ -103,6 +103,7 @@ namespace MoveIt
 
         internal static bool HidePO = false;
         internal static PO_Manager PO = null;
+        internal static NS_Manager NS = null;
         internal static uint _POProcessing = 0;
         internal static bool POProcessing
         {
@@ -130,7 +131,7 @@ namespace MoveIt
                 m_toolState = value;
                 if (m_debugPanel != null)
                 {
-                    m_debugPanel.Update();
+                    m_debugPanel.UpdatePanel();
                 }
             }
         }
@@ -143,7 +144,7 @@ namespace MoveIt
                 m_alignMode = value;
                 if (m_debugPanel != null)
                 {
-                    m_debugPanel.Update();
+                    m_debugPanel.UpdatePanel();
                 }
             }
         }
@@ -156,7 +157,7 @@ namespace MoveIt
                 m_alignToolPhase = value;
                 if (m_debugPanel != null)
                 {
-                    m_debugPanel.Update();
+                    m_debugPanel.UpdatePanel();
                 }
             }
         }
@@ -263,6 +264,10 @@ namespace MoveIt
             if (PO == null)
             {
                 PO = new PO_Manager();
+            }
+            if (NS == null)
+            {
+                NS = new NS_Manager();
             }
 
             if (UIToolOptionPanel.instance == null)

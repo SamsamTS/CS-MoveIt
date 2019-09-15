@@ -24,13 +24,13 @@ namespace MoveIt
             Panel.isVisible = show;
         }
 
-        internal void Update(InstanceID instanceId)
+        internal void UpdatePanel(InstanceID instanceId)
         {
             id = instanceId;
-            Update();
+            UpdatePanel();
         }
 
-        internal void Update()
+        internal void UpdatePanel()
         {
             if (!MoveItTool.showDebugPanel)
             {

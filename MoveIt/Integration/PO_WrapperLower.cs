@@ -159,13 +159,12 @@ namespace MoveIt
 
         public IPO_Object ConvertToPO(Instance instance)
         {
+            // Most code adapted from PO ProceduralObjectsLogic.ConvertToProcedural, by Simon Ryr
 
             if (AvailableProcInfos == null)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
             if ((int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null) == 0)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
-
-            // Most code adapted from PO ProceduralObjectsLogic.ConvertToProcedural, by Simon Ryr
 
             try
             {

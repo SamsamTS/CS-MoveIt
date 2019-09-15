@@ -53,7 +53,7 @@ namespace MoveIt
             InstanceID id = new InstanceID();
 
             // Adding missing nodes
-            foreach (Instance instance in Action.selection)
+            foreach (Instance instance in selection)
             {
                 if (instance.id.Type == InstanceType.NetSegment)
                 {
@@ -68,7 +68,7 @@ namespace MoveIt
             }
 
             // Adding missing segments
-            foreach (Instance instance in Action.selection)
+            foreach (Instance instance in selection)
             {
                 if (instance.id.Type == InstanceType.NetNode)
                 {
@@ -104,7 +104,6 @@ namespace MoveIt
 
             // Remove single nodes
             HashSet<Instance> toRemove = new HashSet<Instance>();
-
             foreach (Instance instance in newSelection)
             {
                 if (instance.id.Type == InstanceType.NetNode)
@@ -130,7 +129,6 @@ namespace MoveIt
                     }
                 }
             }
-
             newSelection.ExceptWith(toRemove);
 
             if (newSelection.Count > 0)
@@ -159,7 +157,40 @@ namespace MoveIt
                 center = Vector3.zero;
             }
 
-            return newSelection;
+            // Sort segments by buildIndex
+            HashSet<Instance> sorted = new HashSet<Instance>();
+            List<uint> indexes = new List<uint>();
+            foreach (Instance instance in newSelection)
+            {
+                if (instance.id.Type != InstanceType.NetSegment)
+                {
+                    sorted.Add(instance);
+                }
+                else
+                {
+                    uint bi = ((NetSegment)instance.data).m_buildIndex;
+                    if (!indexes.Contains(bi))
+                       indexes.Add(bi);
+                }
+            }
+
+            indexes.Sort();
+
+            foreach (uint i in indexes)
+            {
+                foreach (Instance instance in newSelection)
+                {
+                    if (instance.id.Type == InstanceType.NetSegment)
+                    {
+                        if (((NetSegment)instance.data).m_buildIndex == i)
+                        {
+                            sorted.Add(instance);
+                        }
+                    }
+                }
+            }
+
+            return sorted;
         }
 
         // Constructor for imported selections
@@ -230,6 +261,11 @@ namespace MoveIt
                         //}
                         m_clones.Add(clone);
                         m_origToCloneUpdate.Add(state.instance.id, clone.id);
+
+                        if (state is SegmentState segmentState)
+                        {
+                            MoveItTool.NS.SetSegmentSkin(clone.id.NetSegment, segmentState);
+                        }
                     }
                 }
             }
@@ -253,7 +289,7 @@ namespace MoveIt
             selection = m_clones;
             //if (!_isImport)
             //{
-                MoveItTool.m_debugPanel.Update();
+                MoveItTool.m_debugPanel.UpdatePanel();
             //}
 
             UpdateArea(GetTotalBounds(false));
@@ -274,7 +310,7 @@ namespace MoveIt
 
             // Restore selection
             selection = m_oldSelection;
-            MoveItTool.m_debugPanel.Update();
+            MoveItTool.m_debugPanel.UpdatePanel();
 
             UpdateArea(bounds);
         }
