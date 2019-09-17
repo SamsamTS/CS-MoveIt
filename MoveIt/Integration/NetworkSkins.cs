@@ -55,12 +55,16 @@ namespace MoveIt
             }
         }
 
-        public void SetSegmentSkin(ushort id, SegmentState state)
+        public void SetSegmentModifiers(ushort id, SegmentState state)
         {
             if (!Enabled) return;
 
             BindingFlags f = BindingFlags.Public | BindingFlags.Instance;
             object modifiers = state.NS_Modifiers;
+            if (modifiers == null)
+            {
+                return;
+            }
 
             object modDict = Activator.CreateInstance(tDictMods);
             tDictMods.GetMethod("Add", f, null, new Type[] { typeof(NetInfo), tListMods }, null).Invoke(modDict, new[] { (NetInfo)state.Info.Prefab, modifiers });
@@ -70,7 +74,7 @@ namespace MoveIt
             tNSM.GetMethod("OnSegmentPlaced", f, null, new Type[] { typeof(ushort) }, null).Invoke(NSM, new object[] { id });
         }
 
-        public object GetSegmentStateSkin(ushort id)
+        public object GetSegmentModifiers(ushort id)
         {
             if (!Enabled) return null;
 
@@ -92,27 +96,27 @@ namespace MoveIt
             return SegmentSkinsArray[id];
         }
 
-        public object GetNodeStateSkin(ushort id)
-        {
-            if (!Enabled) return null;
+        //public object GetNodeStateSkin(ushort id)
+        //{
+        //    if (!Enabled) return null;
 
-            object skin = _GetNodeSkin(id);
-            if (skin == null)
-            {
-                return null;
-            }
-            //Debug.Log($"Modifiers:{tNS.GetProperty("Modifiers", BindingFlags.Public | BindingFlags.Instance).GetValue(skin, null)}");
+        //    object skin = _GetNodeSkin(id);
+        //    if (skin == null)
+        //    {
+        //        return null;
+        //    }
+        //    //Debug.Log($"Modifiers:{tNS.GetProperty("Modifiers", BindingFlags.Public | BindingFlags.Instance).GetValue(skin, null)}");
 
-            return tNS.GetField("_modifiers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(skin);
-        }
+        //    return tNS.GetField("_modifiers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(skin);
+        //}
 
-        private object _GetNodeSkin(ushort id)
-        {
-            if (!Enabled) return null;
+        //private object _GetNodeSkin(ushort id)
+        //{
+        //    if (!Enabled) return null;
 
-            object[] NodeSkinsArray = (object[])tNSM.GetField("NodeSkins").GetValue(NSM);
-            return NodeSkinsArray[id];
-        }
+        //    object[] NodeSkinsArray = (object[])tNSM.GetField("NodeSkins").GetValue(NSM);
+        //    return NodeSkinsArray[id];
+        //}
 
         internal static bool isModInstalled()
         {
@@ -151,7 +155,7 @@ namespace MoveIt
                 }
             }
 
-            return "Network Skins is not available. To use these options please quit Cities Skylines and subscribe to the latest Network Skins.\n ";
+            return "Network Skins is not available.\n ";
         }
 
         public static string getVersion()
@@ -193,6 +197,7 @@ namespace MoveIt
         public string EncodeModifiers(object obj)
         {
             if (!Enabled) return null;
+            if (obj == null) return null;
 
             Type t = Assembly.GetType("NetworkSkins.Skins.Serialization.ModifierDataSerializer");
 

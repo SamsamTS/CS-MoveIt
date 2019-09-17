@@ -84,7 +84,7 @@ namespace MoveIt
                 startDirection = segmentBuffer[segment].m_startDirection,
                 endDirection = segmentBuffer[segment].m_endDirection,
 
-                NS_Modifiers = MoveItTool.NS.GetSegmentStateSkin(segment),
+                NS_Modifiers = MoveItTool.NS.GetSegmentModifiers(segment),
             };
 
             state.startPosition = nodeBuffer[state.startNode].m_position;
@@ -112,7 +112,7 @@ namespace MoveIt
             netManager.UpdateNode(segmentBuffer[segment].m_startNode);
             netManager.UpdateNode(segmentBuffer[segment].m_endNode);
 
-            MoveItTool.NS.SetSegmentSkin(segment, segmentState);
+            MoveItTool.NS.SetSegmentModifiers(segment, segmentState);
         }
 
         public override Vector3 position

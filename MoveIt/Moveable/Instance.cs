@@ -191,7 +191,7 @@ namespace MoveIt
         public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);
         public abstract Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action);
-        public abstract Instance Clone(InstanceState state, Dictionary<ushort, ushort> clonedNodes);
+        public abstract Instance Clone(InstanceState state, Dictionary<ushort, ushort> clonedNodes); // For Deletion Undo (bulldoze, convertToPO)
         public abstract void Delete();
         public abstract Bounds GetBounds(bool ignoreSegments = true);
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);
@@ -208,7 +208,7 @@ namespace MoveIt
 
         public static implicit operator Instance(InstanceID id)
         {
-            switch(id.Type)
+            switch (id.Type)
             {
                 case InstanceType.Building:
                     return new MoveableBuilding(id);

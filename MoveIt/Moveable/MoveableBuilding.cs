@@ -491,7 +491,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.Building = clone;
                 cloneInstance = new MoveableBuilding(cloneID);
 
@@ -520,7 +520,7 @@ namespace MoveIt
 
                 if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
                 {
-                    Matrix4x4 subMatrix4x = default(Matrix4x4);
+                    Matrix4x4 subMatrix4x = default;
                     subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                     for (int i = 0; i < info.m_subBuildings.Length; i++)
                     {
@@ -551,6 +551,7 @@ namespace MoveIt
             return cloneInstance;
         }
 
+        // For Deletion Undo
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             BuildingState state = instanceState as BuildingState;
@@ -564,7 +565,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.Building = clone;
                 cloneInstance = new MoveableBuilding(cloneID);
 
@@ -572,7 +573,7 @@ namespace MoveIt
 
                 if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
                 {
-                    Matrix4x4 subMatrix4x = default(Matrix4x4);
+                    Matrix4x4 subMatrix4x = default;
                     subMatrix4x.SetTRS(state.position, Quaternion.AngleAxis(state.angle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                     for (int i = 0; i < info.m_subBuildings.Length; i++)
                     {

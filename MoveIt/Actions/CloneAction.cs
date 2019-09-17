@@ -264,7 +264,7 @@ namespace MoveIt
 
                         if (state is SegmentState segmentState)
                         {
-                            MoveItTool.NS.SetSegmentSkin(clone.id.NetSegment, segmentState);
+                            MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
                         }
                     }
                 }

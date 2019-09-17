@@ -396,7 +396,7 @@ namespace MoveIt
 
                     Instance clone = state.instance.Clone(state, clonedNodes);
                     toReplace.Add(state.instance, clone);
-                    MoveItTool.NS.SetSegmentSkin(clone.id.NetSegment, segmentState);
+                    MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
                 }
             }
 
