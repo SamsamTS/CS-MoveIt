@@ -47,7 +47,7 @@ namespace MoveIt
                 {
                     //msg += $"B{building}, ";
 
-                    InstanceID buildingID = default(InstanceID);
+                    InstanceID buildingID = default;
                     buildingID.Building = building;
 
                     yield return new MoveableBuilding(buildingID);
@@ -69,7 +69,7 @@ namespace MoveIt
                     ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                     if (layer != ItemClass.Layer.PublicTransport)
                     {
-                        InstanceID nodeID = default(InstanceID);
+                        InstanceID nodeID = default;
                         nodeID.NetNode = node;
                         yield return new MoveableNode(nodeID);
                     }
@@ -104,7 +104,7 @@ namespace MoveIt
                     ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                     if (layer != ItemClass.Layer.PublicTransport)
                     {
-                        InstanceID nodeID = default(InstanceID);
+                        InstanceID nodeID = default;
                         nodeID.NetNode = node;
                         segments.UnionWith(new MoveableNode(nodeID).segmentList);
                     }
@@ -268,8 +268,6 @@ namespace MoveIt
 
         public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
-            //bool mirror = (ActionQueue.instance.current is AlignMirrorAction) ? true : false;
-
             BuildingState state = instanceState as BuildingState;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
@@ -287,15 +285,13 @@ namespace MoveIt
             AddFixedHeightFlag(id.Building);
             Move(newPosition, state.angle + deltaAngle);
 
-            Matrix4x4 matrixSub = default(Matrix4x4);
+            Matrix4x4 matrixSub = default;
             matrixSub.SetTRS(Vector3.zero, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             if (state.subStates != null)
             {
                 foreach (InstanceState subState in state.subStates)
                 {
-                    //string oldPos = $"{subState.position.x},{subState.position.z}";
-
                     Vector3 subOffset = (subState.position - center) - (state.position - center);
                     Vector3 subPosition = position + matrixSub.MultiplyPoint(subOffset);
 
@@ -428,6 +424,7 @@ namespace MoveIt
         public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
+
             //Singleton<BuildingManager>.instance.RelocateBuilding(id.Building, location, angle);
             RelocateBuilding(id.Building, ref buildingBuffer[id.Building], location, angle);
         }
@@ -641,6 +638,7 @@ namespace MoveIt
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
             Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
+            //Debug.Log($"AAA Y1 {depth} - {bounds}");
 
             if (depth < 1)
             { 
@@ -654,10 +652,11 @@ namespace MoveIt
                     {
                         bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
                     }
+                    //Debug.Log($"AAA Y2\nsubInstance:{subInstance}\n{bounds}\n{subInstance.position}");
                 }
             }
 
-            //Debug.Log($"{depth} - {bounds}");
+            //Debug.Log($"AAA Y3 {depth} - {bounds}");
             return bounds;
         }
 
@@ -737,18 +736,18 @@ namespace MoveIt
 
             float newAngle = state.angle + deltaAngle;
 
-            buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, newPosition, newAngle, default(Segment3));
+            buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, newPosition, newAngle, default);
             BuildingTool.RenderOverlay(cameraInfo, buildingInfo, state.length, newPosition, newAngle, toolColor, false);
             if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
             {
-                Matrix4x4 subMatrix4x = default(Matrix4x4);
+                Matrix4x4 subMatrix4x = default;
                 subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
                     Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
                     float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
-                    buildingInfo2.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, position, angle, default(Segment3));
+                    buildingInfo2.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, position, angle, default);
                     BuildingTool.RenderOverlay(cameraInfo, buildingInfo2, 0, position, angle, toolColor, true);
                 }
             }

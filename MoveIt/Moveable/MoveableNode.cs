@@ -41,7 +41,7 @@ namespace MoveIt
 
     public class MoveableNode : Instance
     {
-        public MoveableBuilding Pillar
+        public MoveableBuilding Pillar // Pillar, pylon, water junction
         {
             get
             {
@@ -200,7 +200,6 @@ namespace MoveIt
             }
 
             Move(newPosition, 0);
-
 
             if (state.pillarState != null)
             {
@@ -386,7 +385,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.NetNode = clone;
                 cloneInstance = new MoveableNode(cloneID);
 
@@ -411,7 +410,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.NetNode = clone;
                 cloneInstance = new MoveableNode(cloneID);
 
@@ -434,7 +433,14 @@ namespace MoveIt
         {
             ushort node = id.NetNode;
 
-            Bounds bounds = nodeBuffer[node].m_bounds;
+            Bounds bounds = SanitizeBounds(node);
+
+            if (nodeBuffer[node].Info.m_netAI is WaterPipeAI)
+            {
+                ignoreSegments = true;
+            }
+
+            //Debug.Log($"AAA X {this}\n{bounds}\nPosition:{position}");
 
             if (!ignoreSegments)
             {
@@ -448,17 +454,32 @@ namespace MoveIt
 
                         if (node != startNode)
                         {
-                            bounds.Encapsulate(nodeBuffer[startNode].m_bounds);
+                            bounds.Encapsulate(SanitizeBounds(startNode));
                         }
                         else
                         {
-                            bounds.Encapsulate(nodeBuffer[endNode].m_bounds);
+                            bounds.Encapsulate(SanitizeBounds(endNode));
                         }
                     }
                 }
             }
 
             return bounds;
+        }
+
+        private static Bounds SanitizeBounds(ushort id)
+        {
+            NetNode node = nodeBuffer[id];
+            Bounds bounds = node.m_bounds;
+            Vector3 AbsCenter = new Vector3(Math.Abs(bounds.center.x), Math.Abs(bounds.center.y), Math.Abs(bounds.center.z));
+
+            if (AbsCenter == bounds.extents || bounds.center == Vector3.zero)
+            {
+                //Debug.Log($"AAA bounds:{node.m_position}\n{bounds}");
+                node.m_bounds = new Bounds(node.m_position, new Vector3(16f, 0f, 16f));
+            }
+
+            return node.m_bounds;
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)

@@ -39,7 +39,7 @@ namespace MoveIt
         public override void Do()
         {
             Vector3 PoR;
-            Matrix4x4 matrix = default(Matrix4x4);
+            Matrix4x4 matrix = default;
             Bounds bounds = GetTotalBounds(true, true);
             float angleDelta, firstValidAngle = 0;
             System.Random random = new System.Random();

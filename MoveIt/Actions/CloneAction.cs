@@ -253,9 +253,9 @@ namespace MoveIt
                         //    MoveableBuilding mb = (MoveableBuilding)state.instance;
                         //    Building b = (Building)mb.data;
                         //    Building c = (Building)clone.data;
-                        //    InstanceID i1 = default(InstanceID);
+                        //    InstanceID i1 = default;
                         //    i1.NetNode = b.m_netNode;
-                        //    InstanceID i2 = default(InstanceID);
+                        //    InstanceID i2 = default;
                         //    i2.NetNode = c.m_netNode;
                         //    Debug.Log($"SUBBUILDINGS\n{mb.id.Building}:{b.m_netNode} ({i1})\n{clone.id.Building}:{c.m_netNode} ({i2})");
                         //}
@@ -357,7 +357,7 @@ namespace MoveIt
 
         public HashSet<InstanceState> CalculateStates(Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain)
         {
-            Matrix4x4 matrix4x = default(Matrix4x4);
+            Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + deltaPosition, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             HashSet<InstanceState> newStates = new HashSet<InstanceState>();

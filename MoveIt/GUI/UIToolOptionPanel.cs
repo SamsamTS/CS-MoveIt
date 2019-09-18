@@ -308,6 +308,7 @@ namespace MoveIt
             m_picker.pressedBgSprite = "OptionsDropboxListboxHovered";
             m_picker.eventClick += OnPickerClick;
             m_picker.eventDoubleClick += OnPickerDoubleClick;
+            m_picker.name = "mit_pickerButton";
 
             checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Picker", null, false);
             checkBox.width -= 21;

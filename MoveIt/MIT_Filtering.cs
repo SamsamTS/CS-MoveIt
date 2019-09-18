@@ -325,7 +325,7 @@ namespace MoveIt
 
             if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)
             {
-                m_selection = default(Quad3);
+                m_selection = default;
             }
             else
             {

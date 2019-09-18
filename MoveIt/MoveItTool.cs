@@ -374,6 +374,12 @@ namespace MoveIt
                     }
                 }
 
+                // Debug overlays
+                foreach (Quad3 q in DebugBoxes)
+                {
+                    Singleton<RenderManager>.instance.OverlayEffect.DrawQuad(cameraInfo, new Color32(255, 255, 255, 63), q, 0, 1000, false, false);
+                }
+
                 if (Action.selection.Count > 0)
                 {
                     // Highlight Selected Items
@@ -558,7 +564,7 @@ namespace MoveIt
             {
                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
-                Matrix4x4 matrix4x = default(Matrix4x4);
+                Matrix4x4 matrix4x = default;
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                 foreach (InstanceState state in action.m_states)
@@ -639,15 +645,39 @@ namespace MoveIt
             }
         }
 
+        private List<Quad3> DebugBoxes = new List<Quad3>();
+        private void AddDebugBox(Bounds b)
+        {
+            Quad3 q = default;
+            q.a = new Vector3(b.min.x, b.min.y, b.min.z);
+            q.b = new Vector3(b.min.x, b.min.y, b.max.z);
+            q.c = new Vector3(b.max.x, b.min.y, b.max.z);
+            q.d = new Vector3(b.max.x, b.min.y, b.min.z);
+            DebugBoxes.Add(q);
+            Debug.Log($"\nBounds:{b}");
+        }
+
         public void UpdateAreas()
         {
+            HashSet<Bounds> merged = MergeBounds(areasToUpdate);
             //string msg = "";
-            foreach (Bounds bounds in MergeBounds(areasToUpdate))
-            {
-                //msg += $"SimStep: {bounds}\n";
 
-                VehicleManager.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+            foreach (Bounds bounds in merged)
+            {
+                //AddDebugBox(bounds);
+                try
+                {
+                    //msg += $"SimStep: {bounds}\n";
+
+                    Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    Singleton<RenderManager>.instance.UpdateGroups((int)ItemClass.Layer.WaterPipes);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"{e}\n{bounds.min.x},{bounds.min.z} - {bounds.max.x},{bounds.max.z}");
+                }
             }
             //Debug.Log(msg);
 

@@ -108,7 +108,7 @@ namespace MoveIt
 
                     m_hoverInstance = null;
                     m_marqueeInstances = null;
-                    m_segmentGuide = default(NetSegment);
+                    m_segmentGuide = default;
 
                     switch (ToolState)
                     {
@@ -366,7 +366,7 @@ namespace MoveIt
             NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
 
-            Matrix4x4 matrix4x = default(Matrix4x4);
+            Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             bool snap = false;
@@ -708,7 +708,7 @@ namespace MoveIt
         {
             string snapType = "";
 
-            m_segmentGuide = default(NetSegment);
+            m_segmentGuide = default;
 
             NetManager netManager = NetManager.instance;
             NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
@@ -735,7 +735,7 @@ namespace MoveIt
 
                         if (segmentB != 0 && segmentB != segmentA)
                         {
-                            NetSegment segment = default(NetSegment);
+                            NetSegment segment = default;
                             segment.m_startNode = segmentBuffer[segmentA].m_startNode == node ? segmentBuffer[segmentA].m_endNode : segmentBuffer[segmentA].m_startNode;
                             segment.m_endNode = segmentBuffer[segmentB].m_startNode == node ? segmentBuffer[segmentB].m_endNode : segmentBuffer[segmentB].m_startNode;
 
@@ -781,7 +781,7 @@ namespace MoveIt
                                                 continue;
                                             }
 
-                                            Bezier3 bezier = default(Bezier3);
+                                            Bezier3 bezier = default;
                                             bezier.a = Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_startNode].m_position;
                                             bezier.d = Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_endNode].m_position;
                                             bool smoothStart = (Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None;
@@ -840,7 +840,7 @@ namespace MoveIt
 
                             if (TrySnapping(testPos + startDir * num, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                             {
-                                m_segmentGuide = default(NetSegment);
+                                m_segmentGuide = default;
 
                                 m_segmentGuide.m_startNode = node;
                                 m_segmentGuide.m_endNode = testNode;
@@ -861,7 +861,7 @@ namespace MoveIt
 
                                 if (TrySnapping(testPos + startDir * num, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                                 {
-                                    m_segmentGuide = default(NetSegment);
+                                    m_segmentGuide = default;
 
                                     m_segmentGuide.m_startNode = node;
                                     m_segmentGuide.m_endNode = testNode;

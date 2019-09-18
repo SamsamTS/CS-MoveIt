@@ -143,7 +143,7 @@ namespace MoveIt
             {
                 if (_startNode == null)
                 {
-                    InstanceID instanceID = default(InstanceID);
+                    InstanceID instanceID = default;
                     instanceID.NetNode = segmentBuffer[id.NetSegment].m_startNode;
                     _startNode = new MoveableNode(instanceID);
                 }
@@ -158,7 +158,7 @@ namespace MoveIt
             {
                 if (_endNode == null)
                 {
-                    InstanceID instanceID = default(InstanceID);
+                    InstanceID instanceID = default;
                     instanceID.NetNode = segmentBuffer[id.NetSegment].m_endNode;
                     _endNode = new MoveableNode(instanceID);
                 }
@@ -302,7 +302,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.NetSegment = clone;
                 cloneInstance = new MoveableSegment(cloneID);
             }

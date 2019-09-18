@@ -132,7 +132,6 @@ namespace MoveIt
             id = instanceID;
         }
 
-
         public InstanceID id
         {
             get;
@@ -197,7 +196,6 @@ namespace MoveIt
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
-
 
         public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor, int depth = 0) { }
 

@@ -192,7 +192,7 @@ namespace MoveIt
 
                             if (!useCardinalMoves)
                             {
-                                Matrix4x4 matrix4x = default(Matrix4x4);
+                                Matrix4x4 matrix4x = default;
                                 matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);
 
                                 direction = matrix4x.MultiplyVector(direction);

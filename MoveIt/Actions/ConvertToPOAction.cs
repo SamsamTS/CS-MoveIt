@@ -47,7 +47,7 @@ namespace MoveIt
 
                     MoveItTool.PO.visibleObjects.Add(obj.Id, obj);
 
-                    InstanceID instanceID = default(InstanceID);
+                    InstanceID instanceID = default;
                     instanceID.NetLane = obj.Id;
                     MoveableProc mpo = new MoveableProc(instanceID);
                     m_clones.Add(mpo);

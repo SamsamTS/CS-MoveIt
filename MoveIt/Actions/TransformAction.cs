@@ -42,7 +42,7 @@ namespace MoveIt
         {
             Bounds originalBounds = GetTotalBounds(false);
 
-            Matrix4x4 matrix4x = default(Matrix4x4);
+            Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             foreach (InstanceState state in m_states)
@@ -118,7 +118,7 @@ namespace MoveIt
 
         public HashSet<InstanceState> CalculateStates(Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain)
         {
-            Matrix4x4 matrix4x = default(Matrix4x4);
+            Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + deltaPosition, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             HashSet<InstanceState> newStates = new HashSet<InstanceState>();

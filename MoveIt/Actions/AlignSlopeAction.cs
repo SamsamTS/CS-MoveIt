@@ -60,7 +60,7 @@ namespace MoveIt
             float angleDelta;
             float heightDelta;
             float distance;
-            Matrix4x4 matrix = default(Matrix4x4);
+            Matrix4x4 matrix = default;
 
             if (IsQuick)
             {
@@ -80,7 +80,7 @@ namespace MoveIt
                             if (c > 1) return; // More than 2 segments found
 
                             NetSegment segment = segmentBuffer[segId];
-                            InstanceID instanceID = default(InstanceID);
+                            InstanceID instanceID = default;
                             if (segment.m_startNode == nodeInstance.id.NetNode)
                             {
                                 instanceID.NetNode = segment.m_endNode;

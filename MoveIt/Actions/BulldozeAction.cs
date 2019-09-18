@@ -76,19 +76,22 @@ namespace MoveIt
                         {
                             NetNode node = netManager.m_nodes.m_buffer[nodeId];
 
-                            for (int i = 0; i < 8; i++)
-                            {
-                                ushort segmentId = node.GetSegment(i);
-                                if (segmentId != 0 && MoveableSegment.isSegmentValid(segmentId) && 
-                                        ((netManager.m_segments.m_buffer[segmentId].m_flags & NetSegment.Flags.Untouchable) == NetSegment.Flags.None))
+                            //if (node.m_building == 0)
+                            { // Exclude attached nodes with attached buildings (e.g. water buildings)
+                                for (int i = 0; i < 8; i++)
                                 {
-                                    InstanceID instanceID = default;
-                                    instanceID.NetSegment = segmentId;
+                                    ushort segmentId = node.GetSegment(i);
+                                    if (segmentId != 0 && MoveableSegment.isSegmentValid(segmentId) && 
+                                            ((netManager.m_segments.m_buffer[segmentId].m_flags & NetSegment.Flags.Untouchable) == NetSegment.Flags.None))
+                                    {
+                                        InstanceID instanceID = default;
+                                        instanceID.NetSegment = segmentId;
 
-                                    if (selection.Contains(instanceID)) continue;
+                                        if (selection.Contains(instanceID)) continue;
 
-                                    newSelection.Add(new MoveableSegment(instanceID));
-                                    segments.Add(segmentId);
+                                        newSelection.Add(new MoveableSegment(instanceID));
+                                        segments.Add(segmentId);
+                                    }
                                 }
                             }
 
@@ -103,8 +106,9 @@ namespace MoveIt
                     }
                 }
             }
+            //Debug.Log(msg + $"AAA Initial Selection: {selection.Count}");
 
-            //msg += $"Selection With Extra Segments: {newSelection.Count}\nTotal Segments: {segments.Count}\n";
+            //msg = $"\nSelection With Extra Segments: {newSelection.Count} (Total Segments: {segments.Count})\n";
 
             // Add any nodes whose segments are all selected
             foreach (Instance instance in newSelection)
@@ -141,6 +145,8 @@ namespace MoveIt
                 }
             }
 
+            //Debug.Log(msg + $"Selection Without Extra Nodes: {newSelection.Count + extraNodes.Count} (Extra Nodes: {extraNodes.Count})");
+
             // Sort segments by buildIndex
             HashSet<Instance> sorted = new HashSet<Instance>();
             List<uint> indexes = new List<uint>();
@@ -174,18 +180,19 @@ namespace MoveIt
                 }
             }
 
-
+            //msg = $"Final States:\n";
             foreach (Instance instance in sorted)
             {
                 m_states.Add(instance.GetState());
+                //msg += $"{instance}\n";
             }
             foreach (Instance instance in extraNodes)
             {
                 m_states.Add(instance.GetState());
+                //msg += $"{instance}\n";
             }
 
-
-            //Debug.Log(msg + $"Final Selection: {m_states.Count}");
+            //Debug.Log(msg + $"AAA Final Selection: {m_states.Count}");
         }
 
         public override void Do()
@@ -318,7 +325,7 @@ namespace MoveIt
                         {
                             if (i is NodeState ns)
                             {
-                                InstanceID instanceID = default(InstanceID);
+                                InstanceID instanceID = default;
                                 instanceID.RawData = ns.id;
                                 //msg2 += $"\n{c} - Attached node #{instanceID.NetNode}: {ns.Info.Name}";
                                 origNodeIds.Insert(c++, instanceID.NetNode);

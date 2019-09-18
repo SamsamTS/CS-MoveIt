@@ -15,7 +15,7 @@ namespace MoveIt
         public override void Do()
         {
             Bounds originalBounds = GetTotalBounds(false);
-            Matrix4x4 matrix4x = default(Matrix4x4);
+            Matrix4x4 matrix4x = default;
 
             base.Do();
 

@@ -50,7 +50,7 @@ namespace MoveIt
 
         public static Bounds GetTotalBounds(bool ignoreSegments = true, bool excludeNetworks = false)
         {
-            Bounds totalBounds = default(Bounds);
+            Bounds totalBounds = default;
 
             bool init = false;
 
@@ -75,12 +75,13 @@ namespace MoveIt
 
         public static void UpdateArea(Bounds bounds, bool updateTerrain = false)
         {
+            bounds.Expand(32f);
             if (updateTerrain)
             {
                 TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
             }
 
-            bounds.Expand(64f);
+            bounds.Expand(32f);
             MoveItTool.instance.areasToUpdate.Add(bounds);
             MoveItTool.instance.areaUpdateCountdown = 40;
 
