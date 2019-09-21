@@ -65,7 +65,7 @@
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
-    <Compile Include="GUI\UIAlignTools.cs" />
+    <Compile Include="GUI\UIMoreTools.cs" />
     <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
     <Compile Include="MIT_Events.cs" />
@@ -133,7 +133,7 @@
     <EmbeddedResource Include="Icons\AlignGroup.png" />
     <EmbeddedResource Include="Icons\AlignIndividual.png" />
     <EmbeddedResource Include="Icons\AlignRandom.png" />
-    <EmbeddedResource Include="Icons\AlignTools.png" />
+    <EmbeddedResource Include="Icons\MoreTools.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\NFCollapse.png" />
@@ -160,6 +160,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\AlignMirror.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ConvertToPO.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

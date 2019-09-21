@@ -65,8 +65,8 @@ namespace MoveIt
             MoveItTool.m_debugPanel = null;
             Object.Destroy(DebugGameObject);
             UIToolOptionPanel.instance = null;
-            UIAlignTools.AlignToolsPanel = null;
-            UIAlignTools.AlignToolsBtn = null;
+            UIMoreTools.MoreToolsPanel = null;
+            UIMoreTools.MoreToolsBtn = null;
             Action.selection.Clear();
             Filters.Picker = null;
             MoveItTool.PO = null;

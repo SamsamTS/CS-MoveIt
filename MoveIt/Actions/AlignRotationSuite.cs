@@ -150,7 +150,7 @@ namespace MoveIt
             MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
             MoveItTool.instance.AlignMode = MoveItTool.AlignModes.Off;
             MoveItTool.instance.AlignToolPhase = 0;
-            UIAlignTools.UpdateAlignTools();
+            UIMoreTools.UpdateMoreTools();
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
         }

@@ -80,9 +80,9 @@ namespace MoveIt
                 checkBox = (UICheckBox)group.AddCheckbox("Auto-close Align Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
-                    if (UIAlignTools.AlignToolsPanel != null)
+                    if (UIMoreTools.MoreToolsPanel != null)
                     {
-                        UIAlignTools.AlignToolsPanel.isVisible = false;
+                        UIMoreTools.MoreToolsPanel.isVisible = false;
                     }
                 });
                 checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";

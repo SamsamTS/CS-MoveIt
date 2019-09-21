@@ -5,35 +5,35 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    class UIAlignTools
+    class UIMoreTools
     {
-        public static UIButton AlignToolsBtn;
-        public static UIPanel AlignToolsPanel;
-        public static Dictionary<string, UIButton> AlignButtons = new Dictionary<string, UIButton>();
+        public static UIButton MoreToolsBtn;
+        public static UIPanel MoreToolsPanel;
+        public static Dictionary<string, UIButton> MoreButtons = new Dictionary<string, UIButton>();
         private static MoveItTool MIT = MoveItTool.instance;
 
         public static void Initialise()
         {
-            AlignToolsBtn = null;
-            AlignToolsPanel = null;
-            AlignButtons = new Dictionary<string, UIButton>();
+            MoreToolsBtn = null;
+            MoreToolsPanel = null;
+            MoreButtons = new Dictionary<string, UIButton>();
             MIT = MoveItTool.instance;
         }
 
-        public static void AlignToolsClicked(UIComponent c, UIMouseEventParameter p)
+        public static void MoreToolsClicked(UIComponent c, UIMouseEventParameter p)
         {
             switch (c.name)
             {
-                case "MoveIt_AlignToolsBtn":
-                    if (AlignToolsPanel.isVisible)
+                case "MoveIt_MoreToolsBtn":
+                    if (MoreToolsPanel.isVisible)
                     {
-                        AlignToolsPanel.isVisible = false;
+                        MoreToolsPanel.isVisible = false;
                     }
                     else
                     {
-                        AlignToolsPanel.isVisible = true;
+                        MoreToolsPanel.isVisible = true;
                     }
-                    UpdateAlignTools();
+                    UpdateMoreTools();
                     break;
 
                 case "MoveIt_AlignHeightBtn":
@@ -55,8 +55,8 @@ namespace MoveIt
                     AlignTerrainHeightAction atha = new AlignTerrainHeightAction();
                     ActionQueue.instance.Push(atha);
                     ActionQueue.instance.Do();
-                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                    MoveItTool.instance.DeactivateAlignTool();
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MoveItTool.instance.DeactivateTool();
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
@@ -74,8 +74,8 @@ namespace MoveIt
                         asa.IsQuick = true;
                         ActionQueue.instance.Push(asa);
                         ActionQueue.instance.Do();
-                        if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                        MIT.DeactivateAlignTool();
+                        if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                        MIT.DeactivateTool();
                         break;
                     }
                     MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
@@ -101,12 +101,31 @@ namespace MoveIt
                     ara.followTerrain = MoveItTool.followTerrain;
                     ActionQueue.instance.Push(ara);
                     ActionQueue.instance.Do();
-                    if (MoveItTool.autoCloseAlignTools) AlignToolsPanel.isVisible = false;
-                    MoveItTool.instance.DeactivateAlignTool();
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MoveItTool.instance.DeactivateTool();
+                    break;
+
+                case "MoveIt_ConvertToPOBtn":
+                    if (!MoveItTool.HidePO && MoveItTool.PO.Enabled && MIT.ToolState == MoveItTool.ToolStates.Default)
+                    {
+                        if (MoveItTool.PO.Active == false)
+                        {
+                            MoveItTool.PO.Active = true;
+                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                            MoveItTool.PO.ToolEnabled();
+                            UIFilters.POToggled();
+                        }
+
+                        ConvertToPOAction convertAction = new ConvertToPOAction();
+                        ActionQueue.instance.Push(convertAction);
+                        ActionQueue.instance.Do();
+                    }
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MoveItTool.instance.DeactivateTool();
                     break;
 
                 default:
-                    Debug.Log($"Invalid Align Tools call ({c.name})");
+                    Debug.Log($"Invalid Tool call ({c.name})");
                     break;
             }
             //Debug.Log($"{c.name} clicked, mode is {MIT.AlignMode} ({MIT.AlignToolPhase})");
@@ -114,17 +133,17 @@ namespace MoveIt
 
 
         // Updates the UI based on the current state
-        public static void UpdateAlignTools()
+        public static void UpdateMoreTools()
         {
-            if (AlignToolsBtn == null)
+            if (MoreToolsBtn == null)
             { // Button isn't created yet
                 return;
             }
 
-            AlignToolsBtn.normalFgSprite = "AlignTools";
-            AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlope";
+            MoreToolsBtn.normalFgSprite = "MoreTools";
+            MoreButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlope";
 
-            foreach (UIButton btn in AlignButtons.Values)
+            foreach (UIButton btn in MoreButtons.Values)
             {
                 btn.normalBgSprite = "OptionBase";
             }
@@ -132,69 +151,68 @@ namespace MoveIt
             switch (MIT.AlignMode)
             {
                 case MoveItTool.AlignModes.Height:
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
-                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignHeight";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    MoreButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.TerrainHeight:
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignHeight";
-                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignHeight";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    MoreButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.Slope:
-                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["MoveIt_AlignSlopeBtn"].normalBgSprite = "OptionBaseFocused";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    MoreButtons["MoveIt_AlignSlopeBtn"].normalBgSprite = "OptionBaseFocused";
 
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlope";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlope";
 
                     switch (MoveItTool.instance.AlignToolPhase)
                     {
                         case 1:
-                            AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeA";
-                            if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlopeA";
+                            MoreButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeA";
+                            if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeA";
                             break;
 
                         case 2:
-                            AlignButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeB";
-                            if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignSlopeB";
+                            MoreButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeB";
+                            if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeB";
                             break;
                     }
                     break;
 
                 case MoveItTool.AlignModes.Inplace:
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignIndividual";
-                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["MoveIt_AlignIndividualBtn"].normalBgSprite = "OptionBaseFocused";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignIndividual";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    MoreButtons["MoveIt_AlignIndividualBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.Group:
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignGroup";
-                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["MoveIt_AlignGroupBtn"].normalBgSprite = "OptionBaseFocused";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroup";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    MoreButtons["MoveIt_AlignGroupBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.AlignModes.Mirror:
-                    if (!AlignToolsPanel.isVisible) AlignToolsBtn.normalFgSprite = "AlignGroup";
-                    AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    AlignButtons["MoveIt_AlignMirrorBtn"].normalBgSprite = "OptionBaseFocused";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroup";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    MoreButtons["MoveIt_AlignMirrorBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 // TerrainHeight and Random modes are instant, their buttons aren't relevant
 
                 default:
-                    if (AlignToolsPanel.isVisible)
+                    if (MoreToolsPanel.isVisible)
                     {
-                        AlignToolsBtn.normalBgSprite = "OptionBaseFocused";
+                        MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
                     }
                     else
                     {
-                        AlignToolsBtn.normalBgSprite = "OptionBase";
+                        MoreToolsBtn.normalBgSprite = "OptionBase";
                     }
                     break;
             }
         }
-
     }
 }

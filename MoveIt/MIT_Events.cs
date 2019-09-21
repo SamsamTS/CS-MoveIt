@@ -248,7 +248,7 @@ namespace MoveIt
                         m_nextAction = ToolAction.Do;
                     }
 
-                    UIAlignTools.UpdateAlignTools();
+                    UIMoreTools.UpdateMoreTools();
                 }
                 if (AlignMode == AlignModes.Mirror)
                 {
@@ -276,7 +276,7 @@ namespace MoveIt
                         //m_nextAction = ToolAction.Do;
                     }
 
-                    UIAlignTools.UpdateAlignTools();
+                    UIMoreTools.UpdateMoreTools();
                 }
                 else if (AlignMode == AlignModes.Inplace || AlignMode == AlignModes.Group)
                 {
@@ -327,7 +327,7 @@ namespace MoveIt
                     ActionQueue.instance.Push(action);
                     m_nextAction = ToolAction.Do;
 
-                    DeactivateAlignTool(false);
+                    DeactivateTool(false);
                 }
                 else if (AlignMode == AlignModes.Slope)
                 {
@@ -341,7 +341,7 @@ namespace MoveIt
                             action = new AlignSlopeAction();
                             action.PointA = m_hoverInstance;
                             ActionQueue.instance.Push(action);
-                            UIAlignTools.UpdateAlignTools();
+                            UIMoreTools.UpdateMoreTools();
                             break;
 
                         case 2: // Point B selected, fire action
@@ -350,7 +350,7 @@ namespace MoveIt
                             action.PointB = m_hoverInstance;
                             action.followTerrain = followTerrain;
                             m_nextAction = ToolAction.Do;
-                            DeactivateAlignTool();
+                            DeactivateTool();
                             break;
                     }
                 }
@@ -414,7 +414,7 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Aligning)
             {
-                DeactivateAlignTool();
+                DeactivateTool();
             }
             else if (ToolState == ToolStates.Picking)
             {

@@ -351,7 +351,7 @@ namespace MoveIt
                 }
                 m_prevTool = null;
 
-                UIAlignTools.UpdateAlignTools();
+                UIMoreTools.UpdateMoreTools();
                 UIToolOptionPanel.RefreshCloneButton();
             }
         }
@@ -735,7 +735,7 @@ namespace MoveIt
                 AlignToolPhase = 1;
             }
 
-            UIAlignTools.UpdateAlignTools();
+            UIMoreTools.UpdateMoreTools();
         }
 
         public void StopAligning()
@@ -746,10 +746,10 @@ namespace MoveIt
             {
                 ToolState = ToolStates.Default;
             }
-            UIAlignTools.UpdateAlignTools();
+            UIMoreTools.UpdateMoreTools();
         }
 
-        public bool DeactivateAlignTool(bool switchMode = true)
+        public bool DeactivateTool(bool switchMode = true)
         {
             //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
             if (switchMode)
@@ -759,7 +759,7 @@ namespace MoveIt
                 AlignToolPhase = 0;
             }
 
-            UIAlignTools.UpdateAlignTools();
+            UIMoreTools.UpdateMoreTools();
             Action.UpdateArea(Action.GetTotalBounds(false));
             return false;
         }

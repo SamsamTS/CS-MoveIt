@@ -106,8 +106,8 @@ namespace MoveIt
                             UIFilters.POToggled();
                         }
 
-                        ConvertToPOAction ca = new ConvertToPOAction();
-                        ActionQueue.instance.Push(ca);
+                        ConvertToPOAction convertAction = new ConvertToPOAction();
+                        ActionQueue.instance.Push(convertAction);
                         ActionQueue.instance.Do();
                     }
                 }
@@ -137,8 +137,8 @@ namespace MoveIt
                     asa.IsQuick = true;
                     ActionQueue.instance.Push(asa);
                     ActionQueue.instance.Do();
-                    if (autoCloseAlignTools) UIAlignTools.AlignToolsPanel.isVisible = false;
-                    DeactivateAlignTool();
+                    if (autoCloseAlignTools) UIMoreTools.MoreToolsPanel.isVisible = false;
+                    DeactivateTool();
                 }
                 else if (OptionsKeymapping.alignInplace.IsPressed(e))
                 {
@@ -161,7 +161,7 @@ namespace MoveIt
                     action.followTerrain = followTerrain;
                     ActionQueue.instance.Push(action);
                     ActionQueue.instance.Do();
-                    DeactivateAlignTool();
+                    DeactivateTool();
                 }
 
                 if (ToolState == ToolStates.Cloning)
