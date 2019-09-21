@@ -76,7 +76,7 @@ namespace MoveIt
                         {
                             NetNode node = netManager.m_nodes.m_buffer[nodeId];
 
-                            //if (node.m_building == 0)
+                            if (node.m_building == 0 || node.Info.m_class.m_layer == ItemClass.Layer.WaterPipes)
                             { // Exclude attached nodes with attached buildings (e.g. water buildings)
                                 for (int i = 0; i < 8; i++)
                                 {
@@ -129,6 +129,20 @@ namespace MoveIt
                                 {
                                     toDelete = false;
                                     break;
+                                }
+                            }
+                            if (toDelete)
+                            {
+                                if (node.Info.m_class.m_layer == ItemClass.Layer.WaterPipes)
+                                {
+                                    foreach (Building b in BuildingManager.instance.m_buildings.m_buffer)
+                                    {
+                                        if (b.m_netNode == id)
+                                        {
+                                            toDelete = false;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                             if (toDelete)
