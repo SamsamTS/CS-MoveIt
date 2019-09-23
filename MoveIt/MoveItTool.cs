@@ -94,8 +94,8 @@ namespace MoveIt
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
-        internal static Color m_POselectedColor = new Color32(220, 125, 235, 120);
-        internal static Color m_POdisabledColor = new Color32(130, 95, 140, 80);
+        internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
+        internal static Color m_POdisabledColor = new Color32(130, 95, 140, 70);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
@@ -660,26 +660,14 @@ namespace MoveIt
         public void UpdateAreas()
         {
             HashSet<Bounds> merged = MergeBounds(areasToUpdate);
-            //string msg = "";
 
             foreach (Bounds bounds in merged)
             {
-                //AddDebugBox(bounds);
-                try
-                {
-                    //msg += $"SimStep: {bounds}\n";
-
-                    Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    Singleton<RenderManager>.instance.UpdateGroups((int)ItemClass.Layer.WaterPipes);
-                }
-                catch (Exception e)
-                {
-                    Debug.Log($"{e}\n{bounds.min.x},{bounds.min.z} - {bounds.max.x},{bounds.max.z}");
-                }
+                Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                bounds.Expand(512f);
+                Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             }
-            //Debug.Log(msg);
 
             areasToUpdate.Clear();
         }

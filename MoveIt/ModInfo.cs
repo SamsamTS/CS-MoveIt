@@ -77,7 +77,7 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Auto-close Align Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox("Auto-close More Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)
@@ -85,7 +85,7 @@ namespace MoveIt
                         UIMoreTools.MoreToolsPanel.isVisible = false;
                     }
                 });
-                checkBox.tooltip = "Check this to close the Align Tools menu after choosing a tool.";
+                checkBox.tooltip = "Check this to close the More Tools menu after choosing a tool.";
 
                 group.AddSpace(10);
 
@@ -147,7 +147,8 @@ namespace MoveIt
 
                 UILabel debugLabel = panel.AddUIComponent<UILabel>();
                 debugLabel.name = "debugLabel";
-                debugLabel.text = "Shows information about the last highlighted object. Slightly decreases\nperformance, do not enable unless you have a specific reason.\n ";
+                debugLabel.text = "      Shows information about the last highlighted object. Slightly decreases\n" +
+                    "      performance, do not enable unless you have a specific reason.\n ";
 
                 group.AddSpace(5);
                 UILabel nsLabel = panel.AddUIComponent<UILabel>();
@@ -165,9 +166,8 @@ namespace MoveIt
 
                     UILabel poWarning = panel.AddUIComponent<UILabel>();
                     poWarning.name = "poWarning";
-                    poWarning.text = "      Please note, you can not redo Convert-to-PO actions or undo Bulldoze \n" +
-                        "      actions. This means if you delete PO objects with Move It, they are \n" +
-                        "      immediately PERMANENTLY gone.\n ";
+                    poWarning.text = "      Please note: you can not undo Bulldozed PO. This means if you delete \n" +
+                        "      PO objects with Move It, they are immediately PERMANENTLY gone.\n ";
 
                     checkBox = (UICheckBox)group.AddCheckbox("Hide the PO deletion warning", !MoveItTool.POShowDeleteWarning.value, (b) =>
                     {
