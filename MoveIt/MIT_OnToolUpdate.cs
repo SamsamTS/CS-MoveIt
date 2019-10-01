@@ -169,9 +169,9 @@ namespace MoveIt
                                         newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
                                     }
                                     newAngle += m_startAngle;
+                                    action.autoCurve = false;
                                 }
-
-                                if (snapping)
+                                else if (snapping)
                                 {
                                     newMove = GetSnapDelta(newMove, newAngle, action.center, out action.autoCurve);
 
