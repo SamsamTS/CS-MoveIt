@@ -132,9 +132,11 @@ namespace MoveIt
                         StopCloning();
                     }
 
-                    AlignSlopeAction asa = new AlignSlopeAction();
-                    asa.followTerrain = followTerrain;
-                    asa.IsQuick = true;
+                    AlignSlopeAction asa = new AlignSlopeAction
+                    {
+                        followTerrain = followTerrain,
+                        IsQuick = true
+                    };
                     ActionQueue.instance.Push(asa);
                     ActionQueue.instance.Do();
                     if (autoCloseAlignTools) UIMoreTools.MoreToolsPanel.isVisible = false;

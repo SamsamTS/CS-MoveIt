@@ -530,7 +530,7 @@ namespace MoveIt
             UIMoreTools.MoreToolsPanel = m_moreToolsPanel;
             m_moreToolsPanel.autoLayout = false;
             m_moreToolsPanel.clipChildren = true;
-            m_moreToolsPanel.size = new Vector2(36, 282 + (MoveItTool.PO.Enabled ? 40 : 0));
+            m_moreToolsPanel.size = new Vector2(36, 322 + (!MoveItTool.HidePO && MoveItTool.PO.Enabled ? 40 : 0));
             m_moreToolsPanel.isVisible = false;
             m_moreToolsPanel.absolutePosition = m_moreTools.absolutePosition + new Vector3(0, 10 - m_moreToolsPanel.height);
             m_moreTools.zOrder = m_moreToolsPanel.zOrder + 10;
@@ -550,13 +550,13 @@ namespace MoveIt
 
             UIMoreTools.MoreButtons.Clear();
 
-            if (MoveItTool.PO.Enabled)
+            if (!MoveItTool.HidePO && MoveItTool.PO.Enabled)
             {
                 UIMoreTools.MoreButtons.Add("MoveIt_ConvertToPOBtn", atpContainer.AddUIComponent<UIButton>());
                 UIButton convertToPO = UIMoreTools.MoreButtons["MoveIt_ConvertToPOBtn"];
                 convertToPO.name = "MoveIt_ConvertToPOBtn";
                 convertToPO.atlas = GetIconsAtlas();
-                convertToPO.tooltip = "Convert To PO - tries to convert all selected\nbuildings and props into Procedural\nObjects.";
+                convertToPO.tooltip = "Convert To PO - tries to convert all selected\nbuildings and props into Procedural Objects.";
                 convertToPO.playAudioEvents = true;
                 convertToPO.size = new Vector2(36, 36);
                 convertToPO.normalBgSprite = "OptionBase";
@@ -567,11 +567,25 @@ namespace MoveIt
                 convertToPO.eventClicked += UIMoreTools.MoreToolsClicked;
             }
 
+            UIMoreTools.MoreButtons.Add("MoveIt_ResetObjectBtn", atpContainer.AddUIComponent<UIButton>());
+            UIButton resetObject = UIMoreTools.MoreButtons["MoveIt_ResetObjectBtn"];
+            resetObject.name = "MoveIt_ResetObjectBtn";
+            resetObject.atlas = GetIconsAtlas();
+            resetObject.tooltip = "Reset - Rebuild selected objects, repairing them and changing size/color variations.";
+            resetObject.playAudioEvents = true;
+            resetObject.size = new Vector2(36, 36);
+            resetObject.normalBgSprite = "OptionBase";
+            resetObject.hoveredBgSprite = "OptionBaseHovered";
+            resetObject.pressedBgSprite = "OptionBasePressed";
+            resetObject.disabledBgSprite = "OptionBaseDisabled";
+            resetObject.normalFgSprite = "ResetObject";
+            resetObject.eventClicked += UIMoreTools.MoreToolsClicked;
+
             UIMoreTools.MoreButtons.Add("MoveIt_AlignMirrorBtn", atpContainer.AddUIComponent<UIButton>());
             UIButton alignMirror = UIMoreTools.MoreButtons["MoveIt_AlignMirrorBtn"];
             alignMirror.name = "MoveIt_AlignMirrorBtn";
             alignMirror.atlas = GetIconsAtlas();
-            alignMirror.tooltip = "Align Mirror - Click on a network segment to\nset the mirror axis to create a mirrored\ncopy of selection";
+            alignMirror.tooltip = "Align Mirror - Click on a network segment to set the\nmirror axis to create a mirrored copy of selection";
             alignMirror.playAudioEvents = true;
             alignMirror.size = new Vector2(36, 36);
             alignMirror.normalBgSprite = "OptionBase";
@@ -913,6 +927,7 @@ namespace MoveIt
                 "Copy",
                 "Bulldoze",
                 "Group",
+                "ResetObject",
                 "Save",
                 "Save_disabled",
                 "Load",

@@ -124,6 +124,10 @@ namespace MoveIt
                     MoveItTool.instance.DeactivateTool();
                     break;
 
+                case "MoveIt_ResetObjectBtn":
+                    MoveItTool.instance.StartReset();
+                    break;
+
                 default:
                     Debug.Log($"Invalid Tool call ({c.name})");
                     break;
