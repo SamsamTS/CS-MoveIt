@@ -78,25 +78,22 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.activatePO.IsPressed(e))
                 {
-                    if (!HidePO)
+                    if (PO.Active == false)
                     {
-                        if (PO.Active == false)
-                        {
-                            PO.Active = true;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                            PO.ToolEnabled();
-                        }
-                        else
-                        {
-                            PO.Active = false;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
-                        }
-                        UIFilters.POToggled();
+                        PO.Active = true;
+                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                        PO.ToolEnabled();
                     }
+                    else
+                    {
+                        PO.Active = false;
+                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
+                    }
+                    UIFilters.POToggled();
                 }
                 else if (OptionsKeymapping.convertToPO.IsPressed(e))
                 {
-                    if (!HidePO && PO.Enabled && ToolState == ToolStates.Default)
+                    if (PO.Enabled && ToolState == ToolStates.Default)
                     {
                         if (PO.Active == false)
                         {

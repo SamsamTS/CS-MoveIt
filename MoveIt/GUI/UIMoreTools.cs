@@ -106,7 +106,7 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_ConvertToPOBtn":
-                    if (!MoveItTool.HidePO && MoveItTool.PO.Enabled && MIT.ToolState == MoveItTool.ToolStates.Default)
+                    if (MoveItTool.PO.Enabled && MIT.ToolState == MoveItTool.ToolStates.Default)
                     {
                         if (MoveItTool.PO.Active == false)
                         {

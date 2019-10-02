@@ -542,7 +542,7 @@ namespace MoveIt
             UIMoreTools.MoreToolsPanel = m_moreToolsPanel;
             m_moreToolsPanel.autoLayout = false;
             m_moreToolsPanel.clipChildren = true;
-            m_moreToolsPanel.size = new Vector2(36, 322 + (!MoveItTool.HidePO && MoveItTool.PO.Enabled ? 40 : 0));
+            m_moreToolsPanel.size = new Vector2(36, 322 + (MoveItTool.PO.Enabled ? 40 : 0));
             m_moreToolsPanel.isVisible = false;
             m_moreToolsPanel.absolutePosition = m_moreTools.absolutePosition + new Vector3(0, 10 - m_moreToolsPanel.height);
             m_moreTools.zOrder = m_moreToolsPanel.zOrder + 10;
@@ -562,7 +562,7 @@ namespace MoveIt
 
             UIMoreTools.MoreButtons.Clear();
 
-            if (!MoveItTool.HidePO && MoveItTool.PO.Enabled)
+            if (MoveItTool.PO.Enabled)
             {
                 UIMoreTools.MoreButtons.Add("MoveIt_ConvertToPOBtn", atpContainer.AddUIComponent<UIButton>());
                 UIButton convertToPO = UIMoreTools.MoreButtons["MoveIt_ConvertToPOBtn"];
@@ -771,7 +771,7 @@ namespace MoveIt
             };
 
 
-            if (!MoveItTool.HidePO && MoveItTool.PO.Enabled)
+            if (MoveItTool.PO.Enabled)
             {
                 PO_button = m_viewOptions.AddUIComponent<UIMultiStateButton>();
                 PO_button.atlas = GetIconsAtlas();
@@ -822,15 +822,8 @@ namespace MoveIt
                     UIFilters.POToggled();
                 };
 
-                if (!MoveItTool.HidePO)
-                {
-                    m_viewOptions.height += 36;
-                    m_viewOptions.absolutePosition += new Vector3(0, -36);
-                }
-                else
-                {
-                    PO_button.isVisible = false;
-                }
+                m_viewOptions.height += 36;
+                m_viewOptions.absolutePosition += new Vector3(0, -36);
             }
 
             #endregion

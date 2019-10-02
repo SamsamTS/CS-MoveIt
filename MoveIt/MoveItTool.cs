@@ -92,14 +92,13 @@ namespace MoveIt
         internal static Color m_removeColor = new Color32(255, 160, 47, 191);
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
-        internal static Color m_POhoverColor = new Color32(240, 140, 255, 240);
+        internal static Color m_POhoverColor = new Color32(240, 140, 255, 230);
         internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
         internal static Color m_POdisabledColor = new Color32(130, 95, 140, 70);
 
         public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
         public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
-        internal static bool HidePO = false;
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
         internal static uint _POProcessing = 0;
@@ -301,7 +300,7 @@ namespace MoveIt
                 tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
             }
 
-            if (!HidePO && PO.Active)
+            if (PO.Active)
             {
                 PO.ToolEnabled();
                 ActionQueue.instance.Push(new TransformAction());
@@ -365,7 +364,7 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
             {
                 // Reset all PO
-                if (!HidePO && PO.Active && POHighlightUnselected)
+                if (PO.Active && POHighlightUnselected)
                 {
                     foreach (IPO_Object obj in PO.Objects)
                     {
@@ -436,7 +435,7 @@ namespace MoveIt
                 }
 
                 // Highlight unselected PO
-                if (!HidePO && PO.Active && POHighlightUnselected)
+                if (PO.Active && POHighlightUnselected)
                 {
                     foreach (IPO_Object obj in PO.Objects)
                     {

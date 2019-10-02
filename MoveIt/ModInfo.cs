@@ -155,51 +155,48 @@ namespace MoveIt
                 nsLabel.name = "nsLabel";
                 nsLabel.text = NS_Manager.getVersionText();
 
-                if (!MoveItTool.HidePO)
+                group = helper.AddGroup("Procedural Objects");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+
+                UILabel poLabel = panel.AddUIComponent<UILabel>();
+                poLabel.name = "poLabel";
+                poLabel.text = PO_Manager.getVersionText();
+
+                UILabel poWarning = panel.AddUIComponent<UILabel>();
+                poWarning.name = "poWarning";
+                poWarning.text = "      Please note: you can not undo Bulldozed PO. This means if you delete \n" +
+                    "      PO objects with Move It, they are immediately PERMANENTLY gone.\n ";
+
+                checkBox = (UICheckBox)group.AddCheckbox("Hide the PO deletion warning", !MoveItTool.POShowDeleteWarning.value, (b) =>
                 {
-                    group = helper.AddGroup("Procedural Objects");
-                    panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                    MoveItTool.POShowDeleteWarning.value = !b;
+                });
 
-                    UILabel poLabel = panel.AddUIComponent<UILabel>();
-                    poLabel.name = "poLabel";
-                    poLabel.text = PO_Manager.getVersionText();
+                //checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
+                //{
+                //    MoveItTool.POOnlySelectedAreVisible.value = b;
+                //    if (MoveItTool.PO != null)
+                //    {
+                //        MoveItTool.PO.ToolEnabled();
+                //    }
+                //});
+                //checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
 
-                    UILabel poWarning = panel.AddUIComponent<UILabel>();
-                    poWarning.name = "poWarning";
-                    poWarning.text = "      Please note: you can not undo Bulldozed PO. This means if you delete \n" +
-                        "      PO objects with Move It, they are immediately PERMANENTLY gone.\n ";
-
-                    checkBox = (UICheckBox)group.AddCheckbox("Hide the PO deletion warning", !MoveItTool.POShowDeleteWarning.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
+                {
+                    MoveItTool.POHighlightUnselected.value = b;
+                    if (MoveItTool.PO != null)
                     {
-                        MoveItTool.POShowDeleteWarning.value = !b;
-                    });
+                        MoveItTool.PO.ToolEnabled();
+                    }
+                });
+                checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
 
-                    //checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
-                    //{
-                    //    MoveItTool.POOnlySelectedAreVisible.value = b;
-                    //    if (MoveItTool.PO != null)
-                    //    {
-                    //        MoveItTool.PO.ToolEnabled();
-                    //    }
-                    //});
-                    //checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
+                group.AddSpace(15);
 
-                    checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
-                    {
-                        MoveItTool.POHighlightUnselected.value = b;
-                        if (MoveItTool.PO != null)
-                        {
-                            MoveItTool.PO.ToolEnabled();
-                        }
-                    });
-                    checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
+                panel.gameObject.AddComponent<OptionsKeymappingPO>();
 
-                    group.AddSpace(15);
-
-                    panel.gameObject.AddComponent<OptionsKeymappingPO>();
-
-                    group.AddSpace(15);
-                }
+                group.AddSpace(15);
             }
             catch (Exception e)
             {
