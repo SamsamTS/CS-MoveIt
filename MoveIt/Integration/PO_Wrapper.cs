@@ -14,14 +14,11 @@ namespace MoveIt
         private static GameObject gameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
-        //private HashSet<uint> selectedIds = new HashSet<uint>();
         internal Dictionary<uint, IPO_Object> visibleObjects = new Dictionary<uint, IPO_Object>();
 
         internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
         internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
 
-        //internal const string VersionName = "1.6-b3";
-        //internal static readonly string[] VersionNames = { "1.5.5", "1.6-b3", "1.6-b4" };
         internal static readonly string[] VersionNames = { "1.6" };
 
         internal bool Enabled = false;
@@ -77,6 +74,7 @@ namespace MoveIt
             Logic.Clone(originalId, position, angle, action);
         }
 
+        /// <returns>Bool - whether any PO changed since MIT was disabled</returns>
         internal bool ToolEnabled()
         {
             Dictionary<uint, IPO_Object> newVisible = new Dictionary<uint, IPO_Object>();
@@ -93,7 +91,6 @@ namespace MoveIt
             HashSet<uint> added = new HashSet<uint>(newIds);
             added.ExceptWith(visibleIds);
 
-            // HashSet<uint> newSelectedIds = new HashSet<uint>();
             List<Instance> toRemove = new List<Instance>();
             foreach (Instance instance in Action.selection)
             {
@@ -103,10 +100,6 @@ namespace MoveIt
                     if (removed.Contains(id))
                     {
                         toRemove.Add(instance);
-                    }
-                    else
-                    {
-                        //newSelectedIds.Add(id);
                     }
                 }
             }
@@ -120,49 +113,12 @@ namespace MoveIt
 
             visibleObjects = newVisible;
             visibleIds = newIds;
-            //selectedIds = newSelectedIds;
 
-            // Has anything changed?
             if (added.Count > 0 || removed.Count > 0)
                 return true;
 
             return false;
         }
-
-        //internal void SelectionAdd(HashSet<Instance> instances)
-        //{
-        //    foreach (Instance i in instances)
-        //    {
-        //        SelectionAdd(i);
-        //    }
-        //}
-
-        //internal void SelectionAdd(Instance instance)
-        //{
-        //    if (instance.id.NetLane <= 0) return;
-
-        //    selectedIds.Add(instance.id.NetLane);
-        //}
-
-        //internal void SelectionRemove(HashSet<Instance> instances)
-        //{
-        //    foreach (Instance i in instances)
-        //    {
-        //        SelectionRemove(i);
-        //    }
-        //}
-
-        //internal void SelectionRemove(Instance instance)
-        //{
-        //    if (instance.id.NetLane <= 0) return;
-
-        //    selectedIds.Remove(instance.id.NetLane);
-        //}
-
-        //internal void SelectionClear()
-        //{
-        //    selectedIds.Clear();
-        //}
 
         internal void Delete(IPO_Object obj)
         {
@@ -180,10 +136,7 @@ namespace MoveIt
             {
                 return false;
             }
-            //if (getVersion() != VersionName)
-            //{
-            //    return false;
-            //}
+
             return true;
         }
 

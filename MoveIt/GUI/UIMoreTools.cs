@@ -102,7 +102,7 @@ namespace MoveIt
                     ActionQueue.instance.Push(ara);
                     ActionQueue.instance.Do();
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
-                    MoveItTool.instance.DeactivateTool();
+                    MIT.DeactivateTool();
                     break;
 
                 case "MoveIt_ConvertToPOBtn":
@@ -121,11 +121,13 @@ namespace MoveIt
                         ActionQueue.instance.Do();
                     }
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
-                    MoveItTool.instance.DeactivateTool();
+                    MIT.DeactivateTool();
                     break;
 
                 case "MoveIt_ResetObjectBtn":
                     MoveItTool.instance.StartReset();
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MIT.DeactivateTool();
                     break;
 
                 default:

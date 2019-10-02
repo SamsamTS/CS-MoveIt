@@ -37,7 +37,6 @@ namespace MoveIt
             }
 
             MoveItTool.stepOver = new StepOver();
-            MoveItTool.m_debugPanel = new DebugPanel();
 
             DebugGameObject = new GameObject("MIT_DebugPanel");
             DebugGameObject.AddComponent<DebugPanel>();

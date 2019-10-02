@@ -408,6 +408,10 @@ namespace MoveIt
                 bool newChecked = false;
                 foreach (UICheckBox cb in m_filtersPanel.GetComponentsInChildren<UICheckBox>())
                 {
+                    if (cb.name == "Picker")
+                    {
+                        continue;
+                    }
                     if (!cb.isChecked)
                     {
                         newChecked = true;
@@ -417,8 +421,16 @@ namespace MoveIt
 
                 foreach (UICheckBox cb in m_filtersPanel.GetComponentsInChildren<UICheckBox>())
                 {
-                    cb.isChecked = newChecked;
-                    Filters.SetAnyFilter(cb.name, newChecked);
+                    if (cb.name == "Picker")
+                    {
+                        cb.isChecked = false;
+                        Filters.SetAnyFilter(cb.name, false);
+                    }
+                    else
+                    {
+                        cb.isChecked = newChecked;
+                        Filters.SetAnyFilter(cb.name, newChecked);
+                    }
                 }
 
                 UIFilters.RefreshFilters();

@@ -6,6 +6,7 @@ Water Works - pipes and water buildings can be moved and delete-undo'ed more rel
 Props in Asset Editor can be raised and lowered, and height is restored after importing props in editor
 More invisible markers can be moved
 Terrain is updated more frequently, to avoid occasional visual corruption
+Concrete brushes by vilgard92 and clipping brushes by 네인 | neinnew are filtered as surfaces
 ModTools integration removed, as ModTools 3 includes that functionality (thanks bloodypenguin)
 
 

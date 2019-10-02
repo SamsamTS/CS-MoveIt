@@ -13,7 +13,6 @@ namespace MoveIt
             "ploppablecliffgrass",
             "ploppableasphalt-prop"
         };
-
         static readonly string[] SurfaceExtraBuildingNames = new string[]
         {
             "1136492728.R69 Docks", "999653286.Ploppable"
@@ -33,7 +32,9 @@ namespace MoveIt
             "416106438.", "416108293.", "416110102.", "416917279.", "416924830.", "416924830.", // Gravel
             "418188094.", "416107568.", "422323255.", "416109334.", "416111243.", "416917700.", "416925008.", // Ruined
             "418188427.", "418188861.", "418415108.", // Tiled
-            "418187791.", "418188652.", "418414886." // Marble
+            "418187791.", "418188652.", "418414886.", // Marble
+            "1471531686", // vilgard92's Concrete Brushes
+            "1762784478." // Clipping
         };
         static readonly string[] PillarClassNames = new string[]
         {
@@ -366,11 +367,11 @@ namespace MoveIt
         public List<Type> aiTypes;
         public List<string> excludeClasses;
 
-        public NetworkFilter(bool e, List<Type> a = null, List<string> ex = null)
+        public NetworkFilter(bool e, List<Type> ai = null, List<string> exclude = null)
         {
             enabled = e;
-            aiTypes = a;
-            excludeClasses = ex;
+            aiTypes = ai;
+            excludeClasses = exclude;
         }
 
         public static void SetNetworkFilter(string name, bool e)

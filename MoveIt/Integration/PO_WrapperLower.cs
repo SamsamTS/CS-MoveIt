@@ -2,7 +2,6 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Reflection;
 
 // Low level PO wrapper, only accessed by high level
@@ -52,10 +51,6 @@ namespace MoveIt
                 List<IPO_Object> objects = new List<IPO_Object>();
 
                 var objectList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
-                if (MoveItTool.POOnlySelectedAreVisible)
-                {
-                    objectList = tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic);
-                }
 
                 int count = (int)objectList.GetType().GetProperty("Count").GetValue(objectList, null);
                 for (int i = 0; i < count; i++)
