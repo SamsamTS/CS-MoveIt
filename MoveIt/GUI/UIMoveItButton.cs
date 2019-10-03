@@ -10,14 +10,14 @@ namespace MoveIt
         public static readonly SavedInt savedX = new SavedInt("savedX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt savedY = new SavedInt("savedY", MoveItTool.settingsFileName, -1000, true);
 
-        private UITipsWindow m_tipsWindow;
+        private UIChangesWindow m_changesWindow;
 
         public override void Start()
         {
             LoadResources();
 
-            m_tipsWindow = GetUIView().AddUIComponent(typeof(UITipsWindow)) as UITipsWindow;
-            m_tipsWindow.isVisible = false;
+            m_changesWindow = GetUIView().AddUIComponent(typeof(UIChangesWindow)) as UIChangesWindow;
+            m_changesWindow.isVisible = false;
 
             UIComponent bulldoserButton = GetUIView().FindUIComponent<UIComponent>("MarqueeBulldozer");
 

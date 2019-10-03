@@ -1,6 +1,7 @@
 New in 2.6.0
 ------------
 Reset Objects - Deletes and rebuilds the select object(s). This cycles the color or size variations and repairs all damage such as burnt down, flooded. Accessible by the More Tools menu (formerly called Align Tools) or by keyboard shortcut (default: Control+Shift+V)
+Procedural Objects integration - PO can be manipulated similar to how props can be, except you can not undo deletion. Convert props and buildings with the More Tools button (or keyboard, default: Shift+V). Note - PO integration can hurt performance, so disable PO with the new PO button when not needed.
 Network Skins 2 integration - cloned networks (roads/tracks/etc) keep their NS2 settings. Also applies to exported/imported networks.
 Water Works - pipes and water buildings can be moved and delete-undo'ed more reliably
 Props in Asset Editor can be raised and lowered, and height is restored after importing props in editor
@@ -8,7 +9,7 @@ More invisible markers can be moved
 Terrain is updated more frequently, to avoid occasional visual corruption
 Concrete brushes by vilgard92 and clipping brushes by 네인 | neinnew are filtered as surfaces
 ModTools integration removed, as ModTools 3 includes that functionality (thanks bloodypenguin)
-
+Tips removed, replaced with "New features" window
 
 
 

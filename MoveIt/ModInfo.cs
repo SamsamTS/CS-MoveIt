@@ -65,19 +65,7 @@ namespace MoveIt
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Hide tips", MoveItTool.hideTips.value, (b) =>
-                {
-                    MoveItTool.hideTips.value = b;
-                    if (UITipsWindow.instance != null)
-                    {
-                        UITipsWindow.instance.isVisible = false;
-                    }
-                });
-                checkBox.tooltip = "Check this if you don't want to see the tips.";
-
-                group.AddSpace(10);
-
-                checkBox = (UICheckBox)group.AddCheckbox("Auto-close More Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close More Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)

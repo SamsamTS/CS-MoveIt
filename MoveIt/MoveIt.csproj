@@ -94,7 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GUI\ResourceLoader.cs" />
     <Compile Include="GUI\UIMoveItButton.cs" />
-    <Compile Include="GUI\UITipsWindow.cs" />
+    <Compile Include="GUI\UIChangesWindow.cs" />
     <Compile Include="GUI\UIToolOptionPanel.cs" />
     <Compile Include="GUI\UIUtils.cs" />
     <Compile Include="StepOver.cs" />

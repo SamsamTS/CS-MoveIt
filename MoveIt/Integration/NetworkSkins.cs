@@ -12,7 +12,7 @@ namespace MoveIt
     internal class NS_Manager
     {
         internal bool Enabled = false;
-        internal static readonly string[] VersionNames = { "2.0" };
+        //internal static readonly string[] VersionNames = { "2" };
         internal readonly Type tNS, tNSM, tNSModifier, tListSkins, tListMods, tDictMods;
         internal readonly object NSM;
         internal readonly Assembly Assembly;
@@ -47,7 +47,6 @@ namespace MoveIt
                 tDictMods = typeof(Dictionary<,>).MakeGenericType(new Type[] { typeof(NetInfo), tListMods });
 
                 NSM = tNSM.GetProperty("instance", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
-
             }
             else
             {
@@ -96,28 +95,6 @@ namespace MoveIt
             return SegmentSkinsArray[id];
         }
 
-        //public object GetNodeStateSkin(ushort id)
-        //{
-        //    if (!Enabled) return null;
-
-        //    object skin = _GetNodeSkin(id);
-        //    if (skin == null)
-        //    {
-        //        return null;
-        //    }
-        //    //Debug.Log($"Modifiers:{tNS.GetProperty("Modifiers", BindingFlags.Public | BindingFlags.Instance).GetValue(skin, null)}");
-
-        //    return tNS.GetField("_modifiers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(skin);
-        //}
-
-        //private object _GetNodeSkin(ushort id)
-        //{
-        //    if (!Enabled) return null;
-
-        //    object[] NodeSkinsArray = (object[])tNSM.GetField("NodeSkins").GetValue(NSM);
-        //    return NodeSkinsArray[id];
-        //}
-
         internal static bool isModInstalled()
         {
             //string msg = "";
@@ -130,8 +107,7 @@ namespace MoveIt
 
             if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
                     mod.publishedFileID.AsUInt64 == 1758376843uL ||
-                    mod.name.Contains("NetworkSkins") ||
-                    mod.name.Contains("Network Skins") ||
+                    mod.name.Contains("NetworkSkins2") ||
                     mod.name.Contains("1758376843")
             ) && mod.isEnabled))
             {
@@ -145,54 +121,46 @@ namespace MoveIt
         {
             if (isModInstalled())
             {
-                if (VersionNames.Contains(getVersion()))
-                {
-                    return $"Network Skins version {getVersion()} found, integration enabled!\n ";
-                }
-                else
-                {
-                    return $"NS integration failed - found version {getVersion()} (required: 2.0)\n ";
-                }
+                return "Network Skins 2 found, integration enabled!\n ";
             }
 
-            return "Network Skins is not available.\n ";
+            return "Network Skins 2 not found, integration disabled.\n ";
         }
 
-        public static string getVersion()
-        {
-            try
-            {
-                Assembly nsAssembly = null;
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
+        //public static string getVersion()
+        //{
+        //    try
+        //    {
+        //        Assembly nsAssembly = null;
+        //        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        //        {
 
-                    if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "NetworkSkins")
-                    {
-                        nsAssembly = assembly;
-                        break;
-                    }
-                }
+        //            if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "NetworkSkins")
+        //            {
+        //                nsAssembly = assembly;
+        //                break;
+        //            }
+        //        }
 
-                if (nsAssembly == null)
-                {
-                    return "(Failed [NS-F1])";
-                }
+        //        if (nsAssembly == null)
+        //        {
+        //            return "(Failed [NS-F1])";
+        //        }
 
-                if (!isModInstalled())
-                {
-                    return "(Failed [NS-F2])";
-                }
+        //        if (!isModInstalled())
+        //        {
+        //            return "(Failed [NS-F2])";
+        //        }
 
-                return "2.0";
-            }
-            catch (Exception e)
-            {
-                Debug.Log($"NS INTERATION FAILED\n" + e);
-            }
+        //        return "2";
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.Log($"NS INTERATION FAILED\n" + e);
+        //    }
 
-            return "(Failed [NS-F3])";
-        }
-
+        //    return "(Failed [NS-F3])";
+        //}
 
         public string EncodeModifiers(object obj)
         {

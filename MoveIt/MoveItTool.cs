@@ -50,7 +50,7 @@ namespace MoveIt
         public const int UI_Filter_CB_Height = 25;
 
         public static MoveItTool instance;
-        public static SavedBool hideTips = new SavedBool("hideTips", settingsFileName, false, true); 
+        public static SavedBool hideChangesWindow = new SavedBool("hideChanges260", settingsFileName, false, true); 
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
@@ -277,9 +277,9 @@ namespace MoveIt
                 UIToolOptionPanel.instance.isVisible = true;
             }
 
-            if (!hideTips && UITipsWindow.instance != null)
+            if (!hideChangesWindow && UIChangesWindow.instance != null)
             {
-                UITipsWindow.instance.isVisible = true;
+                UIChangesWindow.instance.isVisible = true;
             }
 
             m_pauseMenu = UIView.library.Get("PauseMenu");
@@ -330,9 +330,9 @@ namespace MoveIt
                 AlignMode = AlignModes.Off;
                 AlignToolPhase = 0;
 
-                if (UITipsWindow.instance != null)
+                if (UIChangesWindow.instance != null)
                 {
-                    UITipsWindow.instance.isVisible = false;
+                    UIChangesWindow.instance.isVisible = false;
                 }
 
                 if (UIToolOptionPanel.instance != null)
