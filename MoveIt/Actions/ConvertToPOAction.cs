@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ColossalFramework.UI;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace MoveIt
         {
             foreach (Instance instance in selection)
             {
-                if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
+                //if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
                 {
                     m_states.Add(instance.GetState());
                 }
@@ -24,9 +25,25 @@ namespace MoveIt
 
         public override void Do()
         {
-            if (!firstRun) return; // TODO this disables Redo
+            if (m_states.Count < 20)
+            {
+                DoImplementation();
+                return;
+            }
+
+            ConfirmPanel panel = UIView.library.ShowModal<ConfirmPanel>("ConfirmPanel", delegate (UIComponent comp, int value)
+            {
+                if (value == 1)
+                    DoImplementation();
+            });
+            panel.SetMessage("Converting to PO", "Converting many objects to Procedural Objects at once can take along time. The game will appear to have frozen, but it will eventually complete. Continue?");
+        }
+
+        public void DoImplementation()
+        {
+            if (!firstRun) return; // Disables Redo
             m_clones.Clear();
-            m_oldSelection = new HashSet<Instance>(selection);
+            m_oldSelection = new HashSet<Instance>();
 
             foreach (InstanceState instanceState in m_states)
             {
@@ -34,8 +51,14 @@ namespace MoveIt
 
                 lock (instance.data)
                 {
-                    if (!((instance is MoveableBuilding || instance is MoveableProp) || !instance.isValid))
+                    if (!instance.isValid)
                     {
+                        continue;
+                    }
+
+                    if (!(instance is MoveableBuilding || instance is MoveableProp))
+                    {
+                        m_oldSelection.Add(instance);
                         continue;
                     }
 
@@ -78,8 +101,12 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                Instance clone = state.instance.Clone(state, null);
-                toReplace.Add(state.instance, clone);
+                if (state.instance is MoveableBuilding || state.instance is MoveableProp)
+                {
+                    Instance clone = state.instance.Clone(state, null);
+                    toReplace.Add(state.instance, clone);
+                    m_oldSelection.Add(clone);
+                }
             }
 
             ReplaceInstances(toReplace);
@@ -95,7 +122,7 @@ namespace MoveIt
             {
                 if (toReplace.ContainsKey(state.instance))
                 {
-                    DebugUtils.Log("ConvertToPO Replacing: " + state.instance.id.RawData + " -> " + toReplace[state.instance].id.RawData);
+                    DebugUtils.Log($"ConvertToPO Replacing: {state.instance} ({state.instance.id.RawData}) -> {toReplace[state.instance]} ({toReplace[state.instance].id.RawData})");
                     state.ReplaceInstance(toReplace[state.instance]);
                 }
             }
@@ -104,7 +131,7 @@ namespace MoveIt
             {
                 if (m_oldSelection.Remove(instance))
                 {
-                    DebugUtils.Log("ConvertToPO Replacing: " + instance.id.RawData + " -> " + toReplace[instance].id.RawData);
+                    DebugUtils.Log($"ConvertToPO Replacing: {instance} ({instance.id.RawData} -> {toReplace[instance]} ({toReplace[instance].id.RawData})");
                     m_oldSelection.Add(toReplace[instance]);
                 }
             }

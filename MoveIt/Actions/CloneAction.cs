@@ -387,16 +387,16 @@ namespace MoveIt
             return newStates;
         }
 
-        public IEnumerable<Instance> cloneInstances
-        {
-            get
-            {
-                foreach (InstanceState state in m_states)
-                {
-                    yield return state.instance;
-                }
-            }
-        }
+        //public IEnumerable<Instance> cloneInstances
+        //{
+        //    get
+        //    {
+        //        foreach (InstanceState state in m_states)
+        //        {
+        //            yield return state.instance;
+        //        }
+        //    }
+        //}
 
         public int Count
         {
