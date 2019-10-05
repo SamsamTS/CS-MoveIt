@@ -134,8 +134,14 @@ namespace MoveIt
 
             poList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poList, new object[] { obj.GetProceduralObject() });
             poSelList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poSelList, new object[] { obj.GetProceduralObject() });
+            if (tPOLogic.GetField("activeIds", flags) != null)
+            {
+                var activeIds = tPOLogic.GetField("activeIds", flags).GetValue(POLogic);
+                activeIds.GetType().GetMethod("Remove", flags, null, new Type[] { typeof(int) }, null).Invoke(activeIds, new object[] { obj.ProcId });
+            }
         }
 
+        /// <param name="id">The NetLane id</param>
         internal IPO_Object GetPOById(uint id)
         {
             foreach (IPO_Object po in Objects)
@@ -193,14 +199,7 @@ namespace MoveIt
                     {
                         tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
                         var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
-                        if (tPOLogic.GetField("tempVerticesBuffer") != null)
-                        { // 1.6
-                            tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
-                        }
-                        else
-                        { // 1.5
-                            tPOLogic.GetField("temp_storageVertex").SetValue(POLogic, v);
-                        }
+                        tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
                     }
                 }
                 else if (instance is MoveableBuilding mb)
@@ -230,14 +229,7 @@ namespace MoveIt
                     {
                         tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
                         var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
-                        if (tPOLogic.GetField("tempVerticesBuffer") != null)
-                        { // 1.6
-                            tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
-                        }
-                        else
-                        { // 1.5
-                            tPOLogic.GetField("temp_storageVertex").SetValue(POLogic, v);
-                        }
+                        tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
                     }
                 }
 
@@ -290,7 +282,7 @@ namespace MoveIt
 
         public uint Id { get; set; } // The InstanceID.NetLane value
         public bool Selected { get; set; }
-        private int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
+        public int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
         internal Type tPOLogic = null, tPOMod = null, tPO = null;
 

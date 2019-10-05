@@ -540,6 +540,7 @@ namespace MoveIt
 
             m_moreToolsPanel = AddUIComponent<UIPanel>();
             UIMoreTools.MoreToolsPanel = m_moreToolsPanel;
+            m_moreToolsPanel.name = "mtPanel";
             m_moreToolsPanel.autoLayout = false;
             m_moreToolsPanel.clipChildren = true;
             m_moreToolsPanel.size = new Vector2(36, 322 + (MoveItTool.PO.Enabled ? 40 : 0));
@@ -547,24 +548,28 @@ namespace MoveIt
             m_moreToolsPanel.absolutePosition = m_moreTools.absolutePosition + new Vector3(0, 10 - m_moreToolsPanel.height);
             m_moreTools.zOrder = m_moreToolsPanel.zOrder + 10;
 
-            UIPanel atpBackground = m_moreToolsPanel.AddUIComponent<UIPanel>();
-            atpBackground.size = new Vector2(26, 236);
-            atpBackground.clipChildren = true;
-            atpBackground.relativePosition = new Vector3(5, 10);
-            atpBackground.atlas = UIUtils.GetAtlas("Ingame");
-            atpBackground.backgroundSprite = "InfoPanelBack";
+            // The vertical shade
+            UIPanel mtpBackground = m_moreToolsPanel.AddUIComponent<UIPanel>();
+            mtpBackground.name = "mtpBackground";
+            mtpBackground.clipChildren = true;
+            mtpBackground.relativePosition = new Vector3(5, 10);
+            mtpBackground.atlas = UIUtils.GetAtlas("Ingame");
+            mtpBackground.backgroundSprite = "InfoPanelBack";
+            mtpBackground.size = m_moreToolsPanel.size - new Vector2(10, 10);
 
-            UIPanel atpContainer = m_moreToolsPanel.AddUIComponent<UIPanel>();
-            atpContainer.autoLayoutDirection = LayoutDirection.Vertical;
-            atpContainer.autoLayoutPadding = new RectOffset(0, 0, 0, 3);
-            atpContainer.autoLayout = true;
-            atpContainer.relativePosition = Vector3.zero;
+            UIPanel mtpContainer = m_moreToolsPanel.AddUIComponent<UIPanel>();
+            mtpContainer.name = "mtpContainer";
+            mtpContainer.autoLayoutDirection = LayoutDirection.Vertical;
+            mtpContainer.autoLayoutPadding = new RectOffset(0, 0, 0, 3);
+            mtpContainer.autoLayout = true;
+            mtpContainer.relativePosition = Vector3.zero;
+            mtpContainer.size = m_moreToolsPanel.size;
 
             UIMoreTools.MoreButtons.Clear();
 
             if (MoveItTool.PO.Enabled)
             {
-                UIMoreTools.MoreButtons.Add("MoveIt_ConvertToPOBtn", atpContainer.AddUIComponent<UIButton>());
+                UIMoreTools.MoreButtons.Add("MoveIt_ConvertToPOBtn", mtpContainer.AddUIComponent<UIButton>());
                 UIButton convertToPO = UIMoreTools.MoreButtons["MoveIt_ConvertToPOBtn"];
                 convertToPO.name = "MoveIt_ConvertToPOBtn";
                 convertToPO.atlas = GetIconsAtlas();
@@ -579,7 +584,7 @@ namespace MoveIt
                 convertToPO.eventClicked += UIMoreTools.MoreToolsClicked;
             }
 
-            UIMoreTools.MoreButtons.Add("MoveIt_ResetObjectBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_ResetObjectBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton resetObject = UIMoreTools.MoreButtons["MoveIt_ResetObjectBtn"];
             resetObject.name = "MoveIt_ResetObjectBtn";
             resetObject.atlas = GetIconsAtlas();
@@ -593,7 +598,7 @@ namespace MoveIt
             resetObject.normalFgSprite = "ResetObject";
             resetObject.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignMirrorBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignMirrorBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignMirror = UIMoreTools.MoreButtons["MoveIt_AlignMirrorBtn"];
             alignMirror.name = "MoveIt_AlignMirrorBtn";
             alignMirror.atlas = GetIconsAtlas();
@@ -607,7 +612,7 @@ namespace MoveIt
             alignMirror.normalFgSprite = "AlignMirror";
             alignMirror.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignRandomBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignRandomBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignRandom = UIMoreTools.MoreButtons["MoveIt_AlignRandomBtn"];
             alignRandom.name = "MoveIt_AlignRandomBtn";
             alignRandom.atlas = GetIconsAtlas();
@@ -621,7 +626,7 @@ namespace MoveIt
             alignRandom.normalFgSprite = "AlignRandom";
             alignRandom.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignGroupBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignGroupBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignGroup = UIMoreTools.MoreButtons["MoveIt_AlignGroupBtn"];
             alignGroup.name = "MoveIt_AlignGroupBtn";
             alignGroup.atlas = GetIconsAtlas();
@@ -635,7 +640,7 @@ namespace MoveIt
             alignGroup.normalFgSprite = "AlignGroup";
             alignGroup.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignIndividualBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignIndividualBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignIndividual = UIMoreTools.MoreButtons["MoveIt_AlignIndividualBtn"];
             alignIndividual.name = "MoveIt_AlignIndividualBtn";
             alignIndividual.atlas = GetIconsAtlas();
@@ -649,7 +654,7 @@ namespace MoveIt
             alignIndividual.normalFgSprite = "AlignIndividual";
             alignIndividual.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignSlopeBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignSlopeBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignSlope = UIMoreTools.MoreButtons["MoveIt_AlignSlopeBtn"];
             alignSlope.name = "MoveIt_AlignSlopeBtn";
             alignSlope.atlas = GetIconsAtlas();
@@ -663,7 +668,7 @@ namespace MoveIt
             alignSlope.normalFgSprite = "AlignSlope";
             alignSlope.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignTerrainHeightBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignTerrainHeightBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignTerrainHeight = UIMoreTools.MoreButtons["MoveIt_AlignTerrainHeightBtn"];
             alignTerrainHeight.name = "MoveIt_AlignTerrainHeightBtn";
             alignTerrainHeight.atlas = GetIconsAtlas();
@@ -677,7 +682,7 @@ namespace MoveIt
             alignTerrainHeight.normalFgSprite = "AlignTerrainHeight";
             alignTerrainHeight.eventClicked += UIMoreTools.MoreToolsClicked;
 
-            UIMoreTools.MoreButtons.Add("MoveIt_AlignHeightBtn", atpContainer.AddUIComponent<UIButton>());
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignHeightBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignHeight = UIMoreTools.MoreButtons["MoveIt_AlignHeightBtn"];
             alignHeight.name = "MoveIt_AlignHeightBtn";
             alignHeight.atlas = GetIconsAtlas();

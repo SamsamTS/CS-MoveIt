@@ -244,6 +244,7 @@ namespace MoveIt
         /// The InstanceID.NetLane value
         /// </summary>
         uint Id { get; set; }
+        int ProcId { get; set; }
         Vector3 Position { get; set; }
         float Angle { get; set; }
         IInfo Info { get; set; }
@@ -258,6 +259,7 @@ namespace MoveIt
     internal class PO_ObjectDisabled : IPO_Object
     {
         public uint Id { get; set; } // The InstanceID.NetLane value
+        public int ProcId { get; set; } // The PO's id value
 
         public Vector3 Position
         {

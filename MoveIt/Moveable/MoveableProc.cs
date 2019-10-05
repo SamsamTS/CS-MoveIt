@@ -30,11 +30,13 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
-            ProcState state = new ProcState();
-            state.instance = this;
-            state.Info = Info;
-            state.position = m_procObj.Position;
-            state.angle = m_procObj.Angle;
+            ProcState state = new ProcState
+            {
+                instance = this,
+                Info = Info,
+                position = m_procObj.Position,
+                angle = m_procObj.Angle
+            };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
             return state;
