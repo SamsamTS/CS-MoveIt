@@ -34,19 +34,21 @@ namespace MoveIt
                     }
                 }
 
-                if (Assembly == null)
-                {
-                    throw new Exception("Assembly not found (Failed [NS-F1])");
-                }
+                if (Assembly == null) throw new Exception("Assembly not found (Failed [NS-F1])");
 
                 tNS = Assembly.GetType("NetworkSkins.Skins.NetworkSkin");
+                if (tNS == null) throw new Exception("Type NetworkSkins not found (Failed [NS-F2])");
                 tNSM = Assembly.GetType("NetworkSkins.Skins.NetworkSkinManager");
+                if (tNSM == null) throw new Exception("Type NetworkSkinManager not found (Failed [NS-F3])");
                 tNSModifier = Assembly.GetType("NetworkSkins.Skins.NetworkSkinModifier");
+                if (tNSModifier == null) throw new Exception("Type NetworkSkinModifier not found (Failed [NS-F4])");
+
                 tListSkins = typeof(List<>).MakeGenericType(new Type[] { tNS });
                 tListMods = typeof(List<>).MakeGenericType(new Type[] { tNSModifier });
                 tDictMods = typeof(Dictionary<,>).MakeGenericType(new Type[] { typeof(NetInfo), tListMods });
 
                 NSM = tNSM.GetProperty("instance", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
+                if (NSM == null) throw new Exception("Object NetworkSkinManager not found (Failed [NS-F5])");
             }
             else
             {
@@ -112,6 +114,15 @@ namespace MoveIt
                 return false;
             }
 
+            if (PluginManager.instance.GetPluginsInfo().Any(mod => 
+                    mod.publishedFileID.AsUInt64 == 543722850uL ||
+                    (mod.name.Contains("NetworkSkins") && !mod.name.Contains("NetworkSkins2")) ||
+                    mod.name.Contains("543722850")
+            ))
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -122,7 +133,7 @@ namespace MoveIt
                 return "Network Skins 2 found, integration enabled!\n ";
             }
 
-            return "Network Skins 2 not found, integration disabled.\n ";
+            return "Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.\n ";
         }
 
         public string EncodeModifiers(object obj)
