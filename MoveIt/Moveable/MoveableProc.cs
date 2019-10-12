@@ -97,15 +97,13 @@ namespace MoveIt
             }
 
             float a = state.angle + deltaAngleRad;
-            //Debug.Log($"{state.angle} + {deltaAngleRad} = {a} ({a % (Mathf.PI * 2)})");
+
             Move(newPosition, a % (Mathf.PI * 2));
         }
 
         // angleRad is absolute angle, CCW
         public override void Move(Vector3 location, float angleRad)
         {
-            //Debug.Log($"{id.NetLane}\n{m_procObj.Position} => {location}\nRadians {m_procObj.Angle} => {angleRad} ({angleRad - m_procObj.Angle})\n" +
-            //    $"Degrees {m_procObj.Angle * Mathf.Rad2Deg} => {angleRad * Mathf.Rad2Deg} ({(angleRad - m_procObj.Angle) * Mathf.Rad2Deg})\n");
             m_procObj.Position = location;
             m_procObj.Angle = angleRad;
         }
@@ -130,21 +128,6 @@ namespace MoveIt
 
             MoveItTool.PO.Clone(m_procObj.Id, newPosition, state.angle + deltaAngle, action);
             return null;
-
-            //IPO_Object clone = MoveItTool.PO.Clone(m_procObj.Id);
-            //Debug.Log($"Cloning {instanceState.instance.id.NetLane} ({m_procObj.Id}) to #{clone.Id}");
-
-            //InstanceID cloneID = default;
-            //cloneID.NetLane = clone.Id;
-
-            //MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
-            //MoveableProc cloneInstance = new MoveableProc(cloneID)
-            //{
-            //    position = newPosition,
-            //    angle = state.angle + deltaAngle
-            //};
-
-            //return cloneInstance;
         }
 
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)

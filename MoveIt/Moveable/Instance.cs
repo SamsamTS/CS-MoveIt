@@ -55,8 +55,6 @@ namespace MoveIt
             {
                 m_loadedName = value;
 
-                //Debug.Log($"Info:{Info}, m_loadedName:{m_loadedName}, type:{instance.id.Type}");
-
                 switch (instance.id.Type)
                 {
                     case InstanceType.Building:
@@ -86,7 +84,6 @@ namespace MoveIt
 
         public virtual void ReplaceInstance(Instance newInstance)
         {
-            //Debug.Log($"ReplaceInstance\n{instance.id.Prop}:{instance.Info.Name} <{instance.GetType()}>\n{newInstance.id.Prop}:{newInstance.Info.Name} <{newInstance.GetType()}>\n{Info.Name} <{Info.Prefab.GetType()}>");
             instance = newInstance;
 
             if (newInstance.id.Type != instance.id.Type)

@@ -186,8 +186,6 @@ namespace MoveIt
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
 
             Move(newPosition, 0);
-
-            //Debug.Log($"Position\nWas:{oldPos.x},{oldPos.z}\nNow:{newPosition.x},{newPosition.z}\nCenter:{center}");
         }
 
         public override void Move(Vector3 location, float angle)
@@ -200,9 +198,6 @@ namespace MoveIt
 
             segmentBuffer[segment].m_startDirection = location - nodeBuffer[startNode].m_position;
             segmentBuffer[segment].m_endDirection = location - nodeBuffer[endNode].m_position;
-
-            //Debug.Log($"Location:{location}\nNodes: {nodeBuffer[startNode].m_position} - {nodeBuffer[endNode].m_position}\n" +
-            //    $"{segmentBuffer[segment].m_startDirection}, {segmentBuffer[segment].m_endDirection}");
 
             CalculateSegmentDirections(ref segmentBuffer[segment], segment);
 

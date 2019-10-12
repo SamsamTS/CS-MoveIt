@@ -263,17 +263,12 @@ namespace MoveIt
                         Vector3 startPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
                         Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
 
-                        //Debug.Log($"Vector:{endPos.x - startPos.x},{endPos.z - startPos.z} Start:{startPos.x},{startPos.z} End:{endPos.x},{endPos.z}\n" +
-                        //    $"Angle:{Mathf.Atan2(endPos.z - startPos.z, endPos.x - startPos.x)}");
-
                         action.mirrorPivot = ((endPos - startPos) / 2) + startPos;
                         action.mirrorAngle = -Mathf.Atan2(endPos.x - startPos.x, endPos.z - startPos.z);
                         action.followTerrain = followTerrain;
 
                         ActionQueue.instance.Push(action);
                         ActionQueue.instance.Do();
-
-                        //m_nextAction = ToolAction.Do;
                     }
 
                     UIMoreTools.UpdateMoreTools();
@@ -301,12 +296,10 @@ namespace MoveIt
                         Vector3 startPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
                         Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
 
-                        //Debug.Log($"Vector:{endPos.x - startPos.x},{endPos.z - startPos.z} Start:{startPos.x},{startPos.z} End:{endPos.x},{endPos.z}");
                         angle = (float)Math.Atan2(endPos.z - startPos.z, endPos.x - startPos.x);
                     }
                     else
                     {
-                        //Debug.Log($"Wrong hover asset type <{___m_hoverInstance.GetType()}>");
                         return;
                     }
 

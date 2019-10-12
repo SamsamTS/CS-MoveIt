@@ -134,7 +134,6 @@ namespace MoveIt
                     Debug.Log($"Invalid Tool call ({c.name})");
                     break;
             }
-            //Debug.Log($"{c.name} clicked, mode is {MIT.AlignMode} ({MIT.AlignToolPhase})");
         }
 
 

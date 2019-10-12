@@ -58,7 +58,6 @@ namespace MoveIt
             }
             angleDelta = 0 - firstValidAngle + newAngle;
             PoR = bounds.center;
-            //Debug.Log($"{GetType()}\nAll delta:{angleDelta}, All PoR:{PoR}, bounds Size:{bounds.size}\n0 - {firstValidAngle} + {newAngle} = {angleDelta}");
 
             foreach (InstanceState state in m_states)
             {
@@ -81,13 +80,11 @@ namespace MoveIt
                         {
                             angleDelta = 0 - mb.angle + newAngle;
                             PoR = state.position;
-                            //Debug.Log($"B:Each ({Mod.mode},{GetType()} - delta:{angleDelta}, PoR:{PoR}");
                         }
                         else if (this is AlignRandomAction)
                         {
                             angleDelta = 0 - mb.angle + (float)(random.NextDouble() * Math.PI * 2);
                             PoR = state.position;
-                            //Debug.Log($"B:Random ({Mod.mode},{GetType()}) - delta:{angleDelta}, PoR:{PoR}");
                         }
 
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -99,7 +96,6 @@ namespace MoveIt
 
                         if (prefab.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
                         {
-                            //Debug.Log("PARKING (ATA.Do)");
                             buildingManager.UpdateParkingSpaces(id, ref building);
                         }
 

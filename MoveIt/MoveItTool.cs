@@ -111,7 +111,6 @@ namespace MoveIt
                     _POProcessing++;
                 else
                     _POProcessing--;
-                //Debug.Log($"POProcessing {_POProcessing} Setting:{value}");
             }
         }
 
@@ -515,7 +514,6 @@ namespace MoveIt
                     color = m_removeColor;
                 }
 
-                //UnityEngine.Debug.Log($"a:{m_selection.a} c:{m_selection.c}");
                 if (m_selection.a != m_selection.c)
                 {
                     RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, -1f, 1280f, false, true);
@@ -737,7 +735,6 @@ namespace MoveIt
 
         public bool DeactivateTool(bool switchMode = true)
         {
-            //Debug.Log($"DEACTIVATE (sM:{switchMode}) (phase was {m_alignToolPhase})");
             if (switchMode)
             {
                 AlignMode = AlignModes.Off;
@@ -924,13 +921,6 @@ namespace MoveIt
 
                     }
 
-                    //string msg = "";
-                    //foreach (InstanceState state in selectionState.states)
-                    //{
-                    //    msg += $"\n{InstanceIDDebug(state.instance.id)}: {state.prefabName}";
-                    //}
-                    //Debug.Log($"{msg}");
-
                     CloneAction action = new CloneAction(selectionState.states, selectionState.center);
 
                     if (action.Count > 0)
@@ -1099,7 +1089,6 @@ namespace MoveIt
                 if (!hasSegments)
                 {
                     count++;
-                    //Debug.Log($"#{nodeId}: {node.Info.GetAI()} {node.m_position}\n{node.Info.m_class} ({node.Info.m_class.m_service}.{node.Info.m_class.m_subService})");
                     Singleton<NetManager>.instance.ReleaseNode(nodeId);
                 }
             }

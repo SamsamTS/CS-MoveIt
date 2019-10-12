@@ -440,8 +440,6 @@ namespace MoveIt
                 ignoreSegments = true;
             }
 
-            //Debug.Log($"AAA X {this}\n{bounds}\nPosition:{position}");
-
             if (!ignoreSegments)
             {
                 for (int i = 0; i < 8; i++)
@@ -475,7 +473,6 @@ namespace MoveIt
 
             if (AbsCenter == bounds.extents || bounds.center == Vector3.zero)
             {
-                //Debug.Log($"AAA bounds:{node.m_position}\n{bounds}");
                 node.m_bounds = new Bounds(node.m_position, new Vector3(16f, 0f, 16f));
             }
 

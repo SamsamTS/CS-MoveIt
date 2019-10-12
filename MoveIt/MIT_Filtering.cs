@@ -76,18 +76,15 @@ namespace MoveIt
             {
                 if (PO.Active && selectProc)
                 {
-                    //string msg = "";
                     foreach (IPO_Object obj in PO.Objects)
                     {
                         if (stepOver.isValidPO(obj.Id))
                         {
-                            //msg += $"{obj.Id},";
                             bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
                             bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
                             if (inXBounds && inZBounds)
                             {
                                 float t = obj.GetDistance(location);
-                                //Debug.Log($"Object {obj.Id}: {t}m");
                                 if (t < smallestDist)
                                 {
                                     id.NetLane = obj.Id;
@@ -96,7 +93,6 @@ namespace MoveIt
                             }
                         }
                     }
-                    //Debug.Log(msg);
                 }
 
                 int gridMinX = Mathf.Max((int)((location.x - 16f) / 64f + 135f) - 1, 0);
@@ -141,7 +137,6 @@ namespace MoveIt
                             {
                                 if (stepOver.isValidP(prop) && Filters.Filter(propBuffer[prop].Info))
                                 {
-                                    //Debug.Log($"Prop:{prop}");
                                     if (propBuffer[prop].RayCast(prop, ray, out float t, out float targetSqr) && t < smallestDist)
                                     {
                                         id.Prop = prop;
@@ -166,7 +161,6 @@ namespace MoveIt
                             {
                                 if (stepOver.isValidN(node) && IsNodeValid(ref nodeBuffer[node], itemLayers) && RayCastNode(ref nodeBuffer[node], ray, -1000f, out float t, out float priority) && t < smallestDist)
                                 {
-                                    //Debug.Log($"Node:{node}");
                                     ushort building = 0;
                                     if (!Event.current.alt)
                                     {
@@ -209,7 +203,6 @@ namespace MoveIt
                                 if (stepOver.isValidS(segment) && IsSegmentValid(ref segmentBuffer[segment], itemLayers) &&
                                             segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                                 {
-                                    //Debug.Log($"Segment:{segment}");
                                     ushort building = 0;
                                     if (!Event.current.alt)
                                     {
@@ -303,7 +296,6 @@ namespace MoveIt
             }
             while (repeatSearch);
 
-            //Debug.Log($"Id={InstanceIDDebug(id)}");
             if (m_debugPanel != null) m_debugPanel.UpdatePanel(id);
 
             m_hoverInstance = id;
@@ -367,17 +359,14 @@ namespace MoveIt
 
                 if (PO.Active && filterProcs)
                 {
-                    //string msg = "";
                     foreach (IPO_Object obj in PO.Objects)
                     {
                         if (PointInRectangle(m_selection, obj.Position))
                         {
-                            //msg += $"{obj.Id},";
                             id.NetLane = obj.Id;
                             list.Add(id);
                         }
                     }
-                    //Debug.Log(msg);
                 }
 
                 for (int i = gridMinZ; i <= gridMaxZ; i++)
@@ -390,7 +379,6 @@ namespace MoveIt
                             int count = 0;
                             while (building != 0u)
                             {
-                                //Debug.Log($"Building:{building}");
                                 if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && PointInRectangle(m_selection, buildingBuffer[building].m_position))
                                 {
                                     if (Filters.Filter(buildingBuffer[building].Info))
@@ -416,7 +404,6 @@ namespace MoveIt
                             int count = 0;
                             while (prop != 0u)
                             {
-                                //Debug.Log($"Prop:{prop}");
                                 if (Filters.Filter(propBuffer[prop].Info))
                                 {
                                     if (PointInRectangle(m_selection, propBuffer[prop].Position))
@@ -441,7 +428,6 @@ namespace MoveIt
                             int count = 0;
                             while (node != 0u)
                             {
-                                //Debug.Log($"Node:{node}");
                                 if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
                                 {
                                     ushort building = NetNode.FindOwnerBuilding(node, 363f);
@@ -459,7 +445,6 @@ namespace MoveIt
                                     {
                                         if (Filters.Filter(nodeBuffer[node]))
                                         {
-                                            //Debug.Log($"Node:{node}");
                                             id.NetNode = node;
                                             list.Add(id);
                                         }
@@ -480,7 +465,6 @@ namespace MoveIt
                             int count = 0;
                             while (segment != 0u)
                             {
-                                //Debug.Log($"Segment:{segment}");
                                 if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
                                 {
                                     ushort building = FindOwnerBuilding(segment, 363f);
@@ -529,7 +513,6 @@ namespace MoveIt
                             int count = 0;
                             while (tree != 0)
                             {
-                                //Debug.Log($"Tree:{tree}");
                                 if (PointInRectangle(m_selection, treeBuffer[tree].Position))
                                 {
                                     if (Filters.Filter(treeBuffer[tree].Info))
@@ -672,7 +655,6 @@ namespace MoveIt
 
         private bool IsSegmentValid(ref NetSegment segment, ItemClass.Layer itemLayers)
         {
-            //Debug.Log($"S:{segment.Info.name} - {segment.m_flags}\n{segment.m_startNode},{segment.m_endNode}");
             if ((segment.m_flags & NetSegment.Flags.Created) == NetSegment.Flags.Created)
             {
                 return (segment.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;

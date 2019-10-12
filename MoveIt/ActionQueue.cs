@@ -17,7 +17,6 @@ namespace MoveIt
             foreach (Action action in _getPreviousAction())
             {
                 if (action == null) continue;
-                //Debug.Log($"{action.GetType()}");
                 action.UpdateNodeIdInSegmentState(oldId, newId);
             }
         }
@@ -31,12 +30,10 @@ namespace MoveIt
             {
                 if (i < 0)
                 {
-                    //Debug.Log($"{i} ({i + m_actions.Length}) (current:{m_current}, tail:{tail})");
                     yield return m_actions[i + m_actions.Length];
                 }
                 else
                 {
-                    //Debug.Log($"{i} (current:{m_current}, tail:{tail})");
                     yield return m_actions[i];
                 }
             }
@@ -58,7 +55,6 @@ namespace MoveIt
 
         public bool Redo()
         {
-            //Debug.Log($"Current:{m_current}, t-h {m_tail}-{m_head}");
             if (m_current == m_head)
             {
                 return false;
@@ -74,7 +70,6 @@ namespace MoveIt
 
         public bool Undo()
         {
-            //Debug.Log($"Current:{m_current}, t-h {m_tail}-{m_head}");
             if (m_current == m_tail)
             {
                 return false;

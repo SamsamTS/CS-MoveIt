@@ -98,15 +98,6 @@ namespace MoveIt
             }
             MousePosition = Input.mousePosition;
             buffer.Add(id);
-
-            //Debug.Log($"Adding ({id.Building},{id.Prop},{id.Tree},{id.NetNode},{id.NetSegment})");
-            //string msg = $"Id:{id.Building},{id.Prop},{id.Tree},{id.NetNode},{id.NetSegment}, Buffer ({buffer.Count} elements):\n";
-            //foreach (InstanceID b in buffer)
-            //{
-            //    msg += $"{b.Building},{b.Prop},{b.Tree},{b.NetNode},{b.NetSegment}\n";
-            //}
-            //msg += $"Contains:{buffer.Contains(id)}";
-            //Debug.Log(msg);
         }
     }
 }

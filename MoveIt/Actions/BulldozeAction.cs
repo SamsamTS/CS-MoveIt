@@ -38,8 +38,6 @@ namespace MoveIt
 
             NetManager netManager = Singleton<NetManager>.instance;
 
-            //string msg = $"\nBasic Selection: {selection.Count}\n";
-
             // Add any segments whose node is selected
             foreach (Instance instance in selection)
             {
@@ -106,9 +104,6 @@ namespace MoveIt
                     }
                 }
             }
-            //Debug.Log(msg + $"AAA Initial Selection: {selection.Count}");
-
-            //msg = $"\nSelection With Extra Segments: {newSelection.Count} (Total Segments: {segments.Count})\n";
 
             // Add any nodes whose segments are all selected
             foreach (Instance instance in newSelection)
@@ -159,8 +154,6 @@ namespace MoveIt
                 }
             }
 
-            //Debug.Log(msg + $"Selection Without Extra Nodes: {newSelection.Count + extraNodes.Count} (Extra Nodes: {extraNodes.Count})");
-
             // Sort segments by buildIndex
             HashSet<Instance> sorted = new HashSet<Instance>();
             List<uint> indexes = new List<uint>();
@@ -194,19 +187,14 @@ namespace MoveIt
                 }
             }
 
-            //msg = $"Final States:\n";
             foreach (Instance instance in sorted)
             {
                 m_states.Add(instance.GetState());
-                //msg += $"{instance}\n";
             }
             foreach (Instance instance in extraNodes)
             {
                 m_states.Add(instance.GetState());
-                //msg += $"{instance}\n";
             }
-
-            //Debug.Log(msg + $"AAA Final Selection: {m_states.Count}");
         }
 
         public override void Do()
@@ -292,7 +280,6 @@ namespace MoveIt
                     toReplace.Add(state.instance, clone);
                     clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
                     ActionQueue.instance.UpdateNodeIdInStateHistory(state.instance.id.NetNode, clone.id.NetNode);
-                    //Debug.Log($"Cloned N:{state.instance.id.NetNode}->{clone.id.NetNode}");
                 }
             }
 
@@ -327,28 +314,23 @@ namespace MoveIt
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
                         buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
-                        //Debug.Log($"After [{cloneId}]: {buildingBuffer[cloneId].m_flags}");
                         Thread.Sleep(50);
                     }
 
                     if (cloneNodeId != 0)
                     {
                         int c = 0;
-                        //string msg2 = "Original attached nodes:";
                         foreach (InstanceState i in buildingState.subStates)
                         {
                             if (i is NodeState ns)
                             {
                                 InstanceID instanceID = default;
                                 instanceID.RawData = ns.id;
-                                //msg2 += $"\n{c} - Attached node #{instanceID.NetNode}: {ns.Info.Name}";
                                 origNodeIds.Insert(c++, instanceID.NetNode);
                             }
                         }
-                        //Debug.Log(msg2);
 
                         c = 0;
-                        //msg2 = "";
                         while (cloneNodeId != 0)
                         {
                             ushort origNodeId = origNodeIds[c];
@@ -367,7 +349,6 @@ namespace MoveIt
 
                             clonedNodes.Add(origNodeId, cloneNodeId);
 
-                            //msg2 += $"\n{c} - {origNodeId} -> {cloneNodeId} {clonedAttachedNode.Info.GetAI()}";
                             cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
 
                             if (++c > 32768)
@@ -376,17 +357,9 @@ namespace MoveIt
                                 break;
                             }
                         }
-                        //Debug.Log(msg2);
                     }
                 }
             }
-
-            //string msg = "Cloned Nodes:\n";
-            //foreach (KeyValuePair<ushort, ushort> kvp in clonedNodes)
-            //{
-            //    msg += $"{kvp.Key} => {kvp.Value}\n";
-            //}
-            //Debug.Log(msg);
 
             // Recreate segments
             foreach (InstanceState state in m_states)

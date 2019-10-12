@@ -97,158 +97,18 @@ namespace MoveIt
                 }
             }
 
-            //bool isAllNodes = true;
-            //foreach (Instance instance in selection)
-            //{
-            //    if(instance.isValid && instance.id.Type != InstanceType.NetNode && instance.id.Type != InstanceType.NetSegment)
-            //    {
-            //        isAllNodes = false;
-            //        break;
-            //    }
-            //}
+            angleDelta = 0 - (float)Math.Atan2(PointB.position.z - PointA.position.z, PointB.position.x - PointA.position.x);
+            heightDelta = PointB.position.y - PointA.position.y;
+            distance = (float)Math.Sqrt(Math.Pow(PointB.position.z - PointA.position.z, 2) + Math.Pow(PointB.position.x - PointA.position.x, 2));
 
-            //if (isAllNodes)
-            //{
-            //    List<ushort> unsortedNodes = new List<ushort>();
-            //    List<ushort> connectingSegments = new List<ushort>();
-            //    foreach(Instance instance in selection)
-            //    {
-            //        if (instance.id.Type != InstanceType.NetSegment)
-            //        {
-            //            unsortedNodes.Add(instance.id.NetNode);
-            //        }
-            //    }
-            //    if (unsortedNodes.Count < 3)
-            //    {
-            //        Debug.LogError("[Segment Slope Smoother] Not enough nodes to complete process. You probably won't see this error but it's best to put it here anyway, just in case.");
-            //        return;
-            //    }
-            //    List<List<ushort>> fragmentXZ = new List<List<ushort>>();
-            //    List<ushort> endpoints = new List<ushort>();
-            //    for (int i = 0; i < unsortedNodes.Count; i++)
-            //    {
-            //        NetNode node = nodeBuffer[unsortedNodes[i]];
-            //        List<ushort> connections = new List<ushort>();
-            //        connections.Add(unsortedNodes[i]);
-            //        for (int j = 0; j < unsortedNodes.Count; j++)
-            //        {
-            //            if (i == j) continue;
-
-            //            if (node.IsConnectedTo(unsortedNodes[j]))
-            //            {
-            //                connections.Add(unsortedNodes[j]);
-            //            }
-
-            //            if (connections.Count > 3)
-            //            { // the node itself, then both connections
-            //                Debug.LogError("[Segment Slope Smoother] Validation error: Too many connections! Each node should be only connected by segments to at most two other nodes.");
-            //                return;
-            //            }
-            //        }
-
-            //        if (connections.Count == 2)
-            //        { // the node itself, and one connection
-            //            endpoints.Add(unsortedNodes[i]);
-            //        }
-
-            //        if (connections.Count == 1)
-            //        {
-            //            Debug.LogError("[Segment Slope Smoother] Validation error: No connections! Each node needs at least one other segment connection.");
-            //            return;
-            //        }
-            //        fragmentXZ.Add(connections);
-            //    }
-
-
-            //    List<ushort> sortedNodes = new List<ushort>();
-            //    bool incomplete = true;
-            //    int index = -1;
-            //    for (int i = 0; i < fragmentXZ.Count; i++)
-            //    {
-            //        if (fragmentXZ[i].Count == 2)
-            //        {
-            //            index = fragmentXZ.FindIndex(e => e[0] == fragmentXZ[i][1]);
-            //            sortedNodes.Add(fragmentXZ[i][0]);
-            //            sortedNodes.Add(fragmentXZ[i][1]);
-            //            if (index == -1)
-            //            {
-            //                Debug.LogError("[Segment Slope Smoother] Sort error: Invalid path! Endpoint is connected to undefined node.");
-            //                return;
-            //            }
-            //            break;
-            //        }
-            //    }
-            //    while (incomplete)
-            //    {
-            //        for (int i = 0; i < fragmentXZ.Count; i++)
-            //        {
-            //            for (int j = 1; j <= 2; j++)
-            //            {
-            //                if ((fragmentXZ[i][0] == fragmentXZ[index][j] && !sortedNodes.Contains(fragmentXZ[index][j])))
-            //                {
-            //                    sortedNodes.Add(fragmentXZ[i][0]);
-            //                    if (fragmentXZ[i].Count == 2)
-            //                    {
-            //                        incomplete = false;
-            //                        break;
-            //                    }
-            //                    index = i;
-            //                }
-            //            }
-            //        }
-            //    }
-            //    for (var i = 0; i < sortedNodes.Count - 1; i++)
-            //    {
-            //        for (var j = 0; j < nodeBuffer[sortedNodes[i]].CountSegments(); j++)
-            //        {
-            //            ushort segmentID = nodeBuffer[sortedNodes[i]].GetSegment(j);
-            //            NetSegment testedSegment = segmentBuffer[segmentID];
-            //            if ((testedSegment.m_startNode == sortedNodes[i] || testedSegment.m_endNode == sortedNodes[i]) && (testedSegment.m_startNode == sortedNodes[i + 1] || testedSegment.m_endNode == sortedNodes[i + 1]))
-            //            {
-            //                connectingSegments.Add(segmentID);
-            //                break;
-            //            }
-            //        }
-            //    }
-            //    float totalLength = 0;
-            //    List<float> segmentLinearLengthsXZ = new List<float>();
-            //    for (int i = 0; i < connectingSegments.Count; i++)
-            //    {
-            //        NetSegment calcSegment = segmentBuffer[connectingSegments[i]];
-            //        float linearDistanceXZ = (float)Math.Sqrt(Math.Pow(calcSegment.m_averageLength, 2) - Math.Pow(nodeBuffer[calcSegment.m_startNode].m_position.y - nodeBuffer[calcSegment.m_endNode].m_position.y, 2));
-            //        totalLength += linearDistanceXZ;
-            //        segmentLinearLengthsXZ.Add(linearDistanceXZ);
-
-            //    }
-            //    float incrementLength = 0;
-            //    NetNode startNode = nodeBuffer[sortedNodes[0]];
-            //    NetNode endNode = nodeBuffer[sortedNodes[sortedNodes.Count - 1]];
-            //    for (int i = 0; i < sortedNodes.Count; i++)
-            //    {
-            //        float Nln = ((endNode.m_position.y - startNode.m_position.y) / totalLength) * incrementLength + startNode.m_position.y;
-            //        Singleton<NetManager>.instance.MoveNode(sortedNodes[i], new Vector3(nodeBuffer[sortedNodes[i]].m_position.x, Nln, nodeBuffer[sortedNodes[i]].m_position.z));
-            //        if (i != sortedNodes.Count - 1) incrementLength += segmentLinearLengthsXZ[i];
-            //    }
-            //}
-            //else
+            foreach (InstanceState state in m_states)
             {
-                angleDelta = 0 - (float)Math.Atan2(PointB.position.z - PointA.position.z, PointB.position.x - PointA.position.x);
-                heightDelta = PointB.position.y - PointA.position.y;
-                distance = (float)Math.Sqrt(Math.Pow(PointB.position.z - PointA.position.z, 2) + Math.Pow(PointB.position.x - PointA.position.x, 2));
+                float distanceOffset, heightOffset;
+                matrix.SetTRS(PointA.position, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
+                heightOffset = distanceOffset / distance * heightDelta;
 
-                //string msg = $"\nA:{PointA.position}, B:{PointB.position}\nAng:{angleDelta} ({angleDelta * Mathf.Rad2Deg}) - H:{heightDelta} - D:{distance}";
-                foreach (InstanceState state in m_states)
-                {
-                    float distanceOffset, heightOffset;
-                    matrix.SetTRS(PointA.position, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-                    distanceOffset = (matrix.MultiplyPoint(state.position - PointA.position) - PointA.position).x;
-                    heightOffset = distanceOffset / distance * heightDelta;
-
-                    state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 1000f));
-
-                    //msg += $"\nx-offset:{distanceOffset} h-offset:{heightOffset}";
-                }
-                //Debug.Log(msg);
+                state.instance.SetHeight(Mathf.Clamp(PointA.position.y + heightOffset, 0f, 1000f));
             }
         }
 

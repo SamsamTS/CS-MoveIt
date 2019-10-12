@@ -39,14 +39,10 @@ namespace MoveIt
         {
             get
             {
-                //string msg = $"{Info.Name}: ";
-
                 ushort building = buildingBuffer[id.Building].m_subBuilding;
                 int count = 0;
                 while (building != 0)
                 {
-                    //msg += $"B{building}, ";
-
                     InstanceID buildingID = default;
                     buildingID.Building = building;
 
@@ -64,8 +60,6 @@ namespace MoveIt
                 count = 0;
                 while (node != 0)
                 {
-                    //msg += $"N{node}, ";
-
                     ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                     if (layer != ItemClass.Layer.PublicTransport)
                     {
@@ -86,8 +80,6 @@ namespace MoveIt
                         break;
                     }
                 }
-
-                //Debug.Log($"{msg}");
             }
         }
 
@@ -295,8 +287,6 @@ namespace MoveIt
                     Vector3 subOffset = (subState.position - center) - (state.position - center);
                     Vector3 subPosition = position + matrixSub.MultiplyPoint(subOffset);
 
-                    //Debug.Log($"{center}\nsubState: {subState.position - center}\nState: {state.position - center}\nOffset: {subOffset}\nNew Offset: {matrixSub.MultiplyPoint(subOffset)}");
-
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
@@ -402,7 +392,6 @@ namespace MoveIt
 
         public void InitialiseDrag()
         {
-            //Debug.Log($"INITIALISE DRAG");
             Virtual = false;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
@@ -412,8 +401,6 @@ namespace MoveIt
 
         public void FinaliseDrag()
         {
-            //Debug.Log($"FINALISE DRAG");
-            //SetHiddenFlag(false);
             Virtual = false;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
@@ -436,7 +423,6 @@ namespace MoveIt
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             AddFixedHeightFlag(id.Building);
 
-            //Debug.Log($"SETHEIGHT {id.Building}:{Info.Name}");
             foreach (Instance subInstance in subInstances)
             {
                 Vector3 subPosition = subInstance.position;
@@ -638,7 +624,6 @@ namespace MoveIt
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
             Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
-            //Debug.Log($"AAA Y1 {depth} - {bounds}");
 
             if (depth < 1)
             { 
@@ -652,11 +637,9 @@ namespace MoveIt
                     {
                         bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
                     }
-                    //Debug.Log($"AAA Y2\nsubInstance:{subInstance}\n{bounds}\n{subInstance.position}");
                 }
             }
 
-            //Debug.Log($"AAA Y3 {depth} - {bounds}");
             return bounds;
         }
 

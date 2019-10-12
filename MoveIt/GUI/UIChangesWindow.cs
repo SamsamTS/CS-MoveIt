@@ -14,7 +14,6 @@ namespace MoveIt
             "- Network Skins 2 integration - networks keep their skin when copied or imported.\n\n" +
             "- Procedural Objects integration - PO can be manipulated similarly to props, and placed objects can be converted to PO with the powerful Convert Tool.\n\n" +
             "- Handling of pipes, water service buildings, invisible markers and, in the asset editor, props improved.\n\n" +
-            "- More - check the Workshop description for details.\n\n" +
             "Click anywhere on this box to close it.";
 
         public override void Start()

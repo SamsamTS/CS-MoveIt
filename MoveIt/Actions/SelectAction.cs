@@ -29,7 +29,6 @@ namespace MoveIt
         // Used by Prop Painter
         public void Add(Instance instance)
         {
-            Debug.Log($"Adding:{instance.id}");
             if (!selection.Contains(instance))
             {
                 m_newSelection.Add(instance);
@@ -44,16 +43,6 @@ namespace MoveIt
         public override void Do()
         {
             if (MoveItTool.POProcessing) return;
-
-            //string msg = $"Old selection:\n";
-            //foreach (Instance i in selection)
-            //    msg += $"{i} {i.Info.Name}\n";
-            //Debug.Log(msg);
-
-            //msg = $"New selection:\n";
-            //foreach (Instance i in m_newSelection)
-            //    msg += $"{i} {i.Info.Name}\n";
-            //Debug.Log(msg);
 
             selection = m_newSelection;
             MoveItTool.m_debugPanel.UpdatePanel();

@@ -67,7 +67,6 @@ namespace MoveIt
 
             object modDict = Activator.CreateInstance(tDictMods);
             tDictMods.GetMethod("Add", f, null, new Type[] { typeof(NetInfo), tListMods }, null).Invoke(modDict, new[] { (NetInfo)state.Info.Prefab, modifiers });
-            //Debug.Log($"modList:{modDict} (length:{tDictMods.GetProperty("Count").GetValue(modDict, null)})");
 
             tNSM.GetMethod("SetActiveModifiers", f, null, new Type[] { tDictMods }, null).Invoke(NSM, new[] { modDict });
             tNSM.GetMethod("OnSegmentPlaced", f, null, new Type[] { typeof(ushort) }, null).Invoke(NSM, new object[] { id });
@@ -82,7 +81,6 @@ namespace MoveIt
             {
                 return null;
             }
-            //Debug.Log($"Modifiers:{tNS.GetProperty("Modifiers", BindingFlags.Public | BindingFlags.Instance).GetValue(skin, null)}");
 
             return tNS.GetField("_modifiers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(skin);
         }
@@ -126,41 +124,6 @@ namespace MoveIt
 
             return "Network Skins 2 not found, integration disabled.\n ";
         }
-
-        //public static string getVersion()
-        //{
-        //    try
-        //    {
-        //        Assembly nsAssembly = null;
-        //        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-        //        {
-
-        //            if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "NetworkSkins")
-        //            {
-        //                nsAssembly = assembly;
-        //                break;
-        //            }
-        //        }
-
-        //        if (nsAssembly == null)
-        //        {
-        //            return "(Failed [NS-F1])";
-        //        }
-
-        //        if (!isModInstalled())
-        //        {
-        //            return "(Failed [NS-F2])";
-        //        }
-
-        //        return "2";
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Debug.Log($"NS INTERATION FAILED\n" + e);
-        //    }
-
-        //    return "(Failed [NS-F3])";
-        //}
 
         public string EncodeModifiers(object obj)
         {
