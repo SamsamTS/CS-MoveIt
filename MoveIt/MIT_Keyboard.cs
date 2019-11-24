@@ -73,6 +73,7 @@ namespace MoveIt
                     showDebugPanel.value = !showDebugPanel;
                     if (m_debugPanel != null)
                     {
+                        ClearDebugOverlays();
                         m_debugPanel.Visible(showDebugPanel);
                     }
                 }

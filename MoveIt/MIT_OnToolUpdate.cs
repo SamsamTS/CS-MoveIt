@@ -123,6 +123,8 @@ namespace MoveIt
                             {
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
+                                SetLowSensitivityMode();
+
                                 Vector3 newMove = action.moveDelta;
                                 float newAngle = action.angleDelta;
                                 float newSnapAngle = 0f;
@@ -151,14 +153,12 @@ namespace MoveIt
                                     }
                                 }
                             
-
                                 if (m_leftClickTime > 0)
                                 {
                                     float y = action.moveDelta.y;
-                                    newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
+                                    newMove = m_dragStartRelative + RaycastMouseLocation(mouseRay) - m_mouseClickPosition;
                                     newMove.y = y;
                                 }
-
 
                                 if (m_rightClickTime > 0)
                                 {

@@ -224,8 +224,39 @@ namespace MoveIt
         internal Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
-        private Vector3 m_startPosition;
-        private Vector3 m_mouseStartPosition;
+        private Vector3 tmp1;
+        private Vector3 m_dragStartRelative // Where the current drag started, relative to selection center
+        {
+            get => tmp1;
+            set
+            {
+                tmp1 = value;
+                //Debug.Log($"AAA m_dragStartRelative:{tmp1}");
+            }
+        }
+        private Vector3 tmp2;
+        private Vector3 m_mouseClickPosition // Where the current drag started, absolute
+        {
+            get => tmp2;
+            set
+            {
+                tmp2 = value;
+                //Debug.Log($"AAA m_mouseClickPosition:{tmp2}");
+            }
+        }
+
+        private bool m_isLowSensitivity;
+        public bool isLowSensitivity
+        {
+            get => m_isLowSensitivity;
+            set
+            {
+                if (value != m_isLowSensitivity)
+                {
+                    ProcessLowSensitivityMode(value);
+                }
+            }
+        }
 
         private float m_mouseStartX;
         private float m_startAngle;
@@ -375,6 +406,10 @@ namespace MoveIt
                 foreach (Quad3 q in DebugBoxes)
                 {
                     Singleton<RenderManager>.instance.OverlayEffect.DrawQuad(cameraInfo, new Color32(255, 255, 255, 63), q, 0, 1000, false, false);
+                }
+                foreach (Vector3 v in DebugPoints)
+                {
+                    Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, new Color32(255, 255, 255, 63), v, 8, 0, 1000, false, false);
                 }
 
                 if (Action.selection.Count > 0)
@@ -642,7 +677,8 @@ namespace MoveIt
         }
 
         private List<Quad3> DebugBoxes = new List<Quad3>();
-        private void AddDebugBox(Bounds b)
+        private List<Vector3> DebugPoints = new List<Vector3>();
+        internal void AddDebugBox(Bounds b)
         {
             Quad3 q = default;
             q.a = new Vector3(b.min.x, b.min.y, b.min.z);
@@ -651,6 +687,16 @@ namespace MoveIt
             q.d = new Vector3(b.max.x, b.min.y, b.min.z);
             DebugBoxes.Add(q);
             Debug.Log($"\nBounds:{b}");
+        }
+        internal void AddDebugPoint(Vector3 v)
+        {
+            DebugPoints.Add(v);
+            Debug.Log($"\nPoint:{v}");
+        }
+        internal void ClearDebugOverlays()
+        {
+            DebugBoxes.Clear();
+            DebugPoints.Clear();
         }
 
         public void UpdateAreas()

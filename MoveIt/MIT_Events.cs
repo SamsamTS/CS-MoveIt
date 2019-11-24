@@ -25,15 +25,16 @@ namespace MoveIt
                 m_lastInstance = m_hoverInstance;
 
                 Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                m_mouseStartPosition = RaycastMouseLocation(mouseRay);
+                m_mouseClickPosition = RaycastMouseLocation(mouseRay);
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
-                m_startPosition = action.moveDelta;
+                m_dragStartRelative = action.moveDelta;
+                SetLowSensitivityMode();
 
                 Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                m_mouseStartPosition = RaycastMouseLocation(mouseRay);
+                m_mouseClickPosition = RaycastMouseLocation(mouseRay);
             }
             else if (ToolState == ToolStates.Cloning)
             {
@@ -442,13 +443,13 @@ namespace MoveIt
                 {
                     ActionQueue.instance.Push(new SelectAction());
                     Action.selection.Add(m_lastInstance);
-                    //PO.SelectionAdd(m_lastInstance);
 
                     action = new TransformAction();
                     ActionQueue.instance.Push(action);
                 }
 
-                m_startPosition = action.moveDelta;
+                m_dragStartRelative = action.moveDelta;
+                ForceLowSensitivityMode();
 
                 ToolState = ToolStates.MouseDragging;
                 m_debugPanel.UpdatePanel();
@@ -488,6 +489,8 @@ namespace MoveIt
 
             if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
+                ForceLowSensitivityMode();
+
                 ToolState = ToolStates.Default;
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
@@ -509,6 +512,32 @@ namespace MoveIt
             else if (ToolState == ToolStates.RightDraggingClone)
             {
                 ToolState = ToolStates.Cloning;
+            }
+        }
+
+        private void SetLowSensitivityMode()
+        {
+            if (Event.current.control)
+                isLowSensitivity = true;
+            else
+                isLowSensitivity = false;
+        }
+
+        private void ForceLowSensitivityMode()
+        {
+            if (Event.current.control)
+                ProcessLowSensitivityMode(true);
+            else
+                ProcessLowSensitivityMode(false);
+        }
+
+        private void ProcessLowSensitivityMode(bool on)
+        {
+            if (ActionQueue.instance.current is TransformAction ta)
+            {
+                m_isLowSensitivity = on;
+
+                Debug.Log($"AAA isLowSensitivity:{m_isLowSensitivity}");
             }
         }
     }

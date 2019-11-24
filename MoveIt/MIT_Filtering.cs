@@ -301,7 +301,6 @@ namespace MoveIt
             m_hoverInstance = id;
         }
 
-
         private HashSet<Instance> GetMarqueeList(Ray mouseRay)
         {
             HashSet<Instance> list = new HashSet<Instance>();
@@ -312,7 +311,7 @@ namespace MoveIt
             NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
             TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
 
-            m_selection.a = m_mouseStartPosition;
+            m_selection.a = m_mouseClickPosition;
             m_selection.c = RaycastMouseLocation(mouseRay);
 
             if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)
@@ -535,7 +534,6 @@ namespace MoveIt
 
             return list;
         }
-
 
         public static ushort FindOwnerBuilding(ushort segment, float maxDistance)
         {
