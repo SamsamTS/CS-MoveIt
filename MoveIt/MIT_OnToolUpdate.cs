@@ -163,7 +163,7 @@ namespace MoveIt
                                 if (m_rightClickTime > 0)
                                 {
                                     newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
-                                    if (Event.current.control)
+                                    if (Event.current.alt)
                                     {
                                         float quarterPI = Mathf.PI / 4;
                                         newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
@@ -225,7 +225,7 @@ namespace MoveIt
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                                 float newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
-                                if (Event.current.control)
+                                if (Event.current.alt)
                                 {
                                     float quarterPI = Mathf.PI / 4;
                                     newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
