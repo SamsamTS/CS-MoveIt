@@ -311,7 +311,7 @@ namespace MoveIt
             NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
             TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
 
-            m_selection.a = m_mouseClickPosition;
+            m_selection.a = m_clickPositionAbs;
             m_selection.c = RaycastMouseLocation(mouseRay);
 
             if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)

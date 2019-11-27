@@ -24,17 +24,17 @@ namespace MoveIt
 
                 m_lastInstance = m_hoverInstance;
 
-                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                m_mouseClickPosition = RaycastMouseLocation(mouseRay);
+                m_sensitivityTogglePosAbs = m_clickPositionAbs = RaycastMouseLocation();
+                m_sensitivityDistanceOffset = Vector3.zero;
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_dragStartRelative = action.moveDelta;
-                SetLowSensitivityMode();
+                UpdateSensitivityMode();
 
-                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                m_mouseClickPosition = RaycastMouseLocation(mouseRay);
+                m_sensitivityTogglePosAbs = m_clickPositionAbs = RaycastMouseLocation();
+                m_sensitivityDistanceOffset = Vector3.zero;
             }
             else if (ToolState == ToolStates.Cloning)
             {
@@ -159,7 +159,7 @@ namespace MoveIt
                 //}
                 #endregion
 
-                if (!(ActionQueue.instance.current is SelectAction action))
+                if (!(ActionQueue.instance.current is SelectAction))
                 {
                     ActionQueue.instance.Push(new SelectAction(e.shift));
                 }
@@ -204,8 +204,6 @@ namespace MoveIt
                 }
                 else
                 {
-                    //PO.SelectionClear();
-
                     if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
                         MoveableNode closest = ms.GetNodeByDistance();
@@ -226,7 +224,6 @@ namespace MoveIt
                     {
                         Action.selection.Clear();
                         Action.selection.Add(m_hoverInstance);
-                        //PO.SelectionAdd(m_hoverInstance);
                     }
                 }
 
@@ -449,7 +446,7 @@ namespace MoveIt
                 }
 
                 m_dragStartRelative = action.moveDelta;
-                ForceLowSensitivityMode();
+                UpdateSensitivityMode();
 
                 ToolState = ToolStates.MouseDragging;
                 m_debugPanel.UpdatePanel();
@@ -489,7 +486,7 @@ namespace MoveIt
 
             if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
-                ForceLowSensitivityMode();
+                UpdateSensitivityMode();
 
                 ToolState = ToolStates.Default;
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
@@ -515,29 +512,56 @@ namespace MoveIt
             }
         }
 
-        private void SetLowSensitivityMode()
+        private void UpdateSensitivityMode()
         {
             if (Event.current.control)
-                isLowSensitivity = true;
-            else
-                isLowSensitivity = false;
-        }
-
-        private void ForceLowSensitivityMode()
-        {
-            if (Event.current.control)
-                ProcessLowSensitivityMode(true);
-            else
-                ProcessLowSensitivityMode(false);
-        }
-
-        private void ProcessLowSensitivityMode(bool on)
-        {
-            if (ActionQueue.instance.current is TransformAction ta)
             {
+                if (!m_isLowSensitivity)
+                {
+                    ProcessSensitivityMode(true);
+                }
+            }
+            else
+            {
+                if (m_isLowSensitivity)
+                {
+                    ProcessSensitivityMode(false);
+                }
+            }
+        }
+
+        //private void ForceUpdateSensitivityMode()
+        //{
+        //    if (Event.current.control)
+        //        ProcessSensitivityMode(true);
+        //    else
+        //        ProcessSensitivityMode(false);
+        //}
+
+        private void ProcessSensitivityMode(bool on)
+        {
+            if (ActionQueue.instance.current is TransformAction)
+            {
+                Vector3 mousePos = RaycastMouseLocation();
+                Vector3 mouseTravel = mousePos - m_sensitivityTogglePosAbs;
+
+                //Vector3 oldSensTogglePos = m_sensitivityTogglePosAbs;
+                //Vector3 oldSensOffset = m_sensitivityOffset;
+
+                if (m_isLowSensitivity)
+                {
+                    m_sensitivityDistanceOffset += (mouseTravel * 0.8f);
+                }
+                m_sensitivityTogglePosAbs = mousePos;
+
                 m_isLowSensitivity = on;
 
-                Debug.Log($"AAA isLowSensitivity:{m_isLowSensitivity}");
+                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n" +
+                //    $"m_sensitivityTogglePosAbs:{m_sensitivityTogglePosAbs} (was:{oldSensTogglePos})\n" +
+                //    $"m_sensitivityTogglePosAbs delta:{m_sensitivityTogglePosAbs - oldSensTogglePos}\n" +
+                //    $"m_sensitivityOffset:{m_sensitivityOffset} (was:{oldSensOffset})\n" +
+                //    $"m_sensitivityOffset delta:{m_sensitivityOffset - oldSensOffset})\n" +
+                //    $"m_clickPositionAbs:{m_clickPositionAbs}");
             }
         }
     }

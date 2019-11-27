@@ -224,39 +224,11 @@ namespace MoveIt
         internal Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
-        private Vector3 tmp1;
-        private Vector3 m_dragStartRelative // Where the current drag started, relative to selection center
-        {
-            get => tmp1;
-            set
-            {
-                tmp1 = value;
-                //Debug.Log($"AAA m_dragStartRelative:{tmp1}");
-            }
-        }
-        private Vector3 tmp2;
-        private Vector3 m_mouseClickPosition // Where the current drag started, absolute
-        {
-            get => tmp2;
-            set
-            {
-                tmp2 = value;
-                //Debug.Log($"AAA m_mouseClickPosition:{tmp2}");
-            }
-        }
-
-        private bool m_isLowSensitivity;
-        public bool isLowSensitivity
-        {
-            get => m_isLowSensitivity;
-            set
-            {
-                if (value != m_isLowSensitivity)
-                {
-                    ProcessLowSensitivityMode(value);
-                }
-            }
-        }
+        private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
+        private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
+        private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
+        internal Vector3 m_sensitivityDistanceOffset; // Accumulated distance offset from low sensitivity
+        internal bool m_isLowSensitivity;
 
         private float m_mouseStartX;
         private float m_startAngle;
@@ -1007,6 +979,11 @@ namespace MoveIt
 
                 return;
             }
+        }
+
+        internal static Vector3 RaycastMouseLocation()
+        {
+            return RaycastMouseLocation(Camera.main.ScreenPointToRay(Input.mousePosition));
         }
 
         internal static Vector3 RaycastMouseLocation(Ray mouseRay)

@@ -123,7 +123,7 @@ namespace MoveIt
                             {
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
-                                SetLowSensitivityMode();
+                                UpdateSensitivityMode();
 
                                 Vector3 newMove = action.moveDelta;
                                 float newAngle = action.angleDelta;
@@ -156,7 +156,11 @@ namespace MoveIt
                                 if (m_leftClickTime > 0)
                                 {
                                     float y = action.moveDelta.y;
-                                    newMove = m_dragStartRelative + RaycastMouseLocation(mouseRay) - m_mouseClickPosition;
+
+                                    Vector3 mouseDeltaBefore = (m_sensitivityTogglePosAbs - m_clickPositionAbs) - m_sensitivityDistanceOffset;
+                                    Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / (m_isLowSensitivity ? 5 : 1);
+                                    newMove = m_dragStartRelative + mouseDeltaBefore + mouseDeltaAfter;
+
                                     newMove.y = y;
                                 }
 
@@ -260,8 +264,15 @@ namespace MoveIt
             angle = 0;
 
             float magnitude = 8f;
-            if (e.shift) magnitude = magnitude * 8f;
-            if (e.alt) magnitude = magnitude / 8f;
+            if (e.alt && e.shift)
+            {
+                magnitude /= 64f;
+            }
+            else
+            {
+                if (e.shift) magnitude *= 8f;
+                if (e.alt) magnitude /= 8f;
+            }
 
             if (IsKeyDown(OptionsKeymapping.moveXpos, e))
             {
