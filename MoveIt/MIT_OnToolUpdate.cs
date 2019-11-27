@@ -166,11 +166,12 @@ namespace MoveIt
 
                                 if (m_rightClickTime > 0)
                                 {
-                                    newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
+                                    float mouseTravel = (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                    newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                     if (Event.current.alt)
                                     {
                                         float quarterPI = Mathf.PI / 4;
-                                        newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
+                                        newAngle = quarterPI * Mathf.Round(newAngle  / quarterPI);
                                     }
                                     newAngle += m_startAngle;
                                     action.autoCurve = false;
@@ -205,10 +206,15 @@ namespace MoveIt
                             {
                                 if (m_rightClickTime != 0) break;
 
+                                UpdateSensitivityMode();
+
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                                 float y = action.moveDelta.y;
-                                Vector3 newMove = RaycastMouseLocation(mouseRay) - action.center;
+                                //Vector3 newMove = RaycastMouseLocation(mouseRay) - action.center;
+                                Vector3 mouseDeltaBefore = (m_sensitivityTogglePosAbs - m_clickPositionAbs) - m_sensitivityDistanceOffset;
+                                Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / (m_isLowSensitivity && !skipLowSensitivity ? 5 : 1);
+                                Vector3 newMove = m_dragStartRelative + mouseDeltaBefore + mouseDeltaAfter;
                                 newMove.y = y;
 
                                 if (snapping)
@@ -228,7 +234,8 @@ namespace MoveIt
                             {
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
-                                float newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
+                                float mouseTravel = (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                float newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                 if (Event.current.alt)
                                 {
                                     float quarterPI = Mathf.PI / 4;

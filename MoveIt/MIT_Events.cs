@@ -45,6 +45,9 @@ namespace MoveIt
                 {
                     ToolState = ToolStates.Default;
                     m_nextAction = ToolAction.Do;
+
+                    UpdateSensitivityMode();
+                    m_sensitivityDistanceOffset = Vector3.zero;
                 }
             }
         }
@@ -63,6 +66,7 @@ namespace MoveIt
                 m_startAngle = action.angleDelta;
 
                 m_mouseStartX = Input.mousePosition.x;
+                m_sensitivityAngleOffset = 0f;
             }
             else if (ToolState == ToolStates.Cloning)
             {
@@ -70,6 +74,7 @@ namespace MoveIt
                 m_startAngle = action.angleDelta;
 
                 m_mouseStartX = Input.mousePosition.x;
+                m_sensitivityAngleOffset = 0f;
             }
         }
 
@@ -526,6 +531,7 @@ namespace MoveIt
                 if (m_isLowSensitivity)
                 {
                     ProcessSensitivityMode(false);
+                    skipLowSensitivity = false;
                 }
             }
         }
@@ -540,15 +546,15 @@ namespace MoveIt
 
         private void ProcessSensitivityMode(bool on)
         {
-            if (ActionQueue.instance.current is TransformAction)
+            if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
                 Vector3 mousePos = RaycastMouseLocation();
                 Vector3 mouseTravel = mousePos - m_sensitivityTogglePosAbs;
 
                 //Vector3 oldSensTogglePos = m_sensitivityTogglePosAbs;
-                //Vector3 oldSensOffset = m_sensitivityOffset;
+                //Vector3 oldSensOffset = m_sensitivityDistanceOffset;
 
-                if (m_isLowSensitivity)
+                if (m_isLowSensitivity && !skipLowSensitivity)
                 {
                     m_sensitivityDistanceOffset += (mouseTravel * 0.8f);
                 }
@@ -556,11 +562,12 @@ namespace MoveIt
 
                 m_isLowSensitivity = on;
 
+                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n");
                 //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n" +
                 //    $"m_sensitivityTogglePosAbs:{m_sensitivityTogglePosAbs} (was:{oldSensTogglePos})\n" +
                 //    $"m_sensitivityTogglePosAbs delta:{m_sensitivityTogglePosAbs - oldSensTogglePos}\n" +
-                //    $"m_sensitivityOffset:{m_sensitivityOffset} (was:{oldSensOffset})\n" +
-                //    $"m_sensitivityOffset delta:{m_sensitivityOffset - oldSensOffset})\n" +
+                //    $"m_sensitivityDistanceOffset:{m_sensitivityDistanceOffset} (was:{oldSensOffset})\n" +
+                //    $"m_sensitivityDistanceOffset delta:{m_sensitivityDistanceOffset - oldSensOffset})\n" +
                 //    $"m_clickPositionAbs:{m_clickPositionAbs}");
             }
         }
