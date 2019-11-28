@@ -1,5 +1,4 @@
-﻿using ColossalFramework.Math;
-using ColossalFramework.UI;
+﻿using ColossalFramework.UI;
 using ColossalFramework;
 using System;
 using UnityEngine;
@@ -31,7 +30,7 @@ namespace MoveIt
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_dragStartRelative = action.moveDelta;
-                UpdateSensitivityMode();
+                UpdateSensitivityModeMovement();
 
                 m_sensitivityTogglePosAbs = m_clickPositionAbs = RaycastMouseLocation();
                 m_sensitivityDistanceOffset = Vector3.zero;
@@ -46,7 +45,7 @@ namespace MoveIt
                     ToolState = ToolStates.Default;
                     m_nextAction = ToolAction.Do;
 
-                    UpdateSensitivityMode();
+                    UpdateSensitivityModeMovement();
                     m_sensitivityDistanceOffset = Vector3.zero;
                 }
             }
@@ -58,14 +57,15 @@ namespace MoveIt
 
             if (ToolState == ToolStates.Default)
             {
-                m_mouseStartX = Input.mousePosition.x;
+                m_sensitivityTogglePosX = m_mouseStartX = Input.mousePosition.x;
+                m_sensitivityAngleOffset = 0f;
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_startAngle = action.angleDelta;
 
-                m_mouseStartX = Input.mousePosition.x;
+                m_sensitivityTogglePosX = m_mouseStartX = Input.mousePosition.x;
                 m_sensitivityAngleOffset = 0f;
             }
             else if (ToolState == ToolStates.Cloning)
@@ -73,7 +73,7 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
                 m_startAngle = action.angleDelta;
 
-                m_mouseStartX = Input.mousePosition.x;
+                m_sensitivityTogglePosX = m_mouseStartX = Input.mousePosition.x;
                 m_sensitivityAngleOffset = 0f;
             }
         }
@@ -451,7 +451,7 @@ namespace MoveIt
                 }
 
                 m_dragStartRelative = action.moveDelta;
-                UpdateSensitivityMode();
+                UpdateSensitivityModeMovement();
 
                 ToolState = ToolStates.MouseDragging;
                 m_debugPanel.UpdatePanel();
@@ -475,8 +475,9 @@ namespace MoveIt
                 }
 
                 m_startAngle = action.angleDelta;
-                ToolState = ToolStates.MouseDragging;
+                UpdateSensitivityModeMovement();
 
+                ToolState = ToolStates.MouseDragging;
                 action.InitialiseDrag();
             }
             else if (ToolState == ToolStates.Cloning)
@@ -491,7 +492,7 @@ namespace MoveIt
 
             if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
-                UpdateSensitivityMode();
+                UpdateSensitivityModeMovement();
 
                 ToolState = ToolStates.Default;
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
@@ -517,34 +518,26 @@ namespace MoveIt
             }
         }
 
-        private void UpdateSensitivityMode()
+        private void UpdateSensitivityModeMovement()
         {
             if (Event.current.control)
             {
                 if (!m_isLowSensitivity)
                 {
-                    ProcessSensitivityMode(true);
+                    ProcessSensitivityModeMovement(true);
                 }
             }
             else
             {
                 if (m_isLowSensitivity)
                 {
-                    ProcessSensitivityMode(false);
-                    skipLowSensitivity = false;
+                    ProcessSensitivityModeMovement(false);
+                    m_skipLowSensitivity = false;
                 }
             }
         }
 
-        //private void ForceUpdateSensitivityMode()
-        //{
-        //    if (Event.current.control)
-        //        ProcessSensitivityMode(true);
-        //    else
-        //        ProcessSensitivityMode(false);
-        //}
-
-        private void ProcessSensitivityMode(bool on)
+        private void ProcessSensitivityModeMovement(bool on)
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
@@ -554,7 +547,7 @@ namespace MoveIt
                 //Vector3 oldSensTogglePos = m_sensitivityTogglePosAbs;
                 //Vector3 oldSensOffset = m_sensitivityDistanceOffset;
 
-                if (m_isLowSensitivity && !skipLowSensitivity)
+                if (m_isLowSensitivity && !m_skipLowSensitivity)
                 {
                     m_sensitivityDistanceOffset += (mouseTravel * 0.8f);
                 }
@@ -569,6 +562,52 @@ namespace MoveIt
                 //    $"m_sensitivityDistanceOffset:{m_sensitivityDistanceOffset} (was:{oldSensOffset})\n" +
                 //    $"m_sensitivityDistanceOffset delta:{m_sensitivityDistanceOffset - oldSensOffset})\n" +
                 //    $"m_clickPositionAbs:{m_clickPositionAbs}");
+            }
+        }
+
+        private void UpdateSensitivityModeRotation()
+        {
+            if (Event.current.control)
+            {
+                if (!m_isLowSensitivity)
+                {
+                    ProcessSensitivityModeRotation(true);
+                }
+            }
+            else
+            {
+                if (m_isLowSensitivity)
+                {
+                    ProcessSensitivityModeRotation(false);
+                }
+            }
+        }
+
+        private void ProcessSensitivityModeRotation(bool on)
+        {
+            if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
+            {
+                float mousePosX = Input.mousePosition.x;
+                float mouseRotTravel = mousePosX - m_sensitivityTogglePosX;
+
+                //float oldSensTogglePosX = m_sensitivityTogglePosX;
+                //float oldSensOffsetX = m_sensitivityAngleOffset;
+
+                if (m_isLowSensitivity)
+                {
+                    m_sensitivityAngleOffset += mouseRotTravel * 0.8f;
+                }
+
+                m_sensitivityTogglePosX = mousePosX;
+
+                m_isLowSensitivity = on;
+
+                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n");
+                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n" +
+                //    $"m_sensitivityTogglePosX:{m_sensitivityTogglePosX} (was:{oldSensTogglePosX})\n" +
+                //    $"m_sensitivityTogglePosX delta:{m_sensitivityTogglePosX - oldSensTogglePosX}\n" +
+                //    $"m_sensitivityAngleOffset:{m_sensitivityAngleOffset} (was:{oldSensOffsetX})\n" +
+                //    $"m_startAngle:{m_startAngle}, m_mouseStartX:{m_mouseStartX}");
             }
         }
     }

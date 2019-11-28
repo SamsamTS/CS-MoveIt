@@ -229,11 +229,12 @@ namespace MoveIt
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
         internal Vector3 m_sensitivityDistanceOffset; // Accumulated distance offset from low sensitivity
         internal bool m_isLowSensitivity;
-        private bool skipLowSensitivity = false;
+        internal bool m_skipLowSensitivity = false;
 
         private float m_mouseStartX;
         private float m_startAngle;
-        internal float m_sensitivityAngleOffset; // Accumulated angle offset from low sensitivity
+        private float m_sensitivityTogglePosX; // Where sensitivity was last toggled, X-axis absolute
+        private float m_sensitivityAngleOffset; // Accumulated angle offset from low sensitivity
 
         private NetSegment m_segmentGuide;
 
@@ -779,8 +780,8 @@ namespace MoveIt
 
                     if (action.Count > 0)
                     {
-                        skipLowSensitivity = true;
-                        UpdateSensitivityMode();
+                        m_skipLowSensitivity = true;
+                        UpdateSensitivityModeMovement();
 
                         m_sensitivityTogglePosAbs = m_clickPositionAbs = action.center;
                         m_sensitivityDistanceOffset = Vector3.zero;
@@ -801,7 +802,7 @@ namespace MoveIt
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
-                    UpdateSensitivityMode();
+                    UpdateSensitivityModeMovement();
 
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();

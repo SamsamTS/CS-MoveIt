@@ -123,8 +123,6 @@ namespace MoveIt
                             {
                                 TransformAction action = ActionQueue.instance.current as TransformAction;
 
-                                UpdateSensitivityMode();
-
                                 Vector3 newMove = action.moveDelta;
                                 float newAngle = action.angleDelta;
                                 float newSnapAngle = 0f;
@@ -155,6 +153,8 @@ namespace MoveIt
                             
                                 if (m_leftClickTime > 0)
                                 {
+                                    UpdateSensitivityModeMovement();
+
                                     float y = action.moveDelta.y;
 
                                     Vector3 mouseDeltaBefore = (m_sensitivityTogglePosAbs - m_clickPositionAbs) - m_sensitivityDistanceOffset;
@@ -166,7 +166,14 @@ namespace MoveIt
 
                                 if (m_rightClickTime > 0)
                                 {
-                                    float mouseTravel = (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                    UpdateSensitivityModeRotation();
+
+                                    float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
+                                    float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / (m_isLowSensitivity ? 5 : 1);
+                                    float mouseTravel = (mouseRotateBefore + mouseRotateAfter - m_mouseStartX) / Screen.width * 1.2f;
+                                    //UnityEngine.Debug.Log($"mouseTravel:{mouseTravel}\nmouseRotateBefore:{mouseRotateBefore}\nmouseRotateAfter:{mouseRotateAfter}\n" +
+                                    //    $"{m_sensitivityTogglePosX} - {m_sensitivityAngleOffset}");
+
                                     newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                     if (Event.current.alt)
                                     {
@@ -206,14 +213,14 @@ namespace MoveIt
                             {
                                 if (m_rightClickTime != 0) break;
 
-                                UpdateSensitivityMode();
+                                UpdateSensitivityModeMovement();
 
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                                 float y = action.moveDelta.y;
                                 //Vector3 newMove = RaycastMouseLocation(mouseRay) - action.center;
                                 Vector3 mouseDeltaBefore = (m_sensitivityTogglePosAbs - m_clickPositionAbs) - m_sensitivityDistanceOffset;
-                                Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / (m_isLowSensitivity && !skipLowSensitivity ? 5 : 1);
+                                Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / (m_isLowSensitivity && !m_skipLowSensitivity ? 5 : 1);
                                 Vector3 newMove = m_dragStartRelative + mouseDeltaBefore + mouseDeltaAfter;
                                 newMove.y = y;
 
@@ -232,10 +239,21 @@ namespace MoveIt
                             }
                         case ToolStates.RightDraggingClone:
                             {
+                                UpdateSensitivityModeRotation();
+                                m_skipLowSensitivity = true;
+
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
-                                float mouseTravel = (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
+                                float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / (m_isLowSensitivity ? 5 : 1);
+                                float mouseTravel = (mouseRotateBefore + mouseRotateAfter - m_mouseStartX) / Screen.width * 1.2f;
+                                //UnityEngine.Debug.Log($"mouseTravel:{mouseTravel}\nmouseRotateBefore:{mouseRotateBefore}\nmouseRotateAfter:{mouseRotateAfter}\n" +
+                                //    $"{m_sensitivityTogglePosX} - {m_sensitivityAngleOffset}");
+
                                 float newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
+
+                                //float mouseTravel = (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                //float newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                 if (Event.current.alt)
                                 {
                                     float quarterPI = Mathf.PI / 4;

@@ -36,6 +36,7 @@ namespace MoveIt
             }
 
             center = GetCenter();
+            MoveItTool.instance.m_skipLowSensitivity = false;
         }
 
         public override void Do()
