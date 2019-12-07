@@ -76,7 +76,7 @@ namespace MoveIt
             {
                 if (PO.Active && selectProc)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         if (stepOver.isValidPO(obj.Id))
                         {
@@ -358,7 +358,7 @@ namespace MoveIt
 
                 if (PO.Active && filterProcs)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         if (PointInRectangle(m_selection, obj.Position))
                         {

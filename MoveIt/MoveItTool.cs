@@ -371,7 +371,7 @@ namespace MoveIt
                 // Reset all PO
                 if (PO.Active && POHighlightUnselected)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         obj.Selected = false;
                     }
@@ -446,7 +446,7 @@ namespace MoveIt
                 // Highlight unselected PO
                 if (PO.Active && POHighlightUnselected)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         if (!obj.Selected)
                         {

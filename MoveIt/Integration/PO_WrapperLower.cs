@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace MoveIt
 {
-    internal class PO_LogicEnabled : MonoBehaviour, IPO_Logic
+    internal class PO_Logic : MonoBehaviour
     {
         internal static Assembly POAssembly = null;
         protected Type _tPOLogic = null;
@@ -44,30 +44,49 @@ namespace MoveIt
             POLogic = FindObjectOfType(tPOLogic);
         }
 
-        public List<IPO_Object> Objects
+        public List<PO_Object> Objects
         {
             get
             {
-                List<IPO_Object> objects = new List<IPO_Object>();
+                List<PO_Object> objects = new List<PO_Object>();
 
                 var objectList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
+                int count = (int)objectList.GetType().GetProperty("Count").GetValue(objectList, null);
 
-                HashSet<int> activeIds = (HashSet<int>)tPOLogic.GetField("activeIds", flags).GetValue(POLogic);
+                //HashSet<int> activeIds = (HashSet<int>)tPOLogic.GetField("activeIds", flags).GetValue(POLogic);
+                //string msg = $"activeIds ({activeIds.Count}):\n";
+                //foreach (int a in activeIds)
+                //{
+                //    msg += $"{a},";
+                //}
+                //Debug.Log(msg);
+
+                //msg = $"List ({count}):\n";
+
+                HashSet<int> activeIds = new HashSet<int>();
+
+                for (int i = 0; i < count; i++)
+                {
+                    var v = objectList.GetType().GetMethod("get_Item").Invoke(objectList, new object[] { i });
+                    PO_Object o = new PO_Object(v);
+
+                    if (activeIds.Contains(o.ProcId))
+                    {
+                        Debug.Log($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate.");
+                    }
+                    else
+                    {
+                        objects.Add(o);
+                        activeIds.Add(o.ProcId);
+                    }
+                    //msg += $"{o.ProcId},";
+                }
+                //Debug.Log(msg);
+
                 string msg = $"activeIds ({activeIds.Count}):\n";
                 foreach (int a in activeIds)
                 {
                     msg += $"{a},";
-                }
-                Debug.Log(msg);
-
-                int count = (int)objectList.GetType().GetProperty("Count").GetValue(objectList, null);
-                msg = $"List ({count}):\n";
-                for (int i = 0; i < count; i++)
-                {
-                    var v = objectList.GetType().GetMethod("get_Item").Invoke(objectList, new object[] { i });
-                    IPO_Object o = new PO_ObjectEnabled(v);
-                    objects.Add(o);
-                    msg += $"{o.ProcId},";
                 }
                 Debug.Log(msg);
 
@@ -111,7 +130,7 @@ namespace MoveIt
                 throw new Exception($"Failed to clone object #{originalId}! [PO-F4]");
             }
 
-            IPO_Object clone = new PO_ObjectEnabled(paramList[1]);
+            PO_Object clone = new PO_Object(paramList[1]);
 
             InstanceID cloneID = default;
             cloneID.NetLane = clone.Id;
@@ -134,7 +153,7 @@ namespace MoveIt
             MoveItTool.POProcessing = false;
         }
 
-        public void Delete(IPO_Object obj)
+        public void Delete(PO_Object obj)
         {
             var poList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
             var poSelList = tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic);
@@ -149,9 +168,9 @@ namespace MoveIt
         }
 
         /// <param name="id">The NetLane id</param>
-        internal IPO_Object GetPOById(uint id)
+        internal PO_Object GetPOById(uint id)
         {
-            foreach (IPO_Object po in Objects)
+            foreach (PO_Object po in Objects)
             {
                 if (po.Id == id)
                     return po;
@@ -165,7 +184,7 @@ namespace MoveIt
             get => tPOLogic.GetField("availableProceduralInfos").GetValue(POLogic);
         }
 
-        public IPO_Object ConvertToPO(Instance instance)
+        public PO_Object ConvertToPO(Instance instance)
         {
             // Most code adapted from PO ProceduralObjectsLogic.ConvertToProcedural, by Simon Ryr
 
@@ -242,7 +261,7 @@ namespace MoveIt
 
                 object poObj = tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic);
                 tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic), new[] { poObj });
-                return new PO_ObjectEnabled(poObj);
+                return new PO_Object(poObj);
             }
             catch (NullReferenceException)
             {
@@ -283,7 +302,7 @@ namespace MoveIt
     }
 
 
-    internal class PO_ObjectEnabled : IPO_Object
+    internal class PO_Object
     {
         internal object procObj;
 
@@ -357,11 +376,11 @@ namespace MoveIt
             return procObj;
         }
 
-        public PO_ObjectEnabled(object obj)
+        public PO_Object(object obj)
         {
-            tPOLogic = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.3Logic");
-            tPOMod = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
-            tPO = PO_LogicEnabled.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+            tPOLogic = PO_Logic.POAssembly.GetType("ProceduralObjects.3Logic");
+            tPOMod = PO_Logic.POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
+            tPO = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
 
             procObj = obj;
             ProcId = (int)tPO.GetField("id").GetValue(procObj);
@@ -398,12 +417,12 @@ namespace MoveIt
 
     public class Info_POEnabled : IInfo
     {
-        private PO_ObjectEnabled _obj = null;
+        private PO_Object _obj = null;
         private PrefabInfo _Prefab = null;
 
         public Info_POEnabled(object i)
         {
-            _obj = (PO_ObjectEnabled)i;
+            _obj = (PO_Object)i;
         }
 
         public string Name => _obj.Name;

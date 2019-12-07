@@ -62,7 +62,7 @@ namespace MoveIt
                         continue;
                     }
 
-                    IPO_Object obj = MoveItTool.PO.ConvertToPO(instance);
+                    PO_Object obj = MoveItTool.PO.ConvertToPO(instance);
                     if (obj == null)
                     {
                         continue;

@@ -10,14 +10,14 @@ namespace MoveIt
 {
     internal class PO_Manager
     {
-        private IPO_Logic Logic;
+        private PO_Logic Logic;
         private static GameObject gameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
-        internal Dictionary<uint, IPO_Object> visibleObjects = new Dictionary<uint, IPO_Object>();
+        internal Dictionary<uint, PO_Object> visibleObjects = new Dictionary<uint, PO_Object>();
 
-        internal List<IPO_Object> Objects => new List<IPO_Object>(visibleObjects.Values);
-        internal IPO_Object GetProcObj(uint id) => visibleObjects[id];
+        internal List<PO_Object> Objects => new List<PO_Object>(visibleObjects.Values);
+        internal PO_Object GetProcObj(uint id) => visibleObjects[id];
 
         internal static readonly string[] VersionNames = { "1.6" };
 
@@ -49,7 +49,6 @@ namespace MoveIt
             catch (TypeLoadException)
             {
                 Enabled = false;
-                Logic = new PO_LogicDisabled();
             }
         }
 
@@ -58,20 +57,21 @@ namespace MoveIt
             if (isModEnabled())
             {
                 Enabled = true;
-                //Logic = new PO_LogicEnabled();
+
                 gameObject = new GameObject("MIT_POLogic");
-                gameObject.AddComponent<PO_LogicEnabled>();
-                Logic = gameObject.GetComponent<PO_LogicEnabled>();
+                gameObject.AddComponent<PO_Logic>();
+                Logic = gameObject.GetComponent<PO_Logic>();
             }
             else
             {
                 Enabled = false;
-                Logic = new PO_LogicDisabled();
             }
         }
 
         internal void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
+            if (!Enabled) return;
+
             Logic.Clone(originalId, position, angle, action);
         }
 
@@ -94,7 +94,7 @@ namespace MoveIt
         {
             bool altered = false;
 
-            if (MoveItTool.PO.Active == Enabled)
+            if (MoveItTool.PO.Active == enable)
             {
                 return false;
             }
@@ -136,10 +136,10 @@ namespace MoveIt
         /// <returns>Bool - whether any PO changed since MIT was disabled</returns>
         internal bool ToolEnabled()
         {
-            Dictionary<uint, IPO_Object> newVisible = new Dictionary<uint, IPO_Object>();
+            Dictionary<uint, PO_Object> newVisible = new Dictionary<uint, PO_Object>();
             HashSet<uint> newIds = new HashSet<uint>();
 
-            foreach (IPO_Object obj in Logic.Objects)
+            foreach (PO_Object obj in Logic.Objects)
             {
                 newVisible.Add(obj.Id, obj);
                 newIds.Add(obj.Id);
@@ -179,13 +179,17 @@ namespace MoveIt
             return false;
         }
 
-        internal void Delete(IPO_Object obj)
+        internal void Delete(PO_Object obj)
         {
+            if (!Enabled) return;
+
             Logic.Delete(obj);
         }
 
-        internal IPO_Object ConvertToPO(Instance instance)
+        internal PO_Object ConvertToPO(Instance instance)
         {
+            if (!Enabled) return null;
+
             return Logic.ConvertToPO(instance);
         }
 
@@ -226,14 +230,13 @@ namespace MoveIt
         {
             if (isModInstalled())
             {
-                if (VersionNames.Contains(PO_LogicEnabled.getVersion().Substring(0, 3)))
-                //if (PO_LogicEnabled.getVersion() == VersionName)
+                if (VersionNames.Contains(PO_Logic.getVersion().Substring(0, 3)))
                 {
-                    return $"PO version {PO_LogicEnabled.getVersion().Substring(0, 3)} found, integration enabled!\n ";
+                    return $"PO version {PO_Logic.getVersion().Substring(0, 3)} found, integration enabled!\n ";
                 }
                 else
                 {
-                    return $"PO integration failed - found version {PO_LogicEnabled.getVersion().Substring(0, 3)} (required: 1.6)\n ";
+                    return $"PO integration failed - found version {PO_Logic.getVersion().Substring(0, 3)} (required: 1.6)\n ";
                 }
             }
 
@@ -254,11 +257,11 @@ namespace MoveIt
 
         private static string _getVersion()
         {
-            return PO_LogicEnabled.getVersion();
+            return PO_Logic.getVersion();
         }
     }
 
-
+    /*
     // PO Logic
     internal interface IPO_Logic
     {
@@ -314,7 +317,7 @@ namespace MoveIt
         void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position);
         string DebugQuaternion();
     }
-
+    
     internal class PO_ObjectDisabled : IPO_Object
     {
         public uint Id { get; set; } // The InstanceID.NetLane value
@@ -371,5 +374,5 @@ namespace MoveIt
     {
         public string Name => "";
         public PrefabInfo Prefab { get; set; } = null;
-    }
+    }*/
 }
