@@ -323,15 +323,20 @@ namespace MoveIt
                 }
             }
 
-            if (!isFixed) RemoveFixedHeightFlag(id.Building);
-            if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
-            {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
+            if (!isFixed && Mathf.Abs(terrainHeight - newPosition.y) < 0.01f)
             {
                 RemoveFixedHeightFlag(id.Building);
             }
+
+            //if (!isFixed) RemoveFixedHeightFlag(id.Building);
+            //if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
+            //{
+            //    AddFixedHeightFlag(id.Building);
+            //}
+            //else
+            //{
+            //    RemoveFixedHeightFlag(id.Building);
+            //}
         }
 
         private void SetHiddenFlag(bool hide)
@@ -421,7 +426,8 @@ namespace MoveIt
             Vector3 newPosition = position;
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
-            AddFixedHeightFlag(id.Building);
+            bool isFixed = GetFixedHeightFlag(id.Building);
+            if (!isFixed) AddFixedHeightFlag(id.Building);
 
             foreach (Instance subInstance in subInstances)
             {
@@ -434,11 +440,7 @@ namespace MoveIt
             newPosition.y = height;
             Move(newPosition, angle);
 
-            if (Mathf.Abs(terrainHeight - height) > 0.01f)
-            {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
+            if (!isFixed && Mathf.Abs(terrainHeight - newPosition.y) < 0.01f)
             {
                 RemoveFixedHeightFlag(id.Building);
             }

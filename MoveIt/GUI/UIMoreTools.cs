@@ -108,17 +108,19 @@ namespace MoveIt
                 case "MoveIt_ConvertToPOBtn":
                     if (MoveItTool.PO.Enabled && MIT.ToolState == MoveItTool.ToolStates.Default)
                     {
-                        if (MoveItTool.PO.Active == false)
-                        {
-                            MoveItTool.PO.Active = true;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                            MoveItTool.PO.ToolEnabled();
-                            UIFilters.POToggled();
-                        }
+                        MoveItTool.PO.StartConvertAction();
 
-                        ConvertToPOAction convertAction = new ConvertToPOAction();
-                        ActionQueue.instance.Push(convertAction);
-                        ActionQueue.instance.Do();
+                        //if (MoveItTool.PO.Active == false)
+                        //{
+                        //    MoveItTool.PO.Active = true;
+                        //    UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                        //    MoveItTool.PO.ToolEnabled();
+                        //    UIFilters.POToggled();
+                        //}
+
+                        //ConvertToPOAction convertAction = new ConvertToPOAction();
+                        //ActionQueue.instance.Push(convertAction);
+                        //ActionQueue.instance.Do();
                     }
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
                     MIT.DeactivateTool();

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
+using System;
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
@@ -809,22 +810,36 @@ namespace MoveIt
 
                 PO_button.eventClicked += (c, p) =>
                 {
-                    MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
-                    if (MoveItTool.PO.Active)
-                    {
-                        if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
-                        {
-                            MoveItTool.instance.StopCloning();
-                        }
+                    MoveItTool.PO.InitialiseTool();
 
-                        MoveItTool.PO.ToolEnabled();
-                        ActionQueue.instance.Push(new TransformAction());
-                    }
-                    else
-                    {
-                        Action.ClearPOFromSelection();
-                    }
-                    UIFilters.POToggled();
+                    //try
+                    //{
+                    //    MoveItTool.PO.Active = (PO_button.activeStateIndex == 1);
+                    //    if (MoveItTool.PO.Active)
+                    //    {
+                    //        if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
+                    //        {
+                    //            MoveItTool.instance.StopCloning();
+                    //        }
+
+                    //        MoveItTool.PO.ToolEnabled();
+                    //        ActionQueue.instance.Push(new TransformAction());
+                    //    }
+                    //    else
+                    //    {
+                    //        Action.ClearPOFromSelection();
+                    //    }
+                    //    UIFilters.POToggled();
+                    //}
+                    //catch (ArgumentException e)
+                    //{
+                    //    Debug.Log($"{e}");
+                    //    if (MoveItTool.PO.Active)
+                    //    {
+                    //        MoveItTool.PO.Active = false;
+                    //        PO_button.activeStateIndex = 0;
+                    //    }
+                    //}
                 };
 
                 m_viewOptions.height += 36;

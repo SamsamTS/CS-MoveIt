@@ -52,13 +52,24 @@ namespace MoveIt
 
                 var objectList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
 
+                HashSet<int> activeIds = (HashSet<int>)tPOLogic.GetField("activeIds", flags).GetValue(POLogic);
+                string msg = $"activeIds ({activeIds.Count}):\n";
+                foreach (int a in activeIds)
+                {
+                    msg += $"{a},";
+                }
+                Debug.Log(msg);
+
                 int count = (int)objectList.GetType().GetProperty("Count").GetValue(objectList, null);
+                msg = $"List ({count}):\n";
                 for (int i = 0; i < count; i++)
                 {
                     var v = objectList.GetType().GetMethod("get_Item").Invoke(objectList, new object[] { i });
                     IPO_Object o = new PO_ObjectEnabled(v);
                     objects.Add(o);
+                    msg += $"{o.ProcId},";
                 }
+                Debug.Log(msg);
 
                 return objects;
             }

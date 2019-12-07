@@ -33,6 +33,7 @@ namespace MoveIt
             }
             set
             {
+                Debug.Log($"AAA PO UPDATE:{_active} -> {value}");
                 if (!Enabled)
                     _active = false;
                 _active = value;
@@ -72,6 +73,64 @@ namespace MoveIt
         internal void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
             Logic.Clone(originalId, position, angle, action);
+        }
+
+        internal void StartConvertAction()
+        {
+            if (InitialiseTool(true) != null)
+            {
+                ConvertToPOAction convertAction = new ConvertToPOAction();
+                ActionQueue.instance.Push(convertAction);
+                ActionQueue.instance.Do();
+            }
+        }
+
+        internal void InitialiseTool()
+        {
+            InitialiseTool(!MoveItTool.PO.Active);
+        }
+
+        internal bool? InitialiseTool(bool enable)
+        {
+            bool altered = false;
+
+            if (MoveItTool.PO.Active == Enabled)
+            {
+                return false;
+            }
+
+            try
+            {
+                MoveItTool.PO.Active = enable;
+                if (MoveItTool.PO.Active)
+                {
+                    if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
+                    {
+                        MoveItTool.instance.StopCloning();
+                    }
+
+                    altered = MoveItTool.PO.ToolEnabled();
+                    UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
+                    ActionQueue.instance.Push(new TransformAction());
+                }
+                else
+                {
+                    UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
+                    Action.ClearPOFromSelection();
+                }
+                UIFilters.POToggled();
+            }
+            catch (ArgumentException e)
+            {
+                Debug.Log($"PO Integration failed:\n{e}");
+                if (MoveItTool.PO.Active)
+                {
+                    MoveItTool.PO.Active = false;
+                    UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
+                }
+                return null;
+            }
+            return altered;
         }
 
         /// <returns>Bool - whether any PO changed since MIT was disabled</returns>

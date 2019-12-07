@@ -175,7 +175,14 @@ namespace MoveIt
                     MoveItTool.POHighlightUnselected.value = b;
                     if (MoveItTool.PO != null)
                     {
-                        MoveItTool.PO.ToolEnabled();
+                        try
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
+                        catch (ArgumentException e)
+                        {
+                            Debug.Log($"PO Integration failed:\n{e}");
+                        }
                     }
                 });
                 checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
