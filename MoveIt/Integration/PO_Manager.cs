@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// High level PO wrapper, always available
-
 namespace MoveIt
 {
     internal class PO_Manager
@@ -77,7 +75,7 @@ namespace MoveIt
 
         internal void StartConvertAction()
         {
-            if (InitialiseTool(true) != null)
+            if (InitialiseTool(true))
             {
                 ConvertToPOAction convertAction = new ConvertToPOAction();
                 ActionQueue.instance.Push(convertAction);
@@ -90,13 +88,12 @@ namespace MoveIt
             InitialiseTool(!MoveItTool.PO.Active);
         }
 
-        internal bool? InitialiseTool(bool enable)
+        internal bool InitialiseTool(bool enable)
         {
-            bool altered = false;
-
+            Debug.Log($"AAAA InitialiseTool {enable} (was:{MoveItTool.PO.Active})");
             if (MoveItTool.PO.Active == enable)
             {
-                return false;
+                return true;
             }
 
             try
@@ -109,7 +106,8 @@ namespace MoveIt
                         MoveItTool.instance.StopCloning();
                     }
 
-                    altered = MoveItTool.PO.ToolEnabled();
+                    Debug.Log($"AAAB InitialiseTool {enable}");
+                    MoveItTool.PO.ToolEnabled();
                     UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
                     ActionQueue.instance.Push(new TransformAction());
                 }
@@ -128,9 +126,9 @@ namespace MoveIt
                     MoveItTool.PO.Active = false;
                     UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
                 }
-                return null;
+                return false;
             }
-            return altered;
+            return true;
         }
 
         /// <returns>Bool - whether any PO changed since MIT was disabled</returns>
@@ -260,119 +258,4 @@ namespace MoveIt
             return PO_Logic.getVersion();
         }
     }
-
-    /*
-    // PO Logic
-    internal interface IPO_Logic
-    {
-        List<IPO_Object> Objects { get; }
-        void Clone(uint originalId, Vector3 position, float angle, Action action);
-        IPO_Object ConvertToPO(Instance instance);
-        void Delete(IPO_Object obj);
-    }
-
-    internal class PO_LogicDisabled : IPO_Logic
-    {
-        public List<IPO_Object> Objects
-        {
-            get
-            {
-                return new List<IPO_Object>();
-            }
-        }
-
-        public void Clone(uint originalId, Vector3 position, float angle, Action action)
-        {
-            throw new NotImplementedException($"Trying to clone {originalId} despite no PO!");
-        }
-
-        public IPO_Object ConvertToPO(Instance instance)
-        {
-            throw new NotImplementedException($"Trying to convert {instance} despite no PO!");
-        }
-
-        public void Delete(IPO_Object obj)
-        {
-            throw new NotImplementedException($"Trying to delete {obj} despite no PO!");
-        }
-    }
-
-
-    // PO Object
-    internal interface IPO_Object
-    {
-        bool Selected { get; set; }
-        /// <summary>
-        /// The InstanceID.NetLane value
-        /// </summary>
-        uint Id { get; set; }
-        int ProcId { get; set; }
-        Vector3 Position { get; set; }
-        float Angle { get; set; }
-        IInfo Info { get; set; }
-        object GetProceduralObject();
-        void SetPositionY(float h);
-        float GetDistance(Vector3 location);
-        void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color);
-        void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position);
-        string DebugQuaternion();
-    }
-    
-    internal class PO_ObjectDisabled : IPO_Object
-    {
-        public uint Id { get; set; } // The InstanceID.NetLane value
-        public int ProcId { get; set; } // The PO's id value
-
-        public Vector3 Position
-        {
-            get => Vector3.zero;
-            set { }
-        }
-
-        public float Angle
-        {
-            get => 0f;
-            set { }
-        }
-
-        public bool Selected
-        {
-            get => false;
-            set { }
-        }
-
-        private Info_PODisabled _info = new Info_PODisabled();
-        public IInfo Info
-        {
-            get => _info;
-            set => _info = (Info_PODisabled)value;
-        }
-
-        public void SetPositionY(float h)
-        { }
-
-        public object GetProceduralObject()
-        {
-            return null;
-        }
-
-        public float GetDistance(Vector3 location) => 0f;
-
-        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color)
-        { }
-
-        public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position)
-        { }
-
-        public string DebugQuaternion()
-        {
-            return "";
-        }
-    }
-
-    public class Info_PODisabled : IInfo
-    {
-        public string Name => "";
-        public PrefabInfo Prefab { get; set; } = null;
-    }*/
 }

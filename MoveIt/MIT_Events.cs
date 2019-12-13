@@ -537,31 +537,16 @@ namespace MoveIt
             }
         }
 
-        private void ProcessSensitivityModeMovement(bool on)
+        private void ProcessSensitivityModeMovement(bool enable)
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
-                Vector3 mousePos = RaycastMouseLocation();
-                Vector3 mouseTravel = mousePos - m_sensitivityTogglePosAbs;
-
-                //Vector3 oldSensTogglePos = m_sensitivityTogglePosAbs;
-                //Vector3 oldSensOffset = m_sensitivityDistanceOffset;
-
-                if (m_isLowSensitivity && !m_skipLowSensitivity)
+                if (enable)
                 {
-                    m_sensitivityDistanceOffset += (mouseTravel * 0.8f);
+                    m_sensitivityTogglePosAbs = RaycastMouseLocation();
                 }
-                m_sensitivityTogglePosAbs = mousePos;
 
-                m_isLowSensitivity = on;
-
-                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n");
-                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n" +
-                //    $"m_sensitivityTogglePosAbs:{m_sensitivityTogglePosAbs} (was:{oldSensTogglePos})\n" +
-                //    $"m_sensitivityTogglePosAbs delta:{m_sensitivityTogglePosAbs - oldSensTogglePos}\n" +
-                //    $"m_sensitivityDistanceOffset:{m_sensitivityDistanceOffset} (was:{oldSensOffset})\n" +
-                //    $"m_sensitivityDistanceOffset delta:{m_sensitivityDistanceOffset - oldSensOffset})\n" +
-                //    $"m_clickPositionAbs:{m_clickPositionAbs}");
+                m_isLowSensitivity = enable;
             }
         }
 
@@ -579,35 +564,21 @@ namespace MoveIt
                 if (m_isLowSensitivity)
                 {
                     ProcessSensitivityModeRotation(false);
+                    m_skipLowSensitivity = false;
                 }
             }
         }
 
-        private void ProcessSensitivityModeRotation(bool on)
+        private void ProcessSensitivityModeRotation(bool enable)
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
-                float mousePosX = Input.mousePosition.x;
-                float mouseRotTravel = mousePosX - m_sensitivityTogglePosX;
-
-                //float oldSensTogglePosX = m_sensitivityTogglePosX;
-                //float oldSensOffsetX = m_sensitivityAngleOffset;
-
-                if (m_isLowSensitivity)
+                if (enable)
                 {
-                    m_sensitivityAngleOffset += mouseRotTravel * 0.8f;
+                    m_sensitivityTogglePosX = Input.mousePosition.x;
                 }
 
-                m_sensitivityTogglePosX = mousePosX;
-
-                m_isLowSensitivity = on;
-
-                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n");
-                //Debug.Log($"AAA m_isLowSensitivity:{m_isLowSensitivity}\n" +
-                //    $"m_sensitivityTogglePosX:{m_sensitivityTogglePosX} (was:{oldSensTogglePosX})\n" +
-                //    $"m_sensitivityTogglePosX delta:{m_sensitivityTogglePosX - oldSensTogglePosX}\n" +
-                //    $"m_sensitivityAngleOffset:{m_sensitivityAngleOffset} (was:{oldSensOffsetX})\n" +
-                //    $"m_startAngle:{m_startAngle}, m_mouseStartX:{m_mouseStartX}");
+                m_isLowSensitivity = enable;
             }
         }
     }

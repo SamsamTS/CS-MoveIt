@@ -224,13 +224,12 @@ namespace MoveIt
         internal Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
+        internal bool m_isLowSensitivity;
+        internal bool m_skipLowSensitivity = false;
         private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
         private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
         internal Vector3 m_sensitivityDistanceOffset; // Accumulated distance offset from low sensitivity
-        internal bool m_isLowSensitivity;
-        internal bool m_skipLowSensitivity = false;
-
         private float m_mouseStartX;
         private float m_startAngle;
         private float m_sensitivityTogglePosX; // Where sensitivity was last toggled, X-axis absolute
@@ -651,6 +650,7 @@ namespace MoveIt
             }
         }
 
+        #region Debug Overlays
         private List<Quad3> DebugBoxes = new List<Quad3>();
         private List<Vector3> DebugPoints = new List<Vector3>();
         internal void AddDebugBox(Bounds b)
@@ -673,6 +673,7 @@ namespace MoveIt
             DebugBoxes.Clear();
             DebugPoints.Clear();
         }
+        #endregion
 
         public void UpdateAreas()
         {

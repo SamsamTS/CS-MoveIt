@@ -52,13 +52,14 @@
     <Compile Include="GUI\UIMoreTools.cs" />
     <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
+    <Compile Include="Integration\PO_Object.cs" />
     <Compile Include="MIT_Events.cs" />
     <Compile Include="MIT_Filtering.cs" />
     <Compile Include="MIT_Keyboard.cs" />
     <Compile Include="MIT_OnToolUpdate.cs" />
     <Compile Include="Moveable\MoveableProc.cs" />
-    <Compile Include="Integration\PO_WrapperLower.cs" />
-    <Compile Include="Integration\PO_Wrapper.cs" />
+    <Compile Include="Integration\PO_Logic.cs" />
+    <Compile Include="Integration\PO_Manager.cs" />
     <Compile Include="Integration\NetworkSkins.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="GUI\UIFastList.cs" />
