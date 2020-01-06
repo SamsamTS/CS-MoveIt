@@ -153,13 +153,13 @@ namespace MoveIt
                             
                                 if (m_leftClickTime > 0)
                                 {
-                                    UpdateSensitivityModeMovement();
+                                    UpdateSensitivityMode();
 
                                     float y = action.moveDelta.y;
 
                                     if (m_isLowSensitivity)
                                     {
-                                        Vector3 mouseDeltaBefore = (m_sensitivityTogglePosAbs - m_clickPositionAbs) - m_sensitivityDistanceOffset;
+                                        Vector3 mouseDeltaBefore = m_sensitivityTogglePosAbs - m_clickPositionAbs;
                                         Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / 5f;
                                         newMove = m_dragStartRelative + mouseDeltaBefore + mouseDeltaAfter;
                                     }
@@ -173,7 +173,7 @@ namespace MoveIt
 
                                 if (m_rightClickTime > 0)
                                 {
-                                    UpdateSensitivityModeRotation();
+                                    UpdateSensitivityMode();
 
                                     if (m_isLowSensitivity)
                                     {
@@ -227,18 +227,18 @@ namespace MoveIt
                             {
                                 if (m_rightClickTime != 0) break;
 
-                                UpdateSensitivityModeMovement();
+                                UpdateSensitivityMode();
 
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                                 Vector3 newMove;
                                 float y = action.moveDelta.y;
-                                if (m_isLowSensitivity && !m_skipLowSensitivity)
+                                if (m_isLowSensitivity)// && !m_skipLowSensitivity)
                                 {
                                     //Vector3 newMove = RaycastMouseLocation(mouseRay) - action.center;
-                                    Vector3 mouseDeltaBefore = (m_sensitivityTogglePosAbs - m_clickPositionAbs) - m_sensitivityDistanceOffset;
+                                    Vector3 mouseDeltaBefore = m_sensitivityTogglePosAbs - m_clickPositionAbs;
                                     Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / 5;
-                                    newMove = m_dragStartRelative + mouseDeltaBefore + mouseDeltaAfter;
+                                    newMove = mouseDeltaBefore + mouseDeltaAfter;
                                 }
                                 else
                                 {
@@ -261,14 +261,13 @@ namespace MoveIt
                             }
                         case ToolStates.RightDraggingClone:
                             {
-                                UpdateSensitivityModeRotation();
-                                //m_skipLowSensitivity = true;
+                                UpdateSensitivityMode();
 
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
                                 float newAngle;
 
-                                if (m_isLowSensitivity && !m_skipLowSensitivity)
+                                if (m_isLowSensitivity)// && !m_skipLowSensitivity)
                                 {
                                     float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
                                     float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / 5;
@@ -283,8 +282,6 @@ namespace MoveIt
                                     newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
                                 }
 
-                                //float mouseTravel = (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
-                                //float newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                 if (Event.current.alt)
                                 {
                                     float quarterPI = Mathf.PI / 4;

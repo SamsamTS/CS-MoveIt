@@ -24,16 +24,14 @@ namespace MoveIt
                 m_lastInstance = m_hoverInstance;
 
                 m_sensitivityTogglePosAbs = m_clickPositionAbs = RaycastMouseLocation();
-                m_sensitivityDistanceOffset = Vector3.zero;
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 m_dragStartRelative = action.moveDelta;
-                UpdateSensitivityModeMovement();
+                UpdateSensitivityMode();
 
                 m_sensitivityTogglePosAbs = m_clickPositionAbs = RaycastMouseLocation();
-                m_sensitivityDistanceOffset = Vector3.zero;
             }
             else if (ToolState == ToolStates.Cloning)
             {
@@ -45,8 +43,7 @@ namespace MoveIt
                     ToolState = ToolStates.Default;
                     m_nextAction = ToolAction.Do;
 
-                    UpdateSensitivityModeMovement();
-                    m_sensitivityDistanceOffset = Vector3.zero;
+                    UpdateSensitivityMode();
                 }
             }
         }
@@ -451,7 +448,7 @@ namespace MoveIt
                 }
 
                 m_dragStartRelative = action.moveDelta;
-                UpdateSensitivityModeMovement();
+                UpdateSensitivityMode();
 
                 ToolState = ToolStates.MouseDragging;
                 m_debugPanel.UpdatePanel();
@@ -475,7 +472,7 @@ namespace MoveIt
                 }
 
                 m_startAngle = action.angleDelta;
-                UpdateSensitivityModeMovement();
+                UpdateSensitivityMode();
 
                 ToolState = ToolStates.MouseDragging;
                 action.InitialiseDrag();
@@ -492,7 +489,7 @@ namespace MoveIt
 
             if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
-                UpdateSensitivityModeMovement();
+                UpdateSensitivityMode();
 
                 ToolState = ToolStates.Default;
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
@@ -518,63 +515,33 @@ namespace MoveIt
             }
         }
 
-        private void UpdateSensitivityModeMovement()
+        private void UpdateSensitivityMode()
         {
             if (Event.current.control)
             {
                 if (!m_isLowSensitivity)
                 {
-                    ProcessSensitivityModeMovement(true);
+                    ProcessSensitivityMode(true);
                 }
             }
             else
             {
                 if (m_isLowSensitivity)
                 {
-                    ProcessSensitivityModeMovement(false);
-                    m_skipLowSensitivity = false;
+                    ProcessSensitivityMode(false);
+                    //m_skipLowSensitivity = false;
                 }
             }
         }
 
-        private void ProcessSensitivityModeMovement(bool enable)
+        private void ProcessSensitivityMode(bool enable)
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
+                Debug.Log($"Now:{enable}\n-------------------------------------------");
                 if (enable)
                 {
                     m_sensitivityTogglePosAbs = RaycastMouseLocation();
-                }
-
-                m_isLowSensitivity = enable;
-            }
-        }
-
-        private void UpdateSensitivityModeRotation()
-        {
-            if (Event.current.control)
-            {
-                if (!m_isLowSensitivity)
-                {
-                    ProcessSensitivityModeRotation(true);
-                }
-            }
-            else
-            {
-                if (m_isLowSensitivity)
-                {
-                    ProcessSensitivityModeRotation(false);
-                    m_skipLowSensitivity = false;
-                }
-            }
-        }
-
-        private void ProcessSensitivityModeRotation(bool enable)
-        {
-            if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
-            {
-                if (enable)
-                {
                     m_sensitivityTogglePosX = Input.mousePosition.x;
                 }
 

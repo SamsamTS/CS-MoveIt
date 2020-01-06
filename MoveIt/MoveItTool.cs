@@ -225,11 +225,47 @@ namespace MoveIt
         private HashSet<Instance> m_marqueeInstances;
 
         internal bool m_isLowSensitivity;
-        internal bool m_skipLowSensitivity = false;
+        //internal bool m_skipLowSensitivity = false;
         private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
         private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
-        internal Vector3 m_sensitivityDistanceOffset; // Accumulated distance offset from low sensitivity
+        //private Vector3 v1;
+        //private Vector3 v2;
+        //private Vector3 v3;
+        //private Vector3 m_dragStartRelative
+        //{
+        //    get => v1;
+        //    set
+        //    {
+        //        Debug.Log($"{value} (was:{v1})\n" +
+        //            $"dragStartRel:{value}   clickPosAbs:{v2}   sensTogPosAb:{v3}\n" +
+        //            $"Mouse:{RaycastMouseLocation()}");
+        //        v1 = value;
+        //    }
+        //} // Where the current drag started, relative to selection center
+        //private Vector3 m_clickPositionAbs
+        //{
+        //    get => v2;
+        //    set
+        //    {
+        //        Debug.Log($"{value} (was:{v2})\n" +
+        //            $"dragStartRel:{v1}   clickPosAbs:{value}   sensTogPosAb:{v3}\n" +
+        //            $"Mouse:{RaycastMouseLocation()}");
+        //        v2 = value;
+        //    }
+        //} // Where the current drag started, absolute
+        //private Vector3 m_sensitivityTogglePosAbs
+        //{
+        //    get => v3;
+        //    set
+        //    {
+        //        Debug.Log($"{value} (was:{v3})\n" +
+        //            $"dragStartRel:{v1}   clickPosAbs:{v2}   sensTogPosAb:{value}\n" +
+        //            $"Mouse:{RaycastMouseLocation()}");
+        //        v3 = value;
+        //    }
+        //} // Where sensitivity was last toggled, absolute
+        
         private float m_mouseStartX;
         private float m_startAngle;
         private float m_sensitivityTogglePosX; // Where sensitivity was last toggled, X-axis absolute
@@ -781,11 +817,10 @@ namespace MoveIt
 
                     if (action.Count > 0)
                     {
-                        m_skipLowSensitivity = true;
-                        UpdateSensitivityModeMovement();
+                        //m_skipLowSensitivity = true;
+                        UpdateSensitivityMode();
 
                         m_sensitivityTogglePosAbs = m_clickPositionAbs = action.center;
-                        m_sensitivityDistanceOffset = Vector3.zero;
 
                         ActionQueue.instance.Push(action);
 
@@ -803,7 +838,7 @@ namespace MoveIt
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
-                    UpdateSensitivityModeMovement();
+                    UpdateSensitivityMode();
 
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();
