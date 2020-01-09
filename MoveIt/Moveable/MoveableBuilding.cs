@@ -243,16 +243,18 @@ namespace MoveIt
                     if (_virtual == false)
                     {
                         _virtual = true;
-                        SetHiddenFlag(true);
+                        SetHidden(true);
+                        Debug.Log($"AAD-1 ->fast");
                     }
                 }
                 else
                 {
                     if (_virtual == true)
-                    { 
+                    {
                         _virtual = false;
-                        SetHiddenFlag(false);
+                        SetHidden(false);
                         Action.UpdateArea(Action.GetTotalBounds(), true);
+                        Debug.Log($"AAD-2 ->slow");
                     }
                 }
             }
@@ -339,7 +341,7 @@ namespace MoveIt
             //}
         }
 
-        private void SetHiddenFlag(bool hide)
+        private void SetHidden(bool hide)
         {
             buildingBuffer[id.Building].m_flags = ToggleHiddenFlag(id.Building, hide);
 
@@ -400,7 +402,7 @@ namespace MoveIt
             Virtual = false;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
-            bounds.Expand(64f);
+            bounds.Expand(32f);
             Action.UpdateArea(bounds);
         }
 
@@ -409,7 +411,7 @@ namespace MoveIt
             Virtual = false;
 
             Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
-            bounds.Expand(64f);
+            bounds.Expand(32f);
             Action.UpdateArea(bounds);
         }
 

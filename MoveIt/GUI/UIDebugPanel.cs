@@ -1,3 +1,4 @@
+using ColossalFramework;
 using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,7 @@ namespace MoveIt
             {
                 BuildingInfo info = BuildingManager.instance.m_buildings.m_buffer[id.Building].Info;
                 HoverLarge.text = $"B:{id.Building}  {info.name}";
+                HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}\n({info.m_class.m_service}.{info.m_class.m_subService})";
             }
             else if (id.Prop > 0)
@@ -121,30 +123,35 @@ namespace MoveIt
                 PropInfo info = PropManager.instance.m_props.m_buffer[id.Prop].Info;
                 if (info.m_isDecal) type = "D";
                 HoverLarge.text = $"{type}:{id.Prop}  {info.name}";
+                HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
             }
             else if (id.NetLane > 0)
             {
                 IInfo info = MoveItTool.PO.GetProcObj(id.NetLane).Info;
                 HoverLarge.text = $"{id.NetLane}: {info.Name}";
+                HoverLarge.tooltip = info.Name;
                 HoverSmall.text = $"\n";
             }
             else if (id.Tree > 0)
             {
                 TreeInfo info = TreeManager.instance.m_trees.m_buffer[id.Tree].Info;
                 HoverLarge.text = $"T:{id.Tree}  {info.name}";
+                HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
             }
             else if (id.NetNode > 0)
             {
                 NetInfo info = NetManager.instance.m_nodes.m_buffer[id.NetNode].Info;
                 HoverLarge.text = $"N:{id.NetNode}  {info.name}";
+                HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}";
             }
             else if (id.NetSegment > 0)
             {
                 NetInfo info = NetManager.instance.m_segments.m_buffer[id.NetSegment].Info;
                 HoverLarge.text = $"S:{id.NetSegment}  {info.name}";
+                HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()} ({info.GetAI().GetType()})\n{info.m_class.name}";
             }
 
@@ -170,6 +177,10 @@ namespace MoveIt
             HoverLarge.clipChildren = true;
             HoverLarge.useDropShadow = true;
             HoverLarge.dropShadowOffset = new Vector2(2, -2);
+            HoverLarge.eventClick += (c, p) =>
+            {
+                Clipboard.text = HoverLarge.tooltip;
+            };
 
             HoverSmall = Panel.AddUIComponent<UILabel>();
             HoverSmall.textScale = 0.65f;
