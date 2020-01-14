@@ -538,7 +538,7 @@ namespace MoveIt
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
-                Debug.Log($"Now:{enable}\n-------------------------------------------");
+                //Debug.Log($"Now:{enable}\n-------------------------------------------");
                 if (enable)
                 {
                     m_sensitivityTogglePosAbs = RaycastMouseLocation();

@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using ColossalFramework;
+using ColossalFramework.Math;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-
-using ColossalFramework.Math;
+using UnityEngine;
 
 
 namespace MoveIt
@@ -45,23 +45,32 @@ namespace MoveIt
         {
             get
             {
-                if(nodeBuffer[id.NetNode].m_building != 0)
+                foreach (Instance sub in subInstances)
                 {
-                    InstanceID pillarID = new InstanceID();
-                    pillarID.Building = nodeBuffer[id.NetNode].m_building;
-
-
-                    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
+                    if (sub is MoveableBuilding mb)
                     {
-                        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
-
-                        if (pillarInstance.isValid)
-                        {
-                            return pillarInstance;
-                        }
+                        return mb;
                     }
                 }
                 return null;
+
+                //if(nodeBuffer[id.NetNode].m_building != 0)
+                //{
+                //    InstanceID pillarID = new InstanceID();
+                //    pillarID.Building = nodeBuffer[id.NetNode].m_building;
+
+
+                //    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
+                //    {
+                //        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
+
+                //        if (pillarInstance.isValid)
+                //        {
+                //            return pillarInstance;
+                //        }
+                //    }
+                //}
+                //return null;
             }
         }
 
@@ -86,13 +95,9 @@ namespace MoveIt
 
         public MoveableNode(InstanceID instanceID) : base(instanceID)
         {
-            //if ((NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].m_flags & NetNode.Flags.Created) == NetNode.Flags.None)
-            //{
-            //    Debug.Log($"Node #{instanceID.NetNode} not found!");
-            //    return;
-            //    // TODO throw new Exception($"Node #{instanceID.NetNode} not found!");
-            //}
             Info = new Info_Prefab(NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].Info);
+
+            subInstances = GetSubInstances();
         }
 
         public override InstanceState GetState()
@@ -211,9 +216,92 @@ namespace MoveIt
             }
         }
 
+        public List<Instance> GetSubInstances()
+        {
+            List<Instance> instances = new List<Instance>();
+            ushort building = nodeBuffer[id.NetNode].m_building;
+            int count = 0;
+            while (building != 0)
+            {
+                InstanceID buildingID = default;
+                buildingID.Building = building;
+
+                instances.Add(new MoveableBuilding(buildingID));
+                building = buildingBuffer[building].m_subBuilding;
+
+                if (++count > 49152)
+                {
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
+                    break;
+                }
+            }
+
+            ushort node = buildingBuffer[id.Building].m_netNode;
+            count = 0;
+            while (node != 0)
+            {
+                ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
+                if (layer != ItemClass.Layer.PublicTransport)
+                {
+                    InstanceID nodeID = default;
+                    nodeID.NetNode = node;
+                    instances.Add(new MoveableNode(nodeID));
+                }
+
+                node = nodeBuffer[node].m_nextBuildingNode;
+                if ((nodeBuffer[node].m_flags & NetNode.Flags.Created) != NetNode.Flags.Created)
+                {
+                    node = 0;
+                }
+
+                if (++count > 32768)
+                {
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
+                    break;
+                }
+            }
+
+            return instances;
+        }
+
+        internal override void SetHidden(bool hide)
+        {
+            foreach (Instance sub in subInstances)
+            {
+                if (sub is MoveableNode mn)
+                {
+                    if (mn.Pillar != null)
+                    {
+                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleBuildingHiddenFlag(mn.Pillar.id.Building, hide);
+                    }
+                }
+
+                if (sub is MoveableBuilding bs)
+                {
+                    buildingBuffer[sub.id.Building].m_flags = ToggleBuildingHiddenFlag(sub.id.Building, hide);
+
+                    Building subBuilding = (Building)bs.data;
+
+                    foreach (Instance subSub in bs.subInstances)
+                    {
+                        if (subSub is MoveableNode mn2)
+                        {
+                            if (mn2.Pillar != null)
+                            {
+                                buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleBuildingHiddenFlag(mn2.Pillar.id.Building, hide);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
+
+            TransformAngle = angle;
+            TransformPosition = location;
 
             ushort node = id.NetNode;
             Vector3 oldPosition = nodeBuffer[node].m_position;
@@ -497,5 +585,16 @@ namespace MoveIt
         public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
 
         public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
+        
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)//, int depth = 0)
+        {
+            foreach (Instance subInstance in subInstances)
+            {
+                if (subInstance is MoveableBuilding msb)
+                {
+                    msb.RenderGeometry(cameraInfo, toolColor);//, depth + 1);
+                }
+            }
+        }
     }
 }

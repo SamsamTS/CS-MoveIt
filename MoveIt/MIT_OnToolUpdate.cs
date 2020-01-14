@@ -129,26 +129,14 @@ namespace MoveIt
 
                                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                                 {
-                                    if (dragging)
+                                    //if (dragging)
                                     {
-                                        foreach (Instance i in Action.selection)
-                                        {
-                                            if (i is MoveableBuilding mb)
-                                            {
-                                                mb.Virtual = !fastMove;
-                                            }
-                                        }
+                                        action.Virtual = !fastMove;
                                     }
                                 }
                                 else
                                 {
-                                    foreach (Instance i in Action.selection)
-                                    {
-                                        if (i is MoveableBuilding mb)
-                                        {
-                                            mb.Virtual = fastMove;
-                                        }
-                                    }
+                                    action.Virtual = fastMove;
                                 }
                             
                                 if (m_leftClickTime > 0)

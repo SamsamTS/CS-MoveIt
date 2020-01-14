@@ -720,6 +720,7 @@ namespace MoveIt
                 Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                 TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
                 bounds.Expand(512f);
+                Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                 Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
             }
 
@@ -1062,15 +1063,17 @@ namespace MoveIt
             return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
         }
 
-        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerList)
+        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerListHolder)
         {
+            HashSet<Bounds> outerList = new HashSet<Bounds>();
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
 
             int c = 0;
-            foreach (Bounds b in outerList)
+            foreach (Bounds b in outerListHolder)
             {
-                b.Expand(128f);
+                b.Expand(256f);
+                outerList.Add(b);
             }
 
             do

@@ -80,12 +80,12 @@ namespace MoveIt
                 }
                 //Debug.Log(msg);
 
-                string msg = $"activeIds ({activeIds.Count}):\n";
-                foreach (int a in activeIds)
-                {
-                    msg += $"{a},";
-                }
-                Debug.Log(msg);
+                //string msg = $"activeIds ({activeIds.Count}):\n";
+                //foreach (int a in activeIds)
+                //{
+                //    msg += $"{a},";
+                //}
+                //Debug.Log(msg);
 
                 return objects;
             }

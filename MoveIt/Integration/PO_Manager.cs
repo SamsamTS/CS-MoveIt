@@ -31,7 +31,6 @@ namespace MoveIt
             }
             set
             {
-                Debug.Log($"AAA PO UPDATE:{_active} -> {value}");
                 if (!Enabled)
                     _active = false;
                 _active = value;
@@ -90,7 +89,6 @@ namespace MoveIt
 
         internal bool InitialiseTool(bool enable)
         {
-            Debug.Log($"AAAA InitialiseTool {enable} (was:{MoveItTool.PO.Active})");
             if (MoveItTool.PO.Active == enable)
             {
                 return true;
@@ -106,7 +104,6 @@ namespace MoveIt
                         MoveItTool.instance.StopCloning();
                     }
 
-                    Debug.Log($"AAAB InitialiseTool {enable}");
                     MoveItTool.PO.ToolEnabled();
                     UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
                     ActionQueue.instance.Push(new TransformAction());

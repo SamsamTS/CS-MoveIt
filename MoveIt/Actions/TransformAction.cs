@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MoveIt
 {
-
     public class TransformAction : Action
     {
         public Vector3 moveDelta;
@@ -18,7 +17,44 @@ namespace MoveIt
 
         private bool containsNetwork = false;
 
+        //long[] Ticks = new long[6];
+
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
+
+        internal bool _virtual = false;
+        public bool Virtual
+        {
+            get => _virtual;
+            set
+            {
+                if (value == true)
+                {
+                    if (_virtual == false)
+                    {
+                        //UnityEngine.Debug.Log($"AAAC-1 ->fast");
+                        _virtual = true;
+                        foreach (Instance i in selection)
+                        {
+                            i.Virtual = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (_virtual == true)
+                    {
+                        //UnityEngine.Debug.Log($"AAAC-2 ->slow");
+                        _virtual = false;
+                        foreach (Instance i in selection)
+                        {
+                            i.Virtual = false;
+                        }
+                        Do();
+                        UpdateArea(GetTotalBounds(), true);
+                    }
+                }
+            }
+        }
 
         public TransformAction()
         {
@@ -37,14 +73,27 @@ namespace MoveIt
 
             center = GetCenter();
             //MoveItTool.instance.m_skipLowSensitivity = false;
+
+            //for (int i = 0; i < Ticks.Length; i++)
+            //{
+            //    Ticks[i] = 0;
+            //}
         }
 
         public override void Do()
         {
+            //Ticks[0]++;
+            //Stopwatch sw = Stopwatch.StartNew();
+            //Stopwatch sw2 = Stopwatch.StartNew();
+
             Bounds originalBounds = GetTotalBounds(false);
 
             Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+
+            //sw.Stop();
+            //Ticks[1] += sw.ElapsedTicks;
+            //sw = Stopwatch.StartNew();
 
             foreach (InstanceState state in m_states)
             {
@@ -59,9 +108,43 @@ namespace MoveIt
                 }
             }
 
-            bool fast = MoveItTool.fastMove != Event.current.shift;
-            UpdateArea(originalBounds, !fast || containsNetwork);
-            UpdateArea(GetTotalBounds(false), !fast || containsNetwork);
+            bool full = !(MoveItTool.fastMove != Event.current.shift) || containsNetwork;
+            //sw.Stop();
+            //Ticks[2] += sw.ElapsedTicks;
+            //sw = Stopwatch.StartNew();
+
+            UpdateArea(originalBounds, full);
+
+            //sw.Stop();
+            //Ticks[3] += sw.ElapsedTicks;
+            //sw = Stopwatch.StartNew();
+
+            Bounds fullbounds = GetTotalBounds(false);
+
+            //sw.Stop();
+            //Ticks[4] += sw.ElapsedTicks;
+            //sw = Stopwatch.StartNew();
+
+            UpdateArea(fullbounds, full);
+
+            //sw.Stop();
+            //sw2.Stop();
+            //Ticks[5] += sw.ElapsedTicks;
+
+            //var sb = new System.Text.StringBuilder();
+            //sb.Append($"Iterations:{Ticks[0]}, Selection-count:{m_states.Count}\n");
+            //for (int i = 1; i < Ticks.Length; i++)
+            //{
+            //    float t = Ticks[i];
+            //    if (i == 2)
+            //    {
+            //        float t2 = t / m_states.Count;
+            //        sb.Append(string.Format("[A] Total:{0,9} - Avg:{1,9:F2}\n", t2, t2 / Ticks[0]));
+            //    }
+            //    sb.Append(string.Format("[{0}] Total:{1,9} - Avg:{2,9:F2}\n", i, t, t / Ticks[0]));
+            //}
+            //sb.Append(string.Format("  Overall:{0,9}", sw2.ElapsedTicks));
+            //UnityEngine.Debug.Log(sb);
         }
 
         public override void Undo()
@@ -80,6 +163,7 @@ namespace MoveIt
         public void InitialiseDrag()
         {
             MoveItTool.dragging = true;
+            Virtual = false;
 
             foreach (InstanceState instanceState in m_states)
             {
@@ -94,6 +178,7 @@ namespace MoveIt
         public void FinaliseDrag()
         {
             MoveItTool.dragging = false;
+            Virtual = false;
 
             foreach (InstanceState instanceState in m_states)
             {

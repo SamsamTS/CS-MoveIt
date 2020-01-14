@@ -39,8 +39,6 @@ namespace MoveIt
             bool selectTrees = true;
             bool selectProc = PO.Active;
 
-            bool repeatSearch = false;
-
             if (marqueeSelection)
             {
                 selectPicker = filterPicker;
@@ -72,6 +70,7 @@ namespace MoveIt
 
             float smallestDist = 640000f;
 
+            bool repeatSearch;
             do
             {
                 if (PO.Active && selectProc)

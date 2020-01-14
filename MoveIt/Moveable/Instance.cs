@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-
+﻿using System;
 using System.Collections.Generic;
-using System;
 using System.Xml.Serialization;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -124,6 +123,8 @@ namespace MoveIt
         protected static NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
 
+        public List<Instance> subInstances = new List<Instance>();
+
         public Instance(InstanceID instanceID)
         {
             id = instanceID;
@@ -140,9 +141,91 @@ namespace MoveIt
             get;
         }
 
+        internal bool _virtual = false;
+        public bool Virtual
+        {
+            get => _virtual;
+            set
+            {
+                if (value == true)
+                {
+                    if (_virtual == false)
+                    {
+                        _virtual = true;
+                        InitialiseTransform();
+                        SetHidden(true);
+                    }
+                }
+                else
+                {
+                    if (_virtual == true)
+                    {
+                        _virtual = false;
+                        SetHidden(false);
+                        //Move(TransformPosition, TransformAngle);
+                        Action.UpdateArea(Action.GetTotalBounds(), true);
+                    }
+                }
+            }
+        }
+
+        internal virtual void InitialiseTransform()
+        {
+            TransformPosition = position;
+            TransformAngle = angle;
+        }
+
+        internal virtual void SetHidden(bool hide) { }
+
+        internal Building.Flags ToggleBuildingHiddenFlag(ushort id, bool hide)
+        {
+            if (hide)
+            {
+                if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden)
+                {
+                    throw new Exception($"Building already hidden\n#{id}:{buildingBuffer[id].Info.name}");
+                }
+
+                return buildingBuffer[id].m_flags | Building.Flags.Hidden;
+            }
+            else
+            {
+                if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
+                {
+                    throw new Exception($"Building not hidden\n#{id}:{buildingBuffer[id].Info.name}");
+                }
+            }
+
+            return buildingBuffer[id].m_flags & ~Building.Flags.Hidden;
+        }
+
         public abstract Vector3 position { get; set; }
 
         public abstract float angle { get; set; }
+
+        public virtual Vector3 TransformPosition { get; set; }
+
+        public virtual float TransformAngle { get; set; }
+
+        public Vector3 OverlayPosition
+        {
+            get
+            {
+                if (GetAction() is TransformAction ta && ta.Virtual)
+                    return TransformPosition;
+                return position;
+            }
+        }
+
+        public float OverlayAngle
+        {
+            get
+            {
+                if (GetAction() is TransformAction ta && ta.Virtual)
+                    return TransformAngle;
+                return angle;
+            }
+        }
 
         public abstract bool isValid { get; }
 
@@ -178,8 +261,8 @@ namespace MoveIt
             }
         }
 
-        private IInfo info;
-        public IInfo Info { get => info; set => info = value; }
+        private IInfo _info;
+        public IInfo Info { get => _info; set => _info = value; }
 
         public abstract InstanceState GetState();
         public abstract void SetState(InstanceState state);
@@ -193,12 +276,16 @@ namespace MoveIt
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
-
-        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor, int depth = 0) { }
+        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor) { }//, int depth = 0) { }
 
         public virtual void SetHeight()
         {
             SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+        }
+
+        internal Action GetAction()
+        {
+            return ActionQueue.instance.current;
         }
 
         public static implicit operator Instance(InstanceID id)

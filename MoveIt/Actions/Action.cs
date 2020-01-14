@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ColossalFramework;
+using System;
 using System.Collections.Generic;
 
 namespace MoveIt
@@ -73,26 +74,61 @@ namespace MoveIt
             return totalBounds;
         }
 
-        public static void UpdateArea(Bounds bounds, bool updateTerrain = false)
+        public static void UpdateArea(Bounds bounds, bool full = false)
         {
-            bounds.Expand(32f);
-            if (updateTerrain)
+            try
             {
-                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                //Stopwatch sw = Stopwatch.StartNew();
+                //long time = 0;
+                //var sb = new System.Text.StringBuilder();
+                //sb.Append($"full:{full}\nBounds:{bounds}\n");
+
+                bounds.Expand(32f);
+                if (full)
+                {
+                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                }
+
+                //sw.Stop();
+                //sb.Append(string.Format("  A01:{0:D5}", sw.ElapsedTicks - time));
+                //time = sw.ElapsedTicks;
+                //sw.Start();
+
+                bounds.Expand(32f);
+                MoveItTool.instance.areasToUpdate.Add(bounds);
+                MoveItTool.instance.areaUpdateCountdown = 40;
+
+                //sw.Stop();
+                //sb.Append(string.Format("  A02:{0:D5}", sw.ElapsedTicks - time));
+                //time = sw.ElapsedTicks;
+                //sw.Start();
+                if (full)
+                {
+                    Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    bounds.Expand(64f);
+                    Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    //sw.Stop();
+                    //sb.Append(string.Format("  F03:{0:D5}", sw.ElapsedTicks - time));
+                    //time = sw.ElapsedTicks;
+                    //sw.Start();
+                    UpdateRender(bounds);
+                    //sw.Stop();
+                    //sb.Append(string.Format("  F04:{0:D5}", sw.ElapsedTicks - time));
+                    //time = sw.ElapsedTicks;
+                    //sw.Start();
+                }
+                //sw.Stop();
+                //sb.Append(string.Format("  A05:{0:D5}", sw.ElapsedTicks - time));
+                //sb.Append(string.Format("\nTotal:{0:D5}", sw.ElapsedTicks));
+                //UnityEngine.Debug.Log(sb);
             }
-
-            bounds.Expand(32f);
-            MoveItTool.instance.areasToUpdate.Add(bounds);
-            MoveItTool.instance.areaUpdateCountdown = 40;
-
-            Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-
-            bounds.Expand(64f);
-            Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-            UpdateRender(bounds);
+            catch (IndexOutOfRangeException e)
+            {
+                Debug.Log($"EXCEPTION\n{bounds}\n{e}");
+            }
         }
 
         private static void UpdateRender(Bounds bounds)
