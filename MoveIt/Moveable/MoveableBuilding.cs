@@ -81,11 +81,6 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
-        //    return GetBuildingState(0);
-        //}
-
-        //public InstanceState GetBuildingState(int depth)
-        //{ 
             BuildingState state = new BuildingState
             {
                 instance = this,
@@ -106,10 +101,7 @@ namespace MoveIt
                 {
                     if (subInstance.id.Building > 0)
                     {
-                        //if (depth < 1)
-                        {
-                            subStates.Add(((MoveableBuilding)subInstance).GetState()); //.GetBuildingState(depth + 1)); ;
-                        }
+                        subStates.Add(((MoveableBuilding)subInstance).GetState());
                     }
                     else
                     {
@@ -599,31 +591,20 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
-        //    return GetBuildingBounds(0, ignoreSegments);
-        //}
-
-        //public Bounds GetBuildingBounds(int depth, bool ignoreSegments = true)
-        //{
             BuildingInfo info = buildingBuffer[id.Building].Info;
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
             Bounds bounds = new Bounds(OverlayPosition, new Vector3(radius, 0, radius));
-            //Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
 
-            //if (depth < 1)
-            { 
-                foreach (Instance subInstance in subInstances)
+            foreach (Instance subInstance in subInstances)
+            {
+                if (subInstance is MoveableBuilding mb)
                 {
-                    if (/*!isSubInstance && */subInstance is MoveableBuilding mb)// subInstance.id.Building > 0)
-                    {
-                        bounds.Encapsulate(mb.GetBounds(ignoreSegments));
-                        //bounds.Encapsulate(mb.GetBuildingBounds(depth + 1, ignoreSegments));
-                        //bounds.Encapsulate(((MoveableSubBuilding)subInstance).GetBuildingBounds(depth + 1, ignoreSegments));
-                    }
-                    else
-                    {
-                        bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
-                    }
+                    bounds.Encapsulate(mb.GetBounds(ignoreSegments));
+                }
+                else
+                {
+                    bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
                 }
             }
 
@@ -647,8 +628,6 @@ namespace MoveIt
             toolColor.a *= alpha;
 
             int length = buildingBuffer[building].Length;
-            //Vector3 position = buildingBuffer[building].m_position;
-            //float angle = buildingBuffer[building].m_angle;
             BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, OverlayPosition, OverlayAngle, toolColor, false);
 
             foreach (Instance subInstance in subInstances)
@@ -671,53 +650,6 @@ namespace MoveIt
                     BuildingTool.RenderOverlay(cameraInfo, (BuildingInfo)mb.Info.Prefab, b.Length, mb.OverlayPosition, mb.OverlayAngle, toolColor, false);
                 }
             }
-
-            //if (false)
-            //{
-            //    ushort node = buildingBuffer[building].m_netNode;
-            //    int count = 0;
-            //    while (node != 0)
-            //    {
-            //        for (int k = 0; k < 8; k++)
-            //        {
-            //            ushort segment2 = netManager.m_nodes.m_buffer[node].GetSegment(k);
-            //            if (segment2 != 0 && netManager.m_segments.m_buffer[segment2].m_startNode == node && (netManager.m_segments.m_buffer[segment2].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
-            //            {
-            //                NetTool.RenderOverlay(cameraInfo, ref netManager.m_segments.m_buffer[segment2], toolColor, toolColor);
-            //            }
-            //        }
-            //        node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
-
-            //        if (++count > 32768)
-            //        {
-            //            CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
-            //            break;
-            //        }
-            //    }
-            //    ushort subBuildingId = buildingBuffer[building].m_subBuilding;
-            //    count = 0;
-            //    while (subBuildingId != 0)
-            //    {
-            //        InstanceID subInstanceId = default;
-            //        subInstanceId.Building = subBuildingId;
-            //        MoveableSubBuilding subBuilding = new MoveableSubBuilding(subInstanceId);
-            //        BuildingInfo subBuildingInfo = (BuildingInfo)subBuilding.Info.Prefab;
-
-            //        //BuildingInfo subBuildingInfo = buildingBuffer[subBuildingId].Info;
-            //        int subLength = buildingBuffer[subBuildingId].Length;
-            //        //Vector3 subPosition = buildingBuffer[subBuildingId].m_position;
-            //        //float subAngle = buildingBuffer[subBuildingId].m_angle;
-            //        BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subBuilding.OverlayPosition, subBuilding.OverlayAngle, toolColor, false);
-            //        //BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subPosition, subAngle, toolColor, false);
-            //        subBuildingId = buildingBuffer[subBuildingId].m_subBuilding;
-
-            //        if (++count > 49152)
-            //        {
-            //            CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
-            //            break;
-            //        }
-            //    }
-            //}
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
@@ -790,7 +722,7 @@ namespace MoveIt
             }
         }
 
-        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)//, int depth = 0)
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
             BuildingInfo buildingInfo = Info.Prefab as BuildingInfo;
             Color color = GetColor(id.Building, buildingInfo);
@@ -798,14 +730,11 @@ namespace MoveIt
             buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, OverlayPosition, OverlayAngle, 0);
             BuildingTool.RenderGeometry(cameraInfo, buildingInfo, Length, OverlayPosition, OverlayAngle, false, color);
 
-            //if (depth < 1)
+            foreach (Instance subInstance in subInstances)
             {
-                foreach (Instance subInstance in subInstances)
+                if (subInstance is MoveableBuilding msb)
                 {
-                    if (subInstance is MoveableBuilding msb)
-                    {
-                        msb.RenderGeometry(cameraInfo, toolColor);//, depth + 1);
-                    }
+                    msb.RenderGeometry(cameraInfo, toolColor);
                 }
             }
         }

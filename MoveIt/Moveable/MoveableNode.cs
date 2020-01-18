@@ -53,24 +53,6 @@ namespace MoveIt
                     }
                 }
                 return null;
-
-                //if(nodeBuffer[id.NetNode].m_building != 0)
-                //{
-                //    InstanceID pillarID = new InstanceID();
-                //    pillarID.Building = nodeBuffer[id.NetNode].m_building;
-
-
-                //    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
-                //    {
-                //        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
-
-                //        if (pillarInstance.isValid)
-                //        {
-                //            return pillarInstance;
-                //        }
-                //    }
-                //}
-                //return null;
             }
         }
 

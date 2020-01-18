@@ -283,6 +283,17 @@ namespace MoveIt
         private long m_leftClickTime;
 
         public ToolAction m_nextAction = ToolAction.None;
+
+        private static System.Random _rand = null;
+        internal static System.Random Rand
+        {
+            get
+            {
+                if (_rand == null)
+                    _rand = new System.Random();
+                return _rand;
+            }
+        }
         
         protected override void Awake()
         {
@@ -413,9 +424,9 @@ namespace MoveIt
                 }
 
                 // Debug overlays
-                foreach (Quad3 q in DebugBoxes)
+                foreach (DebugOverlay d in DebugBoxes)
                 {
-                    Singleton<RenderManager>.instance.OverlayEffect.DrawQuad(cameraInfo, new Color32(255, 255, 255, 63), q, 0, 1000, false, false);
+                    Singleton<RenderManager>.instance.OverlayEffect.DrawQuad(cameraInfo, d.color, d.quad, 0, 1000, false, false);
                 }
                 foreach (Vector3 v in DebugPoints)
                 {
@@ -687,19 +698,35 @@ namespace MoveIt
         }
 
         #region Debug Overlays
-        private List<Quad3> DebugBoxes = new List<Quad3>();
-        private List<Vector3> DebugPoints = new List<Vector3>();
-        internal void AddDebugBox(Bounds b)
+        internal struct DebugOverlay
         {
+            internal Quad3 quad;
+            internal Color32 color;
+
+            public DebugOverlay(Quad3 q, Color32 c)
+            {
+                quad = q;
+                color = c;
+            }
+        }
+        private static List<DebugOverlay> DebugBoxes = new List<DebugOverlay>();
+        private static List<Vector3> DebugPoints = new List<Vector3>();
+        internal static void AddDebugBox(Bounds b, Color32? c = null)
+        {
+            if (c == null)
+            {
+                c = new Color32(255, 255, 255, 63);
+            }
             Quad3 q = default;
             q.a = new Vector3(b.min.x, b.min.y, b.min.z);
             q.b = new Vector3(b.min.x, b.min.y, b.max.z);
             q.c = new Vector3(b.max.x, b.min.y, b.max.z);
             q.d = new Vector3(b.max.x, b.min.y, b.min.z);
-            DebugBoxes.Add(q);
+            DebugOverlay d = new DebugOverlay(q, (Color32)c);
+            DebugBoxes.Add(d);
             Debug.Log($"\nBounds:{b}");
         }
-        internal void AddDebugPoint(Vector3 v)
+        internal static void AddDebugPoint(Vector3 v)
         {
             DebugPoints.Add(v);
             Debug.Log($"\nPoint:{v}");
@@ -708,6 +735,10 @@ namespace MoveIt
         {
             DebugBoxes.Clear();
             DebugPoints.Clear();
+        }
+        internal static Color32 GetRandomDebugColor()
+        {
+            return new Color32(RandomByte(100, 255), RandomByte(100, 255), RandomByte(100, 255), 63);
         }
         #endregion
 
@@ -1063,23 +1094,21 @@ namespace MoveIt
             return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
         }
 
-        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerListHolder)
+        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerList)
         {
-            HashSet<Bounds> outerList = new HashSet<Bounds>();
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
+            HashSet<Bounds> originalList = outerList;
 
             int c = 0;
-            foreach (Bounds b in outerListHolder)
-            {
-                b.Expand(256f);
-                outerList.Add(b);
-            }
 
             do
             {
                 foreach (Bounds outer in outerList)
                 {
+                    //Color32 color = GetRandomDebugColor();
+                    //AddDebugBox(outer, color);
+
                     bool merged = false;
 
                     float outerVolume = outer.size.x * outer.size.y * outer.size.z;
@@ -1127,6 +1156,12 @@ namespace MoveIt
             }
             while (true);
 
+            //foreach (Bounds b in innerList)
+            //{
+            //    b.Expand(4f);
+            //    AddDebugBox(b, new Color32(255, 0, 0, 200));
+            //}
+            //Debug.Log($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
             return innerList;
         }
 
@@ -1175,6 +1210,11 @@ namespace MoveIt
                 message = "No ghost nodes found, nothing has been changed.";
             }
             panel.SetMessage("Removing Ghost Nodes", message, false);
+        }
+
+        internal static byte RandomByte(byte min, byte max)
+        {
+            return (byte)Rand.Next(min, max);
         }
     }
 }

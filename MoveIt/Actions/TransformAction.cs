@@ -31,7 +31,6 @@ namespace MoveIt
                 {
                     if (_virtual == false)
                     {
-                        //UnityEngine.Debug.Log($"AAAC-1 ->fast");
                         _virtual = true;
                         foreach (Instance i in selection)
                         {
@@ -43,7 +42,6 @@ namespace MoveIt
                 {
                     if (_virtual == true)
                     {
-                        //UnityEngine.Debug.Log($"AAAC-2 ->slow");
                         _virtual = false;
                         foreach (Instance i in selection)
                         {
@@ -108,7 +106,7 @@ namespace MoveIt
                 }
             }
 
-            bool full = !(MoveItTool.fastMove != Event.current.shift) || containsNetwork;
+            bool full = !(MoveItTool.fastMove != Event.current.shift);// || containsNetwork;
             //sw.Stop();
             //Ticks[2] += sw.ElapsedTicks;
             //sw = Stopwatch.StartNew();

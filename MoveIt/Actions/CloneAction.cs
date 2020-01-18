@@ -190,17 +190,6 @@ namespace MoveIt
                 }
             }
 
-            //string msg = $"AAAG Count:{sorted.Count}\n";
-            //foreach (Instance i in sorted)
-            //{
-            //    msg += $"{i.Info.Name} - {i.subInstances.Count}";
-            //    //foreach (Instance sub in i.subInstances)
-            //    //{
-            //    //    msg += $"\n    {sub.Info.Name} <{sub.GetType()}>";
-            //    //}
-            //}
-            //Debug.Log(msg);
-
             return sorted;
         }
 
@@ -296,31 +285,9 @@ namespace MoveIt
 
             m_origToClone = m_origToCloneUpdate;
 
-            //foreach (Instance ins in m_clones)
-            //{
-            //    if (ins is MoveableBuilding mb)
-            //    {
-            //        mb.GetSubInstances();
-            //    }
-            //    else if (ins is MoveableNode mn)
-            //    {
-            //        mn.GetSubInstances();
-            //    }
-            //}
-
-            //string msg = $"AAAB\n";
-            //int i = 0;
-            //foreach (Instance ins in m_clones)
-            //{
-            //    msg += $"{i++}:{ins.Info.Name}\n";
-            //}
-            //Debug.Log($"{msg}");
             // Select clones
             selection = m_clones;
-            //if (!_isImport)
-            //{
-                MoveItTool.m_debugPanel.UpdatePanel();
-            //}
+            MoveItTool.m_debugPanel.UpdatePanel();
 
             UpdateArea(GetTotalBounds(false));
         }

@@ -2,6 +2,7 @@
 using ColossalFramework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MoveIt
 {
@@ -45,7 +46,6 @@ namespace MoveIt
                 selection.Remove(i);
             }
 
-            //MoveItTool.PO.SelectionClear();
             MoveItTool.m_debugPanel.UpdatePanel();
         }
 
@@ -78,30 +78,38 @@ namespace MoveIt
         {
             try
             {
-                //Stopwatch sw = Stopwatch.StartNew();
-                //long time = 0;
-                //var sb = new System.Text.StringBuilder();
-                //sb.Append($"full:{full}\nBounds:{bounds}\n");
+                Stopwatch sw = Stopwatch.StartNew();
+
+                long time = 0;
+                var sb = new System.Text.StringBuilder();
+                sb.Append($"full:{full}\nBounds:{bounds}\n");
 
                 bounds.Expand(32f);
+
+                sw.Stop();
+                sb.Append(string.Format("  A02:{0:D5}", sw.ElapsedTicks - time));
+                time = sw.ElapsedTicks;
+                sw.Start();
+
                 if (full)
                 {
+                    //Debug.Log($"AAAB\nTerrain:{bounds}");
                     TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                }
 
-                //sw.Stop();
-                //sb.Append(string.Format("  A01:{0:D5}", sw.ElapsedTicks - time));
-                //time = sw.ElapsedTicks;
-                //sw.Start();
+                    sw.Stop();
+                    sb.Append(string.Format("  F03:{0:D5}", sw.ElapsedTicks - time));
+                    time = sw.ElapsedTicks;
+                    sw.Start();
+                }
 
                 bounds.Expand(32f);
                 MoveItTool.instance.areasToUpdate.Add(bounds);
-                MoveItTool.instance.areaUpdateCountdown = 40;
+                MoveItTool.instance.areaUpdateCountdown = 60;
 
-                //sw.Stop();
-                //sb.Append(string.Format("  A02:{0:D5}", sw.ElapsedTicks - time));
-                //time = sw.ElapsedTicks;
-                //sw.Start();
+                sw.Stop();
+                sb.Append(string.Format("  A04:{0:D5}", sw.ElapsedTicks - time));
+                time = sw.ElapsedTicks;
+                sw.Start();
                 if (full)
                 {
                     Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
@@ -110,24 +118,24 @@ namespace MoveIt
                     bounds.Expand(64f);
                     Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    //sw.Stop();
-                    //sb.Append(string.Format("  F03:{0:D5}", sw.ElapsedTicks - time));
-                    //time = sw.ElapsedTicks;
-                    //sw.Start();
-                    UpdateRender(bounds);
-                    //sw.Stop();
-                    //sb.Append(string.Format("  F04:{0:D5}", sw.ElapsedTicks - time));
-                    //time = sw.ElapsedTicks;
-                    //sw.Start();
+                    sw.Stop();
+                    sb.Append(string.Format("  F05:{0:D5}", sw.ElapsedTicks - time));
+                    time = sw.ElapsedTicks;
+                    sw.Start();
                 }
-                //sw.Stop();
-                //sb.Append(string.Format("  A05:{0:D5}", sw.ElapsedTicks - time));
-                //sb.Append(string.Format("\nTotal:{0:D5}", sw.ElapsedTicks));
-                //UnityEngine.Debug.Log(sb);
+                sw.Stop();
+                sb.Append(string.Format("  A06:{0:D5}", sw.ElapsedTicks - time));
+                time = sw.ElapsedTicks;
+                sw.Start();
+                UpdateRender(bounds);
+                sw.Stop();
+                sb.Append(string.Format("  A07:{0:D5}", sw.ElapsedTicks - time));
+                sb.Append(string.Format("\nTotal:{0:D5}", sw.ElapsedTicks));
+                UnityEngine.Debug.Log(sb);
             }
             catch (IndexOutOfRangeException e)
             {
-                Debug.Log($"EXCEPTION\n{bounds}\n{e}");
+                UnityEngine.Debug.Log($"EXCEPTION\n{bounds}\n{e}");
             }
         }
 
