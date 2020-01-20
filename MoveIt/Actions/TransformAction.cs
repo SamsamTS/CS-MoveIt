@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MoveIt
 {
@@ -15,9 +14,7 @@ namespace MoveIt
         public bool autoCurve;
         public NetSegment segmentCurve;
 
-        private bool containsNetwork = false;
-
-        //long[] Ticks = new long[6];
+        private readonly bool containsNetwork = false;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
@@ -29,7 +26,7 @@ namespace MoveIt
             {
                 if (value == true)
                 {
-                    if (_virtual == false)
+                    if (_virtual == false && selection.Count < 50)
                     {
                         _virtual = true;
                         foreach (Instance i in selection)
@@ -70,28 +67,14 @@ namespace MoveIt
             }
 
             center = GetCenter();
-            //MoveItTool.instance.m_skipLowSensitivity = false;
-
-            //for (int i = 0; i < Ticks.Length; i++)
-            //{
-            //    Ticks[i] = 0;
-            //}
         }
 
         public override void Do()
         {
-            //Ticks[0]++;
-            //Stopwatch sw = Stopwatch.StartNew();
-            //Stopwatch sw2 = Stopwatch.StartNew();
-
             Bounds originalBounds = GetTotalBounds(false);
 
             Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis((angleDelta + snapAngle) * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-
-            //sw.Stop();
-            //Ticks[1] += sw.ElapsedTicks;
-            //sw = Stopwatch.StartNew();
 
             foreach (InstanceState state in m_states)
             {
@@ -106,43 +89,14 @@ namespace MoveIt
                 }
             }
 
-            bool full = !(MoveItTool.fastMove != Event.current.shift);// || containsNetwork;
-            //sw.Stop();
-            //Ticks[2] += sw.ElapsedTicks;
-            //sw = Stopwatch.StartNew();
-
+            bool full = !(MoveItTool.fastMove != Event.current.shift) || containsNetwork;
+            if (!full)
+            {
+                full = selection.Count > 50 ? true : false;
+            }
             UpdateArea(originalBounds, full);
-
-            //sw.Stop();
-            //Ticks[3] += sw.ElapsedTicks;
-            //sw = Stopwatch.StartNew();
-
             Bounds fullbounds = GetTotalBounds(false);
-
-            //sw.Stop();
-            //Ticks[4] += sw.ElapsedTicks;
-            //sw = Stopwatch.StartNew();
-
             UpdateArea(fullbounds, full);
-
-            //sw.Stop();
-            //sw2.Stop();
-            //Ticks[5] += sw.ElapsedTicks;
-
-            //var sb = new System.Text.StringBuilder();
-            //sb.Append($"Iterations:{Ticks[0]}, Selection-count:{m_states.Count}\n");
-            //for (int i = 1; i < Ticks.Length; i++)
-            //{
-            //    float t = Ticks[i];
-            //    if (i == 2)
-            //    {
-            //        float t2 = t / m_states.Count;
-            //        sb.Append(string.Format("[A] Total:{0,9} - Avg:{1,9:F2}\n", t2, t2 / Ticks[0]));
-            //    }
-            //    sb.Append(string.Format("[{0}] Total:{1,9} - Avg:{2,9:F2}\n", i, t, t / Ticks[0]));
-            //}
-            //sb.Append(string.Format("  Overall:{0,9}", sw2.ElapsedTicks));
-            //UnityEngine.Debug.Log(sb);
         }
 
         public override void Undo()
@@ -165,8 +119,7 @@ namespace MoveIt
 
             foreach (InstanceState instanceState in m_states)
             {
-                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
-                if (mb != null)
+                if (instanceState.instance is MoveableBuilding mb)
                 {
                     mb.InitialiseDrag();
                 }
@@ -180,8 +133,7 @@ namespace MoveIt
 
             foreach (InstanceState instanceState in m_states)
             {
-                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
-                if (mb != null)
+                if (instanceState.instance is MoveableBuilding mb)
                 {
                     mb.FinaliseDrag();
                 }

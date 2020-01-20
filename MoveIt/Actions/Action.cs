@@ -2,7 +2,6 @@
 using ColossalFramework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MoveIt
 {
@@ -78,38 +77,14 @@ namespace MoveIt
         {
             try
             {
-                Stopwatch sw = Stopwatch.StartNew();
+                //bounds.Expand(32f);
 
-                long time = 0;
-                var sb = new System.Text.StringBuilder();
-                sb.Append($"full:{full}\nBounds:{bounds}\n");
-
-                bounds.Expand(32f);
-
-                sw.Stop();
-                sb.Append(string.Format("  A02:{0:D5}", sw.ElapsedTicks - time));
-                time = sw.ElapsedTicks;
-                sw.Start();
-
-                if (full)
-                {
-                    //Debug.Log($"AAAB\nTerrain:{bounds}");
-                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-
-                    sw.Stop();
-                    sb.Append(string.Format("  F03:{0:D5}", sw.ElapsedTicks - time));
-                    time = sw.ElapsedTicks;
-                    sw.Start();
-                }
+                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
 
                 bounds.Expand(32f);
                 MoveItTool.instance.areasToUpdate.Add(bounds);
                 MoveItTool.instance.areaUpdateCountdown = 60;
 
-                sw.Stop();
-                sb.Append(string.Format("  A04:{0:D5}", sw.ElapsedTicks - time));
-                time = sw.ElapsedTicks;
-                sw.Start();
                 if (full)
                 {
                     Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
@@ -118,24 +93,16 @@ namespace MoveIt
                     bounds.Expand(64f);
                     Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    sw.Stop();
-                    sb.Append(string.Format("  F05:{0:D5}", sw.ElapsedTicks - time));
-                    time = sw.ElapsedTicks;
-                    sw.Start();
                 }
-                sw.Stop();
-                sb.Append(string.Format("  A06:{0:D5}", sw.ElapsedTicks - time));
-                time = sw.ElapsedTicks;
-                sw.Start();
+                else
+                {
+                    bounds.Expand(64f);
+                }
                 UpdateRender(bounds);
-                sw.Stop();
-                sb.Append(string.Format("  A07:{0:D5}", sw.ElapsedTicks - time));
-                sb.Append(string.Format("\nTotal:{0:D5}", sw.ElapsedTicks));
-                UnityEngine.Debug.Log(sb);
             }
             catch (IndexOutOfRangeException e)
             {
-                UnityEngine.Debug.Log($"EXCEPTION\n{bounds}\n{e}");
+                Debug.Log($"EXCEPTION\n{bounds}\n{e}");
             }
         }
 
