@@ -212,7 +212,7 @@ namespace MoveIt
 
         public override void Do()
         {
-            if (MoveItTool.POProcessing)
+            if (MoveItTool.POProcessing > 0)
             {
                 return;
             }

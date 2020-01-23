@@ -41,7 +41,7 @@ namespace MoveIt
         internal IEnumerator<object> UpdateDo()
         {
             yield return new WaitForSeconds(0.05f);
-            ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase})";
+            ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase}), POPro:{MoveItTool.POProcessing}";
 
             SelectedLarge.text = $"Objects Selected: {Action.selection.Count}";
             ushort[] types = new ushort[8];

@@ -38,7 +38,7 @@ namespace MoveIt
                 CloneAction action = ActionQueue.instance.current as CloneAction;
                 action.followTerrain = followTerrain;
 
-                if (!POProcessing)
+                if (POProcessing == 0)
                 {
                     ToolState = ToolStates.Default;
                     m_nextAction = ToolAction.Do;
@@ -103,7 +103,6 @@ namespace MoveIt
                 if (e.alt)
                 {
                     Action.selection.ExceptWith(m_marqueeInstances);
-                    //PO.SelectionRemove(m_marqueeInstances);
                     m_debugPanel.UpdatePanel();
                 }
                 else
@@ -113,7 +112,6 @@ namespace MoveIt
                         Action.selection.Clear();
                     }
                     Action.selection.UnionWith(m_marqueeInstances);
-                    //PO.SelectionAdd(m_marqueeInstances);
                     m_debugPanel.UpdatePanel();
                 }
 
@@ -127,6 +125,11 @@ namespace MoveIt
         private void OnLeftClick()
         {
             DebugUtils.Log("OnLeftClick: " + ToolState);
+
+            if (POProcessing > 0)
+            {
+                return;
+            }
 
             if (ToolState == ToolStates.Default || ToolState == ToolStates.DrawingSelection)
             {

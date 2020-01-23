@@ -79,7 +79,10 @@ namespace MoveIt
             {
                 //bounds.Expand(32f);
 
-                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                if (full)
+                {
+                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                }
 
                 bounds.Expand(32f);
                 MoveItTool.instance.areasToUpdate.Add(bounds);

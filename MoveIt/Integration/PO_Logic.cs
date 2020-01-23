@@ -93,7 +93,7 @@ namespace MoveIt
 
         public void Clone(uint originalId, Vector3 position, float angle, Action action)
         {
-            MoveItTool.POProcessing = true;
+            MoveItTool.POProcessing++;
             tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { GetPOById(originalId).GetProceduralObject() });
             StartCoroutine(RetrieveClone(originalId, position, angle, action));
         }
@@ -141,13 +141,12 @@ namespace MoveIt
 
             Action.selection.Add(cloneInstance);
             ((CloneAction)action).m_clones.Add(cloneInstance);
-            //MoveItTool.PO.SelectionAdd(cloneInstance);
 
             MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
 
             yield return new WaitForSeconds(0.25f);
             Debug.Log($"Cloned {originalId} to #{clone.Id}");
-            MoveItTool.POProcessing = false;
+            MoveItTool.POProcessing--;
         }
 
         public void Delete(PO_Object obj)

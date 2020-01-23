@@ -17,11 +17,11 @@ namespace MoveIt
             Vector3 vector = mouseRay.origin + normalized * Camera.main.farClipPlane;
             Segment3 ray = new Segment3(origin, vector);
 
-            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-            PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
-            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-            TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
+            Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+            PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+            TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
 
             Vector3 location = RaycastMouseLocation(mouseRay);
 
@@ -304,11 +304,11 @@ namespace MoveIt
         {
             HashSet<Instance> list = new HashSet<Instance>();
 
-            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-            PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
-            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-            TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
+            Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+            PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+            TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
 
             m_selection.a = m_clickPositionAbs;
             m_selection.c = RaycastMouseLocation(mouseRay);

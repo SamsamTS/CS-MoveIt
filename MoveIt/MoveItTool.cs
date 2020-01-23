@@ -96,21 +96,25 @@ namespace MoveIt
         internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
         internal static Color m_POdisabledColor = new Color32(130, 95, 140, 70);
 
-        public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
-        public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
+        //public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
+        //public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
 
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
-        internal static uint _POProcessing = 0;
-        internal static bool POProcessing
+        private static int _POProcessing = 0;
+        internal static int POProcessing
         {
-            get => _POProcessing > 0;
+            get
+            {
+                return _POProcessing;
+            }
             set
             {
-                if (value)
-                    _POProcessing++;
-                else
-                    _POProcessing--;
+                _POProcessing = value;
+                if (m_debugPanel != null)
+                {
+                    m_debugPanel.UpdatePanel();
+                }
             }
         }
 
@@ -225,7 +229,6 @@ namespace MoveIt
         private HashSet<Instance> m_marqueeInstances;
 
         internal bool m_isLowSensitivity;
-        //internal bool m_skipLowSensitivity = false;
         private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
         private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute

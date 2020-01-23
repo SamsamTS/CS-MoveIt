@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ColossalFramework;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MoveIt
@@ -9,6 +11,7 @@ namespace MoveIt
         public bool active = false;
         public List<InstanceID> buffer = new List<InstanceID>();
 
+        Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
         public StepOver()
         {
@@ -20,7 +23,7 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = new InstanceID();
+            InstanceID instance = default;
             instance.Building = id;
             return _isValid(instance);
         }
@@ -29,7 +32,7 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = new InstanceID();
+            InstanceID instance = default;
             instance.Prop = id;
             return _isValid(instance);
         }
@@ -38,7 +41,7 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = new InstanceID();
+            InstanceID instance = default;
             instance.NetLane = id;
             return _isValid(instance);
         }
@@ -47,7 +50,7 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = new InstanceID();
+            InstanceID instance = default;
             instance.Tree = id;
             return _isValid(instance);
         }
@@ -56,7 +59,7 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = new InstanceID();
+            InstanceID instance = default;
             instance.NetNode = id;
             return _isValid(instance);
         }
@@ -65,7 +68,7 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = new InstanceID();
+            InstanceID instance = default;
             instance.NetSegment = id;
             return _isValid(instance);
         }
@@ -86,7 +89,7 @@ namespace MoveIt
         }
 
 
-        public void Add(InstanceID id)
+        public void Add(InstanceID id, int depth = 0)
         {
             if (id.Equals(InstanceID.Empty))
             {
@@ -98,6 +101,18 @@ namespace MoveIt
             }
             MousePosition = Input.mousePosition;
             buffer.Add(id);
+
+            if (id.Type == InstanceType.Building && buildingBuffer[id.Building].m_subBuilding > 0)
+            {
+                InstanceID subId = default;
+                subId.Building = buildingBuffer[id.Building].m_subBuilding;
+                Add(subId, depth++);
+            }
+
+            if (depth > 1000)
+            {
+                throw new Exception("Step-over reached depth of > 1000");
+            }
         }
     }
 }
