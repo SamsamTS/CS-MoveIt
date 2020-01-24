@@ -57,6 +57,7 @@ namespace MoveIt
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
+        public static SavedBool hideSelectorsOnLowSensitivity = new SavedBool("hideSelectorsOnLowSensitivity", settingsFileName, true, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
@@ -228,7 +229,7 @@ namespace MoveIt
         internal Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
-        internal bool m_isLowSensitivity;
+        internal static bool m_isLowSensitivity;
         private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
         private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
@@ -283,6 +284,7 @@ namespace MoveIt
 
         private long m_keyTime;
         private long m_rightClickTime;
+        private long m_middleClickTime;
         private long m_leftClickTime;
 
         public ToolAction m_nextAction = ToolAction.None;
@@ -516,10 +518,12 @@ namespace MoveIt
                         }
                     }
 
-                    Vector3 center = Action.GetCenter();
-                    center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-
-                    RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
+                    if (!(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
+                    {
+                        Vector3 center = Action.GetCenter();
+                        center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
+                    }
 
                     if (snapping && m_segmentGuide.m_startNode != 0 && m_segmentGuide.m_endNode != 0)
                     {

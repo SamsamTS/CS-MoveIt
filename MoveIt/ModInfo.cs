@@ -85,6 +85,14 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
+                checkBox = (UICheckBox)group.AddCheckbox("Hide selectors/overlays when in low-sensitivity mode", MoveItTool.hideSelectorsOnLowSensitivity.value, (b) =>
+                {
+                    MoveItTool.hideSelectorsOnLowSensitivity.value = b;
+                });
+                checkBox.tooltip = "When holding control, the selection overlays are hidden";
+
+                group.AddSpace(10);
+
                 checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;

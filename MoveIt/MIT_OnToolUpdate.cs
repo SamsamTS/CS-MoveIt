@@ -102,6 +102,40 @@ namespace MoveIt
                     }
                 }
 
+                if (m_middleClickTime == 0 && Input.GetMouseButton(2) && Event.current.control)
+                {
+                    if (!isInsideUI)
+                    {
+                        m_middleClickTime = Stopwatch.GetTimestamp();
+                        OnMiddleMouseDown();
+                    }
+                }
+
+                if (m_middleClickTime != 0)
+                {
+                    long elapsed = ElapsedMilliseconds(m_middleClickTime);
+
+                    if (!Input.GetMouseButton(2))
+                    {
+                        m_middleClickTime = 0;
+
+                        if (elapsed < 200)
+                        {
+                            OnMiddleClick();
+                        }
+                        else
+                        {
+                            OnMiddleDragStop();
+                        }
+
+                        OnMiddleMouseUp();
+                    }
+                    else if (elapsed >= 200)
+                    {
+                        OnMiddleDrag();
+                    }
+                }
+
                 if (!isInsideUI && Cursor.visible)
                 {
                     Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -129,23 +163,20 @@ namespace MoveIt
 
                                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                                 {
-                                    //if (dragging)
-                                    {
-                                        action.Virtual = !fastMove;
-                                    }
+                                    action.Virtual = !fastMove;
                                 }
                                 else
                                 {
                                     action.Virtual = fastMove;
                                 }
                             
-                                if (m_leftClickTime > 0)
+                                if (m_leftClickTime > 0 != m_middleClickTime > 0)
                                 {
                                     UpdateSensitivityMode();
 
                                     float y = action.moveDelta.y;
 
-                                    if (m_isLowSensitivity)
+                                    if (m_isLowSensitivity || m_middleClickTime > 0)
                                     {
                                         Vector3 mouseDeltaBefore = m_sensitivityTogglePosAbs - m_clickPositionAbs;
                                         Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / 5f;

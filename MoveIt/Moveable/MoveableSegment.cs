@@ -318,6 +318,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
 
             ushort segment = id.NetSegment;
             NetInfo netInfo = segmentBuffer[segment].Info;
