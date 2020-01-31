@@ -182,7 +182,6 @@ namespace MoveIt
 
         public override void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
-            //Vector3 oldPos = state.position;
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
 
             Move(newPosition, 0);
@@ -356,6 +355,8 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+
             SegmentState state = instanceState as SegmentState;
 
             NetInfo netInfo = state.Info.Prefab as NetInfo;

@@ -48,6 +48,7 @@ namespace MoveIt
         public const string settingsFileName = "MoveItTool";
         public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
         public const int UI_Filter_CB_Height = 25;
+        public const int Fastmove_Max = 40;
 
         public static MoveItTool instance;
         public static SavedBool hideChangesWindow = new SavedBool("hideChanges260", settingsFileName, false, true); 
@@ -751,7 +752,16 @@ namespace MoveIt
 
         public void UpdateAreas()
         {
+            //foreach (Bounds b in areasToUpdate)
+            //{
+            //    AddDebugBox(b, new Color32(255, 31, 31, 31));
+            //}
             HashSet<Bounds> merged = MergeBounds(areasToUpdate);
+            //foreach (Bounds b in merged)
+            //{
+            //    b.Expand(4f);
+            //    AddDebugBox(b, new Color32(31, 31, 255, 31));
+            //}
 
             foreach (Bounds bounds in merged)
             {

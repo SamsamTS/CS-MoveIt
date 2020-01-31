@@ -26,7 +26,7 @@ namespace MoveIt
             {
                 if (value == true)
                 {
-                    if (_virtual == false && selection.Count < 50)
+                    if (_virtual == false && selection.Count < MoveItTool.Fastmove_Max)
                     {
                         _virtual = true;
                         foreach (Instance i in selection)
@@ -92,7 +92,7 @@ namespace MoveIt
             bool full = !(MoveItTool.fastMove != Event.current.shift) || containsNetwork;
             if (!full)
             {
-                full = selection.Count > 50 ? true : false;
+                full = selection.Count > MoveItTool.Fastmove_Max ? true : false;
             }
             UpdateArea(originalBounds, full);
             Bounds fullbounds = GetTotalBounds(false);

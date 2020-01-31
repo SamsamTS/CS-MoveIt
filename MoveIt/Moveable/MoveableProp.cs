@@ -136,6 +136,11 @@ namespace MoveIt
             PropManager.instance.UpdatePropRenderer(prop, true);
         }
 
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+        }
+
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             PropState state = instanceState as PropState;
@@ -218,6 +223,8 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+
             PropState state = instanceState as PropState;
 
             PropInfo info = state.Info.Prefab as PropInfo;

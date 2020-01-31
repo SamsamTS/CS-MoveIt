@@ -96,12 +96,12 @@ namespace MoveIt
                     bounds.Expand(64f);
                     Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    UpdateRender(bounds);
                 }
-                else
-                {
-                    bounds.Expand(64f);
-                }
-                UpdateRender(bounds);
+                //else
+                //{
+                //    bounds.Expand(64f);
+                //}
             }
             catch (IndexOutOfRangeException e)
             {

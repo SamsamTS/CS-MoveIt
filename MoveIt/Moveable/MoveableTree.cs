@@ -32,9 +32,10 @@ namespace MoveIt
 
         public override InstanceState GetState()
         {
-            TreeState state = new TreeState();
-
-            state.instance = this;
+            TreeState state = new TreeState
+            {
+                instance = this
+            };
 
             uint tree = id.Tree;
             state.Info = Info;
@@ -115,6 +116,11 @@ namespace MoveIt
             uint tree = id.Tree;
             TreeManager.instance.MoveTree(tree, newPosition);
             TreeManager.instance.UpdateTreeRenderer(tree, true);
+        }
+
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
         }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
@@ -198,6 +204,8 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+
             TreeState state = instanceState as TreeState;
 
             TreeInfo info = state.Info.Prefab as TreeInfo;
