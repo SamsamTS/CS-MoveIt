@@ -348,42 +348,38 @@ namespace MoveIt
 
             if (IsKeyDown(OptionsKeymapping.moveXpos, e))
             {
-                direction.x = direction.x + magnitude;
+                direction.x += magnitude;
             }
-
             if (IsKeyDown(OptionsKeymapping.moveXneg, e))
             {
-                direction.x = direction.x - magnitude;
+                direction.x -= magnitude;
             }
 
             if (IsKeyDown(OptionsKeymapping.moveYpos, e))
             {
-                direction.y = direction.y + magnitude;
+                direction.y += magnitude;
             }
-
             if (IsKeyDown(OptionsKeymapping.moveYneg, e))
             {
-                direction.y = direction.y - magnitude;
+                direction.y -= magnitude;
             }
 
             if (IsKeyDown(OptionsKeymapping.moveZpos, e))
             {
-                direction.z = direction.z + magnitude;
+                direction.z += magnitude;
             }
-
             if (IsKeyDown(OptionsKeymapping.moveZneg, e))
             {
-                direction.z = direction.z - magnitude;
+                direction.z -= magnitude;
             }
 
             if (IsKeyDown(OptionsKeymapping.turnPos, e))
             {
-                angle = angle - magnitude * 20f * 9.58738E-05f;
+                angle -= magnitude * 20f * 9.58738E-05f;
             }
-
             if (IsKeyDown(OptionsKeymapping.turnNeg, e))
             {
-                angle = angle + magnitude * 20f * 9.58738E-05f;
+                angle += magnitude * 20f * 9.58738E-05f;
             }
 
             if (direction != Vector3.zero || angle != 0)
@@ -401,6 +397,45 @@ namespace MoveIt
             else
             {
                 m_keyTime = 0;
+            }
+
+            return false;
+        }
+
+        private bool ProcessScaleKeys(Event e, out float magnitude)
+        {
+            magnitude = 0.01f;
+            if (e.alt && e.shift)
+            {
+                magnitude /= 64f;
+            }
+            else
+            {
+                if (e.shift) magnitude *= 8f;
+                if (e.alt) magnitude /= 8f;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.scaleIn, e))
+            {
+                magnitude = 0 - magnitude;
+            }
+            else if (IsKeyDown(OptionsKeymapping.scaleOut, e))
+            {
+            }
+            else
+            {
+                m_keyTime = 0;
+                return false;
+            }
+
+            if (m_keyTime == 0)
+            {
+                m_keyTime = Stopwatch.GetTimestamp();
+                return true;
+            }
+            else if (ElapsedMilliseconds(m_keyTime) >= 250)
+            {
+                return true;
             }
 
             return false;

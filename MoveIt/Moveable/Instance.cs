@@ -280,6 +280,7 @@ namespace MoveIt
 
         public virtual void SetHeight()
         {
+            //SetHeight(TerrainManager.instance.SampleDetailHeight(position));
             SetHeight(TerrainManager.instance.SampleRawHeightSmooth(position));
         }
 

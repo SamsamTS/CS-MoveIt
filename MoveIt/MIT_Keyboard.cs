@@ -80,37 +80,12 @@ namespace MoveIt
                 else if (OptionsKeymapping.activatePO.IsPressed(e))
                 {
                     PO.InitialiseTool();
-
-                    //if (PO.Active == false)
-                    //{
-                    //    PO.Active = true;
-                    //    UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                    //    PO.ToolEnabled();
-                    //}
-                    //else
-                    //{
-                    //    PO.Active = false;
-                    //    UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
-                    //}
-                    //UIFilters.POToggled();
                 }
                 else if (OptionsKeymapping.convertToPO.IsPressed(e))
                 {
                     if (PO.Enabled && ToolState == ToolStates.Default)
                     {
                         PO.StartConvertAction();
-
-                        //if (PO.Active == false)
-                        //{
-                        //    PO.Active = true;
-                        //    UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                        //    PO.ToolEnabled();
-                        //    UIFilters.POToggled();
-                        //}
-
-                        //ConvertToPOAction convertAction = new ConvertToPOAction();
-                        //ActionQueue.instance.Push(convertAction);
-                        //ActionQueue.instance.Do();
                     }
                 }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
@@ -190,9 +165,9 @@ namespace MoveIt
 
                         if (direction != Vector3.zero)
                         {
-                            direction.x = direction.x * XFACTOR;
-                            direction.y = direction.y * YFACTOR;
-                            direction.z = direction.z * ZFACTOR;
+                            direction.x *= XFACTOR;
+                            direction.y *= YFACTOR;
+                            direction.z *= ZFACTOR;
 
                             if (!useCardinalMoves)
                             {
@@ -206,6 +181,18 @@ namespace MoveIt
                         action.moveDelta += direction;
                         action.angleDelta += angle;
                         action.followTerrain = followTerrain;
+
+                        m_nextAction = ToolAction.Do;
+                    }
+                    else if (ProcessScaleKeys(e, out float magnitude))
+                    {
+                        if (!(ActionQueue.instance.current is ScaleAction action))
+                        {
+                            action = new ScaleAction();
+                            ActionQueue.instance.Push(action);
+                        }
+
+                        action.magnitude += magnitude;
 
                         m_nextAction = ToolAction.Do;
                     }

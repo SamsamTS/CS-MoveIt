@@ -14,7 +14,7 @@ namespace MoveIt
         public bool autoCurve;
         public NetSegment segmentCurve;
 
-        private readonly bool containsNetwork = false;
+        protected readonly bool containsNetwork = false;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
