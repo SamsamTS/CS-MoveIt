@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 namespace MoveIt
 {
@@ -29,7 +28,7 @@ namespace MoveIt
                 }
             }
 
-            bool full = !(MoveItTool.fastMove != Event.current.shift) || containsNetwork;
+            bool full = (!MoveItTool.fastMove) || containsNetwork;
             if (!full)
             {
                 full = selection.Count > MoveItTool.Fastmove_Max ? true : false;

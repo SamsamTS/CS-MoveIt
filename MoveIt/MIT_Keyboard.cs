@@ -193,6 +193,7 @@ namespace MoveIt
                         }
 
                         action.magnitude += magnitude;
+                        action.followTerrain = followTerrain;
 
                         m_nextAction = ToolAction.Do;
                     }

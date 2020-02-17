@@ -9,11 +9,12 @@ namespace MoveIt
         public static UIChangesWindow instance;
 
         private readonly string m_blurb =
-            "New in Move It 2.6.0:\n\n" +
-            "- Reset Objects Tool - cycle size/colour variations of selected objects and repair all damage.\n\n" +
-            "- Network Skins 2 integration - networks keep their skin when copied or imported.\n\n" +
-            "- Procedural Objects integration - PO can be manipulated similarly to props, and placed objects can be converted to PO with the powerful Convert Tool.\n\n" +
-            "- Handling of pipes, water service buildings, invisible markers and, in the asset editor, props improved.\n\n" +
+            "New in Move It 2.7.0:\n\n" +
+            "- Precision Mode - cycle size/colour variations of selected objects and repair all damage.\n\n" +
+            "- Expand or shrink selections with - (minus) and = (equals).\n\n" +
+            "- Fast-move - big frame-rate improvements when holding Shift while moving buildings.\n\n" +
+            "- Procedural Objects integration is now more reliable.\n\n" +
+            "- Many other tweaks and optimisations!\n\n" +
             "Click anywhere on this box to close it.";
 
         public override void Start()
