@@ -389,7 +389,7 @@ namespace MoveIt
                     m_keyTime = Stopwatch.GetTimestamp();
                     return true;
                 }
-                else if (ElapsedMilliseconds(m_keyTime) >= 250)
+                else if (ElapsedMilliseconds(m_keyTime) >= 333)
                 {
                     return true;
                 }
@@ -424,16 +424,16 @@ namespace MoveIt
             }
             else
             {
-                m_keyTime = 0;
+                m_scaleKeyTime = 0;
                 return false;
             }
 
-            if (m_keyTime == 0)
+            if (m_scaleKeyTime == 0)
             {
-                m_keyTime = Stopwatch.GetTimestamp();
+                m_scaleKeyTime = Stopwatch.GetTimestamp();
                 return true;
             }
-            else if (ElapsedMilliseconds(m_keyTime) >= 250)
+            else if (ElapsedMilliseconds(m_scaleKeyTime) >= 333)
             {
                 return true;
             }

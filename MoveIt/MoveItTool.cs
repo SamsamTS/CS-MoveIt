@@ -284,6 +284,7 @@ namespace MoveIt
         private static InfoManager.InfoMode m_prevInfoMode;
 
         private long m_keyTime;
+        private long m_scaleKeyTime;
         private long m_rightClickTime;
         private long m_middleClickTime;
         private long m_leftClickTime;
@@ -673,7 +674,7 @@ namespace MoveIt
                             }
                     }
 
-                    bool inputHeld = m_keyTime != 0 || m_leftClickTime != 0 || m_rightClickTime != 0;
+                    bool inputHeld = m_scaleKeyTime != 0 || m_keyTime != 0 || m_leftClickTime != 0 || m_rightClickTime != 0;
 
                     if (segmentUpdateCountdown == 0)
                     {
