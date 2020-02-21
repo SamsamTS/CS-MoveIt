@@ -182,20 +182,6 @@ namespace MoveIt
             }
         }
 
-        internal override void InitialiseTransform()
-        {
-            base.InitialiseTransform();
-
-            foreach (Instance sub in subInstances)
-            {
-                if (sub is MoveableBuilding mb)
-                {
-                    mb.TransformPosition = mb.position;
-                    mb.TransformAngle = mb.angle;
-                }
-            }
-        }
-
         public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
             BuildingState state = instanceState as BuildingState;
@@ -270,35 +256,6 @@ namespace MoveIt
         internal override void SetHidden(bool hide)
         {
             buildingBuffer[id.Building].m_flags = ToggleBuildingHiddenFlag(id.Building, hide);
-
-            foreach (Instance sub in subInstances)
-            {
-                if (sub is MoveableNode mn)
-                {
-                    if (mn.Pillar != null)
-                    {
-                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleBuildingHiddenFlag(mn.Pillar.id.Building, hide);
-                    }
-                }
-
-                if (sub is MoveableBuilding bs)
-                {
-                    buildingBuffer[sub.id.Building].m_flags = ToggleBuildingHiddenFlag(sub.id.Building, hide);
-
-                    Building subBuilding = (Building)sub.data;
-
-                    foreach (Instance subSub in bs.subInstances)
-                    {
-                        if (subSub is MoveableNode mn2)
-                        {
-                            if (mn2.Pillar != null)
-                            {
-                                buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleBuildingHiddenFlag(mn2.Pillar.id.Building, hide);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         public void InitialiseDrag()

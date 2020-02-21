@@ -86,17 +86,14 @@ namespace MoveIt
         {
             ushort node = id.NetNode;
 
-            NodeState state = new NodeState();
-
-            state.instance = this;
-            state.Info = Info;
-
-            state.position = nodeBuffer[node].m_position;
+            NodeState state = new NodeState
+            {
+                instance = this,
+                Info = Info,
+                position = nodeBuffer[node].m_position,
+                flags = nodeBuffer[node].m_flags
+            };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
-
-            state.flags = nodeBuffer[node].m_flags;
-
-            MoveableBuilding pillarInstance = Pillar;
 
             if (Pillar != null)
             {
@@ -244,38 +241,6 @@ namespace MoveIt
             }
 
             return instances;
-        }
-
-        internal override void SetHidden(bool hide)
-        {
-            foreach (Instance sub in subInstances)
-            {
-                if (sub is MoveableNode mn)
-                {
-                    if (mn.Pillar != null)
-                    {
-                        buildingBuffer[mn.Pillar.id.Building].m_flags = ToggleBuildingHiddenFlag(mn.Pillar.id.Building, hide);
-                    }
-                }
-
-                if (sub is MoveableBuilding bs)
-                {
-                    buildingBuffer[sub.id.Building].m_flags = ToggleBuildingHiddenFlag(sub.id.Building, hide);
-
-                    Building subBuilding = (Building)bs.data;
-
-                    foreach (Instance subSub in bs.subInstances)
-                    {
-                        if (subSub is MoveableNode mn2)
-                        {
-                            if (mn2.Pillar != null)
-                            {
-                                buildingBuffer[mn2.Pillar.id.Building].m_flags = ToggleBuildingHiddenFlag(mn2.Pillar.id.Building, hide);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         public override void Move(Vector3 location, float angle)

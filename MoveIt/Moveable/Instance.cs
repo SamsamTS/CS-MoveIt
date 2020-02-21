@@ -154,6 +154,10 @@ namespace MoveIt
                         _virtual = true;
                         InitialiseTransform();
                         SetHidden(true);
+                        foreach (Instance i in subInstances)
+                        {
+                            i.Virtual = true;
+                        }
                     }
                 }
                 else
@@ -162,7 +166,10 @@ namespace MoveIt
                     {
                         _virtual = false;
                         SetHidden(false);
-                        Action.UpdateArea(Action.GetTotalBounds(), true);
+                        foreach (Instance i in subInstances)
+                        {
+                            i.Virtual = false;
+                        }
                     }
                 }
             }
