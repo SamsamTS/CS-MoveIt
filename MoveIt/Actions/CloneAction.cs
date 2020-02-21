@@ -55,7 +55,7 @@ namespace MoveIt
             // Adding missing nodes
             foreach (Instance instance in selection)
             {
-                if (instance is MoveableSegment)// instance.id.Type == InstanceType.NetSegment)
+                if (instance is MoveableSegment)
                 {
                     ushort segment = instance.id.NetSegment;
 

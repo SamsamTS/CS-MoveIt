@@ -285,59 +285,62 @@ namespace MoveIt
             TransformAngle = angle;
             TransformPosition = location;
 
-            ushort node = id.NetNode;
-            Vector3 oldPosition = nodeBuffer[node].m_position;
-
-            netManager.MoveNode(node, location);
-
-            for (int i = 0; i < 8; i++)
+            if (!isVirtual())
             {
-                ushort segment = nodeBuffer[node].GetSegment(i);
-                if (segment != 0 && !Action.IsSegmentSelected(segment)) // TODO: Is IsSegmentSelected sane?
+                ushort node = id.NetNode;
+                Vector3 oldPosition = nodeBuffer[node].m_position;
+
+                netManager.MoveNode(node, location);
+
+                for (int i = 0; i < 8; i++)
                 {
-                    ushort startNode = segmentBuffer[segment].m_startNode;
-                    ushort endNode = segmentBuffer[segment].m_endNode;
-
-                    Vector3 oldVector;
-                    if(node == endNode)
+                    ushort segment = nodeBuffer[node].GetSegment(i);
+                    if (segment != 0 && !Action.IsSegmentSelected(segment))
                     {
-                        oldVector = oldPosition - nodeBuffer[startNode].m_position;
-                    }
-                    else
-                    {
-                        oldVector = nodeBuffer[endNode].m_position - oldPosition;
-                    }
-                    oldVector.Normalize();
-                    
-                    Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
-                    Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
 
-                    Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
-                    Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
+                        Vector3 oldVector;
+                        if (node == endNode)
+                        {
+                            oldVector = oldPosition - nodeBuffer[startNode].m_position;
+                        }
+                        else
+                        {
+                            oldVector = nodeBuffer[endNode].m_position - oldPosition;
+                        }
+                        oldVector.Normalize();
 
-                    Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
-                    newVector.Normalize();
+                        Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
+                        Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
 
-                    segmentBuffer[segment].m_startDirection = startRotation * newVector;
-                    segmentBuffer[segment].m_endDirection = endRotation * -newVector;
+                        Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
+                        Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
 
-                    CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+                        Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                        newVector.Normalize();
 
-                    netManager.UpdateSegmentRenderer(segment, true);
-                    UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+                        segmentBuffer[segment].m_startDirection = startRotation * newVector;
+                        segmentBuffer[segment].m_endDirection = endRotation * -newVector;
 
-                    if (node != startNode)
-                    {
-                        netManager.UpdateNode(startNode);
-                    }
-                    else
-                    {
-                        netManager.UpdateNode(endNode);
+                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+
+                        netManager.UpdateSegmentRenderer(segment, true);
+                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                        if (node != startNode)
+                        {
+                            netManager.UpdateNode(startNode);
+                        }
+                        else
+                        {
+                            netManager.UpdateNode(endNode);
+                        }
                     }
                 }
-            }
 
-            netManager.UpdateNode(node);
+                netManager.UpdateNode(node);
+            }
         }
 
         public void AutoCurve(NetSegment segmentCurve)
@@ -535,7 +538,7 @@ namespace MoveIt
             return bounds;
         }
 
-        private static Bounds SanitizeBounds(ushort id)
+        private Bounds SanitizeBounds(ushort id)
         {
             NetNode node = nodeBuffer[id];
             Bounds bounds = node.m_bounds;
@@ -552,7 +555,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+            if (!isVirtual() && MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
 
             ushort node = id.NetNode;
             NetManager netManager = NetManager.instance;
@@ -562,7 +565,7 @@ namespace MoveIt
             float alpha = 1f;
             NetTool.CheckOverlayAlpha(netInfo, ref alpha);
             toolColor.a *= alpha;
-            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
+            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, OverlayPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
         }
 
         public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }

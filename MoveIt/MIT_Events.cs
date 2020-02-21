@@ -66,9 +66,9 @@ namespace MoveIt
                     (e.shift && Action.selection.IsSupersetOf(m_marqueeInstances))
                     ) return;
 
-                if (!(ActionQueue.instance.current is SelectAction action))
+                if (!(ActionQueue.instance.current is SelectAction))
                 {
-                    action = new SelectAction(e.shift);
+                    SelectAction action = new SelectAction(e.shift);
                     ActionQueue.instance.Push(action);
                 }
                 else

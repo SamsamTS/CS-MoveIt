@@ -77,8 +77,6 @@ namespace MoveIt
         {
             try
             {
-                //bounds.Expand(32f);
-
                 if (full)
                 {
                     TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
@@ -98,10 +96,6 @@ namespace MoveIt
                     Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     UpdateRender(bounds);
                 }
-                //else
-                //{
-                //    bounds.Expand(64f);
-                //}
             }
             catch (IndexOutOfRangeException e)
             {

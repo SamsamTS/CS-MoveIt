@@ -162,7 +162,6 @@ namespace MoveIt
                     {
                         _virtual = false;
                         SetHidden(false);
-                        //Move(TransformPosition, TransformAngle);
                         Action.UpdateArea(Action.GetTotalBounds(), true);
                     }
                 }
@@ -211,7 +210,7 @@ namespace MoveIt
         {
             get
             {
-                if (GetAction() is TransformAction ta && ta.Virtual)
+                if (Virtual)
                     return TransformPosition;
                 return position;
             }
@@ -221,7 +220,7 @@ namespace MoveIt
         {
             get
             {
-                if (GetAction() is TransformAction ta && ta.Virtual)
+                if (Virtual)
                     return TransformAngle;
                 return angle;
             }
@@ -276,7 +275,7 @@ namespace MoveIt
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
-        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor) { }//, int depth = 0) { }
+        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor) { }
 
         public virtual void SetHeight()
         {
@@ -284,9 +283,9 @@ namespace MoveIt
             SetHeight(TerrainManager.instance.SampleRawHeightSmooth(position));
         }
 
-        internal Action GetAction()
+        internal static bool isVirtual()
         {
-            return ActionQueue.instance.current;
+            return ActionQueue.instance.current is TransformAction ta && ta.Virtual;
         }
 
         public static implicit operator Instance(InstanceID id)

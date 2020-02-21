@@ -78,7 +78,7 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.isValid)
+                if (state.instance.isValid && !(state is SegmentState))
                 {
                     state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta + snapAngle, center, followTerrain);
 
@@ -89,7 +89,21 @@ namespace MoveIt
                 }
             }
 
-            bool full = !(MoveItTool.fastMove != Event.current.shift) || containsNetwork;
+            // Move segments after the nodes have moved
+            foreach (InstanceState state in m_states)
+            {
+                if (state.instance.isValid && state is SegmentState)
+                {
+                    state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta + snapAngle, center, followTerrain);
+
+                    if (autoCurve && state.instance is MoveableNode node)
+                    {
+                        node.AutoCurve(segmentCurve);
+                    }
+                }
+            }
+
+            bool full = !(MoveItTool.fastMove != Event.current.shift);// || containsNetwork;
             if (!full)
             {
                 full = selection.Count > MoveItTool.Fastmove_Max ? true : false;

@@ -322,7 +322,7 @@ namespace MoveIt
             TransformAngle = angle;
             TransformPosition = location;
 
-            if (!(GetAction() is TransformAction ta && ta.Virtual))
+            if (!isVirtual())
             {
                 RelocateBuilding(id.Building, ref buildingBuffer[id.Building], location, angle);
             }
@@ -441,12 +441,6 @@ namespace MoveIt
                 cloneInstance.ResetSubInstances();
             }
 
-            //string msg = $"AAAK {cloneInstance.subInstances.Count}";
-            //foreach (Instance i in cloneInstance.subInstances)
-            //{
-            //    msg += $"\n    {i.id.Building},{i.id.NetNode}:{i.Info.Name}";
-            //}
-            //Debug.Log(msg);
             return cloneInstance;
         }
 

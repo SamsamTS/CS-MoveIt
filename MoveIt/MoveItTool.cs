@@ -48,7 +48,7 @@ namespace MoveIt
         public const string settingsFileName = "MoveItTool";
         public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
         public const int UI_Filter_CB_Height = 25;
-        public const int Fastmove_Max = 40;
+        public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
         public static SavedBool hideChangesWindow = new SavedBool("hideChanges270", settingsFileName, false, true); 
@@ -520,7 +520,7 @@ namespace MoveIt
                         }
                     }
 
-                    if (!(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
+                    if (!Instance.isVirtual() && !(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
                     {
                         Vector3 center = Action.GetCenter();
                         center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
