@@ -15,7 +15,7 @@ namespace MoveIt
         public bool Selected { get; set; }
         public int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
-        internal Type tPOLogic = null, tPOMod = null, tPO = null;
+        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPOLayer = null;
 
         internal Vector3 Position
         {
@@ -86,9 +86,20 @@ namespace MoveIt
             tPOLogic = PO_Logic.POAssembly.GetType("ProceduralObjects.3Logic");
             tPOMod = PO_Logic.POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
             tPO = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
+            tPOLayer = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.Layer");
 
             procObj = obj;
             ProcId = (int)tPO.GetField("id").GetValue(procObj);
+        }
+
+        public bool isHidden()
+        {
+            object layer = tPO.GetField("layer").GetValue(procObj);
+            if (layer == null)
+            {
+                return false;
+            }
+            return (bool)tPOLayer.GetField("m_isHidden").GetValue(layer);
         }
 
         public void SetPositionY(float h)

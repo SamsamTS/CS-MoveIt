@@ -77,7 +77,7 @@ namespace MoveIt
                 {
                     foreach (PO_Object obj in PO.Objects)
                     {
-                        if (stepOver.isValidPO(obj.Id))
+                        if (!obj.isHidden() && stepOver.isValidPO(obj.Id))
                         {
                             bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
                             bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
@@ -359,7 +359,7 @@ namespace MoveIt
                 {
                     foreach (PO_Object obj in PO.Objects)
                     {
-                        if (PointInRectangle(m_selection, obj.Position))
+                        if (!obj.isHidden() && PointInRectangle(m_selection, obj.Position))
                         {
                             id.NetLane = obj.Id;
                             list.Add(id);

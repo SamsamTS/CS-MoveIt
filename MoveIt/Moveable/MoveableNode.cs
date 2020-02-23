@@ -471,6 +471,11 @@ namespace MoveIt
         {
             ushort node = id.NetNode;
 
+            if (Virtual)
+            {
+                return new Bounds(OverlayPosition, new Vector3(nodeBuffer[node].Info.m_halfWidth, 0, nodeBuffer[node].Info.m_halfWidth));
+            }
+
             Bounds bounds = SanitizeBounds(node);
 
             if (nodeBuffer[node].Info.m_netAI is WaterPipeAI)

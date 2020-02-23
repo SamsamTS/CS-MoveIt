@@ -320,6 +320,14 @@ namespace MoveIt
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
+            if (Virtual)
+            {
+                Bounds b = new Bounds(OverlayPosition, Vector3.one);
+                b.Encapsulate(StartNode.GetBounds());
+                b.Encapsulate(EndNode.GetBounds());
+                return b;
+            }
+
             return segmentBuffer[id.NetSegment].m_bounds;
         }
 

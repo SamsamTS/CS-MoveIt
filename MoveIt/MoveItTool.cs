@@ -520,7 +520,7 @@ namespace MoveIt
                         }
                     }
 
-                    if (!Instance.isVirtual() && !(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
+                    if (!(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
                     {
                         Vector3 center = Action.GetCenter();
                         center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
