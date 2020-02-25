@@ -8,12 +8,12 @@ namespace MoveIt
     {
         public static UIChangesWindow instance;
 
-        private readonly string m_blurb =
+        private const string m_blurb =
             "New in Move It 2.7.0:\n\n" +
-            "- Precision Mode - cycle size/colour variations of selected objects and repair all damage.\n\n" +
+            "- Precision Mode - hold Control while moving/rotating objects to move objects slowly and without overlays. (Now hold Alt to rotate 45 degrees.)\n\n" +
             "- Expand or shrink selections with - (minus) and = (equals).\n\n" +
-            "- Fast-move - big frame-rate improvements when holding Shift while moving buildings.\n\n" +
-            "- Procedural Objects integration is now more reliable.\n\n" +
+            "- Fast-move - big frame-rate improvements when holding Shift while moving buildings or networks.\n\n" +
+            "- Procedural Objects integration is now more reliable and takes layers into consideration.\n\n" +
             "- Many other tweaks and optimisations!\n\n" +
             "Click anywhere on this box to close it.";
 

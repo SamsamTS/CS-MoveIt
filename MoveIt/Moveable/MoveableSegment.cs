@@ -475,6 +475,8 @@ namespace MoveIt
 
         public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (!Virtual) return;
+
             ushort segment = id.NetSegment;
             ushort startNode = segmentBuffer[segment].m_startNode;
             ushort endNode = segmentBuffer[segment].m_endNode;
