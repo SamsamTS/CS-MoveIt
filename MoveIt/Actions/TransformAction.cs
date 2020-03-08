@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace MoveIt
 {
-    public class TransformAction : Action
+    public class TransformAction : BaseTransformAction
+    {
+    }
+
+    public abstract class BaseTransformAction : Action
     {
         public Vector3 moveDelta;
         public Vector3 center;
@@ -51,7 +55,7 @@ namespace MoveIt
             }
         }
 
-        public TransformAction()
+        public BaseTransformAction()
         {
             foreach (Instance instance in selection)
             {

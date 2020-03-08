@@ -41,7 +41,7 @@ namespace MoveIt
         internal IEnumerator<object> UpdateDo()
         {
             yield return new WaitForSeconds(0.05f);
-            ToolStatus.text = $"{MoveItTool.instance.ToolState} (align:{MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase}), POPro:{MoveItTool.POProcessing}";
+            ToolStatus.text = $"{MoveItTool.instance.ToolState} ({MoveItTool.instance.AlignMode}.{MoveItTool.instance.AlignToolPhase}), Low:{MoveItTool.m_isLowSensitivity}, POPro:{MoveItTool.POProcessing}";
 
             SelectedLarge.text = $"Objects Selected: {Action.selection.Count}";
             ushort[] types = new ushort[8];
@@ -183,7 +183,7 @@ namespace MoveIt
             };
 
             HoverSmall = Panel.AddUIComponent<UILabel>();
-            HoverSmall.textScale = 0.65f;
+            HoverSmall.textScale = 0.6f;
             HoverSmall.text = "No item being hovered\n ";
             HoverSmall.relativePosition = new Vector3(5, 23);
             HoverSmall.width = HoverSmall.parent.width - 20;
@@ -192,7 +192,7 @@ namespace MoveIt
             HoverSmall.dropShadowOffset = new Vector2(1, -1);
 
             ToolStatus = Panel.AddUIComponent<UILabel>();
-            ToolStatus.textScale = 0.65f;
+            ToolStatus.textScale = 0.6f;
             ToolStatus.text = "";
             ToolStatus.relativePosition = new Vector3(5, 63);
             ToolStatus.width = HoverSmall.parent.width - 20;
@@ -210,7 +210,7 @@ namespace MoveIt
             SelectedLarge.dropShadowOffset = new Vector2(2, -2);
 
             SelectedSmall = Panel.AddUIComponent<UILabel>();
-            SelectedSmall.textScale = 0.65f;
+            SelectedSmall.textScale = 0.6f;
             SelectedSmall.text = "B:0, P:0, D:0, S:0, T:0, PO:0, N:0, S:0\n ";
             SelectedSmall.relativePosition = new Vector3(5, 94);
             SelectedSmall.width = SelectedSmall.parent.width - 20;

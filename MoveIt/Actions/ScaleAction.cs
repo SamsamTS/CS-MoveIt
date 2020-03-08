@@ -2,7 +2,7 @@
 
 namespace MoveIt
 {
-    public class ScaleAction : TransformAction
+    public class ScaleAction : BaseTransformAction
     {
         public float magnitude;
 
