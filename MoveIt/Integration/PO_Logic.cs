@@ -110,14 +110,14 @@ namespace MoveIt
             uint c = 0;
             while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
             {
-                if (c % 100 == 0)
-                {
-                    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
-                    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
-                    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
-                    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
-                    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
-                }
+                //if (c % 100 == 0)
+                //{
+                //    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
+                //    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
+                //    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
+                //    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
+                //    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
+                //}
                 c++;
                 yield return new WaitForSeconds(0.05f);
             }
