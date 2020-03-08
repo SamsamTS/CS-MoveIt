@@ -102,9 +102,9 @@ namespace MoveIt
         {
             const uint MaxAttempts = 1000_000;
 
-            var original = GetPOById(originalId).GetProceduralObject();
+            PO_Object original = GetPOById(originalId);
             Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
-            object[] paramList = new[] { original, null, null };
+            object[] paramList = new[] { original.GetProceduralObject(), null, null };
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null );
 
             uint c = 0;
@@ -127,7 +127,10 @@ namespace MoveIt
                 throw new Exception($"Failed to clone object #{originalId}! [PO-F4]");
             }
 
-            PO_Object clone = new PO_Object(paramList[1]);
+            PO_Object clone = new PO_Object(paramList[1])
+            {
+                POColor = original.POColor
+            };
 
             InstanceID cloneID = default;
             cloneID.NetLane = clone.Id;

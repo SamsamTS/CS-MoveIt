@@ -25,6 +25,14 @@ namespace MoveIt
                 tPO.GetField("m_position").SetValue(procObj, value);
             }
         }
+        internal Color POColor
+        {
+            get => (Color)tPO.GetField("m_color").GetValue(procObj);
+            set
+            {
+                tPO.GetField("m_color").SetValue(procObj, value);
+            }
+        }
         private Quaternion Rotation
         {
             get => (Quaternion)tPO.GetField("m_rotation").GetValue(procObj);
