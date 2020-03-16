@@ -82,7 +82,7 @@ namespace MoveIt
             subInstances = GetSubInstances();
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             ushort node = id.NetNode;
 
@@ -97,7 +97,7 @@ namespace MoveIt
 
             if (Pillar != null)
             {
-                state.pillarState = Pillar.GetState() as BuildingState;
+                state.pillarState = Pillar.SaveToState() as BuildingState;
             }
 
             for (int i = 0; i < 8; i++)
@@ -113,7 +113,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is NodeState nodeState)) return;
 
@@ -138,7 +138,7 @@ namespace MoveIt
 
             if (nodeState.pillarState != null)
             {
-                nodeState.pillarState.instance.SetState(nodeState.pillarState);
+                nodeState.pillarState.instance.LoadFromState(nodeState.pillarState);
             }
         }
 
@@ -425,13 +425,13 @@ namespace MoveIt
 
                 InstanceID cloneID = default;
                 cloneID.NetNode = clone;
-                cloneInstance = new MoveableNode(cloneID);
 
                 nodeBuffer[clone].m_flags = state.flags;
 
-                // TODO: Clone pillar instead?
                 nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out BuildingInfo newBuilding, out float heightOffset);
                 nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
+
+                cloneInstance = new MoveableNode(cloneID);
             }
 
             return cloneInstance;

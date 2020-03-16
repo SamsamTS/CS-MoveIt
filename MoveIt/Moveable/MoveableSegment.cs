@@ -47,6 +47,18 @@ namespace MoveIt
             startNodeId = segmentBuffer[instance.id.NetSegment].m_startNode;
             endNodeId = segmentBuffer[instance.id.NetSegment].m_endNode;
         }
+
+        // Move It <= 2.6 compatiblity
+        public ushort startNode
+        {
+            get => startNodeId;
+            set => startNodeId = value;
+        }
+        public ushort endNode
+        {
+            get => endNodeId;
+            set => endNodeId = value;
+        }
     }
 
     public class MoveableSegment : Instance
@@ -64,7 +76,7 @@ namespace MoveIt
             Info = new Info_Prefab(NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].Info);
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             ushort segment  = id.NetSegment;
 
@@ -95,7 +107,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is SegmentState segmentState)) return;
 

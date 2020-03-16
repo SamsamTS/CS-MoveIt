@@ -19,6 +19,8 @@ namespace MoveIt
             AddKeymapping("Move Down", moveYneg);
             AddKeymapping("Rotate Counterclockwise", turnNeg);
             AddKeymapping("Rotate Clockwise", turnPos);
+            AddKeymapping("Scale Inwards", scaleIn);
+            AddKeymapping("Scale Outwards", scaleOut);
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
             AddKeymapping("Clone", clone);

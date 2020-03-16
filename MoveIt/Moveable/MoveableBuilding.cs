@@ -79,7 +79,7 @@ namespace MoveIt
             ResetSubInstances();
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             BuildingState state = new BuildingState
             {
@@ -101,11 +101,11 @@ namespace MoveIt
                 {
                     if (subInstance.id.Building > 0)
                     {
-                        subStates.Add(((MoveableBuilding)subInstance).GetState());
+                        subStates.Add(((MoveableBuilding)subInstance).SaveToState());
                     }
                     else
                     {
-                        subStates.Add(subInstance.GetState());
+                        subStates.Add(subInstance.SaveToState());
                     }
                 }
             }
@@ -116,7 +116,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is BuildingState buildingState)) return;
 
@@ -131,7 +131,7 @@ namespace MoveIt
             {
                 foreach (InstanceState subState in buildingState.subStates)
                 {
-                    subState.instance.SetState(subState);
+                    subState.instance.LoadFromState(subState);
                 }
             }
             buildingBuffer[building].m_flags = buildingState.flags;

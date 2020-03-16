@@ -41,7 +41,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
                 }
             }
         }
@@ -198,13 +198,19 @@ namespace MoveIt
         {
             m_oldSelection = selection;
 
+            //string msg = $"\n";
             foreach (InstanceState state in states)
             {
                 if (state.instance != null && state.Info.Prefab != null)
                 {
                     m_states.Add(state);
+                    //if (state is SegmentState ss)
+                    //{
+                    //    msg += $"{ss.id}:{ss.startNodeId},{ss.endNodeId}";
+                    //}
                 }
             }
+            //Debug.Log(msg);
 
             center = centerPoint;
             _isImport = true;
@@ -227,9 +233,11 @@ namespace MoveIt
             // Clone nodes first
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.id.Type == InstanceType.NetNode)
+                if (state is NodeState)
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
+                    //Debug.Log($"AAA1 {MoveItTool.InstanceIDDebug(clone)}:{clone.Info.Name} ({clone.subInstances.Count})");
+
                     if (clone != null)
                     {
                         m_clones.Add(clone);
@@ -239,12 +247,20 @@ namespace MoveIt
                 }
             }
 
+            //string msg = $"Total: {m_nodeOrigToClone.Count}\n";
+            //foreach (KeyValuePair<ushort, ushort> value in m_nodeOrigToClone)
+            //{
+            //    msg += $"{value.Key}->{value.Value},  ";
+            //}
+            //Debug.Log(msg);
+
             // Clone everything else
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.id.Type != InstanceType.NetNode)
+                if (!(state is NodeState))
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
+
                     // Cloned PO returns null, because it is delayed
                     if (clone != null)
                     {

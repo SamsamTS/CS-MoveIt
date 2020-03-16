@@ -30,7 +30,7 @@ namespace MoveIt
             Info = new Info_Prefab(TreeManager.instance.m_trees.m_buffer[instanceID.Tree].Info);
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             TreeState state = new TreeState
             {
@@ -48,7 +48,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is InstanceState treeState)) return;
 

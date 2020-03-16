@@ -958,7 +958,7 @@ namespace MoveIt
                 int i = 0;
                 foreach (Instance instance in selection)
                 {
-                    selectionState.states[i++] = instance.GetState();
+                    selectionState.states[i++] = instance.SaveToState();
                 }
 
                 Directory.CreateDirectory(saveFolder);

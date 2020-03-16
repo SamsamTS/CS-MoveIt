@@ -18,7 +18,7 @@ namespace MoveIt
             {
                 //if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
                 }
             }
         }

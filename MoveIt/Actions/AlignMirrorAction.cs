@@ -31,11 +31,11 @@ namespace MoveIt
                         {               
                             if (pair.Value.id.NetSegment > 0)
                             { // Segments need original state because nodes move before clone's position is saved
-                                state = pair.Key.GetState();
+                                state = pair.Key.SaveToState();
                             }
                             else
                             { // Buildings need clone state to access correct subInstances. Others don't matter, but clone makes most sense
-                                state = pair.Value.GetState();
+                                state = pair.Value.SaveToState();
                             }
                             break;
                         }

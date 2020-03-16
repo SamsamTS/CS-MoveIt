@@ -189,11 +189,11 @@ namespace MoveIt
 
             foreach (Instance instance in sorted)
             {
-                m_states.Add(instance.GetState());
+                m_states.Add(instance.SaveToState());
             }
             foreach (Instance instance in extraNodes)
             {
-                m_states.Add(instance.GetState());
+                m_states.Add(instance.SaveToState());
             }
         }
 

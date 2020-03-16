@@ -31,7 +31,7 @@ namespace MoveIt
             Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             PropState state = new PropState();
 
@@ -50,7 +50,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is PropState propState)) return;
 

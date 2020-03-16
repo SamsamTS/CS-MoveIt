@@ -270,8 +270,8 @@ namespace MoveIt
         private IInfo _info;
         public IInfo Info { get => _info; set => _info = value; }
 
-        public abstract InstanceState GetState();
-        public abstract void SetState(InstanceState state);
+        public abstract InstanceState SaveToState();
+        public abstract void LoadFromState(InstanceState state);
         public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);
         public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);

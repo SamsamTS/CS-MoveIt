@@ -28,7 +28,7 @@ namespace MoveIt
             Info = m_procObj.Info;
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             ProcState state = new ProcState
             {
@@ -42,7 +42,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             m_procObj.Position = state.position;
             m_procObj.Angle = state.angle;

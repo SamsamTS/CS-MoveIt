@@ -61,7 +61,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
 
                     if (instance is MoveableNode || instance is MoveableSegment)
                     {
@@ -123,7 +123,7 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                state.instance.SetState(state);
+                state.instance.LoadFromState(state);
             }
 
             UpdateArea(bounds, true);
