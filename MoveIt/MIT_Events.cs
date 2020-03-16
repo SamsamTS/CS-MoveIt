@@ -437,9 +437,9 @@ namespace MoveIt
 
             if (ToolState == ToolStates.Default)
             {
-                if (!(ActionQueue.instance.current is SelectAction action))
+                if (!(ActionQueue.instance.current is SelectAction))
                 {
-                    action = new SelectAction();
+                    SelectAction action = new SelectAction();
                     ActionQueue.instance.Push(action);
                 }
                 else

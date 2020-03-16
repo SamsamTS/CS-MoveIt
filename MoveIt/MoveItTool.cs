@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -363,6 +364,13 @@ namespace MoveIt
                 PO.ToolEnabled();
                 ActionQueue.instance.Push(new TransformAction());
             }
+
+            //string msg = $"Assemblies:";
+            //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            //{
+            //    msg += $"\n{assembly.GetName().Name.ToLower()}";
+            //}
+            //Debug.Log(msg);
         }
 
         protected override void OnDisable()
@@ -888,7 +896,7 @@ namespace MoveIt
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
-                    UpdateSensitivityMode();
+                    ProcessSensitivityMode(false);
 
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();

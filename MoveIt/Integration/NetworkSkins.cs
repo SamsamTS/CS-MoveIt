@@ -26,7 +26,6 @@ namespace MoveIt
                 Assembly = null;
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-
                     if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "NetworkSkins")
                     {
                         Assembly = assembly;
