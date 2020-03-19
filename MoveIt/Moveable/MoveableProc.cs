@@ -114,10 +114,10 @@ namespace MoveIt
             m_procObj.SetPositionY(height);
         }
 
-        public override void SetHeight()
-        {
-            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
-        }
+        //public override void SetHeight()
+        //{
+        //    SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+        //}
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {

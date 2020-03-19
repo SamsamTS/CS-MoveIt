@@ -538,7 +538,7 @@ namespace MoveIt
                     if (snapping && m_segmentGuide.m_startNode != 0 && m_segmentGuide.m_endNode != 0)
                     {
                         NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
+                        //NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
                         NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
 
                         Bezier3 bezier;

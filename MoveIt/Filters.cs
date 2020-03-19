@@ -52,7 +52,7 @@ namespace MoveIt
         public static Dictionary<string, NetworkFilter> NetworkFilters = new Dictionary<string, NetworkFilter>
         {
             { "Roads", new NetworkFilter(true, new List<Type> { typeof(RoadBaseAI) }, new List<string> { "Pedestrian Path", "Beautification Item" } ) },
-            { "Tracks", new NetworkFilter(true, new List<Type> { typeof(TrainTrackBaseAI), typeof(MonorailTrackAI) } ) },
+            { "Tracks", new NetworkFilter(true, new List<Type> { typeof(TrainTrackBaseAI), typeof(MonorailTrackAI), typeof(MetroTrackAI)/*, typeof(MetroTrackBaseAI)*/ } ) },
             { "Paths", new NetworkFilter(true, new List<Type> { typeof(PedestrianPathAI), typeof(PedestrianTunnelAI), typeof(PedestrianBridgeAI), typeof(PedestrianWayAI) } ) },
             { "Fences", new NetworkFilter(true, new List<Type> { typeof(DecorationWallAI) } ) },
             { "Powerlines", new NetworkFilter(true, new List<Type> { typeof(PowerLineAI) } ) },

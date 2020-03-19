@@ -161,13 +161,20 @@ namespace MoveIt
                                 float newAngle = action.angleDelta;
                                 float newSnapAngle = 0f;
 
-                                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                if (snapping)
                                 {
-                                    action.Virtual = !fastMove;
+                                    action.Virtual = false;
                                 }
                                 else
                                 {
-                                    action.Virtual = fastMove;
+                                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                    {
+                                        action.Virtual = !fastMove;
+                                    }
+                                    else
+                                    {
+                                        action.Virtual = fastMove;
+                                    }
                                 }
                             
                                 if (m_leftClickTime > 0 != m_middleClickTime > 0)
