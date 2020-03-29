@@ -600,6 +600,14 @@ namespace MoveIt
             {
                 itemLayers |= ItemClass.Layer.WaterPipes;
             }
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Fishing)
+            {
+                itemLayers |= ItemClass.Layer.FishingPaths;
+            }
+            else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            {
+                itemLayers |= ItemClass.Layer.MetroTunnels | ItemClass.Layer.BlimpPaths | ItemClass.Layer.FerryPaths | ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths;
+            }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
             {
                 itemLayers |= ItemClass.Layer.MetroTunnels;
@@ -608,10 +616,6 @@ namespace MoveIt
             {
                 itemLayers = ItemClass.Layer.MetroTunnels; // Removes Default assignment
             }
-            //else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
-            //{
-            //    itemLayers |= ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths | ItemClass.Layer.BlimpPaths;
-            //}
             else
             {
                 itemLayers |= ItemClass.Layer.Markers;

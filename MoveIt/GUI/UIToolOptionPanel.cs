@@ -745,7 +745,7 @@ namespace MoveIt
             underground = m_viewOptions.AddUIComponent<UIMultiStateButton>();
             underground.atlas = UIUtils.GetAtlas("Ingame");
             underground.name = "MoveIt_UndergroundView";
-            underground.tooltip = "Toogle Underground View";
+            underground.tooltip = "Toggle Underground View";
             underground.playAudioEvents = true;
 
             underground.size = new Vector2(36, 36);
