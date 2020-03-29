@@ -200,14 +200,6 @@ namespace MoveIt
 
         internal static bool isModInstalled()
         {
-            //string msg = "";
-            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
-            //{
-            //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
-            //        $"\n - {pi.modPath}";
-            //}
-            //Debug.Log(msg);
-
             if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
                     mod.publishedFileID.AsUInt64 == 1094334744uL || 
                     mod.name.Contains("ProceduralObjects") || 

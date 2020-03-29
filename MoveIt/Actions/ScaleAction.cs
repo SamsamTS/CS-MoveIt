@@ -28,7 +28,7 @@ namespace MoveIt
                 }
             }
 
-            bool full = (!MoveItTool.fastMove);// || containsNetwork;
+            bool full = (!MoveItTool.fastMove);
             if (!full)
             {
                 full = selection.Count > MoveItTool.Fastmove_Max ? true : false;

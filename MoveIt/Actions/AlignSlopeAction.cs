@@ -1,6 +1,7 @@
-using System;
 using ColossalFramework;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MoveIt
@@ -65,35 +66,33 @@ namespace MoveIt
             if (IsQuick)
             {
                 if (selection.Count != 1) return;
-                foreach (Instance instance in selection) // Is this really the best way to get the value of selection[0]?
+                Instance instance = selection.First();
+
+                if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
+
+                NetNode node = nodeBuffer[nodeInstance.id.NetNode];
+
+                int c = 0;
+                for (int i = 0; i < 8; i++)
                 {
-                    if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
-
-                    NetNode node = nodeBuffer[nodeInstance.id.NetNode];
-
-                    int c = 0;
-                    for (int i = 0; i < 8; i++)
+                    ushort segId;
+                    if ((segId = node.GetSegment(i)) > 0)
                     {
-                        ushort segId = 0;
-                        if ((segId = node.GetSegment(i)) > 0)
-                        {
-                            if (c > 1) return; // More than 2 segments found
+                        if (c > 1) return; // More than 2 segments found
 
-                            NetSegment segment = segmentBuffer[segId];
-                            InstanceID instanceID = default;
-                            if (segment.m_startNode == nodeInstance.id.NetNode)
-                            {
-                                instanceID.NetNode = segment.m_endNode;
-                            }
-                            else
-                            {
-                                instanceID.NetNode = segment.m_startNode;
-                            }
-                            keyInstance[c] = new MoveableNode(instanceID);
-                            c++;
+                        NetSegment segment = segmentBuffer[segId];
+                        InstanceID instanceID = default;
+                        if (segment.m_startNode == nodeInstance.id.NetNode)
+                        {
+                            instanceID.NetNode = segment.m_endNode;
                         }
+                        else
+                        {
+                            instanceID.NetNode = segment.m_startNode;
+                        }
+                        keyInstance[c] = new MoveableNode(instanceID);
+                        c++;
                     }
-                    if (c != 2) return;
                 }
             }
 

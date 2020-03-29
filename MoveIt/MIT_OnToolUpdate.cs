@@ -206,8 +206,6 @@ namespace MoveIt
                                         float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
                                         float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / 5;
                                         float mouseTravel = (mouseRotateBefore + mouseRotateAfter - m_mouseStartX) / Screen.width * 1.2f;
-                                        //UnityEngine.Debug.Log($"mouseTravel:{mouseTravel}\nmouseRotateBefore:{mouseRotateBefore}\nmouseRotateAfter:{mouseRotateAfter}\n" +
-                                        //    $"{m_sensitivityTogglePosX} - {m_sensitivityAngleOffset}");
 
                                         newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                     }
@@ -259,9 +257,8 @@ namespace MoveIt
 
                                 Vector3 newMove;
                                 float y = action.moveDelta.y;
-                                if (m_isLowSensitivity)// && !m_skipLowSensitivity)
+                                if (m_isLowSensitivity)
                                 {
-                                    //Vector3 newMove = RaycastMouseLocation(mouseRay) - action.center;
                                     Vector3 mouseDeltaBefore = m_sensitivityTogglePosAbs - m_clickPositionAbs;
                                     Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / 5;
                                     newMove = mouseDeltaBefore + mouseDeltaAfter;
@@ -293,13 +290,11 @@ namespace MoveIt
 
                                 float newAngle;
 
-                                if (m_isLowSensitivity)// && !m_skipLowSensitivity)
+                                if (m_isLowSensitivity)
                                 {
                                     float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
                                     float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / 5;
                                     float mouseTravel = (mouseRotateBefore + mouseRotateAfter - m_mouseStartX) / Screen.width * 1.2f;
-                                    //UnityEngine.Debug.Log($"mouseTravel:{mouseTravel}\nmouseRotateBefore:{mouseRotateBefore}\nmouseRotateAfter:{mouseRotateAfter}\n" +
-                                    //    $"{m_sensitivityTogglePosX} - {m_sensitivityAngleOffset}");
 
                                     newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
                                 }
@@ -867,7 +862,7 @@ namespace MoveIt
                             segment.m_startDirection = (nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
                             segment.m_endDirection = -segment.m_startDirection;
 
-                            segment.GetClosestPositionAndDirection(newPosition, out Vector3 testPos, out Vector3 direction);
+                            segment.GetClosestPositionAndDirection(newPosition, out Vector3 testPos, out _);
                             // Straight
                             if (TrySnapping(testPos, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                             {
@@ -924,7 +919,7 @@ namespace MoveIt
                                             }
                                             else
                                             {
-                                                segment.GetClosestPositionAndDirection(newPosition, out testPos, out direction);
+                                                segment.GetClosestPositionAndDirection(newPosition, out testPos, out _);
                                                 // Curve
                                                 if (TrySnapping(testPos, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                                                 {

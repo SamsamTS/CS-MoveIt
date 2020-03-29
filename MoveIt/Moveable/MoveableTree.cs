@@ -118,11 +118,6 @@ namespace MoveIt
             TreeManager.instance.UpdateTreeRenderer(tree, true);
         }
 
-        //public override void SetHeight()
-        //{
-        //    SetHeight(TerrainManager.instance.SampleDetailHeight(position));
-        //}
-
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             TreeState state = instanceState as TreeState;
@@ -212,7 +207,7 @@ namespace MoveIt
 
             Randomizer randomizer = new Randomizer(state.instance.id.Tree);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
-            float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
+            //float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;

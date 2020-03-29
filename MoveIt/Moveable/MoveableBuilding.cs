@@ -68,11 +68,6 @@ namespace MoveIt
 
         public MoveableBuilding(InstanceID instanceID, bool sub = false) : base(instanceID)
         {
-            //if ((BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].m_flags & Building.Flags.Created) == Building.Flags.None)
-            //{
-            //    throw new Exception($"Building #{instanceID.Building} not found!");
-            //}
-
             isSubInstance = sub;
             Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
 
@@ -357,7 +352,6 @@ namespace MoveIt
                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Historical;
                 }
 
-                // TODO: when should the flag be set?
                 if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
                 {
                     AddFixedHeightFlag(clone);

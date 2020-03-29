@@ -16,7 +16,7 @@ namespace MoveIt
         {
             foreach (Instance instance in selection)
             {
-                //if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
+                if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
                 {
                     m_states.Add(instance.SaveToState());
                 }

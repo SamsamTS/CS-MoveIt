@@ -481,7 +481,6 @@ namespace MoveIt
 
             startDirection.Normalize();
             endDirection.Normalize();
-            //private static void RenderSegment(NetInfo info, NetSegment.Flags flags, Vector3 startPosition, Vector3 endPosition, Vector3 startDirection, Vector3 endDirection, bool smoothStart, bool smoothEnd)
             RenderSegment.Invoke(null, new object[] { netInfo, NetSegment.Flags.All, bezier.a, bezier.d, startDirection, -endDirection, state.smoothStart, state.smoothEnd });
         }
 
@@ -541,8 +540,6 @@ namespace MoveIt
         { 
             Vector3 startPos = StartNode.OverlayPosition;
             Vector3 endPos = EndNode.OverlayPosition;
-
-            //Debug.Log($"AAA2 #{segment}\n{startPos} - {startDir} - {StartNode.id.NetNode}:{StartNode.Virtual}\n{endPos} - {endDir} - {EndNode.id.NetNode}:{EndNode.Virtual}");
 
             if (!NetSegment.IsStraight(startPos, startDir, endPos, endDir, out float _))
             {

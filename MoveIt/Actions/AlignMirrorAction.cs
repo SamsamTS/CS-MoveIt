@@ -52,10 +52,6 @@ namespace MoveIt
                     matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                     instance.Transform(state, ref matrix4x, 0f, faceDelta, mirrorPivot, followTerrain);
-                    //Debug.Log($"{instance.Info.Name}\n" +
-                    //    $"Mirror:{mirrorPivot.x},{mirrorPivot.z}/{mirrorAngle} (follow:{followTerrain})\n\n" +
-                    //    $"Angle - Old:{state.angle}, New:{instance.angle}, Delta:{faceDelta}\n" +
-                    //    $"Position - Old:{state.position}, New:{instance.position}, Delta:{posDelta}");
                 }
             }
 

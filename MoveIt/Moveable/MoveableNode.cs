@@ -314,7 +314,7 @@ namespace MoveIt
 
             if (segmentCurve.m_startNode != 0 && segmentCurve.m_endNode != 0)
             {
-                segmentCurve.GetClosestPositionAndDirection(position, out Vector3 p, out Vector3 tangent);
+                segmentCurve.GetClosestPositionAndDirection(position, out _, out Vector3 tangent);
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -542,13 +542,13 @@ namespace MoveIt
 
         public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
         
-        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)//, int depth = 0)
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
             foreach (Instance subInstance in subInstances)
             {
                 if (subInstance is MoveableBuilding msb)
                 {
-                    msb.RenderGeometry(cameraInfo, toolColor);//, depth + 1);
+                    msb.RenderGeometry(cameraInfo, toolColor);
                 }
             }
         }

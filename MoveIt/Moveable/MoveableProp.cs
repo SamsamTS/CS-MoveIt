@@ -24,10 +24,6 @@ namespace MoveIt
 
         public MoveableProp(InstanceID instanceID) : base(instanceID)
         {
-            //if (((PropInstance.Flags)PropManager.instance.m_props.m_buffer[instanceID.Prop].m_flags & PropInstance.Flags.Created) == PropInstance.Flags.None)
-            //{
-            //    throw new Exception($"Prop #{instanceID.Prop} not found!");
-            //}
             Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
         }
 
@@ -135,11 +131,6 @@ namespace MoveIt
             PropManager.instance.MoveProp(prop, newPosition);
             PropManager.instance.UpdatePropRenderer(prop, true);
         }
-
-        //public override void SetHeight()
-        //{
-        //    SetHeight(TerrainManager.instance.SampleDetailHeight(position));
-        //}
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {

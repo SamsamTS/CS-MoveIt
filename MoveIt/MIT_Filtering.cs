@@ -338,12 +338,6 @@ namespace MoveIt
                     m_selection.d = m_selection.a + dotDown * down;
                 }
 
-                // Disables select-during-drag
-                //if (ToolState == ToolStates.DrawingSelection)
-                //{
-                //    return list;
-                //}
-
                 Vector3 min = m_selection.Min();
                 Vector3 max = m_selection.Max();
 
@@ -623,16 +617,6 @@ namespace MoveIt
 
             return itemLayers;
         }
-
-        //private bool IsDecal(PropInfo prop)
-        //{
-        //    if (prop != null && prop.m_material != null)
-        //    {
-        //        return (prop.m_material.shader == shaderBlend || prop.m_material.shader == shaderSolid);
-        //    }
-
-        //    return false;
-        //}
 
         private bool IsBuildingValid(ref Building building, ItemClass.Layer itemLayers)
         {

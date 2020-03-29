@@ -50,16 +50,6 @@ namespace MoveIt
                 var objectList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
                 int count = (int)objectList.GetType().GetProperty("Count").GetValue(objectList, null);
 
-                //HashSet<int> activeIds = (HashSet<int>)tPOLogic.GetField("activeIds", flags).GetValue(POLogic);
-                //string msg = $"activeIds ({activeIds.Count}):\n";
-                //foreach (int a in activeIds)
-                //{
-                //    msg += $"{a},";
-                //}
-                //Debug.Log(msg);
-
-                //msg = $"List ({count}):\n";
-
                 HashSet<int> activeIds = new HashSet<int>();
 
                 for (int i = 0; i < count; i++)
@@ -76,9 +66,7 @@ namespace MoveIt
                         objects.Add(o);
                         activeIds.Add(o.ProcId);
                     }
-                    //msg += $"{o.ProcId},";
                 }
-                //Debug.Log(msg);
 
                 //string msg = $"activeIds ({activeIds.Count}):\n";
                 //foreach (int a in activeIds)

@@ -109,18 +109,6 @@ namespace MoveIt
                     if (MoveItTool.PO.Enabled && MIT.ToolState == MoveItTool.ToolStates.Default)
                     {
                         MoveItTool.PO.StartConvertAction();
-
-                        //if (MoveItTool.PO.Active == false)
-                        //{
-                        //    MoveItTool.PO.Active = true;
-                        //    UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                        //    MoveItTool.PO.ToolEnabled();
-                        //    UIFilters.POToggled();
-                        //}
-
-                        //ConvertToPOAction convertAction = new ConvertToPOAction();
-                        //ActionQueue.instance.Push(convertAction);
-                        //ActionQueue.instance.Do();
                     }
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
                     MIT.DeactivateTool();

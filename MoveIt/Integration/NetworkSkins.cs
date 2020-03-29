@@ -12,7 +12,6 @@ namespace MoveIt
     internal class NS_Manager
     {
         internal bool Enabled = false;
-        //internal static readonly string[] VersionNames = { "2" };
         internal readonly Type tNS, tNSM, tNSModifier, tListSkins, tListMods, tDictMods;
         internal readonly object NSM;
         internal readonly Assembly Assembly;
@@ -96,14 +95,6 @@ namespace MoveIt
 
         internal static bool isModInstalled()
         {
-            //string msg = "";
-            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
-            //{
-            //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
-            //        $"\n - {pi.modPath}";
-            //}
-            //Debug.Log(msg);
-
             if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
                     mod.publishedFileID.AsUInt64 == 1758376843uL ||
                     mod.name.Contains("NetworkSkins2") ||

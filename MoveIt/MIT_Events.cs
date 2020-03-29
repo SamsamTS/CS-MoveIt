@@ -171,12 +171,10 @@ namespace MoveIt
                         if (Action.selection.Contains(m_hoverInstance))
                         {
                             Action.selection.Remove(m_hoverInstance);
-                            //PO.SelectionRemove(m_hoverInstance);
                         }
                         else
                         {
                             Action.selection.Add(m_hoverInstance);
-                            //PO.SelectionAdd(m_hoverInstance);
                         }
                     }
                 }
@@ -528,7 +526,7 @@ namespace MoveIt
             //Debug.Log("OnMiddleMouseDown: " + ToolState);
 
             Vector3 mousePos = RaycastMouseLocation();
-            //Vector3 selectionCenter = Action.GetCenter();
+
             if (ToolState == ToolStates.Default)
             {
                 m_lastInstance = m_hoverInstance;
@@ -607,7 +605,6 @@ namespace MoveIt
                 if (m_isLowSensitivity)
                 {
                     ProcessSensitivityMode(false);
-                    //m_skipLowSensitivity = false;
                 }
             }
         }
@@ -616,7 +613,6 @@ namespace MoveIt
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {
-                //Debug.Log($"Now:{enable}\n-------------------------------------------");
                 if (enable)
                 {
                     m_sensitivityTogglePosAbs = RaycastMouseLocation();

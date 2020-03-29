@@ -99,9 +99,6 @@ namespace MoveIt
         internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
         internal static Color m_POdisabledColor = new Color32(130, 95, 140, 70);
 
-        //public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
-        //public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
-
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
         private static int _POProcessing = 0;
@@ -235,42 +232,6 @@ namespace MoveIt
         private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
         private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
-        //private Vector3 v1;
-        //private Vector3 v2;
-        //private Vector3 v3;
-        //private Vector3 m_dragStartRelative
-        //{
-        //    get => v1;
-        //    set
-        //    {
-        //        Debug.Log($"{value} (was:{v1})\n" +
-        //            $"dragStartRel:{value}   clickPosAbs:{v2}   sensTogPosAb:{v3}\n" +
-        //            $"Mouse:{RaycastMouseLocation()}");
-        //        v1 = value;
-        //    }
-        //} // Where the current drag started, relative to selection center
-        //private Vector3 m_clickPositionAbs
-        //{
-        //    get => v2;
-        //    set
-        //    {
-        //        Debug.Log($"{value} (was:{v2})\n" +
-        //            $"dragStartRel:{v1}   clickPosAbs:{value}   sensTogPosAb:{v3}\n" +
-        //            $"Mouse:{RaycastMouseLocation()}");
-        //        v2 = value;
-        //    }
-        //} // Where the current drag started, absolute
-        //private Vector3 m_sensitivityTogglePosAbs
-        //{
-        //    get => v3;
-        //    set
-        //    {
-        //        Debug.Log($"{value} (was:{v3})\n" +
-        //            $"dragStartRel:{v1}   clickPosAbs:{v2}   sensTogPosAb:{value}\n" +
-        //            $"Mouse:{RaycastMouseLocation()}");
-        //        v3 = value;
-        //    }
-        //} // Where sensitivity was last toggled, absolute
         
         private float m_mouseStartX;
         private float m_startAngle;
@@ -369,6 +330,14 @@ namespace MoveIt
             //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             //{
             //    msg += $"\n{assembly.GetName().Name.ToLower()}";
+            //}
+            //Debug.Log(msg);
+
+            // msg = "Plugins:";
+            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            //{
+            //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
+            //        $"\n - {pi.modPath}";
             //}
             //Debug.Log(msg);
         }
@@ -538,7 +507,6 @@ namespace MoveIt
                     if (snapping && m_segmentGuide.m_startNode != 0 && m_segmentGuide.m_endNode != 0)
                     {
                         NetManager netManager = NetManager.instance;
-                        //NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
                         NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
 
                         Bezier3 bezier;
@@ -875,7 +843,6 @@ namespace MoveIt
 
                     if (action.Count > 0)
                     {
-                        //m_skipLowSensitivity = true;
                         UpdateSensitivityMode();
 
                         m_sensitivityTogglePosAbs = m_clickPositionAbs = action.center;
@@ -1052,7 +1019,7 @@ namespace MoveIt
 
                         if (restore)
                         {
-                            ActionQueue.instance.Do(); // For paste
+                            ActionQueue.instance.Do(); // For restore to position
                         }
                         else
                         {
@@ -1093,8 +1060,10 @@ namespace MoveIt
 
         internal static Vector3 RaycastMouseLocation(Ray mouseRay)
         {
-            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-            input.m_ignoreTerrain = false;
+            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane)
+            {
+                m_ignoreTerrain = false
+            };
             RayCast(input, out RaycastOutput output);
 
             return output.m_hitPos;
