@@ -14,7 +14,11 @@ namespace MoveIt
         protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
-        public bool IsQuick = false;
+        public enum Modes
+        {
+            Quick, Auto, Full
+        }
+        public Modes mode = Modes.Full;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
@@ -63,7 +67,7 @@ namespace MoveIt
             float distance;
             Matrix4x4 matrix = default;
 
-            if (IsQuick)
+            if (mode == Modes.Quick)
             {
                 if (selection.Count != 1) return;
                 Instance instance = selection.First();
@@ -94,6 +98,11 @@ namespace MoveIt
                         c++;
                     }
                 }
+            }
+            else if (mode == Modes.Auto)
+            {
+                if (selection.Count < 2) return;
+                GetExtremeObjects(out keyInstance[0], out keyInstance[1]);
             }
 
             angleDelta = 0 - (float)Math.Atan2(PointB.position.z - PointA.position.z, PointB.position.x - PointA.position.x);

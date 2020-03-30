@@ -60,25 +60,32 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
-                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                     {
-                        MIT.AlignMode = MoveItTool.AlignModes.SlopeNode;
-
-                        if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
-                        {
-                            MIT.StopCloning();
-                        }
-
-                        AlignSlopeAction asa = new AlignSlopeAction();
-                        asa.followTerrain = MoveItTool.followTerrain;
-                        asa.IsQuick = true;
-                        ActionQueue.instance.Push(asa);
-                        ActionQueue.instance.Do();
-                        if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
-                        MIT.DeactivateTool();
+                        MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
                         break;
                     }
-                    MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
+
+                    MIT.AlignMode = MoveItTool.AlignModes.SlopeNode;
+
+                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    {
+                        MIT.StopCloning();
+                    }
+
+                    AlignSlopeAction asa = new AlignSlopeAction
+                    {
+                        followTerrain = MoveItTool.followTerrain,
+                        mode = AlignSlopeAction.Modes.Auto
+                    };
+                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                    {
+                        asa.mode = AlignSlopeAction.Modes.Quick;
+                    }
+                    ActionQueue.instance.Push(asa);
+                    ActionQueue.instance.Do();
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MIT.DeactivateTool();
                     break;
 
                 case "MoveIt_AlignIndividualBtn":

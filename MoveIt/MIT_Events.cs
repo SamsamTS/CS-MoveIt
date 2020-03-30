@@ -305,8 +305,10 @@ namespace MoveIt
                     {
                         case 1: // Point A selected, prepare for Point B
                             AlignToolPhase++;
-                            action = new AlignSlopeAction();
-                            action.PointA = m_hoverInstance;
+                            action = new AlignSlopeAction
+                            {
+                                PointA = m_hoverInstance
+                            };
                             ActionQueue.instance.Push(action);
                             UIMoreTools.UpdateMoreTools();
                             break;

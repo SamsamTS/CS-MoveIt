@@ -112,7 +112,7 @@ namespace MoveIt
                     AlignSlopeAction asa = new AlignSlopeAction
                     {
                         followTerrain = followTerrain,
-                        IsQuick = true
+                        mode = AlignSlopeAction.Modes.Quick
                     };
                     ActionQueue.instance.Push(asa);
                     ActionQueue.instance.Do();

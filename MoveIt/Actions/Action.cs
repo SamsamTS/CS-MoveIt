@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using ColossalFramework;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace MoveIt
@@ -138,6 +139,34 @@ namespace MoveIt
                         renderGroups[n].SetAllLayersDirty();
                         renderManager.m_updatedGroups1[n >> 6] |= 1uL << n;
                         renderManager.m_groupsUpdated1 = true;
+                    }
+                }
+            }
+        }
+
+        internal static void GetExtremeObjects(out Instance A, out Instance B)
+        {
+            Instance[] inst = selection.ToArray();
+            if (inst.Count() < 2)
+            {
+                throw new IndexOutOfRangeException("Less than 2 objects selected");
+            }
+            A = inst[0];
+            B = inst[1];
+
+            float longest = 0;
+
+            for (int i = 0; i < inst.Count(); i++)
+            {
+                for (int j = i + 1; j < inst.Count(); j++)
+                {
+                    float distance = Math.Abs((inst[i].position - inst[j].position).sqrMagnitude);
+
+                    if (distance > longest)
+                    {
+                        A = inst[i];
+                        B = inst[j];
+                        longest = distance;
                     }
                 }
             }

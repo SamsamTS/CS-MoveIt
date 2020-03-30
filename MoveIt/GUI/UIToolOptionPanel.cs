@@ -510,14 +510,7 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
-                    {
-                        MoveItTool.instance.StartReset();
-                    }
-                    else
-                    {
-                        MoveItTool.instance.StartBulldoze();
-                    }
+                    MoveItTool.instance.StartBulldoze();
                 }
             };
             #endregion
