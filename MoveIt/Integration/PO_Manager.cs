@@ -65,11 +65,11 @@ namespace MoveIt
             }
         }
 
-        internal void Clone(uint originalId, Vector3 position, float angle, Action action)
+        internal void Clone(MoveableProc original, Vector3 position, float angle, Action action)
         {
             if (!Enabled) return;
 
-            Logic.Clone(originalId, position, angle, action);
+            Logic.Clone(original, position, angle, action);
         }
 
         internal void StartConvertAction()

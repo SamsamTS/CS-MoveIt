@@ -243,6 +243,8 @@ namespace MoveIt
 
                         ActionQueue.instance.Push(action);
                         ActionQueue.instance.Do();
+
+                        ProcessMirror(action);
                     }
 
                     UIMoreTools.UpdateMoreTools();

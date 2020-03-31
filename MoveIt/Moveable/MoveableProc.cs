@@ -126,7 +126,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            MoveItTool.PO.Clone(m_procObj.Id, newPosition, state.angle + deltaAngle, action);
+            MoveItTool.PO.Clone((MoveableProc)state.instance, newPosition, state.angle + deltaAngle, action);
             return null;
         }
 

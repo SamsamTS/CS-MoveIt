@@ -11,14 +11,18 @@ namespace MoveIt
 
         public Vector3 mirrorPivot;
         public float mirrorAngle;
+        private Bounds originalBounds;
 
         public override void Do()
         {
-            Bounds originalBounds = GetTotalBounds(false);
-            Matrix4x4 matrix4x = default;
+            originalBounds = GetTotalBounds(false);
 
             base.Do();
+        }
 
+        public void DoProcess()
+        {
+            Matrix4x4 matrix4x = default;
             foreach (Instance instance in m_clones)
             {
                 if (instance.isValid)
@@ -44,7 +48,6 @@ namespace MoveIt
                     {
                         throw new NullReferenceException($"Original for cloned object not found.");
                     }
-
 
                     float faceDelta = getMirrorFacingDelta(state.angle, mirrorPivot, mirrorAngle);
                     float posDelta = getMirrorPositionDelta(state.position, mirrorPivot, mirrorAngle);

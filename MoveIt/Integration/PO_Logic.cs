@@ -79,20 +79,20 @@ namespace MoveIt
             }
         }
 
-        public void Clone(uint originalId, Vector3 position, float angle, Action action)
+        public void Clone(MoveableProc original, Vector3 position, float angle, Action action)
         {
             MoveItTool.POProcessing++;
-            tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { GetPOById(originalId).GetProceduralObject() });
-            StartCoroutine(RetrieveClone(originalId, position, angle, action));
+            tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { original.m_procObj.GetProceduralObject() });
+            StartCoroutine(RetrieveClone(original, position, angle, action));
         }
 
-        public IEnumerator<object> RetrieveClone(uint originalId, Vector3 position, float angle, Action action)
+        public IEnumerator<object> RetrieveClone(MoveableProc original, Vector3 position, float angle, Action action)
         {
             const uint MaxAttempts = 1000_000;
+            CloneAction ca = (CloneAction)action;
 
-            PO_Object original = GetPOById(originalId);
             Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
-            object[] paramList = new[] { original.GetProceduralObject(), null, null };
+            object[] paramList = new[] { original.m_procObj.GetProceduralObject(), null, null };
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null );
 
             uint c = 0;
@@ -112,12 +112,12 @@ namespace MoveIt
 
             if (c == MaxAttempts)
             {
-                throw new Exception($"Failed to clone object #{originalId}! [PO-F4]");
+                throw new Exception($"Failed to clone object #{original.m_procObj.Id}! [PO-F4]");
             }
 
             PO_Object clone = new PO_Object(paramList[1])
             {
-                POColor = original.POColor
+                POColor = original.m_procObj.POColor
             };
 
             InstanceID cloneID = default;
@@ -131,12 +131,13 @@ namespace MoveIt
             };
 
             Action.selection.Add(cloneInstance);
-            ((CloneAction)action).m_clones.Add(cloneInstance);
+            ca.m_clones.Add(cloneInstance);
+            ca.m_origToClone.Add(original, cloneInstance);
 
             MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
 
             yield return new WaitForSeconds(0.25f);
-            Debug.Log($"Cloned {originalId} to #{clone.Id}");
+            Debug.Log($"Cloned {original.m_procObj.Id} to #{clone.Id}");
             MoveItTool.POProcessing--;
         }
 

@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,9 +24,9 @@ namespace MoveIt
 
         protected bool _isImport = false;
 
-        protected Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
-        protected Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
-        protected Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
+        internal Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
+        internal Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
+        internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
 
         protected Matrix4x4 matrix4x = default;
 
@@ -254,35 +255,34 @@ namespace MoveIt
             //}
             //Debug.Log(msg);
 
-            // Clone everything else
+            // Clone everything else except PO
             foreach (InstanceState state in m_states)
             {
-                if (!(state is NodeState))
+                if (!(state is NodeState || state is ProcState))
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
 
-                    // Cloned PO returns null, because it is delayed
-                    if (clone != null)
+                    if (clone == null)
                     {
-                        //if (state.instance.id.Type == InstanceType.Building)
-                        //{
-                        //    MoveableBuilding mb = (MoveableBuilding)state.instance;
-                        //    Building b = (Building)mb.data;
-                        //    Building c = (Building)clone.data;
-                        //    InstanceID i1 = default;
-                        //    i1.NetNode = b.m_netNode;
-                        //    InstanceID i2 = default;
-                        //    i2.NetNode = c.m_netNode;
-                        //    Debug.Log($"SUBBUILDINGS\n{mb.id.Building}:{b.m_netNode} ({i1})\n{clone.id.Building}:{c.m_netNode} ({i2})");
-                        //}
-                        m_clones.Add(clone);
-                        m_origToCloneUpdate.Add(state.instance.id, clone.id);
-
-                        if (state is SegmentState segmentState)
-                        {
-                            MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
-                        }
+                        throw new Exception($"Failed to clone {state}");
                     }
+                    
+                    m_clones.Add(clone);
+                    m_origToCloneUpdate.Add(state.instance.id, clone.id);
+
+                    if (state is SegmentState segmentState)
+                    {
+                        MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
+                    }
+                }
+            }
+
+            // Clone PO
+            foreach (InstanceState state in m_states)
+            {
+                if (state is ProcState)
+                {
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
             }
 
@@ -414,6 +414,16 @@ namespace MoveIt
         public int Count
         {
             get { return m_states.Count; }
+        }
+    }
+
+
+    public class DuplicateAction : CloneAction
+    {
+        public DuplicateAction() : base()
+        {
+            angleDelta = 0f;
+            moveDelta = Vector3.zero;
         }
     }
 }

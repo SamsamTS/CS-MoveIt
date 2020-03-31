@@ -1211,5 +1211,29 @@ namespace MoveIt
         {
             return (byte)Rand.Next(min, max);
         }
+
+        internal void ProcessMirror(AlignMirrorAction action)
+        {
+            StartCoroutine(ProcessMirrorIterate(action));
+        }
+
+        internal IEnumerator<object> ProcessMirrorIterate(AlignMirrorAction action)
+        {
+            const uint MaxAttempts = 1000_000;
+
+            uint c = 0;
+            while (c < MaxAttempts && POProcessing > 0)
+            {
+                c++;
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            if (c == MaxAttempts)
+            {
+                throw new Exception($"Failed to mirror PO");
+            }
+
+            action.DoProcess();
+        }
     }
 }
