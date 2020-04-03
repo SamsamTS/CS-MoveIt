@@ -31,6 +31,7 @@ namespace MoveIt
             AddKeymapping("Toggle Debug Panel", viewDebug);
             AddKeymapping("Step Over", stepOverKey);
             AddKeymapping("Align Heights", alignHeights);
+            AddKeymapping("Align Line", alignLine);
             AddKeymapping("Align Slope", alignSlope);
             AddKeymapping("Quick Align Slope", alignSlopeQuick);
             AddKeymapping("Align In-Place", alignInplace);
@@ -90,6 +91,7 @@ namespace MoveIt
         public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);
 
         public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
+        public static readonly SavedInputKey alignLine = new SavedInputKey("alignLine", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.L, false, false, true), true);
         public static readonly SavedInputKey alignSlope = new SavedInputKey("alignSlope", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignSlopeQuick = new SavedInputKey("alignSlopeQuick", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);

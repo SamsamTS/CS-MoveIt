@@ -92,13 +92,29 @@ namespace MoveIt
                 {
                     ProcessAligning(AlignModes.Height);
                 }
-                else if (OptionsKeymapping.alignSlope.IsPressed(e))
-                {
-                    ProcessAligning(AlignModes.Slope);
-                }
                 else if (OptionsKeymapping.alignMirror.IsPressed(e))
                 {
                     ProcessAligning(AlignModes.Mirror);
+                }
+                else if (OptionsKeymapping.alignLine.IsPressed(e))
+                {
+                    if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
+                    {
+                        StopCloning();
+                    }
+
+                    LineAction la = new LineAction
+                    {
+                        followTerrain = followTerrain,
+                    };
+                    ActionQueue.instance.Push(la);
+                    ActionQueue.instance.Do();
+                    if (autoCloseAlignTools) UIMoreTools.MoreToolsPanel.isVisible = false;
+                    DeactivateTool();
+                }
+                else if (OptionsKeymapping.alignSlope.IsPressed(e))
+                {
+                    ProcessAligning(AlignModes.Slope);
                 }
                 else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
                 {

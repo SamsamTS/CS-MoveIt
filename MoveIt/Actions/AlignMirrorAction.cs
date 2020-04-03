@@ -33,7 +33,7 @@ namespace MoveIt
                     {
                         if (pair.Value.id.RawData == instance.id.RawData)
                         {               
-                            if (pair.Value.id.NetSegment > 0)
+                            if (pair.Value is MoveableSegment)
                             { // Segments need original state because nodes move before clone's position is saved
                                 state = pair.Key.SaveToState();
                             }

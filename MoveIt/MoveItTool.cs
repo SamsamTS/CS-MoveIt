@@ -742,6 +742,7 @@ namespace MoveIt
 
             foreach (Bounds bounds in merged)
             {
+                bounds.Expand(64f);
                 Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                 TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
                 bounds.Expand(512f);
