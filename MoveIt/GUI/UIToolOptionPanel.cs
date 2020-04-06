@@ -537,7 +537,7 @@ namespace MoveIt
             m_moreToolsPanel.name = "mtPanel";
             m_moreToolsPanel.autoLayout = false;
             m_moreToolsPanel.clipChildren = true;
-            m_moreToolsPanel.size = new Vector2(36, 322 + (MoveItTool.PO.Enabled ? 40 : 0));
+            m_moreToolsPanel.size = new Vector2(36, 362 + (MoveItTool.PO.Enabled ? 40 : 0));
             m_moreToolsPanel.isVisible = false;
             m_moreToolsPanel.absolutePosition = m_moreTools.absolutePosition + new Vector3(0, 10 - m_moreToolsPanel.height);
             m_moreTools.zOrder = m_moreToolsPanel.zOrder + 10;
@@ -591,6 +591,20 @@ namespace MoveIt
             resetObject.disabledBgSprite = "OptionBaseDisabled";
             resetObject.normalFgSprite = "ResetObject";
             resetObject.eventClicked += UIMoreTools.MoreToolsClicked;
+
+            UIMoreTools.MoreButtons.Add("MoveIt_AlignLineBtn", mtpContainer.AddUIComponent<UIButton>());
+            UIButton alignLine = UIMoreTools.MoreButtons["MoveIt_AlignLineBtn"];
+            alignLine.name = "MoveIt_AlignLineBtn";
+            alignLine.atlas = GetIconsAtlas();
+            alignLine.tooltip = "Align Line - Selected objects are evenly spaced out\nbetween furthest 2 selected objects";
+            alignLine.playAudioEvents = true;
+            alignLine.size = new Vector2(36, 36);
+            alignLine.normalBgSprite = "OptionBase";
+            alignLine.hoveredBgSprite = "OptionBaseHovered";
+            alignLine.pressedBgSprite = "OptionBasePressed";
+            alignLine.disabledBgSprite = "OptionBaseDisabled";
+            alignLine.normalFgSprite = "AlignLine";
+            alignLine.eventClicked += UIMoreTools.MoreToolsClicked;
 
             UIMoreTools.MoreButtons.Add("MoveIt_AlignMirrorBtn", mtpContainer.AddUIComponent<UIButton>());
             UIButton alignMirror = UIMoreTools.MoreButtons["MoveIt_AlignMirrorBtn"];
@@ -652,7 +666,7 @@ namespace MoveIt
             UIButton alignSlope = UIMoreTools.MoreButtons["MoveIt_AlignSlopeBtn"];
             alignSlope.name = "MoveIt_AlignSlopeBtn";
             alignSlope.atlas = GetIconsAtlas();
-            alignSlope.tooltip = "Align Slope - click on 2 objects to define\nthe slope axis to move selected objects\nup/down to that height";
+            alignSlope.tooltip = "Align Slope - selected objects move up/down to be on a slope\nbetween the 2 furthest apart objects";
             alignSlope.playAudioEvents = true;
             alignSlope.size = new Vector2(36, 36);
             alignSlope.normalBgSprite = "OptionBase";
@@ -909,6 +923,7 @@ namespace MoveIt
                 "AlignSlopeA",
                 "AlignSlopeB",
                 "AlignHeight",
+                "AlignLine",
                 "AlignMirror",
                 "AlignTerrainHeight",
                 "ConvertToPO",

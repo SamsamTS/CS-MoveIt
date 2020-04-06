@@ -88,6 +88,22 @@ namespace MoveIt
                     MIT.DeactivateTool();
                     break;
 
+                case "MoveIt_AlignLineBtn":
+                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    {
+                        MIT.StopCloning();
+                    }
+
+                    LineAction la = new LineAction
+                    {
+                        followTerrain = MoveItTool.followTerrain,
+                    };
+                    ActionQueue.instance.Push(la);
+                    ActionQueue.instance.Do();
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MIT.DeactivateTool();
+                    break;
+
                 case "MoveIt_AlignIndividualBtn":
                     MIT.ProcessAligning(MoveItTool.AlignModes.Inplace);
                     break;

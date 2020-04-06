@@ -599,16 +599,16 @@ namespace MoveIt
                 itemLayers |= ItemClass.Layer.FishingPaths;
             }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
-            {
-                itemLayers |= ItemClass.Layer.MetroTunnels | ItemClass.Layer.BlimpPaths | ItemClass.Layer.FerryPaths | ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths;
+            { // Removes Default assignment
+                itemLayers = ItemClass.Layer.MetroTunnels | ItemClass.Layer.BlimpPaths | ItemClass.Layer.FerryPaths | ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths | ItemClass.Layer.HelicopterPaths;
             }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
             {
                 itemLayers |= ItemClass.Layer.MetroTunnels;
             }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground)
-            {
-                itemLayers = ItemClass.Layer.MetroTunnels; // Removes Default assignment
+            { // Removes Default assignment
+                itemLayers = ItemClass.Layer.MetroTunnels; 
             }
             else
             {

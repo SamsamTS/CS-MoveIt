@@ -146,7 +146,16 @@ namespace MoveIt
 
         internal static void GetExtremeObjects(out Instance A, out Instance B)
         {
-            Instance[] inst = selection.ToArray();
+            List<Instance> inst = new List<Instance>();
+            foreach (Instance i in selection)
+            {
+                if (i is MoveableSegment)
+                {
+                    continue;
+                }
+                inst.Add(i);
+            }
+
             if (inst.Count() < 2)
             {
                 throw new IndexOutOfRangeException("Less than 2 objects selected");
