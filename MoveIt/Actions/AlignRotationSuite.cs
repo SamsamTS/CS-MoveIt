@@ -144,7 +144,7 @@ namespace MoveIt
             }
 
             MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
-            MoveItTool.instance.AlignMode = MoveItTool.AlignModes.Off;
+            MoveItTool.instance.MT_Tool = MoveItTool.MT_Tools.Off;
             MoveItTool.instance.AlignToolPhase = 0;
             UIMoreTools.UpdateMoreTools();
             UpdateArea(bounds);

@@ -90,11 +90,11 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Height);
+                    ProcessAligning(MT_Tools.Height);
                 }
                 else if (OptionsKeymapping.alignMirror.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Mirror);
+                    ProcessAligning(MT_Tools.Mirror);
                 }
                 else if (OptionsKeymapping.alignLine.IsPressed(e))
                 {
@@ -114,12 +114,10 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.alignSlope.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Slope);
+                    ProcessAligning(MT_Tools.Slope);
                 }
                 else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
                 {
-                    AlignMode = AlignModes.SlopeNode;
-
                     if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                     {
                         StopCloning();
@@ -137,16 +135,14 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.alignInplace.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Inplace);
+                    ProcessAligning(MT_Tools.Inplace);
                 }
                 else if (OptionsKeymapping.alignGroup.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Group);
+                    ProcessAligning(MT_Tools.Group);
                 }
                 else if (OptionsKeymapping.alignRandom.IsPressed(e))
                 {
-                    AlignMode = AlignModes.Random;
-
                     if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                     {
                         StopCloning();

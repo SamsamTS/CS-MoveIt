@@ -1,28 +1,148 @@
 ﻿using ColossalFramework.UI;
-using MoveIt;
 using System.Collections.Generic;
 using UnityEngine;
+using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
 {
+    class UIMoreToolsBtn
+    {
+        internal UIPanel m_panel;
+        internal UIPanel m_subpanel;
+        internal UIToolOptionPanel m_toolbar;
+        internal UIButton m_button;
+        internal UIPanel m_container;
+        internal string m_fgSprite;
+
+        public UIMoreToolsBtn(UIToolOptionPanel parent, string btnName, string tooltip, string fgSprite, UIPanel container, string subName, ushort entries, ushort index)
+        {
+            m_panel = parent.AddUIComponent(typeof(UIPanel)) as UIPanel;
+            m_subpanel = m_panel.AddUIComponent(typeof(UIPanel)) as UIPanel;
+            m_toolbar = parent;
+            m_container = container;
+            m_fgSprite = fgSprite;
+
+            //UIMoreTools.MoreButtons.Add(btnName, this);
+            UIMoreTools.MoreSubButtons.Add(this, new Dictionary<string, UIButton>());
+
+            m_button = container.AddUIComponent<UIButton>();
+            m_button.name = btnName;
+            m_button.atlas = m_toolbar.GetIconsAtlas();
+            m_button.tooltip = tooltip;
+            m_button.playAudioEvents = true;
+            m_button.size = new Vector2(36, 36);
+            m_button.normalBgSprite = "OptionBase";
+            m_button.hoveredBgSprite = "OptionBaseHovered";
+            m_button.pressedBgSprite = "OptionBasePressed";
+            m_button.disabledBgSprite = "OptionBaseDisabled";
+            m_button.normalFgSprite = fgSprite;
+            m_button.eventMouseEnter += (UIComponent c, UIMouseEventParameter p) =>
+            {
+                MouseOverToggle(this, true);
+            };
+            m_button.eventMouseLeave += (UIComponent c, UIMouseEventParameter p) =>
+            {
+                MouseOverToggle(this, false);
+            };
+            //UIMoreTools.SubmenuToButton.Add(m_panel, m_button);
+
+            CreateSubPanel(subName, entries, index);
+        }
+
+        private static void MouseOverToggle(UIMoreToolsBtn button, bool visible)
+        {
+            button.m_panel.isVisible = visible;
+        }
+
+        internal void CreateSubPanel(string subName, ushort entries, ushort index)
+        {
+            m_panel.atlas = UIUtils.GetAtlas("Ingame");
+            m_panel.backgroundSprite = "SubcategoriesPanel";
+            m_panel.clipChildren = true;
+            m_panel.size = new Vector2(160, 12 + (entries * 32));
+            m_panel.isVisible = false;
+            m_subpanel.name = subName;
+            m_subpanel.padding = new RectOffset(1, 1, 6, 6);
+            m_subpanel.size = m_panel.size;
+            m_subpanel.autoLayoutDirection = LayoutDirection.Vertical;
+            m_subpanel.autoLayout = true;
+            m_subpanel.relativePosition = new Vector3(0, 0, 0);
+            m_subpanel.autoLayoutPadding = new RectOffset(0, 0, 0, 2);
+            m_panel.autoLayout = false;
+            m_panel.absolutePosition = UIMoreTools.MoreToolsBtn.absolutePosition + new Vector3(-m_panel.width, -m_panel.height - 8 - (index * 40));
+            m_panel.eventMouseEnter += (UIComponent c, UIMouseEventParameter p) =>
+            {
+                UIMoreTools.m_activeDisplayMenu = this;
+                if (MoveItTool.marqueeSelection)
+                {
+                    UIToolOptionPanel.instance.m_filtersPanel.isVisible = false;
+                }
+                c.isVisible = true;
+                UIMoreTools.UpdateMoreTools();
+            };
+            m_panel.eventMouseLeave += (UIComponent c, UIMouseEventParameter p) =>
+            {
+                UIMoreTools.m_activeDisplayMenu = null;
+                if (MoveItTool.marqueeSelection)
+                {
+                    UIToolOptionPanel.instance.m_filtersPanel.isVisible = true;
+                }
+                c.isVisible = false;
+                UIMoreTools.UpdateMoreTools();
+            };
+        }
+
+        internal UIButton CreateSubButton(string name, string text, string fgSprite)
+        {
+            UIMoreTools.MoreSubButtons[this].Add(name, m_subpanel.AddUIComponent<UIButton>());
+            UIButton subButton = UIMoreTools.MoreSubButtons[this][name];
+            subButton.name = name;
+            subButton.atlas = m_toolbar.GetIconsAtlas();
+            subButton.playAudioEvents = true;
+            subButton.size = new Vector2(158, 30);
+            subButton.text = text;
+            subButton.textHorizontalAlignment = UIHorizontalAlignment.Left;
+            subButton.textScale = 0.8f;
+            subButton.textPadding = new RectOffset(28, 0, 5, 0);
+            subButton.textColor = new Color32(225, 225, 225, 255);
+            subButton.hoveredTextColor = new Color32(255, 255, 255, 255);
+            subButton.normalFgSprite = fgSprite;
+            subButton.hoveredBgSprite = "SubmenuBG";
+            subButton.foregroundSpriteMode = UIForegroundSpriteMode.Scale;
+            subButton.spritePadding = new RectOffset(0, 64, 0, 0);
+            subButton.eventClicked += (UIComponent c, UIMouseEventParameter p) =>
+            {
+                UIMoreTools.m_activeToolMenu = this;
+                UIMoreTools.MoreToolsClicked(subButton.name);
+            };
+
+            return subButton;
+        }
+    }
+
     class UIMoreTools
     {
         public static UIButton MoreToolsBtn;
+        public static UIMoreToolsBtn m_activeToolMenu, m_activeDisplayMenu;
         public static UIPanel MoreToolsPanel;
-        public static Dictionary<string, UIButton> MoreButtons = new Dictionary<string, UIButton>();
+        //public static Dictionary<string, UIMoreToolsBtn> MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
+        public static Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>> MoreSubButtons = new Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>>();
+        //public static Dictionary<UIPanel, UIButton> SubmenuToButton = new Dictionary<UIPanel, UIButton>();
         private static MoveItTool MIT = MoveItTool.instance;
 
         public static void Initialise()
         {
             MoreToolsBtn = null;
             MoreToolsPanel = null;
-            MoreButtons = new Dictionary<string, UIButton>();
+            //MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
+            MoreSubButtons = new Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>>();
+            //SubmenuToButton = new Dictionary<UIPanel, UIButton>();
             MIT = MoveItTool.instance;
         }
 
-        public static void MoreToolsClicked(UIComponent c, UIMouseEventParameter p)
+        public static void MoreToolsClicked(string name)
         {
-            switch (c.name)
+            switch (name)
             {
                 case "MoveIt_MoreToolsBtn":
                     if (MoreToolsPanel.isVisible)
@@ -37,16 +157,14 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignHeightBtn":
-                    MIT.ProcessAligning(MoveItTool.AlignModes.Height);
+                    MIT.ProcessAligning(MoveItTool.MT_Tools.Height);
                     break;
 
                 case "MoveIt_AlignMirrorBtn":
-                    MIT.ProcessAligning(MoveItTool.AlignModes.Mirror);
+                    MIT.ProcessAligning(MoveItTool.MT_Tools.Mirror);
                     break;
 
                 case "MoveIt_AlignTerrainHeightBtn":
-                    MIT.AlignMode = MoveItTool.AlignModes.TerrainHeight;
-
                     if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
@@ -62,11 +180,9 @@ namespace MoveIt
                 case "MoveIt_AlignSlopeBtn":
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                     {
-                        MIT.ProcessAligning(MoveItTool.AlignModes.Slope);
+                        MIT.ProcessAligning(MoveItTool.MT_Tools.Slope);
                         break;
                     }
-
-                    MIT.AlignMode = MoveItTool.AlignModes.SlopeNode;
 
                     if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
@@ -105,16 +221,14 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignIndividualBtn":
-                    MIT.ProcessAligning(MoveItTool.AlignModes.Inplace);
+                    MIT.ProcessAligning(MoveItTool.MT_Tools.Inplace);
                     break;
 
                 case "MoveIt_AlignGroupBtn":
-                    MIT.ProcessAligning(MoveItTool.AlignModes.Group);
+                    MIT.ProcessAligning(MoveItTool.MT_Tools.Group);
                     break;
 
                 case "MoveIt_AlignRandomBtn":
-                    MIT.AlignMode = MoveItTool.AlignModes.Random;
-
                     if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
@@ -144,11 +258,10 @@ namespace MoveIt
                     break;
 
                 default:
-                    Debug.Log($"Invalid Tool call ({c.name})");
+                    Debug.Log($"Invalid Tool clicked ({name})");
                     break;
             }
         }
-
 
         // Updates the UI based on the current state
         public static void UpdateMoreTools()
@@ -159,66 +272,63 @@ namespace MoveIt
             }
 
             MoreToolsBtn.normalFgSprite = "MoreTools";
-            MoreButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlope";
 
-            foreach (UIButton btn in MoreButtons.Values)
+            foreach (UIMoreToolsBtn btn in MoreSubButtons.Keys)
             {
-                btn.normalBgSprite = "OptionBase";
+                btn.m_button.normalBgSprite = "OptionBase";
+                btn.m_button.normalFgSprite = btn.m_fgSprite;
+            }
+            if (m_activeDisplayMenu != null)
+            {
+                m_activeDisplayMenu.m_button.normalBgSprite = "OptionBaseFocused";
             }
 
-            switch (MIT.AlignMode)
-            {
-                case MoveItTool.AlignModes.Height:
+            switch (MIT.MT_Tool)
+            { // Cases only apply to tools that require further interaction
+                case MoveItTool.MT_Tools.Height:
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignHeight";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignHeight";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    MoreButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                case MoveItTool.AlignModes.TerrainHeight:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignHeight";
+                case MoveItTool.MT_Tools.Slope:
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    MoreButtons["MoveIt_AlignHeightBtn"].normalBgSprite = "OptionBaseFocused";
-                    break;
-
-                case MoveItTool.AlignModes.Slope:
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    MoreButtons["MoveIt_AlignSlopeBtn"].normalBgSprite = "OptionBaseFocused";
 
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlope";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignSlope";
 
                     switch (MoveItTool.instance.AlignToolPhase)
                     {
                         case 1:
-                            MoreButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeA";
                             if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeA";
+                            else m_activeToolMenu.m_button.normalFgSprite = "AlignSlopeA";
                             break;
 
                         case 2:
-                            MoreButtons["MoveIt_AlignSlopeBtn"].normalFgSprite = "AlignSlopeB";
                             if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeB";
+                            else m_activeToolMenu.m_button.normalFgSprite = "AlignSlopeB";
                             break;
                     }
                     break;
 
-                case MoveItTool.AlignModes.Inplace:
+                case MoveItTool.MT_Tools.Inplace:
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignIndividual";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignIndividual";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    MoreButtons["MoveIt_AlignIndividualBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                case MoveItTool.AlignModes.Group:
+                case MoveItTool.MT_Tools.Group:
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroup";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignGroup";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    MoreButtons["MoveIt_AlignGroupBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
-                case MoveItTool.AlignModes.Mirror:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroup";
+                case MoveItTool.MT_Tools.Mirror:
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignMirror";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignMirror";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    MoreButtons["MoveIt_AlignMirrorBtn"].normalBgSprite = "OptionBaseFocused";
+                    //MoreSubButtons[m_mtOthers]["MoveIt_AlignMirrorBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
-
-                // TerrainHeight and Random modes are instant, their buttons aren't relevant
 
                 default:
                     if (MoreToolsPanel.isVisible)
@@ -232,5 +342,18 @@ namespace MoveIt
                     break;
             }
         }
+
+        internal static UIMoreToolsBtn CreateButton(UIToolOptionPanel parent, string btnName, string tooltip, string sprite, UIPanel container, string subName, ushort entries, ushort index)
+        {
+            return new UIMoreToolsBtn(parent, btnName, tooltip, sprite, container, subName, entries, index);
+        }
+
+        //internal static UIMoreToolsBtn CreateButton(UIToolOptionPanel parent, string btnName, string tooltip, string sprite, UIPanel container)
+        //{
+        //    UIMoreToolsBtn button = new UIMoreToolsBtn(parent, btnName, tooltip, sprite, container);
+
+        //    return button;
+        //}
+
     }
 }

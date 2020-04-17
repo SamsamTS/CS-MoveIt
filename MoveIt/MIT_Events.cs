@@ -208,10 +208,10 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Aligning)
             {
-                if (AlignMode == AlignModes.Height)
+                if (MT_Tool == MT_Tools.Height)
                 {
                     ToolState = ToolStates.Default;
-                    AlignMode = AlignModes.Off;
+                    MT_Tool = MT_Tools.Off;
 
                     AlignHeightAction action = new AlignHeightAction();
                     if (m_hoverInstance != null)
@@ -224,10 +224,10 @@ namespace MoveIt
 
                     UIMoreTools.UpdateMoreTools();
                 }
-                if (AlignMode == AlignModes.Mirror)
+                if (MT_Tool == MT_Tools.Mirror)
                 {
                     ToolState = ToolStates.Default;
-                    AlignMode = AlignModes.Off;
+                    MT_Tool = MT_Tools.Off;
 
                     AlignMirrorAction action = new AlignMirrorAction();
                     if (m_hoverInstance != null && m_hoverInstance is MoveableSegment ms)
@@ -249,7 +249,7 @@ namespace MoveIt
 
                     UIMoreTools.UpdateMoreTools();
                 }
-                else if (AlignMode == AlignModes.Inplace || AlignMode == AlignModes.Group)
+                else if (MT_Tool == MT_Tools.Inplace || MT_Tool == MT_Tools.Group)
                 {
                     float angle;
 
@@ -281,9 +281,9 @@ namespace MoveIt
 
                     // Add action to queue, also enables Undo/Redo
                     AlignRotationAction action;
-                    switch (AlignMode)
+                    switch (MT_Tool)
                     {
-                        case AlignModes.Group:
+                        case MT_Tools.Group:
                             action = new AlignGroupAction();
                             break;
 
@@ -296,9 +296,9 @@ namespace MoveIt
                     ActionQueue.instance.Push(action);
                     m_nextAction = ToolAction.Do;
 
-                    DeactivateTool(false);
+                    DeactivateTool();// false);
                 }
-                else if (AlignMode == AlignModes.Slope)
+                else if (MT_Tool == MT_Tools.Slope)
                 {
                     if (m_hoverInstance == null) return;
 

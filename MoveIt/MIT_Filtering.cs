@@ -52,12 +52,12 @@ namespace MoveIt
                 selectProc = PO.Active ? filterProcs : false;
             }
 
-            if (AlignMode == AlignModes.Group || AlignMode == AlignModes.Inplace)
+            if (MT_Tool == MT_Tools.Group || MT_Tool == MT_Tools.Inplace)
             {
                 selectNodes = false;
                 selectTrees = false;
             }
-            else if (AlignMode == AlignModes.Mirror)
+            else if (MT_Tool == MT_Tools.Mirror)
             {
                 selectBuilding = false;
                 selectProps = false;

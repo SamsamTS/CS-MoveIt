@@ -33,16 +33,13 @@ namespace MoveIt
             Picking
         }
 
-        public enum AlignModes
+        public enum MT_Tools
         {
             Off,
             Height,
-            TerrainHeight,
             Inplace,
             Group,
-            Random,
             Slope,
-            SlopeNode,
             Mirror
         }
 
@@ -135,13 +132,13 @@ namespace MoveIt
                 }
             }
         }
-        private AlignModes m_alignMode = AlignModes.Off;
-        public AlignModes AlignMode
+        private MT_Tools m_toolsMode = MT_Tools.Off;
+        public MT_Tools MT_Tool
         { 
-            get => m_alignMode;
+            get => m_toolsMode;
             set
             {
-                m_alignMode = value;
+                m_toolsMode = value;
                 if (m_debugPanel != null)
                 {
                     m_debugPanel.UpdatePanel();
@@ -362,7 +359,7 @@ namespace MoveIt
                 UpdateSegments();
 
                 ToolState = ToolStates.Default;
-                AlignMode = AlignModes.Off;
+                MT_Tool = MT_Tools.Off;
                 AlignToolPhase = 0;
 
                 if (UIChangesWindow.instance != null)
@@ -438,7 +435,7 @@ namespace MoveIt
                             }
                         }
                     }
-                    if (ToolState == ToolStates.Aligning && AlignMode == AlignModes.Slope && AlignToolPhase == 2)
+                    if (ToolState == ToolStates.Aligning && MT_Tool == MT_Tools.Slope && AlignToolPhase == 2)
                     {
                         AlignSlopeAction action = ActionQueue.instance.current as AlignSlopeAction;
                         action.PointA.RenderOverlay(cameraInfo, m_alignColor, m_despawnColor);
@@ -776,9 +773,9 @@ namespace MoveIt
             return ToolErrors.None;
         }
 
-        public void ProcessAligning(AlignModes mode)
+        public void ProcessAligning(MT_Tools mode)
         {
-            if (ToolState == ToolStates.Aligning && AlignMode == mode)
+            if (ToolState == ToolStates.Aligning && MT_Tool == mode)
             {
                 StopAligning();
             }
@@ -788,7 +785,7 @@ namespace MoveIt
             }
         }
 
-        public void StartAligning(AlignModes mode)
+        public void StartAligning(MT_Tools mode)
         {
             if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
@@ -800,7 +797,7 @@ namespace MoveIt
             if (Action.selection.Count > 0)
             {
                 ToolState = ToolStates.Aligning;
-                AlignMode = mode;
+                MT_Tool = mode;
                 AlignToolPhase = 1;
             }
 
@@ -809,7 +806,7 @@ namespace MoveIt
 
         public void StopAligning()
         {
-            AlignMode = AlignModes.Off;
+            MT_Tool = MT_Tools.Off;
             AlignToolPhase = 0;
             if (ToolState == ToolStates.Aligning)
             {
@@ -822,11 +819,12 @@ namespace MoveIt
         {
             if (switchMode)
             {
-                AlignMode = AlignModes.Off;
+                MT_Tool = MT_Tools.Off;
                 ToolState = ToolStates.Default;
                 AlignToolPhase = 0;
             }
 
+            UIMoreTools.m_activeToolMenu = null;
             UIMoreTools.UpdateMoreTools();
             Action.UpdateArea(Action.GetTotalBounds(false));
             return false;
