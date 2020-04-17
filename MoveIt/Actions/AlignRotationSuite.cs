@@ -40,7 +40,7 @@ namespace MoveIt
         {
             Vector3 PoR;
             Matrix4x4 matrix = default;
-            Bounds bounds = GetTotalBounds(true, true);
+            Bounds bounds = GetTotalBounds();// true, true);
             float angleDelta, firstValidAngle = 0;
             System.Random random = new System.Random();
             BuildingManager buildingManager = Singleton<BuildingManager>.instance;
@@ -115,6 +115,38 @@ namespace MoveIt
                         }
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mp.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
+                    else if (state.instance is MoveableNode mn)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - mn.angle + newAngle;
+                            PoR = state.position;
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - mn.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                        }
+
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        mn.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
+                    else if (state.instance is MoveableSegment ms)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - ms.angle + newAngle;
+                            PoR = state.position;
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - ms.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                        }
+
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        ms.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
                     }
                     else if (state.instance is MoveableProc mpo)
                     {

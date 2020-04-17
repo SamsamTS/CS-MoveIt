@@ -99,11 +99,6 @@ namespace MoveIt
                 if (state.instance.isValid && state is SegmentState)
                 {
                     state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta + snapAngle, center, followTerrain);
-
-                    if (autoCurve && state.instance is MoveableNode node)
-                    {
-                        node.AutoCurve(segmentCurve);
-                    }
                 }
             }
 

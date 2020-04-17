@@ -327,7 +327,6 @@ namespace MoveIt
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignMirror";
                     else m_activeToolMenu.m_button.normalFgSprite = "AlignMirror";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    //MoreSubButtons[m_mtOthers]["MoveIt_AlignMirrorBtn"].normalBgSprite = "OptionBaseFocused";
                     break;
 
                 default:
@@ -342,18 +341,5 @@ namespace MoveIt
                     break;
             }
         }
-
-        internal static UIMoreToolsBtn CreateButton(UIToolOptionPanel parent, string btnName, string tooltip, string sprite, UIPanel container, string subName, ushort entries, ushort index)
-        {
-            return new UIMoreToolsBtn(parent, btnName, tooltip, sprite, container, subName, entries, index);
-        }
-
-        //internal static UIMoreToolsBtn CreateButton(UIToolOptionPanel parent, string btnName, string tooltip, string sprite, UIPanel container)
-        //{
-        //    UIMoreToolsBtn button = new UIMoreToolsBtn(parent, btnName, tooltip, sprite, container);
-
-        //    return button;
-        //}
-
     }
 }

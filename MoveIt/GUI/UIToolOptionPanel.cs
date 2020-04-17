@@ -568,19 +568,19 @@ namespace MoveIt
             UIMoreTools.MoreSubButtons.Clear();
 
             #region More Tools buttons
-            UIMoreToolsBtn othersBtn = UIMoreTools.CreateButton(this, "MoveIt_OthersBtn", "Other Tools", "AlignLine", mtpContainer, "m_mtOthersList", (ushort)(MoveItTool.PO.Enabled ? 4 : 3), 2);
+            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", "Other Tools", "AlignLine", mtpContainer, "m_mtOthersList", (ushort)(MoveItTool.PO.Enabled ? 4 : 3), 2);
             if (MoveItTool.PO.Enabled)
                 othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", "Convert To PO", "ConvertToPO");
             othersBtn.CreateSubButton("MoveIt_ResetObjectBtn", "Reset Objects", "ResetObject");
             othersBtn.CreateSubButton("MoveIt_AlignLineBtn", "Line Up Objects", "AlignLine");
             othersBtn.CreateSubButton("MoveIt_AlignMirrorBtn", "Mirror Objects", "AlignMirror");
 
-            UIMoreToolsBtn rotateBtn = UIMoreTools.CreateButton(this, "MoveIt_RotateBtn", "Rotation Tools", "ResetObject", mtpContainer, "m_mtRotateList", 3, 1);
+            UIMoreToolsBtn rotateBtn = new UIMoreToolsBtn(this, "MoveIt_RotateBtn", "Rotation Tools", "ResetObject", mtpContainer, "m_mtRotateList", 3, 1);
             rotateBtn.CreateSubButton("MoveIt_AlignRandomBtn", "Rotate Randomly", "AlignRandom");
-            rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", "Rotate As Group", "AlignGroup");
+            rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", "Rotate At Centre", "AlignGroup");
             rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", "Rotate In-Place", "AlignIndividual");
 
-            UIMoreToolsBtn heightBtn = UIMoreTools.CreateButton(this, "MoveIt_HeightBtn", "Height Tools", "AlignHeight", mtpContainer, "m_mtHeightList", 3, 0);
+            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", "Height Tools", "AlignHeight", mtpContainer, "m_mtHeightList", 3, 0);
             heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", "Slope", "AlignSlope");
             heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", "To Terrain Height", "AlignTerrainHeight");
             heightBtn.CreateSubButton("MoveIt_AlignHeightBtn", "To Object Height", "AlignHeight");
