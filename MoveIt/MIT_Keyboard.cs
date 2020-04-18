@@ -83,76 +83,43 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.convertToPO.IsPressed(e))
                 {
-                    if (PO.Enabled && ToolState == ToolStates.Default)
-                    {
-                        PO.StartConvertAction();
-                    }
+                    UIMoreTools.MoreToolsClicked("MoveIt_ConvertToPOBtn");
                 }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
-                    ProcessAligning(MT_Tools.Height);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignHeightBtn");
                 }
                 else if (OptionsKeymapping.alignMirror.IsPressed(e))
                 {
-                    ProcessAligning(MT_Tools.Mirror);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignMirrorBtn");
                 }
                 else if (OptionsKeymapping.alignLine.IsPressed(e))
                 {
-                    if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    LineAction la = new LineAction
-                    {
-                        followTerrain = followTerrain,
-                    };
-                    ActionQueue.instance.Push(la);
-                    ActionQueue.instance.Do();
-                    if (autoCloseAlignTools) UIMoreTools.MoreToolsPanel.isVisible = false;
-                    DeactivateTool();
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignLineBtn");
                 }
                 else if (OptionsKeymapping.alignSlope.IsPressed(e))
                 {
-                    ProcessAligning(MT_Tools.Slope);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn");
                 }
                 else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
                 {
-                    if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    AlignSlopeAction asa = new AlignSlopeAction
-                    {
-                        followTerrain = followTerrain,
-                        mode = AlignSlopeAction.Modes.Quick
-                    };
-                    ActionQueue.instance.Push(asa);
-                    ActionQueue.instance.Do();
-                    if (autoCloseAlignTools) UIMoreTools.MoreToolsPanel.isVisible = false;
-                    DeactivateTool();
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn", true);
+                }
+                else if (OptionsKeymapping.alignSlopeFull.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn", false, true);
                 }
                 else if (OptionsKeymapping.alignInplace.IsPressed(e))
                 {
-                    ProcessAligning(MT_Tools.Inplace);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignIndividualBtn");
                 }
                 else if (OptionsKeymapping.alignGroup.IsPressed(e))
                 {
-                    ProcessAligning(MT_Tools.Group);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignGroupBtn");
                 }
                 else if (OptionsKeymapping.alignRandom.IsPressed(e))
                 {
-                    if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    AlignRandomAction action = new AlignRandomAction();
-                    action.followTerrain = followTerrain;
-                    ActionQueue.instance.Push(action);
-                    ActionQueue.instance.Do();
-                    DeactivateTool();
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignRandomBtn");
                 }
 
                 if (ToolState == ToolStates.Cloning)

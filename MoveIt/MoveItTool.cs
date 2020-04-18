@@ -323,6 +323,8 @@ namespace MoveIt
                 ActionQueue.instance.Push(new TransformAction());
             }
 
+            UIMoreTools.UpdateMoreTools();
+
             //string msg = $"Assemblies:";
             //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             //{

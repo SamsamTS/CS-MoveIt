@@ -34,6 +34,7 @@ namespace MoveIt
             AddKeymapping("Align Line", alignLine);
             AddKeymapping("Align Slope", alignSlope);
             AddKeymapping("Quick Align Slope", alignSlopeQuick);
+            AddKeymapping("Full Align Slope", alignSlopeFull);
             AddKeymapping("Align In-Place", alignInplace);
             AddKeymapping("Align As Group", alignGroup);
             AddKeymapping("Align Randomly", alignRandom);
@@ -94,6 +95,7 @@ namespace MoveIt
         public static readonly SavedInputKey alignLine = new SavedInputKey("alignLine", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.L, false, false, true), true);
         public static readonly SavedInputKey alignSlope = new SavedInputKey("alignSlope", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignSlopeQuick = new SavedInputKey("alignSlopeQuick", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignSlopeFull = new SavedInputKey("alignSlopeFull", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);

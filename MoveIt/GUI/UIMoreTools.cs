@@ -22,7 +22,7 @@ namespace MoveIt
             m_container = container;
             m_fgSprite = fgSprite;
 
-            //UIMoreTools.MoreButtons.Add(btnName, this);
+            UIMoreTools.MoreButtons.Add(btnName, this);
             UIMoreTools.MoreSubButtons.Add(this, new Dictionary<string, UIButton>());
 
             m_button = container.AddUIComponent<UIButton>();
@@ -44,7 +44,6 @@ namespace MoveIt
             {
                 MouseOverToggle(this, false);
             };
-            //UIMoreTools.SubmenuToButton.Add(m_panel, m_button);
 
             CreateSubPanel(subName, entries, index);
         }
@@ -112,8 +111,7 @@ namespace MoveIt
             subButton.spritePadding = new RectOffset(0, 64, 0, 0);
             subButton.eventClicked += (UIComponent c, UIMouseEventParameter p) =>
             {
-                UIMoreTools.m_activeToolMenu = this;
-                UIMoreTools.MoreToolsClicked(subButton.name);
+                UIMoreTools.MoreToolsClicked(subButton.name, Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt), Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
             };
 
             return subButton;
@@ -125,22 +123,20 @@ namespace MoveIt
         public static UIButton MoreToolsBtn;
         public static UIMoreToolsBtn m_activeToolMenu, m_activeDisplayMenu;
         public static UIPanel MoreToolsPanel;
-        //public static Dictionary<string, UIMoreToolsBtn> MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
+        public static Dictionary<string, UIMoreToolsBtn> MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
         public static Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>> MoreSubButtons = new Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>>();
-        //public static Dictionary<UIPanel, UIButton> SubmenuToButton = new Dictionary<UIPanel, UIButton>();
         private static MoveItTool MIT = MoveItTool.instance;
 
         public static void Initialise()
         {
             MoreToolsBtn = null;
             MoreToolsPanel = null;
-            //MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
+            MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
             MoreSubButtons = new Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>>();
-            //SubmenuToButton = new Dictionary<UIPanel, UIButton>();
             MIT = MoveItTool.instance;
         }
 
-        public static void MoreToolsClicked(string name)
+        public static void MoreToolsClicked(string name, bool simAlt = false, bool simShift = false)
         {
             switch (name)
             {
@@ -157,10 +153,12 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignHeightBtn":
+                    m_activeToolMenu = MoreButtons["MoveIt_HeightBtn"];
                     MIT.ProcessAligning(MoveItTool.MT_Tools.Height);
                     break;
 
                 case "MoveIt_AlignMirrorBtn":
+                    m_activeToolMenu = MoreButtons["MoveIt_OthersBtn"];
                     MIT.ProcessAligning(MoveItTool.MT_Tools.Mirror);
                     break;
 
@@ -178,8 +176,9 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
-                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    if (simShift)
                     {
+                        m_activeToolMenu = MoreButtons["MoveIt_HeightBtn"];
                         MIT.ProcessAligning(MoveItTool.MT_Tools.Slope);
                         break;
                     }
@@ -194,7 +193,7 @@ namespace MoveIt
                         followTerrain = MoveItTool.followTerrain,
                         mode = AlignSlopeAction.Modes.Auto
                     };
-                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                    if (simAlt)
                     {
                         asa.mode = AlignSlopeAction.Modes.Quick;
                     }
@@ -221,10 +220,12 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignIndividualBtn":
+                    m_activeToolMenu = MoreButtons["MoveIt_RotateBtn"];
                     MIT.ProcessAligning(MoveItTool.MT_Tools.Inplace);
                     break;
 
                 case "MoveIt_AlignGroupBtn":
+                    m_activeToolMenu = MoreButtons["MoveIt_RotateBtn"];
                     MIT.ProcessAligning(MoveItTool.MT_Tools.Group);
                     break;
 
@@ -293,7 +294,6 @@ namespace MoveIt
 
                 case MoveItTool.MT_Tools.Slope:
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlope";
                     else m_activeToolMenu.m_button.normalFgSprite = "AlignSlope";
 

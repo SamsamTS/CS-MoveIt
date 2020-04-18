@@ -132,22 +132,6 @@ namespace MoveIt
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mn.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
                     }
-                    else if (state.instance is MoveableSegment ms)
-                    {
-                        if (this is AlignIndividualAction)
-                        {
-                            angleDelta = 0 - ms.angle + newAngle;
-                            PoR = state.position;
-                        }
-                        else if (this is AlignRandomAction)
-                        {
-                            angleDelta = 0 - ms.angle + (float)(random.NextDouble() * Math.PI * 2);
-                            PoR = state.position;
-                        }
-
-                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-                        ms.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
-                    }
                     else if (state.instance is MoveableProc mpo)
                     {
                         if (this is AlignIndividualAction)
@@ -171,6 +155,30 @@ namespace MoveIt
                         }
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mt.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
+                }
+            }
+
+            // Move segments after nodes, for updated positions
+            foreach (InstanceState state in m_states)
+            {
+                if (state.instance.isValid)
+                {
+                    if (state.instance is MoveableSegment ms)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - ms.angle + newAngle;
+                            PoR = state.position;
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - ms.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                        }
+
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        ms.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
                     }
                 }
             }
