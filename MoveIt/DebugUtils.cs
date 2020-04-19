@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-using ColossalFramework;
-
+﻿using ColossalFramework;
 using System;
+using UnityEngine;
 
 namespace MoveIt
 {

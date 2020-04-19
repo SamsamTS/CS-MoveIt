@@ -794,7 +794,7 @@ namespace MoveIt
                 StopCloning();
             }
 
-            if (ToolState != ToolStates.Default) return;
+            if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning) return;
 
             if (Action.selection.Count > 0)
             {
@@ -814,6 +814,7 @@ namespace MoveIt
             {
                 ToolState = ToolStates.Default;
             }
+            UIMoreTools.m_activeToolMenu = null;
             UIMoreTools.UpdateMoreTools();
         }
 

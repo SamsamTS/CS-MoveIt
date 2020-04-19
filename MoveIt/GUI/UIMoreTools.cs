@@ -102,7 +102,7 @@ namespace MoveIt
             subButton.text = text;
             subButton.textHorizontalAlignment = UIHorizontalAlignment.Left;
             subButton.textScale = 0.8f;
-            subButton.textPadding = new RectOffset(28, 0, 5, 0);
+            subButton.textPadding = new RectOffset(29, 0, 5, 0);
             subButton.textColor = new Color32(225, 225, 225, 255);
             subButton.hoveredTextColor = new Color32(255, 255, 255, 255);
             subButton.normalFgSprite = fgSprite;
@@ -121,7 +121,8 @@ namespace MoveIt
     class UIMoreTools
     {
         public static UIButton MoreToolsBtn;
-        public static UIMoreToolsBtn m_activeToolMenu, m_activeDisplayMenu;
+        public static UIMoreToolsBtn m_activeDisplayMenu; // Currently displayed submenu's menu button
+        public static UIMoreToolsBtn m_activeToolMenu; // Currently selected tool's menu button
         public static UIPanel MoreToolsPanel;
         public static Dictionary<string, UIMoreToolsBtn> MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
         public static Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>> MoreSubButtons = new Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>>();
@@ -283,6 +284,10 @@ namespace MoveIt
             {
                 m_activeDisplayMenu.m_button.normalBgSprite = "OptionBaseFocused";
             }
+            else if (m_activeToolMenu != null)
+            {
+                m_activeToolMenu.m_button.normalBgSprite = "OptionBaseFocused";
+            }
 
             switch (MIT.MT_Tool)
             { // Cases only apply to tools that require further interaction
@@ -312,14 +317,14 @@ namespace MoveIt
                     break;
 
                 case MoveItTool.MT_Tools.Inplace:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignIndividual";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignIndividual";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignIndividualActive";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignIndividualActive";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
                     break;
 
                 case MoveItTool.MT_Tools.Group:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroup";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignGroup";
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroupActive";
+                    else m_activeToolMenu.m_button.normalFgSprite = "AlignGroupActive";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
                     break;
 

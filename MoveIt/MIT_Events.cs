@@ -222,7 +222,7 @@ namespace MoveIt
                         m_nextAction = ToolAction.Do;
                     }
 
-                    UIMoreTools.UpdateMoreTools();
+                    DeactivateTool();
                 }
                 if (MT_Tool == MT_Tools.Mirror)
                 {
@@ -247,7 +247,7 @@ namespace MoveIt
                         ProcessMirror(action);
                     }
 
-                    UIMoreTools.UpdateMoreTools();
+                    DeactivateTool();
                 }
                 else if (MT_Tool == MT_Tools.Inplace || MT_Tool == MT_Tools.Group)
                 {
@@ -296,7 +296,7 @@ namespace MoveIt
                     ActionQueue.instance.Push(action);
                     m_nextAction = ToolAction.Do;
 
-                    DeactivateTool();// false);
+                    DeactivateTool();
                 }
                 else if (MT_Tool == MT_Tools.Slope)
                 {
