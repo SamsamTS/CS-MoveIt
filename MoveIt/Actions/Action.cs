@@ -57,17 +57,14 @@ namespace MoveIt
 
             foreach (Instance instance in selection)
             {
-                //if (!excludeNetworks || (instance.id.Building > 0 || instance.id.Prop > 0 || instance.id.NetLane > 0 || instance.id.Tree > 0))
+                if (!init)
                 {
-                    if (!init)
-                    {
-                        totalBounds = instance.GetBounds(ignoreSegments);
-                        init = true;
-                    }
-                    else
-                    {
-                        totalBounds.Encapsulate(instance.GetBounds(ignoreSegments));
-                    }
+                    totalBounds = instance.GetBounds(ignoreSegments);
+                    init = true;
+                }
+                else
+                {
+                    totalBounds.Encapsulate(instance.GetBounds(ignoreSegments));
                 }
             }
 

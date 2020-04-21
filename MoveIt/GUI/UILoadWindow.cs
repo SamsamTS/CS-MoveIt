@@ -27,7 +27,7 @@ namespace MoveIt
             name = "MoveIt_SaveWindow";
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
-            size = new Vector2(545, 272); // 180
+            size = new Vector2(545, 272);
             canFocus = true;
 
             UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();

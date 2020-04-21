@@ -224,7 +224,7 @@ namespace MoveIt
 
                     DeactivateTool();
                 }
-                if (MT_Tool == MT_Tools.Mirror)
+                else if (MT_Tool == MT_Tools.Mirror)
                 {
                     ToolState = ToolStates.Default;
                     MT_Tool = MT_Tools.Off;

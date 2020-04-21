@@ -49,24 +49,23 @@ namespace MoveIt
 
             #region Group
             // Group
-            m_group = AddUIComponent<UIButton>();
-            m_group.name = "MoveIt_Group";
-            m_group.group = m_tabStrip;
-            m_group.atlas = GetIconsAtlas();
-            m_group.tooltip = "Group";
-            m_group.playAudioEvents = true;
+            //m_group = AddUIComponent<UIButton>();
+            //m_group.name = "MoveIt_Group";
+            //m_group.group = m_tabStrip;
+            //m_group.atlas = GetIconsAtlas();
+            //m_group.tooltip = "Group";
+            //m_group.playAudioEvents = true;
 
-            m_group.size = new Vector2(36, 36);
+            //m_group.size = new Vector2(36, 36);
 
-            m_group.normalBgSprite = "OptionBase";
-            m_group.hoveredBgSprite = "OptionBaseHovered";
-            m_group.pressedBgSprite = "OptionBasePressed";
-            m_group.disabledBgSprite = "OptionBaseDisabled";
+            //m_group.normalBgSprite = "OptionBase";
+            //m_group.hoveredBgSprite = "OptionBaseHovered";
+            //m_group.pressedBgSprite = "OptionBasePressed";
+            //m_group.disabledBgSprite = "OptionBaseDisabled";
 
-            m_group.normalFgSprite = "Group";
+            //m_group.normalFgSprite = "Group";
 
-            m_group.relativePosition = Vector2.zero;
-            m_group.isVisible = false; //TODO: temporary
+            //m_group.isVisible = false; //TODO: temporary
             #endregion
 
             #region Save

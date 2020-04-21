@@ -212,11 +212,6 @@ namespace MoveIt
             }
         }
 
-        //public HashSet<Instance> selection
-        //{
-        //    get { return Action.selection; }
-        //}
-
         private UIMoveItButton m_button;
         private UIComponent m_pauseMenu;
 
@@ -955,15 +950,15 @@ namespace MoveIt
 
         public void Import(string filename)
         {
-            _import(filename, false);
+            ImportImpl(filename, false);
         }
 
         public void Restore(string filename)
         {
-            _import(filename, true);
+            ImportImpl(filename, true);
         }
 
-        private void _import(string filename, bool restore)
+        private void ImportImpl(string filename, bool restore)
         {
             lock (ActionQueue.instance)
             {

@@ -103,7 +103,7 @@ namespace MoveIt
             subButton.textHorizontalAlignment = UIHorizontalAlignment.Left;
             subButton.textScale = 0.8f;
             subButton.textPadding = new RectOffset(29, 0, 5, 0);
-            subButton.textColor = new Color32(225, 225, 225, 255);
+            subButton.textColor = new Color32(230, 230, 230, 255);
             subButton.hoveredTextColor = new Color32(255, 255, 255, 255);
             subButton.normalFgSprite = fgSprite;
             subButton.hoveredBgSprite = "SubmenuBG";

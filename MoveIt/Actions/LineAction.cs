@@ -77,7 +77,6 @@ namespace MoveIt
             Vector3 interval = (PointB.position - PointA.position) / (sorted.Count() + 1);
 
             int i = 1;
-            //string msg = $"Interval:{interval}";
             foreach (KeyValuePair<InstanceState, float> pair in sorted)
             {
                 InstanceState state = pair.Key;
@@ -90,13 +89,11 @@ namespace MoveIt
                 {
                     heightDelta = (PointA.position.y - state.position.y) + (interval * i).y;
                 }
-                //msg += $"\n{state.instance} = {pair.Value}   {PointA.position + (interval * i)}   {heightDelta}";
 
                 matrix4x.SetTRS(PointA.position + (interval * i), Quaternion.AngleAxis(0f, Vector3.down), Vector3.one);
                 state.instance.Transform(state, ref matrix4x, heightDelta, 0f, state.position, followTerrain);
                 i++;
             }
-            //Debug.Log(msg);
 
             UpdateArea(originalBounds, true);
             UpdateArea(GetTotalBounds(false), true);

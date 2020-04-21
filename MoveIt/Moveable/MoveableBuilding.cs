@@ -477,8 +477,6 @@ namespace MoveIt
         
         internal void ResetSubInstances()
         {
-            //string msg = $"Building {id.Building}\n";
-            //Debug.Log($"\n -- Building {id.Building} --\n");
             List<Instance> instances = new List<Instance>();
             int count = 0;
 
@@ -487,8 +485,6 @@ namespace MoveIt
                 ushort building = buildingBuffer[id.Building].m_subBuilding;
                 while (building != 0)
                 {
-                    //Debug.Log($"{building}:{buildingBuffer[building].Info.name}");
-                    //msg += $"B{building}:{buildingBuffer[building].Info.name}\n";
                     InstanceID buildingID = default;
                     buildingID.Building = building;
 
@@ -507,8 +503,6 @@ namespace MoveIt
             count = 0;
             while (node != 0)
             {
-                //Debug.Log($"{node}:{nodeBuffer[node].Info.name}");
-                //msg += $"N{node}:{nodeBuffer[node].Info.name}, ";
                 ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                 if (layer != ItemClass.Layer.PublicTransport)
                 {
@@ -529,7 +523,6 @@ namespace MoveIt
                     break;
                 }
             }
-            //Debug.Log(msg);
 
             subInstances = instances;
         }
@@ -760,7 +753,7 @@ namespace MoveIt
             }
             try
             {
-                buildingBuffer[(int)building].m_nextGridBuilding = BuildingManager.instance.m_buildingGrid[num3];
+                buildingBuffer[building].m_nextGridBuilding = BuildingManager.instance.m_buildingGrid[num3];
                 BuildingManager.instance.m_buildingGrid[num3] = building;
             }
             finally

@@ -267,8 +267,7 @@ namespace MoveIt
             }
         }
 
-        private IInfo _info;
-        public IInfo Info { get => _info; set => _info = value; }
+        public IInfo Info { get; set; }
 
         public abstract InstanceState SaveToState();
         public abstract void LoadFromState(InstanceState state);

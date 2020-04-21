@@ -199,19 +199,13 @@ namespace MoveIt
         {
             m_oldSelection = selection;
 
-            //string msg = $"\n";
             foreach (InstanceState state in states)
             {
                 if (state.instance != null && state.Info.Prefab != null)
                 {
                     m_states.Add(state);
-                    //if (state is SegmentState ss)
-                    //{
-                    //    msg += $"{ss.id}:{ss.startNodeId},{ss.endNodeId}";
-                    //}
                 }
             }
-            //Debug.Log(msg);
 
             center = centerPoint;
             _isImport = true;
@@ -237,7 +231,6 @@ namespace MoveIt
                 if (state is NodeState)
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
-                    //Debug.Log($"AAA1 {MoveItTool.InstanceIDDebug(clone)}:{clone.Info.Name} ({clone.subInstances.Count})");
 
                     if (clone != null)
                     {
@@ -247,13 +240,6 @@ namespace MoveIt
                     }
                 }
             }
-
-            //string msg = $"Total: {m_nodeOrigToClone.Count}\n";
-            //foreach (KeyValuePair<ushort, ushort> value in m_nodeOrigToClone)
-            //{
-            //    msg += $"{value.Key}->{value.Value},  ";
-            //}
-            //Debug.Log(msg);
 
             // Clone everything else except PO
             foreach (InstanceState state in m_states)
@@ -399,17 +385,6 @@ namespace MoveIt
             }
             return newStates;
         }
-
-        //public IEnumerable<Instance> cloneInstances
-        //{
-        //    get
-        //    {
-        //        foreach (InstanceState state in m_states)
-        //        {
-        //            yield return state.instance;
-        //        }
-        //    }
-        //}
 
         public int Count
         {
