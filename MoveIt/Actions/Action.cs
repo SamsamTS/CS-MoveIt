@@ -29,6 +29,24 @@ namespace MoveIt
             return GetTotalBounds().center;
         }
 
+        public static float GetAngle()
+        {
+            List<float> angles = new List<float>();
+            foreach (Instance i in selection.Where(i => i is MoveableBuilding || i is MoveableProc || i is MoveableProp))
+            {
+                angles.Add((i.angle % (Mathf.PI * 2)) * Mathf.Rad2Deg);
+            }
+
+            return MeanAngle(angles.ToArray());
+        }
+
+        private static float MeanAngle(float[] angles)
+        {
+            var x = angles.Sum(a => Mathf.Cos(a * Mathf.PI / 180)) / angles.Length;
+            var y = angles.Sum(a => Mathf.Sin(a * Mathf.PI / 180)) / angles.Length;
+            return (Mathf.Atan2(y, x) * 180 / Mathf.PI) * Mathf.Deg2Rad;
+        }
+
         public static void ClearPOFromSelection()
         {
             if (!MoveItTool.PO.Enabled) return;
@@ -162,7 +180,7 @@ namespace MoveIt
 
             float longest = 0;
 
-            for (int i = 0; i < inst.Count(); i++)
+            for (int i = 0; i < (inst.Count() - 1); i++)
             {
                 for (int j = i + 1; j < inst.Count(); j++)
                 {

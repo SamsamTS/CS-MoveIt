@@ -79,6 +79,7 @@ namespace MoveIt
 
         public static StepOver stepOver;
         internal static DebugPanel m_debugPanel;
+        internal static MoveToPanel m_moveToPanel;
 
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
@@ -367,6 +368,11 @@ namespace MoveIt
                 if (UIToolOptionPanel.instance != null)
                 {
                     UIToolOptionPanel.instance.isVisible = false;
+                }
+
+                if (m_moveToPanel != null)
+                {
+                    m_moveToPanel.Visible(false);
                 }
 
                 TerrainManager.instance.RenderZones = m_prevRenderZones;

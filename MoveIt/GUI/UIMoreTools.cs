@@ -259,6 +259,10 @@ namespace MoveIt
                     MIT.DeactivateTool();
                     break;
 
+                case "MoveIt_AlignMoveToBtn":
+                    MoveItTool.m_moveToPanel.Visible();
+                    break;
+
                 default:
                     Debug.Log($"Invalid Tool clicked ({name})");
                     break;

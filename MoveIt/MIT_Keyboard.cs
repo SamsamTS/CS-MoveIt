@@ -121,6 +121,10 @@ namespace MoveIt
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_AlignRandomBtn");
                 }
+                else if (OptionsKeymapping.alignMoveTo.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignMoveToBtn");
+                }
 
                 if (ToolState == ToolStates.Cloning)
                 {

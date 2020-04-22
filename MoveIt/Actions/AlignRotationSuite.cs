@@ -35,28 +35,27 @@ namespace MoveIt
             }
         }
 
-
         public override void Do()
         {
             Vector3 PoR;
             Matrix4x4 matrix = default;
-            Bounds bounds = GetTotalBounds();// true, true);
-            float angleDelta, firstValidAngle = 0;
+            Bounds bounds = GetTotalBounds();
+            float angleDelta;//, firstValidAngle = 0;
             System.Random random = new System.Random();
             BuildingManager buildingManager = Singleton<BuildingManager>.instance;
 
-            foreach (InstanceState state in m_states)
-            {
-                if (state.instance.isValid)
-                {
-                    if (state.instance is MoveableBuilding || state.instance is MoveableProp || state.instance is MoveableProc)
-                    {
-                        firstValidAngle = state.angle;
-                        break;
-                    }
-                }
-            }
-            angleDelta = 0 - firstValidAngle + newAngle;
+            //foreach (InstanceState state in m_states)
+            //{
+            //    if (state.instance.isValid)
+            //    {
+            //        if (state.instance is MoveableBuilding || state.instance is MoveableProp || state.instance is MoveableProc)
+            //        {
+            //            firstValidAngle = state.angle;
+            //            break;
+            //        }
+            //    }
+            //}
+            angleDelta = 0 - GetAngle() + newAngle;
             PoR = bounds.center;
 
             foreach (InstanceState state in m_states)

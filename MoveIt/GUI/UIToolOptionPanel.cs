@@ -9,7 +9,7 @@ namespace MoveIt
     {
         public static UIToolOptionPanel instance;
 
-        private UIButton m_group;
+        //private UIButton m_group;
         private UIButton m_save;
         private UIButton m_load;
 
@@ -42,7 +42,7 @@ namespace MoveIt
 
             atlas = UIUtils.GetAtlas("Ingame");
             size = new Vector2(41, 41);
-            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 448, -41);
+            relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 412, -41);
             name = "MoveIt_ToolOptionPanel";
 
             DebugUtils.Log("ToolOptionPanel position: " + absolutePosition);
@@ -65,6 +65,7 @@ namespace MoveIt
 
             //m_group.normalFgSprite = "Group";
 
+            //m_group.relativePosition = Vector2.zero;
             //m_group.isVisible = false; //TODO: temporary
             #endregion
 
@@ -86,7 +87,8 @@ namespace MoveIt
             m_save.normalFgSprite = "Save";
             m_save.disabledFgSprite = "Save_disabled";
 
-            m_save.relativePosition = m_group.relativePosition + new Vector3(m_group.width, 0);
+            m_save.relativePosition = Vector2.zero;
+            //m_save.relativePosition = m_group.relativePosition + new Vector3(m_group.width, 0);
 
             m_save.eventClicked += (c, p) =>
             {
