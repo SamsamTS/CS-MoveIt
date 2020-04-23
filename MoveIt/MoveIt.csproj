@@ -45,6 +45,7 @@
     <Compile Include="Actions\ConvertToPOAction.cs" />
     <Compile Include="Actions\AlignMirrorAction.cs" />
     <Compile Include="Actions\LineAction.cs" />
+    <Compile Include="Actions\MoveToAction.cs" />
     <Compile Include="Actions\ScaleAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
@@ -188,6 +189,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\AlignGroupActive.png" />
     <EmbeddedResource Include="Icons\AlignIndividualActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MoveTo.png" />
+    <EmbeddedResource Include="Icons\MoveToActive.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

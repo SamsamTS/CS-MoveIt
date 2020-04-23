@@ -21,7 +21,7 @@ namespace MoveIt
                 }
 
                 StopCloning();
-                StopAligning();
+                StopTool();
 
                 ToolState = ToolStates.Default;
 
@@ -85,7 +85,7 @@ namespace MoveIt
                     {
                         m_rightClickTime = 0;
 
-                        if (elapsed < 200)
+                        if (elapsed < 250)
                         {
                             OnRightClick();
                         }
@@ -149,6 +149,7 @@ namespace MoveIt
                         case ToolStates.Default:
                         case ToolStates.Aligning:
                         case ToolStates.Picking:
+                        case ToolStates.ToolActive:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 break;

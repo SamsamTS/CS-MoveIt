@@ -104,7 +104,7 @@ namespace MoveIt
                 return;
             }
 
-            if (ToolState == ToolStates.Default || ToolState == ToolStates.DrawingSelection)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.DrawingSelection || ToolState == ToolStates.ToolActive)
             {
                 Event e = Event.current;
                 if (m_hoverInstance == null) return;
@@ -211,7 +211,6 @@ namespace MoveIt
                 if (MT_Tool == MT_Tools.Height)
                 {
                     ToolState = ToolStates.Default;
-                    MT_Tool = MT_Tools.Off;
 
                     AlignHeightAction action = new AlignHeightAction();
                     if (m_hoverInstance != null)
@@ -227,7 +226,6 @@ namespace MoveIt
                 else if (MT_Tool == MT_Tools.Mirror)
                 {
                     ToolState = ToolStates.Default;
-                    MT_Tool = MT_Tools.Off;
 
                     AlignMirrorAction action = new AlignMirrorAction();
                     if (m_hoverInstance != null && m_hoverInstance is MoveableSegment ms)
@@ -464,7 +462,7 @@ namespace MoveIt
                     action.angleDelta -= Mathf.PI / 4;
                 }
             }
-            else if (ToolState == ToolStates.Aligning)
+            else if (ToolState == ToolStates.Aligning || ToolState == ToolStates.ToolActive)
             {
                 DeactivateTool();
             }

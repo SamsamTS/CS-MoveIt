@@ -30,7 +30,8 @@ namespace MoveIt
             DrawingSelection,
             Cloning,
             Aligning,
-            Picking
+            Picking,
+            ToolActive
         }
 
         public enum MT_Tools
@@ -40,7 +41,8 @@ namespace MoveIt
             Inplace,
             Group,
             Slope,
-            Mirror
+            Mirror,
+            MoveTo
         }
 
         public const string settingsFileName = "MoveItTool";
@@ -127,6 +129,11 @@ namespace MoveIt
             set
             {
                 m_toolState = value;
+                if (value == ToolStates.Default)
+                {
+                    MT_Tool = MT_Tools.Off;
+                    AlignToolPhase = 0;
+                }
                 if (m_debugPanel != null)
                 {
                     m_debugPanel.UpdatePanel();
@@ -357,8 +364,6 @@ namespace MoveIt
                 UpdateSegments();
 
                 ToolState = ToolStates.Default;
-                MT_Tool = MT_Tools.Off;
-                AlignToolPhase = 0;
 
                 if (UIChangesWindow.instance != null)
                 {
@@ -396,7 +401,7 @@ namespace MoveIt
                 return;
             }
 
-            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking || ToolState == ToolStates.ToolActive)
             {
                 // Reset all PO
                 if (PO.Active && POHighlightUnselected)
@@ -780,53 +785,57 @@ namespace MoveIt
         {
             if (ToolState == ToolStates.Aligning && MT_Tool == mode)
             {
-                StopAligning();
+                StopTool();
             }
             else
             {
-                StartAligning(mode);
+                StartTool(ToolStates.Aligning, mode);
             }
         }
 
-        public void StartAligning(MT_Tools mode)
+        public bool StartTool(ToolStates newToolState, MT_Tools mode)
         {
             if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
                 StopCloning();
             }
 
-            if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning) return;
+            if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
 
-            if (Action.selection.Count > 0)
-            {
-                ToolState = ToolStates.Aligning;
-                MT_Tool = mode;
-                AlignToolPhase = 1;
-            }
+            if (Action.selection.Count == 0) return false;
 
+            ToolState = newToolState;
+            MT_Tool = mode;
+            AlignToolPhase = 1;
             UIMoreTools.UpdateMoreTools();
+            return true;
         }
 
-        public void StopAligning()
+        // Called when a tool might not be active
+        public void StopTool()
         {
-            MT_Tool = MT_Tools.Off;
-            AlignToolPhase = 0;
-            if (ToolState == ToolStates.Aligning)
-            {
-                ToolState = ToolStates.Default;
-            }
-            UIMoreTools.m_activeToolMenu = null;
-            UIMoreTools.UpdateMoreTools();
+            if (ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return;
+
+            DeactivateTool();
+
+            //MT_Tool = MT_Tools.Off;
+            //AlignToolPhase = 0;
+            //if (ToolState == ToolStates.Aligning)
+            //{
+            //    ToolState = ToolStates.Default;
+            //}
+            //UIMoreTools.m_activeToolMenu = null;
+            //UIMoreTools.UpdateMoreTools();
         }
 
-        public bool DeactivateTool(bool switchMode = true)
+        public bool DeactivateTool()
         {
-            if (switchMode)
+            if (MT_Tool == MT_Tools.MoveTo)
             {
-                MT_Tool = MT_Tools.Off;
-                ToolState = ToolStates.Default;
-                AlignToolPhase = 0;
+                m_moveToPanel.Visible(false);
             }
+
+            ToolState = ToolStates.Default;
 
             UIMoreTools.m_activeToolMenu = null;
             UIMoreTools.UpdateMoreTools();
@@ -969,7 +978,7 @@ namespace MoveIt
             lock (ActionQueue.instance)
             {
                 StopCloning();
-                StopAligning();
+                StopTool();
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                 Selection selectionState;

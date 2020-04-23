@@ -123,7 +123,7 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.alignMoveTo.IsPressed(e))
                 {
-                    UIMoreTools.MoreToolsClicked("MoveIt_AlignMoveToBtn");
+                    UIMoreTools.MoreToolsClicked("MoveIt_MoveToBtn");
                 }
 
                 if (ToolState == ToolStates.Cloning)

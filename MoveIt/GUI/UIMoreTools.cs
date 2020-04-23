@@ -139,6 +139,8 @@ namespace MoveIt
 
         public static void MoreToolsClicked(string name, bool simAlt = false, bool simShift = false)
         {
+            MoveItTool.instance.DeactivateTool();
+
             switch (name)
             {
                 case "MoveIt_MoreToolsBtn":
@@ -173,7 +175,7 @@ namespace MoveIt
                     ActionQueue.instance.Push(atha);
                     ActionQueue.instance.Do();
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
-                    MoveItTool.instance.DeactivateTool();
+                    MIT.DeactivateTool();
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
@@ -259,8 +261,20 @@ namespace MoveIt
                     MIT.DeactivateTool();
                     break;
 
-                case "MoveIt_AlignMoveToBtn":
-                    MoveItTool.m_moveToPanel.Visible();
+                case "MoveIt_MoveToBtn":
+                    m_activeToolMenu = MoreButtons["MoveIt_OthersBtn"];
+                    if (!MoveItTool.instance.StartTool(MoveItTool.ToolStates.ToolActive, MoveItTool.MT_Tools.MoveTo))
+                    {
+                        m_activeToolMenu = null;
+                        break;
+                    }
+                    MoveItTool.m_moveToPanel.Visible(true);
+                    MoveToAction mta = new MoveToAction
+                    {
+                        followTerrain = MoveItTool.followTerrain
+                    };
+                    ActionQueue.instance.Push(mta);
+                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
                     break;
 
                 default:
@@ -335,6 +349,12 @@ namespace MoveIt
                 case MoveItTool.MT_Tools.Mirror:
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignMirror";
                     else m_activeToolMenu.m_button.normalFgSprite = "AlignMirror";
+                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    break;
+
+                case MoveItTool.MT_Tools.MoveTo:
+                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "MoveToActive";
+                    else m_activeToolMenu.m_button.normalFgSprite = "MoveToActive";
                     MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
                     break;
 

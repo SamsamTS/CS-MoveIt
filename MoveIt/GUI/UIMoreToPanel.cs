@@ -22,11 +22,6 @@ namespace MoveIt
             _initialise();
         }
 
-        internal void Visible()
-        {
-            Visible(!Panel.isVisible);
-        }
-
         internal void Visible(bool show)
         {
             Panel.isVisible = show;
@@ -63,7 +58,7 @@ namespace MoveIt
             Panel.atlas = ResourceLoader.GetAtlas("Ingame");
             Panel.backgroundSprite = "MenuPanel2";
             Panel.size = new Vector2(190, 185);
-            Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 220, Panel.GetUIView().GetScreenResolution().y - 450);
+            Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 220, Panel.GetUIView().GetScreenResolution().y - 600);
             Panel.clipChildren = true;
             Panel.isVisible = false;
             Panel.anchor = UIAnchorStyle.None;
@@ -97,7 +92,7 @@ namespace MoveIt
             TitleClose.relativePosition = new Vector3(Panel.width - 36, 4);
             TitleClose.eventClicked += (UIComponent c, UIMouseEventParameter p) =>
             {
-                Visible(false);
+                MoveItTool.instance.DeactivateTool();
             };
 
             XLabel = Panel.AddUIComponent<UILabel>();
@@ -108,10 +103,10 @@ namespace MoveIt
             XInput.size = new Vector2(148, 24);
             XInput.horizontalAlignment = UIHorizontalAlignment.Left;
             XInput.tabIndex = 0;
-            XInput.eventTextSubmitted += (UIComponent component, string value) =>
-            {
-                Debug.Log($"{XInput.text}");
-            };
+            //XInput.eventTextSubmitted += (UIComponent component, string value) =>
+            //{
+            //    Debug.Log($"{XInput.text}");
+            //};
 
             ZLabel = Panel.AddUIComponent<UILabel>();
             ZLabel.relativePosition = new Vector3(8, 86);

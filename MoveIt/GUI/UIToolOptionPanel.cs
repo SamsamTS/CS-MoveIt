@@ -568,9 +568,10 @@ namespace MoveIt
             UIMoreTools.MoreSubButtons.Clear();
 
             #region More Tools buttons
-            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", "Other Tools", "MenuOthers", mtpContainer, "m_mtOthersList", (ushort)(MoveItTool.PO.Enabled ? 4 : 3), 2);
+            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", "Other Tools", "MenuOthers", mtpContainer, "m_mtOthersList", (ushort)(MoveItTool.PO.Enabled ? 5 : 4), 2);
             if (MoveItTool.PO.Enabled)
                 othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", "Convert To PO", "ConvertToPO");
+            othersBtn.CreateSubButton("MoveIt_MoveToBtn", "Set Position", "MoveTo");
             othersBtn.CreateSubButton("MoveIt_ResetObjectBtn", "Reset Objects", "ResetObject");
             othersBtn.CreateSubButton("MoveIt_AlignLineBtn", "Line Up Objects", "AlignLine");
             othersBtn.CreateSubButton("MoveIt_AlignMirrorBtn", "Mirror Objects", "AlignMirror");
@@ -810,6 +811,8 @@ namespace MoveIt
                 "AlignLine",
                 "AlignMirror",
                 "AlignTerrainHeight",
+                "MoveTo",
+                "MoveToActive",
                 "ConvertToPO",
                 "EyeDropper",
                 "Copy",
