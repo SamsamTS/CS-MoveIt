@@ -714,7 +714,7 @@ namespace MoveIt
         {
             if (isVisible)
             {
-                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 448, -41);
+                relativePosition = new Vector2(GetUIView().GetScreenResolution().x - 412, -41);
             }
             base.OnVisibilityChanged();
         }
