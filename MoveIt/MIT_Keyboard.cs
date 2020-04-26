@@ -11,7 +11,7 @@ namespace MoveIt
 
             lock (ActionQueue.instance)
             {
-                if (ToolState == ToolStates.Default)
+                if (ToolState == ToolStates.Default || ToolState == ToolStates.ToolActive)
                 {
                     if (OptionsKeymapping.undo.IsPressed(e))
                     {

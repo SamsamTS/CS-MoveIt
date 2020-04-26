@@ -282,7 +282,7 @@ namespace MoveIt
 
             void OnPickerClick(UIComponent c, UIMouseEventParameter p)
             {
-                MoveItTool.instance.ToolState = MoveItTool.ToolStates.Picking;
+                MoveItTool.SetToolState(MoveItTool.ToolStates.Picking);
                 UIFilters.UpdatePickerButton(2);
             }
 
@@ -291,7 +291,7 @@ namespace MoveIt
                 Filters.Picker = new PickerFilter();
 
                 Filters.SetFilter("Picker", false);
-                MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
+                MoveItTool.SetToolState();
                 UIFilters.UpdatePickerButton(1);
             }
 
@@ -460,7 +460,7 @@ namespace MoveIt
             {
                 if (MoveItTool.instance != null)
                 {
-                    if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
+                    if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning)
                     {
                         MoveItTool.instance.StopCloning();
                     }
@@ -731,7 +731,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_moreTools != null && MoveItTool.instance != null)
             {
-                if(MoveItTool.instance.ToolState == MoveItTool.ToolStates.Aligning)
+                if(MoveItTool.ToolState == MoveItTool.ToolStates.Aligning)
                 {
                     instance.m_moreTools.normalBgSprite = "OptionBaseFocused";
                 }
@@ -746,7 +746,7 @@ namespace MoveIt
         {
             if (instance != null && instance.m_copy != null && MoveItTool.instance != null)
             {
-                if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.instance.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                 {
                     instance.m_copy.normalBgSprite = "OptionBaseFocused";
                 }

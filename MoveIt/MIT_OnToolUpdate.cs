@@ -23,7 +23,7 @@ namespace MoveIt
                 StopCloning();
                 StopTool();
 
-                ToolState = ToolStates.Default;
+                SetToolState();
 
                 UIView.library.Hide("PauseMenu");
 

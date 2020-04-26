@@ -166,7 +166,7 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignTerrainHeightBtn":
-                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }
@@ -186,7 +186,7 @@ namespace MoveIt
                         break;
                     }
 
-                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }
@@ -207,7 +207,7 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignLineBtn":
-                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }
@@ -233,13 +233,15 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_AlignRandomBtn":
-                    if (MIT.ToolState == MoveItTool.ToolStates.Cloning || MIT.ToolState == MoveItTool.ToolStates.RightDraggingClone)
+                    if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning || MoveItTool.ToolState == MoveItTool.ToolStates.RightDraggingClone)
                     {
                         MIT.StopCloning();
                     }
 
-                    AlignRandomAction ara = new AlignRandomAction();
-                    ara.followTerrain = MoveItTool.followTerrain;
+                    AlignRandomAction ara = new AlignRandomAction
+                    {
+                        followTerrain = MoveItTool.followTerrain
+                    };
                     ActionQueue.instance.Push(ara);
                     ActionQueue.instance.Do();
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
@@ -247,7 +249,7 @@ namespace MoveIt
                     break;
 
                 case "MoveIt_ConvertToPOBtn":
-                    if (MoveItTool.PO.Enabled && MIT.ToolState == MoveItTool.ToolStates.Default)
+                    if (MoveItTool.PO.Enabled && MoveItTool.ToolState == MoveItTool.ToolStates.Default)
                     {
                         MoveItTool.PO.StartConvertAction();
                     }
@@ -268,12 +270,14 @@ namespace MoveIt
                         m_activeToolMenu = null;
                         break;
                     }
-                    MoveItTool.m_moveToPanel.Visible(true);
+
                     MoveToAction mta = new MoveToAction
                     {
                         followTerrain = MoveItTool.followTerrain
                     };
                     ActionQueue.instance.Push(mta);
+
+                    MoveItTool.m_moveToPanel.Visible(true);
                     if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
                     break;
 
@@ -307,7 +311,7 @@ namespace MoveIt
                 m_activeToolMenu.m_button.normalBgSprite = "OptionBaseFocused";
             }
 
-            switch (MIT.MT_Tool)
+            switch (MoveItTool.MT_Tool)
             { // Cases only apply to tools that require further interaction
                 case MoveItTool.MT_Tools.Height:
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignHeight";
@@ -320,7 +324,7 @@ namespace MoveIt
                     if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlope";
                     else m_activeToolMenu.m_button.normalFgSprite = "AlignSlope";
 
-                    switch (MoveItTool.instance.AlignToolPhase)
+                    switch (MoveItTool.AlignToolPhase)
                     {
                         case 1:
                             if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeA";

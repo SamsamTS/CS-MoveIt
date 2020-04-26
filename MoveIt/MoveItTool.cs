@@ -122,26 +122,9 @@ namespace MoveIt
         private const float YFACTOR = 0.015625f;
         private const float ZFACTOR = 0.263671875f;
 
-        private ToolStates m_toolState = ToolStates.Default;
-        public ToolStates ToolState
-        {
-            get => m_toolState;
-            set
-            {
-                m_toolState = value;
-                if (value == ToolStates.Default)
-                {
-                    MT_Tool = MT_Tools.Off;
-                    AlignToolPhase = 0;
-                }
-                if (m_debugPanel != null)
-                {
-                    m_debugPanel.UpdatePanel();
-                }
-            }
-        }
-        private MT_Tools m_toolsMode = MT_Tools.Off;
-        public MT_Tools MT_Tool
+        public static ToolStates ToolState { get; set; } = ToolStates.Default;
+        private static MT_Tools m_toolsMode = MT_Tools.Off;
+        public static MT_Tools MT_Tool
         { 
             get => m_toolsMode;
             set
@@ -153,8 +136,8 @@ namespace MoveIt
                 }
             }
         }
-        private ushort m_alignToolPhase = 0;
-        public ushort AlignToolPhase
+        private static ushort m_alignToolPhase = 0;
+        public static ushort AlignToolPhase
         {
             get => m_alignToolPhase;
             set
@@ -362,8 +345,7 @@ namespace MoveIt
 
                 UpdateAreas();
                 UpdateSegments();
-
-                ToolState = ToolStates.Default;
+                SetToolState();
 
                 if (UIChangesWindow.instance != null)
                 {
@@ -392,6 +374,36 @@ namespace MoveIt
                 UIMoreTools.UpdateMoreTools();
                 UIToolOptionPanel.RefreshCloneButton();
             }
+        }
+
+        public static void SetToolState(ToolStates state = ToolStates.Default, MT_Tools tool = MT_Tools.Off, ushort toolPhase = 0)
+        {
+            ToolStates previousState = ToolState;
+            if (ToolState != state)
+            {
+                if (state != ToolStates.ToolActive && state != ToolStates.Aligning)
+                {
+                    UIMoreTools.m_activeToolMenu = null;
+                }
+
+                if (ToolState == ToolStates.ToolActive)
+                {
+                    if (MT_Tool == MT_Tools.MoveTo)
+                    {
+                        m_moveToPanel.Visible(false);
+                    }
+                }
+            }
+
+            ToolState = state;
+            m_toolsMode = tool;
+            m_alignToolPhase = toolPhase;
+
+            if (state == ToolStates.ToolActive || state == ToolStates.Aligning || previousState == ToolStates.ToolActive || previousState == ToolStates.Aligning)
+            {
+                UIMoreTools.UpdateMoreTools();
+            }
+            m_debugPanel.UpdatePanel();
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
@@ -804,10 +816,7 @@ namespace MoveIt
 
             if (Action.selection.Count == 0) return false;
 
-            ToolState = newToolState;
-            MT_Tool = mode;
-            AlignToolPhase = 1;
-            UIMoreTools.UpdateMoreTools();
+            SetToolState(newToolState, mode, 1);
             return true;
         }
 
@@ -817,15 +826,6 @@ namespace MoveIt
             if (ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return;
 
             DeactivateTool();
-
-            //MT_Tool = MT_Tools.Off;
-            //AlignToolPhase = 0;
-            //if (ToolState == ToolStates.Aligning)
-            //{
-            //    ToolState = ToolStates.Default;
-            //}
-            //UIMoreTools.m_activeToolMenu = null;
-            //UIMoreTools.UpdateMoreTools();
         }
 
         public bool DeactivateTool()
@@ -835,10 +835,7 @@ namespace MoveIt
                 m_moveToPanel.Visible(false);
             }
 
-            ToolState = ToolStates.Default;
-
-            UIMoreTools.m_activeToolMenu = null;
-            UIMoreTools.UpdateMoreTools();
+            SetToolState();
             Action.UpdateArea(Action.GetTotalBounds(false));
             return false;
         }
@@ -861,7 +858,7 @@ namespace MoveIt
 
                         ActionQueue.instance.Push(action);
 
-                        ToolState = ToolStates.Cloning;
+                        SetToolState(ToolStates.Cloning);
                         UIToolOptionPanel.RefreshCloneButton();
                         UIToolOptionPanel.RefreshAlignHeightButton();
                     }
@@ -879,7 +876,7 @@ namespace MoveIt
 
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();
-                    ToolState = ToolStates.Default;
+                    SetToolState();
 
                     UIToolOptionPanel.RefreshCloneButton();
                 }
@@ -1035,7 +1032,7 @@ namespace MoveIt
                         }
                         else
                         {
-                            ToolState = ToolStates.Cloning; // For clone
+                            SetToolState(ToolStates.Cloning); // For clone
                         }
 
                         UIToolOptionPanel.RefreshCloneButton();

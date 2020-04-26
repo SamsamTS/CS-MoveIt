@@ -134,7 +134,7 @@ namespace MoveIt
             ca.m_clones.Add(cloneInstance);
             ca.m_origToClone.Add(original, cloneInstance);
 
-            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
+            MoveItTool.SetToolState();
 
             yield return new WaitForSeconds(0.25f);
             Debug.Log($"Cloned {original.m_procObj.Id} to #{clone.Id}");

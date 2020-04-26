@@ -182,10 +182,7 @@ namespace MoveIt
                 }
             }
 
-            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
-            MoveItTool.instance.MT_Tool = MoveItTool.MT_Tools.Off;
-            MoveItTool.instance.AlignToolPhase = 0;
-            UIMoreTools.UpdateMoreTools();
+            MoveItTool.SetToolState();
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
         }

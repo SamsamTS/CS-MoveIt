@@ -324,7 +324,7 @@ namespace MoveIt
 
         public static bool Filter(NetNode node)
         {
-            if (MoveItTool.instance.MT_Tool == MoveItTool.MT_Tools.Group || MoveItTool.instance.MT_Tool == MoveItTool.MT_Tools.Inplace)
+            if (MoveItTool.MT_Tool == MoveItTool.MT_Tools.Group || MoveItTool.MT_Tool == MoveItTool.MT_Tools.Inplace)
             {
                 return false;
             }

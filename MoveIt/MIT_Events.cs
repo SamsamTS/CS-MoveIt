@@ -19,7 +19,7 @@ namespace MoveIt
                     m_selection = default;
                     m_marqueeInstances = null;
 
-                    ToolState = ToolStates.DrawingSelection;
+                    SetToolState(ToolStates.DrawingSelection);
                 }
 
                 m_lastInstance = m_hoverInstance;
@@ -43,7 +43,7 @@ namespace MoveIt
 
                 if (POProcessing == 0)
                 {
-                    ToolState = ToolStates.Default;
+                    SetToolState();
                     m_nextAction = ToolAction.Do;
 
                     UpdateSensitivityMode();
@@ -57,7 +57,7 @@ namespace MoveIt
 
             if (ToolState == ToolStates.DrawingSelection)
             {
-                ToolState = ToolStates.Default;
+                SetToolState();
 
                 Event e = Event.current;
 
@@ -203,14 +203,13 @@ namespace MoveIt
                     }
                 }
 
-                m_debugPanel.UpdatePanel();
-                ToolState = ToolStates.Default;
+                SetToolState();
             }
             else if (ToolState == ToolStates.Aligning)
             {
                 if (MT_Tool == MT_Tools.Height)
                 {
-                    ToolState = ToolStates.Default;
+                    SetToolState();
 
                     AlignHeightAction action = new AlignHeightAction();
                     if (m_hoverInstance != null)
@@ -225,7 +224,7 @@ namespace MoveIt
                 }
                 else if (MT_Tool == MT_Tools.Mirror)
                 {
-                    ToolState = ToolStates.Default;
+                    SetToolState();
 
                     AlignMirrorAction action = new AlignMirrorAction();
                     if (m_hoverInstance != null && m_hoverInstance is MoveableSegment ms)
@@ -346,7 +345,7 @@ namespace MoveIt
                 }
                 UIFilters.RefreshFilters();
 
-                ToolState = ToolStates.Default;
+                SetToolState();
             }
         }
 
@@ -354,7 +353,7 @@ namespace MoveIt
         {
             DebugUtils.Log("OnLeftDrag: " + ToolState);
 
-            if (ToolState == ToolStates.Default)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.ToolActive)
             {
                 if (m_lastInstance == null) return;
 
@@ -380,8 +379,7 @@ namespace MoveIt
                 m_dragStartRelative = action.moveDelta;
                 UpdateSensitivityMode();
 
-                ToolState = ToolStates.MouseDragging;
-                m_debugPanel.UpdatePanel();
+                SetToolState(ToolStates.MouseDragging);
                 action.InitialiseDrag();
             }
         }
@@ -394,7 +392,7 @@ namespace MoveIt
             {
                 ProcessSensitivityMode(false);
 
-                ToolState = ToolStates.Default;
+                SetToolState();
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();
@@ -469,11 +467,11 @@ namespace MoveIt
             else if (ToolState == ToolStates.Picking)
             {
                 UIFilters.UpdatePickerButton(1);
-                ToolState = ToolStates.Default;
+                SetToolState();
             }
             else if (ToolState != ToolStates.MouseDragging)
             {
-                ToolState = ToolStates.Default;
+                SetToolState();
             }
         }
 
@@ -481,7 +479,7 @@ namespace MoveIt
         {
             DebugUtils.Log("OnRightDrag: " + ToolState);
 
-            if (ToolState == ToolStates.Default)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.ToolActive)
             {
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 if (action == null)
@@ -495,12 +493,12 @@ namespace MoveIt
                 m_startAngle = action.angleDelta;
                 UpdateSensitivityMode();
 
-                ToolState = ToolStates.MouseDragging;
+                SetToolState(ToolStates.MouseDragging);
                 action.InitialiseDrag();
             }
             else if (ToolState == ToolStates.Cloning)
             {
-                ToolState = ToolStates.RightDraggingClone;
+                SetToolState(ToolStates.RightDraggingClone);
             }
         }
 
@@ -512,14 +510,14 @@ namespace MoveIt
             {
                 ProcessSensitivityMode(false);
 
-                ToolState = ToolStates.Default;
+                SetToolState();
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();
             }
             else if (ToolState == ToolStates.RightDraggingClone)
             {
-                ToolState = ToolStates.Cloning;
+                SetToolState(ToolStates.Cloning);
             }
         }
 
@@ -572,8 +570,7 @@ namespace MoveIt
                 m_dragStartRelative = action.moveDelta;
                 UpdateSensitivityMode();
 
-                ToolState = ToolStates.MouseDragging;
-                m_debugPanel.UpdatePanel();
+                SetToolState(ToolStates.MouseDragging);
                 action.InitialiseDrag();
             }
         }
@@ -586,7 +583,7 @@ namespace MoveIt
             {
                 ProcessSensitivityMode(false);
 
-                ToolState = ToolStates.Default;
+                SetToolState();
                 ((TransformAction)ActionQueue.instance.current).FinaliseDrag();
 
                 UIToolOptionPanel.RefreshSnapButton();

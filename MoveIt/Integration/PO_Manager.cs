@@ -99,7 +99,7 @@ namespace MoveIt
                 MoveItTool.PO.Active = enable;
                 if (MoveItTool.PO.Active)
                 {
-                    if (MoveItTool.instance.ToolState == MoveItTool.ToolStates.Cloning)
+                    if (MoveItTool.ToolState == MoveItTool.ToolStates.Cloning)
                     {
                         MoveItTool.instance.StopCloning();
                     }

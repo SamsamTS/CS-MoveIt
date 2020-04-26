@@ -1,7 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
 using System;
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UIUtils = SamsamTS.UIUtils;
 
@@ -19,7 +19,7 @@ namespace MoveIt
 
         internal MoveToPanel()
         {
-            _initialise();
+            Initialise();
         }
 
         internal void Visible(bool show)
@@ -27,6 +27,34 @@ namespace MoveIt
             Panel.isVisible = show;
             if (show)
             {
+                MoveToAction action = ActionQueue.instance.current as MoveToAction;
+                action.Position = action.Original = Action.GetCenter();
+                action.Angle = action.AngleOriginal = Action.GetAngle();
+
+                action.HeightActive = false;
+                foreach (Instance i in Action.selection)
+                {
+                    if (i is MoveableBuilding || i is MoveableProc || i is MoveableProp || i is MoveableNode || i is MoveableTree)
+                    {
+                        action.HeightActive = true;
+                        break;
+                    }
+                }
+                YLabel.isVisible = action.HeightActive;
+                YInput.enabled = action.HeightActive;
+
+                action.AngleActive = false;
+                foreach (Instance i in Action.selection)
+                {
+                    if (i is MoveableBuilding || i is MoveableProc || i is MoveableProp)
+                    {
+                        action.AngleActive = true;
+                        break;
+                    }
+                }
+                ALabel.isVisible = action.AngleActive;
+                AInput.enabled = action.AngleActive;
+
                 UpdateValues();
             }
         }
@@ -35,23 +63,37 @@ namespace MoveIt
         {
             if (!Panel.isVisible) return;
 
-            Vector3 center = Action.GetCenter();
-            XInput.text = center.x.ToString();
-            YInput.text = center.y.ToString();
-            ZInput.text = center.z.ToString();
-            AInput.text = (Action.GetAngle() * Mathf.Rad2Deg).ToString();
-            if (AInput.text == "NaN")
-            {
-                AInput.text = "";
-                AInput.enabled = false;
-            }
-            else
-            {
-                AInput.enabled = true;
-            }
+            MoveToAction action = ActionQueue.instance.current as MoveToAction;
+
+            XInput.text = action.Position.x.ToString();
+            YInput.text = action.Position.y.ToString();
+            ZInput.text = action.Position.z.ToString();
+            AInput.text = (action.Angle * Mathf.Rad2Deg).ToString();
         }
 
-        private void _initialise()
+        internal void Go()
+        {
+            MoveToAction action = ActionQueue.instance.current as MoveToAction;
+
+            float x = Mathf.Clamp(float.Parse(XInput.text), -8600, 8600);
+            float y = action.HeightActive ? Mathf.Clamp(float.Parse(YInput.text), 0, 1024) : action.Original.y;
+            float z = Mathf.Clamp(float.Parse(ZInput.text), -8600, 8600);
+            float a = (float.Parse(AInput.text) * Mathf.Deg2Rad) % (Mathf.PI * 2);
+
+            action.Position = new Vector3(x, y, z);
+            action.Angle = a;
+            
+            action.moveDelta = action.Position - action.Original;
+            if (action.AngleActive)
+            {
+                action.angleDelta = action.Angle - action.AngleOriginal;
+            }
+
+            ActionQueue.instance.Do();
+            UpdateValues();
+        }
+
+        private void Initialise()
         {
             Panel = UIView.GetAView().AddUIComponent(typeof(UIPanel)) as UIPanel;
             Panel.name = "MoveIt_MoveToPanel";
@@ -103,10 +145,7 @@ namespace MoveIt
             XInput.size = new Vector2(148, 24);
             XInput.horizontalAlignment = UIHorizontalAlignment.Left;
             XInput.tabIndex = 0;
-            //XInput.eventTextSubmitted += (UIComponent component, string value) =>
-            //{
-            //    Debug.Log($"{XInput.text}");
-            //};
+            XInput.eventLostFocus += (UIComponent c, UIFocusEventParameter f) => { Validate(XInput); };
 
             ZLabel = Panel.AddUIComponent<UILabel>();
             ZLabel.relativePosition = new Vector3(8, 86);
@@ -116,10 +155,7 @@ namespace MoveIt
             ZInput.size = new Vector2(148, 24);
             ZInput.horizontalAlignment = UIHorizontalAlignment.Left;
             ZInput.tabIndex = 1;
-            //ZInput.eventTextSubmitted += (UIComponent component, string value) =>
-            //{
-            //    Debug.Log($"{ZInput.text}");
-            //};
+            ZInput.eventLostFocus += (UIComponent c, UIFocusEventParameter f) => { Validate(ZInput); };
 
             YLabel = Panel.AddUIComponent<UILabel>();
             YLabel.relativePosition = new Vector3(8, 120);
@@ -130,10 +166,7 @@ namespace MoveIt
             YInput.size = new Vector2(148, 24);
             YInput.horizontalAlignment = UIHorizontalAlignment.Left;
             YInput.tabIndex = 2;
-            //YInput.eventTextSubmitted += (UIComponent component, string value) =>
-            //{
-            //    Debug.Log($"{YInput.text}");
-            //};
+            YInput.eventLostFocus += (UIComponent c, UIFocusEventParameter f) => { Validate(YInput); };
 
             ALabel = Panel.AddUIComponent<UILabel>();
             ALabel.relativePosition = new Vector3(8, 154);
@@ -144,10 +177,7 @@ namespace MoveIt
             AInput.size = new Vector2(100, 24);
             AInput.horizontalAlignment = UIHorizontalAlignment.Left;
             AInput.tabIndex = 3;
-            //AInput.eventTextSubmitted += (UIComponent component, string value) =>
-            //{
-            //    Debug.Log($"{AInput.text}");
-            //};
+            AInput.eventLostFocus += (UIComponent c, UIFocusEventParameter f) => { Validate(AInput); };
 
             Submit = UIUtils.CreateButton(Panel);
             Submit.relativePosition = new Vector3(138, 146);
@@ -156,8 +186,20 @@ namespace MoveIt
             Submit.tabIndex = 4;
             Submit.eventClicked += (UIComponent c, UIMouseEventParameter p) =>
             {
-                Debug.Log($"{XInput.text},{ZInput.text},{YInput.text},{AInput.text}");
+                Go();
             };
+        }
+
+        private void Validate(UITextField textField)
+        {
+            string text = textField.text;
+            text = Regex.Replace(text, @"[^0-9\-\.]", @"", RegexOptions.ECMAScript);
+            text = text.Substring(0, 1) + Regex.Replace(text.Substring(1), @"[^0-9\.]", @"", RegexOptions.ECMAScript);
+            if (text.IndexOf('.') > 0)
+            {
+                text = text.Substring(0, text.IndexOf('.') + 1) + Regex.Replace(text.Substring(text.IndexOf('.') + 1), @"[^0-9\-]", @"", RegexOptions.ECMAScript);
+            }
+            textField.text = text;
         }
     }
 }
