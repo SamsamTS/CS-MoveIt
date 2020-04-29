@@ -7,6 +7,13 @@ namespace MoveIt
     {
     }
 
+    public class MoveToAction : BaseTransformAction
+    {
+        internal Vector3 Original, Position;
+        internal float AngleOriginal, Angle;
+        internal bool AngleActive, HeightActive;
+    }
+
     public abstract class BaseTransformAction : Action
     {
         public Vector3 moveDelta;
@@ -118,7 +125,18 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                state.instance.LoadFromState(state);
+                if (!(state is SegmentState))
+                {
+                    state.instance.LoadFromState(state);
+                }
+            }
+
+            foreach (InstanceState state in m_states)
+            {
+                if (state is SegmentState)
+                {
+                    state.instance.LoadFromState(state);
+                }
             }
 
             UpdateArea(bounds, true);

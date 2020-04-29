@@ -16,6 +16,9 @@ namespace MoveIt
         [XmlElement("segmentsSave")]
         public SegmentSave[] segmentsSave = new SegmentSave[8];
 
+        [XmlElement("segmentsList")]
+        public List<ushort> segmentsList = new List<ushort>();
+
         public struct SegmentSave
         {
             public Vector3 startDirection;
@@ -105,6 +108,7 @@ namespace MoveIt
                 ushort segment = nodeBuffer[node].GetSegment(i);
                 if (segment != 0)
                 {
+                    state.segmentsList.Add(segment);
                     state.segmentsSave[i].startDirection = segmentBuffer[segment].m_startDirection;
                     state.segmentsSave[i].endDirection = segmentBuffer[segment].m_endDirection;
                 }
@@ -124,7 +128,7 @@ namespace MoveIt
             for (int i = 0; i < 8; i++)
             {
                 ushort segment = nodeBuffer[node].GetSegment(i);
-                if (segment != 0)
+                if (segment != 0 && nodeState.segmentsList.Contains(segment))
                 {
                     segmentBuffer[segment].m_startDirection = nodeState.segmentsSave[i].startDirection;
                     segmentBuffer[segment].m_endDirection = nodeState.segmentsSave[i].endDirection;

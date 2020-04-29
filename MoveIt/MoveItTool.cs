@@ -118,9 +118,9 @@ namespace MoveIt
             }
         }
 
-        private const float XFACTOR = 0.263671875f;
-        private const float YFACTOR = 0.015625f;
-        private const float ZFACTOR = 0.263671875f;
+        private const float XFACTOR = 0.25f; //63671875f;
+        private const float YFACTOR = 0.015625f; // 1/64
+        private const float ZFACTOR = 0.25f; //63671875f;
 
         public static ToolStates ToolState { get; set; } = ToolStates.Default;
         private static MT_Tools m_toolsMode = MT_Tools.Off;
@@ -403,7 +403,7 @@ namespace MoveIt
             {
                 UIMoreTools.UpdateMoreTools();
             }
-            m_debugPanel.UpdatePanel();
+            m_debugPanel?.UpdatePanel();
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
