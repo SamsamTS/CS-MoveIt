@@ -193,6 +193,9 @@
     <EmbeddedResource Include="Icons\MoveTo.png" />
     <EmbeddedResource Include="Icons\MoveToActive.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SubmenuSeparator.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"

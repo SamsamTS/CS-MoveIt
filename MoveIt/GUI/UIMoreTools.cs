@@ -14,7 +14,7 @@ namespace MoveIt
         internal UIPanel m_container;
         internal string m_fgSprite;
 
-        public UIMoreToolsBtn(UIToolOptionPanel parent, string btnName, string tooltip, string fgSprite, UIPanel container, string subName, ushort entries, ushort index)
+        public UIMoreToolsBtn(UIToolOptionPanel parent, string btnName, string tooltip, string fgSprite, UIPanel container, string subName, float entries)
         {
             m_panel = parent.AddUIComponent(typeof(UIPanel)) as UIPanel;
             m_subpanel = m_panel.AddUIComponent(typeof(UIPanel)) as UIPanel;
@@ -45,7 +45,7 @@ namespace MoveIt
                 MouseOverToggle(this, false);
             };
 
-            CreateSubPanel(subName, entries, index);
+            CreateSubPanel(subName, entries);
         }
 
         private static void MouseOverToggle(UIMoreToolsBtn button, bool visible)
@@ -53,12 +53,12 @@ namespace MoveIt
             button.m_panel.isVisible = visible;
         }
 
-        internal void CreateSubPanel(string subName, ushort entries, ushort index)
+        internal void CreateSubPanel(string subName, float entries)
         {
             m_panel.atlas = UIUtils.GetAtlas("Ingame");
             m_panel.backgroundSprite = "SubcategoriesPanel";
             m_panel.clipChildren = true;
-            m_panel.size = new Vector2(160, 12 + (entries * 32));
+            m_panel.size = new Vector2(160, 12 + (entries * 32f));
             m_panel.isVisible = false;
             m_subpanel.name = subName;
             m_subpanel.padding = new RectOffset(1, 1, 6, 6);
@@ -68,7 +68,7 @@ namespace MoveIt
             m_subpanel.relativePosition = new Vector3(0, 0, 0);
             m_subpanel.autoLayoutPadding = new RectOffset(0, 0, 0, 2);
             m_panel.autoLayout = false;
-            m_panel.absolutePosition = UIMoreTools.MoreToolsBtn.absolutePosition + new Vector3(-m_panel.width, -m_panel.height - 8 - (index * 40));
+            m_panel.absolutePosition = UIMoreTools.MoreToolsBtn.absolutePosition + new Vector3(-m_panel.width, -m_panel.height - 10);
             m_panel.eventMouseEnter += (UIComponent c, UIMouseEventParameter p) =>
             {
                 UIMoreTools.m_activeDisplayMenu = this;
@@ -116,6 +116,17 @@ namespace MoveIt
 
             return subButton;
         }
+
+        internal UIPanel CreateSubSeparator(string name)
+        {
+            UIPanel separator = m_subpanel.AddUIComponent<UIPanel>();
+            separator.name = name;
+            separator.atlas = m_toolbar.GetIconsAtlas();
+            separator.size = new Vector2(158, 7);
+            separator.backgroundSprite = "SubmenuSeparator";
+
+            return separator;
+        }
     }
 
     class UIMoreTools
@@ -153,6 +164,21 @@ namespace MoveIt
                         MoreToolsPanel.isVisible = true;
                     }
                     UpdateMoreTools();
+                    break;
+
+                case "MoveIt_LoadBtn":
+                    UILoadWindow.Open();
+                    break;
+
+                case "MoveIt_SaveBtn":
+                    if (MoveItTool.IsExportSelectionValid())
+                    {
+                        UISaveWindow.Open();
+                    }
+                    else
+                    {
+                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Selection invalid", "The selection is empty or invalid.", false);
+                    }
                     break;
 
                 case "MoveIt_AlignHeightBtn":
