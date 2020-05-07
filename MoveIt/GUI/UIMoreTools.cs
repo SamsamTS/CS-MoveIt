@@ -24,6 +24,7 @@ namespace MoveIt
 
             UIMoreTools.MoreButtons.Add(btnName, this);
             UIMoreTools.MoreSubButtons.Add(this, new Dictionary<string, UIButton>());
+            UIMoreTools.SubMenuPanels.Add(m_panel);
 
             m_button = container.AddUIComponent<UIButton>();
             m_button.name = btnName;
@@ -135,6 +136,7 @@ namespace MoveIt
         public static UIMoreToolsBtn m_activeDisplayMenu; // Currently displayed submenu's menu button
         public static UIMoreToolsBtn m_activeToolMenu; // Currently selected tool's menu button
         public static UIPanel MoreToolsPanel;
+        public static List<UIPanel> SubMenuPanels = new List<UIPanel>();
         public static Dictionary<string, UIMoreToolsBtn> MoreButtons = new Dictionary<string, UIMoreToolsBtn>();
         public static Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>> MoreSubButtons = new Dictionary<UIMoreToolsBtn, Dictionary<string, UIButton>>();
         private static MoveItTool MIT = MoveItTool.instance;
@@ -200,8 +202,13 @@ namespace MoveIt
                     AlignTerrainHeightAction atha = new AlignTerrainHeightAction();
                     ActionQueue.instance.Push(atha);
                     ActionQueue.instance.Do();
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    CheckCloseMenu();
                     MIT.DeactivateTool();
+                    break;
+
+                case "MoveIt_SlopeNetworkBtn":
+                    m_activeToolMenu = MoreButtons["MoveIt_HeightBtn"];
+                    MIT.ProcessAligning(MoveItTool.MT_Tools.SlopeNetwork);
                     break;
 
                 case "MoveIt_AlignSlopeBtn":
@@ -228,7 +235,7 @@ namespace MoveIt
                     }
                     ActionQueue.instance.Push(asa);
                     ActionQueue.instance.Do();
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    CheckCloseMenu();
                     MIT.DeactivateTool();
                     break;
 
@@ -244,7 +251,7 @@ namespace MoveIt
                     };
                     ActionQueue.instance.Push(la);
                     ActionQueue.instance.Do();
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    CheckCloseMenu();
                     MIT.DeactivateTool();
                     break;
 
@@ -270,7 +277,7 @@ namespace MoveIt
                     };
                     ActionQueue.instance.Push(ara);
                     ActionQueue.instance.Do();
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    CheckCloseMenu();
                     MIT.DeactivateTool();
                     break;
 
@@ -279,13 +286,13 @@ namespace MoveIt
                     {
                         MoveItTool.PO.StartConvertAction();
                     }
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    CheckCloseMenu();
                     MIT.DeactivateTool();
                     break;
 
                 case "MoveIt_ResetObjectBtn":
-                    MoveItTool.instance.StartReset();
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    MIT.StartReset();
+                    CheckCloseMenu();
                     MIT.DeactivateTool();
                     break;
 
@@ -304,12 +311,29 @@ namespace MoveIt
                     ActionQueue.instance.Push(mta);
 
                     MoveItTool.m_moveToPanel.Visible(true);
-                    if (MoveItTool.autoCloseAlignTools) MoreToolsPanel.isVisible = false;
+                    CheckCloseMenu();
                     break;
 
                 default:
                     Debug.Log($"Invalid Tool clicked ({name})");
                     break;
+            }
+        }
+
+        internal static void CheckCloseMenu()
+        {
+            if (!MoveItTool.autoCloseAlignTools) return;
+
+            CloseMenu();
+        }
+
+        internal static void CloseMenu()
+        {
+            MoreToolsPanel.isVisible = false;
+
+            foreach (UIPanel p in SubMenuPanels)
+            {
+                p.isVisible = false;
             }
         }
 
@@ -323,10 +347,10 @@ namespace MoveIt
 
             MoreToolsBtn.normalFgSprite = "MoreTools";
 
-            foreach (UIMoreToolsBtn btn in MoreSubButtons.Keys)
+            foreach (UIMoreToolsBtn mtbtn in MoreSubButtons.Keys)
             {
-                btn.m_button.normalBgSprite = "OptionBase";
-                btn.m_button.normalFgSprite = btn.m_fgSprite;
+                mtbtn.m_button.normalBgSprite = "OptionBase";
+                mtbtn.m_button.normalFgSprite = mtbtn.m_fgSprite;
             }
             if (m_activeDisplayMenu != null)
             {
@@ -337,63 +361,51 @@ namespace MoveIt
                 m_activeToolMenu.m_button.normalBgSprite = "OptionBaseFocused";
             }
 
+            MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+            UIButton btn = MoreToolsPanel.isVisible ? (m_activeToolMenu != null ? m_activeToolMenu.m_button : MoreToolsBtn) : MoreToolsBtn;
             switch (MoveItTool.MT_Tool)
             { // Cases only apply to tools that require further interaction
                 case MoveItTool.MT_Tools.Height:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignHeight";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignHeight";
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    btn.normalFgSprite = "AlignHeight";
+                    break;
+
+                case MoveItTool.MT_Tools.SlopeNetwork:
+                    btn.normalFgSprite = "SlopeNetwork";
                     break;
 
                 case MoveItTool.MT_Tools.Slope:
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlope";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignSlope";
+                    btn.normalFgSprite = "AlignSlope";
 
                     switch (MoveItTool.AlignToolPhase)
                     {
                         case 1:
-                            if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeA";
-                            else m_activeToolMenu.m_button.normalFgSprite = "AlignSlopeA";
+                            btn.normalFgSprite = "AlignSlopeA";
                             break;
 
                         case 2:
-                            if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignSlopeB";
-                            else m_activeToolMenu.m_button.normalFgSprite = "AlignSlopeB";
+                            btn.normalFgSprite = "AlignSlopeB";
                             break;
                     }
                     break;
 
                 case MoveItTool.MT_Tools.Inplace:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignIndividualActive";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignIndividualActive";
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    btn.normalFgSprite = "AlignIndividualActive";
                     break;
 
                 case MoveItTool.MT_Tools.Group:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignGroupActive";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignGroupActive";
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    btn.normalFgSprite = "AlignGroupActive";
                     break;
 
                 case MoveItTool.MT_Tools.Mirror:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "AlignMirror";
-                    else m_activeToolMenu.m_button.normalFgSprite = "AlignMirror";
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    btn.normalFgSprite = "AlignMirror";
                     break;
 
                 case MoveItTool.MT_Tools.MoveTo:
-                    if (!MoreToolsPanel.isVisible) MoreToolsBtn.normalFgSprite = "MoveToActive";
-                    else m_activeToolMenu.m_button.normalFgSprite = "MoveToActive";
-                    MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
+                    btn.normalFgSprite = "MoveToActive";
                     break;
 
                 default:
-                    if (MoreToolsPanel.isVisible)
-                    {
-                        MoreToolsBtn.normalBgSprite = "OptionBaseFocused";
-                    }
-                    else
+                    if (!MoreToolsPanel.isVisible)
                     {
                         MoreToolsBtn.normalBgSprite = "OptionBase";
                     }

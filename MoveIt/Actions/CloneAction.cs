@@ -250,7 +250,8 @@ namespace MoveIt
 
                     if (clone == null)
                     {
-                        throw new Exception($"Failed to clone {state}");
+                        Debug.Log($"Failed to clone {state}");
+                        continue;
                     }
                     
                     m_clones.Add(clone);

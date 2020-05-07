@@ -409,7 +409,7 @@ namespace MoveIt
             }
         }
 
-        public override void UpdateNodeIdInSegmentState(ushort oldId, ushort newId)
+        internal override void UpdateNodeIdInSegmentState(ushort oldId, ushort newId)
         {
             foreach (InstanceState state in m_states)
             {

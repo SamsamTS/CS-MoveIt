@@ -9,7 +9,7 @@ namespace MoveIt
     internal class DebugPanel : MonoBehaviour
     {
         internal UIPanel Panel;
-        private UILabel HoverLarge, HoverSmall, ToolStatus, SelectedLarge, SelectedSmall;
+        private UILabel HoverLarge, HoverSmall, ActionStatus, ToolStatus, SelectedLarge, SelectedSmall;
         private InstanceID id, lastId;
 
         internal DebugPanel()
@@ -41,6 +41,7 @@ namespace MoveIt
         internal IEnumerator<object> UpdateDo()
         {
             yield return new WaitForSeconds(0.05f);
+            ActionStatus.text = ActionQueue.instance.current == null ? "" : $"{ActionQueue.instance.current.GetType()}";
             ToolStatus.text = $"{MoveItTool.ToolState} ({MoveItTool.MT_Tool}.{MoveItTool.AlignToolPhase}), POProc:{MoveItTool.POProcessing}";
 
             SelectedLarge.text = $"Objects Selected: {Action.selection.Count}";
@@ -164,7 +165,7 @@ namespace MoveIt
             Panel.name = "MoveIt_DebugPanel";
             Panel.atlas = ResourceLoader.GetAtlas("Ingame");
             Panel.backgroundSprite = "SubcategoriesPanel";
-            Panel.size = new Vector2(300, 107);
+            Panel.size = new Vector2(300, 120);
             Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 412, 3);
             Panel.clipChildren = true;
             Panel.isVisible = MoveItTool.showDebugPanel;
@@ -185,17 +186,26 @@ namespace MoveIt
             HoverSmall = Panel.AddUIComponent<UILabel>();
             HoverSmall.textScale = 0.6f;
             HoverSmall.text = "No item being hovered\n ";
-            HoverSmall.relativePosition = new Vector3(5, 23);
+            HoverSmall.relativePosition = new Vector3(5, HoverLarge.relativePosition.y + 16);
             HoverSmall.width = HoverSmall.parent.width - 20;
             HoverSmall.clipChildren = true;
             HoverSmall.useDropShadow = true;
             HoverSmall.dropShadowOffset = new Vector2(1, -1);
 
+            ActionStatus = Panel.AddUIComponent<UILabel>();
+            ActionStatus.textScale = 0.6f;
+            ActionStatus.text = "";
+            ActionStatus.relativePosition = new Vector3(5, HoverSmall.relativePosition.y + 40);
+            ActionStatus.width = ActionStatus.parent.width - 20;
+            ActionStatus.clipChildren = true;
+            ActionStatus.useDropShadow = true;
+            ActionStatus.dropShadowOffset = new Vector2(1, -1);
+
             ToolStatus = Panel.AddUIComponent<UILabel>();
             ToolStatus.textScale = 0.6f;
             ToolStatus.text = "";
-            ToolStatus.relativePosition = new Vector3(5, 63);
-            ToolStatus.width = HoverSmall.parent.width - 20;
+            ToolStatus.relativePosition = new Vector3(5, ActionStatus.relativePosition.y + 13);
+            ToolStatus.width = ToolStatus.parent.width - 20;
             ToolStatus.clipChildren = true;
             ToolStatus.useDropShadow = true;
             ToolStatus.dropShadowOffset = new Vector2(1, -1);
@@ -203,7 +213,7 @@ namespace MoveIt
             SelectedLarge = Panel.AddUIComponent<UILabel>();
             SelectedLarge.textScale = 0.8f;
             SelectedLarge.text = "Objects Selected: 0";
-            SelectedLarge.relativePosition = new Vector3(6, 79);
+            SelectedLarge.relativePosition = new Vector3(6, ToolStatus.relativePosition.y + 16);
             SelectedLarge.width = SelectedLarge.parent.width - 20;
             SelectedLarge.clipChildren = true;
             SelectedLarge.useDropShadow = true;
@@ -212,7 +222,7 @@ namespace MoveIt
             SelectedSmall = Panel.AddUIComponent<UILabel>();
             SelectedSmall.textScale = 0.6f;
             SelectedSmall.text = "B:0, P:0, D:0, S:0, T:0, PO:0, N:0, S:0\n ";
-            SelectedSmall.relativePosition = new Vector3(5, 94);
+            SelectedSmall.relativePosition = new Vector3(5, SelectedLarge.relativePosition.y + 15);
             SelectedSmall.width = SelectedSmall.parent.width - 20;
             SelectedSmall.clipChildren = true;
             SelectedSmall.useDropShadow = true;

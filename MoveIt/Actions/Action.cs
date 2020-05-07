@@ -14,7 +14,11 @@ namespace MoveIt
         public abstract void Undo();
         public abstract void ReplaceInstances(Dictionary<Instance, Instance> toReplace);
 
-        public virtual void UpdateNodeIdInSegmentState(ushort oldId, ushort newId) { }
+        internal virtual void OnHover() { }
+
+        internal virtual void Overlays(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor) { }
+
+        internal virtual void UpdateNodeIdInSegmentState(ushort oldId, ushort newId) { }
 
         public static bool IsSegmentSelected(ushort segment)
         {

@@ -270,8 +270,15 @@ namespace MoveIt
             ushort endNodeId = state.endNodeId;
 
             // Nodes should exist
-            startNodeId = clonedNodes[startNodeId];
-            endNodeId = clonedNodes[endNodeId];
+            try
+            {
+                startNodeId = clonedNodes[startNodeId];
+                endNodeId = clonedNodes[endNodeId];
+            }
+            catch (KeyNotFoundException)
+            {
+                //Debug.Log($"{startNodeId}->{state.startNodeId}, {endNodeId}->{state.endNodeId}");
+            }
 
             Vector3 startDirection = newPosition - nodeBuffer[startNodeId].m_position;
             Vector3 endDirection = newPosition - nodeBuffer[endNodeId].m_position;

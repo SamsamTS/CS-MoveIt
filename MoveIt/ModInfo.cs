@@ -70,7 +70,7 @@ namespace MoveIt
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)
                     {
-                        UIMoreTools.MoreToolsPanel.isVisible = false;
+                        UIMoreTools.CloseMenu();
                     }
                 });
                 checkBox.tooltip = "Check this to close the More Tools menu after choosing a tool.";

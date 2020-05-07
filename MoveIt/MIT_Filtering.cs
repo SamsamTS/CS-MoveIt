@@ -67,6 +67,17 @@ namespace MoveIt
                 selectTrees = false;
                 selectNodes = false;
             }
+            else if (MT_Tool == MT_Tools.SlopeNetwork)
+            {
+                selectBuilding = false;
+                selectProps = false;
+                selectDecals = false;
+                selectSurfaces = false;
+                selectProc = false;
+                selectTrees = false;
+                selectSegments = false;
+                selectNodes = true;
+            }
 
             float smallestDist = 640000f;
 
@@ -295,9 +306,9 @@ namespace MoveIt
             }
             while (repeatSearch);
 
-            if (m_debugPanel != null) m_debugPanel.UpdatePanel(id);
-
             m_hoverInstance = id;
+            m_debugPanel?.UpdatePanel(id);
+            ActionQueue.instance.current?.OnHover();
         }
 
         private HashSet<Instance> GetMarqueeList(Ray mouseRay)

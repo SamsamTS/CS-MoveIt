@@ -135,9 +135,10 @@ namespace MoveIt
             ca.m_origToClone.Add(original, cloneInstance);
 
             MoveItTool.SetToolState();
+            MoveItTool.instance.ProcessSensitivityMode(false);
 
             yield return new WaitForSeconds(0.25f);
-            Debug.Log($"Cloned {original.m_procObj.Id} to #{clone.Id}");
+            Debug.Log($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
             MoveItTool.POProcessing--;
         }
 

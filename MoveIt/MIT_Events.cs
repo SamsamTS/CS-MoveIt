@@ -231,8 +231,8 @@ namespace MoveIt
                     {
                         NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
 
-                        Vector3 startPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
-                        Vector3 endPos = NetManager.instance.m_nodes.m_buffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
+                        Vector3 startPos = nodeBuffer[segmentBuffer[ms.id.NetSegment].m_startNode].m_position;
+                        Vector3 endPos = nodeBuffer[segmentBuffer[ms.id.NetSegment].m_endNode].m_position;
 
                         action.mirrorPivot = ((endPos - startPos) / 2) + startPos;
                         action.mirrorAngle = -Mathf.Atan2(endPos.x - startPos.x, endPos.z - startPos.z);
@@ -317,6 +317,48 @@ namespace MoveIt
                             action = ActionQueue.instance.current as AlignSlopeAction;
                             action.PointB = m_hoverInstance;
                             action.followTerrain = followTerrain;
+                            m_nextAction = ToolAction.Do;
+                            DeactivateTool();
+                            break;
+                    }
+                }
+                else if (MT_Tool == MT_Tools.SlopeNetwork)
+                {
+                    if (m_hoverInstance == null) return;
+
+                    SlopeNetworkAction action;
+                    switch (AlignToolPhase)
+                    {
+                        case 1: // Point A selected, prepare for Point B
+                            if (!(m_hoverInstance is MoveableNode))
+                            {
+                                throw new Exception($"hoverInstance is {m_hoverInstance.GetType()}");
+                            }
+                            AlignToolPhase++;
+                            action = new SlopeNetworkAction
+                            {
+                                PointA = (MoveableNode)m_hoverInstance
+                            };
+                            MoveableNode mn = (MoveableNode)m_hoverInstance;
+                            ActionQueue.instance.Push(action);
+                            action.pathNodes.Add(action.PointA);
+                            foreach (ushort i in mn.segmentList)
+                            {
+                                InstanceID id = default;
+                                id.NetSegment = i;
+                                action.pathSegments.Add(new MoveableSegment(id));
+                            }
+                            UIMoreTools.UpdateMoreTools();
+                            break;
+
+                        case 2: // Point B selected, fire action
+                            if (!(m_hoverInstance is MoveableNode))
+                            {
+                                throw new Exception($"hoverInstance is {m_hoverInstance.GetType()}");
+                            }
+                            AlignToolPhase++;
+                            action = ActionQueue.instance.current as SlopeNetworkAction;
+                            action.PointB = (MoveableNode)m_hoverInstance;
                             m_nextAction = ToolAction.Do;
                             DeactivateTool();
                             break;
@@ -608,7 +650,7 @@ namespace MoveIt
             }
         }
 
-        private void ProcessSensitivityMode(bool enable)
+        internal void ProcessSensitivityMode(bool enable)
         {
             if (ActionQueue.instance.current is TransformAction || ActionQueue.instance.current is CloneAction)
             {

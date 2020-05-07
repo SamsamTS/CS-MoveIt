@@ -41,6 +41,7 @@ namespace MoveIt
             Inplace,
             Group,
             Slope,
+            SlopeNetwork,
             Mirror,
             MoveTo
         }
@@ -233,6 +234,9 @@ namespace MoveIt
         private long m_rightClickTime;
         private long m_middleClickTime;
         private long m_leftClickTime;
+
+        protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+        protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
         public ToolAction m_nextAction = ToolAction.None;
 
@@ -433,6 +437,8 @@ namespace MoveIt
                 {
                     Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, new Color32(255, 255, 255, 63), v, 8, 0, 1000, false, false);
                 }
+
+                ActionQueue.instance.current?.Overlays(cameraInfo, m_alignColor, m_despawnColor);
 
                 if (Action.selection.Count > 0)
                 {
@@ -814,9 +820,17 @@ namespace MoveIt
 
             if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
 
-            if (Action.selection.Count == 0) return false;
+            if (newToolState == ToolStates.Aligning && mode == MT_Tools.SlopeNetwork)
+            {
+                Action.selection.Clear();
+            }
+            else
+            {
+                if (Action.selection.Count == 0) return false;
+            }
 
             SetToolState(newToolState, mode, 1);
+            UIMoreTools.CheckCloseMenu();
             return true;
         }
 
