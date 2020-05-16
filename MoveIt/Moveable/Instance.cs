@@ -118,17 +118,21 @@ namespace MoveIt
 
     public abstract class Instance
     {
-        protected static NetManager netManager = NetManager.instance;
-        protected static Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-        protected static NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-        protected static NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+        protected static NetManager netManager;
+        protected static Building[] buildingBuffer;
+        protected static NetSegment[] segmentBuffer;
+        protected static NetNode[] nodeBuffer;
 
         public List<Instance> subInstances = new List<Instance>();
 
         public Instance(InstanceID instanceID)
         {
             id = instanceID;
-        }
+            netManager = NetManager.instance;
+            buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+            segmentBuffer = NetManager.instance.m_segments.m_buffer;
+            nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+    }
 
         public InstanceID id
         {

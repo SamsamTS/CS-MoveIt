@@ -67,17 +67,17 @@ namespace MoveIt
                 selectTrees = false;
                 selectNodes = false;
             }
-            else if (MT_Tool == MT_Tools.SlopeNetwork)
-            {
-                selectBuilding = false;
-                selectProps = false;
-                selectDecals = false;
-                selectSurfaces = false;
-                selectProc = false;
-                selectTrees = false;
-                selectSegments = false;
-                selectNodes = true;
-            }
+            //else if (MT_Tool == MT_Tools.SlopeNetwork)
+            //{
+            //    selectBuilding = false;
+            //    selectProps = false;
+            //    selectDecals = false;
+            //    selectSurfaces = false;
+            //    selectProc = false;
+            //    selectTrees = false;
+            //    selectSegments = false;
+            //    selectNodes = true;
+            //}
 
             float smallestDist = 640000f;
 

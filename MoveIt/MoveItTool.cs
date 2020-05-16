@@ -41,7 +41,7 @@ namespace MoveIt
             Inplace,
             Group,
             Slope,
-            SlopeNetwork,
+            //SlopeNetwork,
             Mirror,
             MoveTo
         }
@@ -765,12 +765,19 @@ namespace MoveIt
 
             foreach (Bounds bounds in merged)
             {
-                bounds.Expand(64f);
-                Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                bounds.Expand(512f);
-                Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                try
+                {
+                    bounds.Expand(64f);
+                    Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    bounds.Expand(512f);
+                    Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Debug.Log($"Failed to update bounds {bounds}");
+                }
             }
 
             areasToUpdate.Clear();
@@ -820,14 +827,14 @@ namespace MoveIt
 
             if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
 
-            if (newToolState == ToolStates.Aligning && mode == MT_Tools.SlopeNetwork)
-            {
-                Action.selection.Clear();
-            }
-            else
-            {
+            //if (newToolState == ToolStates.Aligning && mode == MT_Tools.SlopeNetwork)
+            //{
+            //    Action.selection.Clear();
+            //}
+            //else
+            //{
                 if (Action.selection.Count == 0) return false;
-            }
+            //}
 
             SetToolState(newToolState, mode, 1);
             UIMoreTools.CheckCloseMenu();

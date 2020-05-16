@@ -501,7 +501,7 @@ namespace MoveIt
             rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", "Rotate At Centre", "AlignGroup");
             rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", "Rotate In-Place", "AlignIndividual");
 
-            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", "Height Tools", "MenuHeight", mtpContainer, "m_mtHeightList", 4f);
+            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", "Height Tools", "MenuHeight", mtpContainer, "m_mtHeightList", 3f);
             //heightBtn.CreateSubButton("MoveIt_SlopeNetworkBtn", "Slope Network", "SlopeNetwork");
             heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", "Slope Objects", "AlignSlope");
             heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", "To Terrain Height", "AlignTerrainHeight");
@@ -732,7 +732,7 @@ namespace MoveIt
                 "AlignLine",
                 "AlignMirror",
                 "AlignTerrainHeight",
-                "SlopeNetwork",
+                //"SlopeNetwork",
                 "MoveTo",
                 "MoveToActive",
                 "ConvertToPO",
