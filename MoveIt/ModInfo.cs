@@ -114,15 +114,24 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
 
-                group.AddSpace(15);
+                group.AddSpace(10);
+                group = helper.AddGroup("General Shortcuts");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
-                group.AddSpace(30);
+                group.AddSpace(10);
+                group = helper.AddGroup("Toolbox Shortcuts");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingToolbox>();
 
-                group.AddSpace(15);
+                group.AddSpace(10);
+                group = helper.AddGroup("Extra Options");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                group.AddSpace(10);
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", MoveItTool.CleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
