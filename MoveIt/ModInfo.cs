@@ -65,7 +65,7 @@ namespace MoveIt
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close More Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close Toolbox menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)
@@ -73,7 +73,7 @@ namespace MoveIt
                         UIMoreTools.CloseMenu();
                     }
                 });
-                checkBox.tooltip = "Check this to close the More Tools menu after choosing a tool.";
+                checkBox.tooltip = "Check this to close the Toolbox menu after choosing a tool.";
 
                 group.AddSpace(10);
 
@@ -117,6 +117,10 @@ namespace MoveIt
                 group.AddSpace(15);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
+
+                group.AddSpace(30);
+
+                ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingToolbox>();
 
                 group.AddSpace(15);
 

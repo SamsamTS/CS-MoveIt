@@ -437,7 +437,7 @@ namespace MoveIt
             m_moreTools.name = "MoveIt_MoreToolsBtn";
             m_moreTools.group = m_tabStrip;
             m_moreTools.atlas = GetIconsAtlas();
-            m_moreTools.tooltip = "More Tools";
+            m_moreTools.tooltip = "Toolbox";
             m_moreTools.playAudioEvents = true;
             m_moreTools.size = new Vector2(36, 36);
             m_moreTools.normalBgSprite = "OptionBase";
@@ -484,7 +484,7 @@ namespace MoveIt
             UIMoreTools.MoreSubButtons.Clear();
             #endregion
 
-            #region More Tools buttons
+            #region More Tools / Toolbox buttons
             UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", "Other Tools", "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));
             if (MoveItTool.PO.Enabled)
                 othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", "Convert To PO", "ConvertToPO");

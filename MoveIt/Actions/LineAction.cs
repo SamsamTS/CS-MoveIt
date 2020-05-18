@@ -10,6 +10,12 @@ namespace MoveIt
     {
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
+        public enum Modes
+        {
+            Spaced, Unspaced
+        }
+        public Modes mode = Modes.Spaced;
+
         private Instance[] keyInstance = new Instance[2];
 
         public Instance PointA
@@ -39,6 +45,7 @@ namespace MoveIt
 
         public LineAction()
         {
+            affectsSegments = true;
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
@@ -75,24 +82,44 @@ namespace MoveIt
 
             IOrderedEnumerable<KeyValuePair<InstanceState, float>> sorted = distances.OrderBy(key => key.Value);
             Vector3 interval = (PointB.position - PointA.position) / (sorted.Count() + 1);
+            float totalDistance = (PointB.position - PointA.position).magnitude;
 
-            int i = 1;
+            //string msg = $"{totalDistance}, {mode}";
+            //foreach (KeyValuePair<InstanceState, float> pair in distances)
+            //{
+            //    Instance inst = pair.Key.instance;
+            //    float d = pair.Value;
+
+            //    msg += $"\n{inst}:{d}";
+            //}
+            //Debug.Log(msg);
+
+            Vector3 cumulative = Vector3.zero;
             foreach (KeyValuePair<InstanceState, float> pair in sorted)
             {
                 InstanceState state = pair.Key;
                 float heightDelta;
+
+                if (mode == Modes.Spaced)
+                {
+                    cumulative += interval;
+                }
+                else if (mode == Modes.Unspaced)
+                {
+                    cumulative = (PointB.position - PointA.position) * (pair.Value / totalDistance);
+                }
+
                 if (followTerrain)
                 {
                     heightDelta = 0f;
                 }
                 else
                 {
-                    heightDelta = (PointA.position.y - state.position.y) + (interval * i).y;
+                    heightDelta = (PointA.position.y - state.position.y) + cumulative.y;
                 }
 
-                matrix4x.SetTRS(PointA.position + (interval * i), Quaternion.AngleAxis(0f, Vector3.down), Vector3.one);
+                matrix4x.SetTRS(PointA.position + cumulative, Quaternion.AngleAxis(0f, Vector3.down), Vector3.one);
                 state.instance.Transform(state, ref matrix4x, heightDelta, 0f, state.position, followTerrain);
-                i++;
             }
 
             UpdateArea(originalBounds, true);

@@ -9,6 +9,7 @@ namespace MoveIt
     public abstract class Action
     {
         public static HashSet<Instance> selection = new HashSet<Instance>();
+        public static bool affectsSegments = true;
 
         public abstract void Do();
         public abstract void Undo();
@@ -22,6 +23,8 @@ namespace MoveIt
 
         public static bool IsSegmentSelected(ushort segment)
         {
+            if (affectsSegments) return false;
+
             InstanceID id = InstanceID.Empty;
             id.NetSegment = segment;
 

@@ -97,6 +97,10 @@ namespace MoveIt
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_AlignLineBtn");
                 }
+                else if (OptionsKeymapping.alignLineUnspaced.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignLineBtn", false, true);
+                }
                 else if (OptionsKeymapping.alignSlope.IsPressed(e))
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn");

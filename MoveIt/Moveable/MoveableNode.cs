@@ -475,6 +475,7 @@ namespace MoveIt
         {
             ushort node = id.NetNode;
 
+            // In asset editor, second loads can cause null error
             if (nodeBuffer[node].Info == null)
             {
                 return new Bounds();

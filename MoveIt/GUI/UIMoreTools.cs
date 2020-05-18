@@ -248,7 +248,12 @@ namespace MoveIt
                     LineAction la = new LineAction
                     {
                         followTerrain = MoveItTool.followTerrain,
+                        mode = LineAction.Modes.Spaced,
                     };
+                    if (simShift)
+                    {
+                        la.mode = LineAction.Modes.Unspaced;
+                    }
                     ActionQueue.instance.Push(la);
                     ActionQueue.instance.Do();
                     CheckCloseMenu();
