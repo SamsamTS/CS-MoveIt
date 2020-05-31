@@ -206,11 +206,6 @@ namespace MoveIt
                     MIT.DeactivateTool();
                     break;
 
-                //case "MoveIt_SlopeNetworkBtn":
-                //    m_activeToolMenu = MoreButtons["MoveIt_HeightBtn"];
-                //    MIT.ProcessAligning(MoveItTool.MT_Tools.SlopeNetwork);
-                //    break;
-
                 case "MoveIt_AlignSlopeBtn":
                     if (simShift)
                     {
@@ -373,10 +368,6 @@ namespace MoveIt
                 case MoveItTool.MT_Tools.Height:
                     btn.normalFgSprite = "AlignHeight";
                     break;
-
-                //case MoveItTool.MT_Tools.SlopeNetwork:
-                //    btn.normalFgSprite = "SlopeNetwork";
-                //    break;
 
                 case MoveItTool.MT_Tools.Slope:
                     btn.normalFgSprite = "AlignSlope";

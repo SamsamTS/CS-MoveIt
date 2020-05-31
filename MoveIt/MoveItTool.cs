@@ -41,7 +41,6 @@ namespace MoveIt
             Inplace,
             Group,
             Slope,
-            //SlopeNetwork,
             Mirror,
             MoveTo
         }
@@ -827,14 +826,7 @@ namespace MoveIt
 
             if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
 
-            //if (newToolState == ToolStates.Aligning && mode == MT_Tools.SlopeNetwork)
-            //{
-            //    Action.selection.Clear();
-            //}
-            //else
-            //{
-                if (Action.selection.Count == 0) return false;
-            //}
+            if (Action.selection.Count == 0) return false;
 
             SetToolState(newToolState, mode, 1);
             UIMoreTools.CheckCloseMenu();

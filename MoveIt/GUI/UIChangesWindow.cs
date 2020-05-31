@@ -9,7 +9,8 @@ namespace MoveIt
         public static UIChangesWindow instance;
 
         private const string m_blurb =
-            "New in Move It 2.7.0:\n\n" +
+            "New in Move It 2.8.0:\n\n" +
+            "- Slope Align now automatically uses the 2 furthest apart select objects (Shift+Click on the tool icon to manually select the 2 points)." +
             "- Precision Mode - hold Control while moving/rotating objects to move objects slowly and without overlays. (Now hold Alt to rotate 45 degrees.)\n\n" +
             "- Expand or shrink selections with - (minus) and = (equals).\n\n" +
             "- Fast-move - big frame-rate improvements when holding Shift while moving buildings or networks.\n\n" +

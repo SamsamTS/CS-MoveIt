@@ -47,7 +47,6 @@
     <Compile Include="Actions\LineAction.cs" />
     <Compile Include="Actions\ScaleAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
-    <Compile Include="Actions\SlopeNetworkAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
@@ -196,9 +195,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\SubmenuSeparator.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SlopeNetwork.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
