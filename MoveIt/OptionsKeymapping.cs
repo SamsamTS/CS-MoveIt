@@ -21,6 +21,7 @@ namespace MoveIt
             AddKeymapping("Rotate Clockwise", turnPos);
             AddKeymapping("Scale Inwards", scaleIn);
             AddKeymapping("Scale Outwards", scaleOut);
+            AddKeymapping("Deselect All", deselectAll);
             AddKeymapping("Undo", undo);
             AddKeymapping("Redo", redo);
             AddKeymapping("Clone", clone);
@@ -86,6 +87,7 @@ namespace MoveIt
         public static readonly SavedInputKey scaleOut = new SavedInputKey("scaleOut", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Equals, false, false, false), true);
         public static readonly SavedInputKey scaleIn = new SavedInputKey("scaleIn", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, false, false, false), true);
 
+        public static readonly SavedInputKey deselectAll = new SavedInputKey("deselectAll", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.D, false, false, true), true);
         public static readonly SavedInputKey undo = new SavedInputKey("undo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
 
@@ -100,11 +102,11 @@ namespace MoveIt
 
         public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);
 
-        public static readonly SavedInputKey alignLine = new SavedInputKey("alignLine", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.L, false, false, true), true);
+        public static readonly SavedInputKey alignLine = new SavedInputKey("alignLine", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignLineUnspaced = new SavedInputKey("alignLineUnspaced", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignMirror = new SavedInputKey("alignMirror", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey reset = new SavedInputKey("reset", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.V, true, true, false), true);
-        public static readonly SavedInputKey alignMoveTo = new SavedInputKey("alignMoveTo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.M, false, false, true), true);
+        public static readonly SavedInputKey reset = new SavedInputKey("reset", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignMoveTo = new SavedInputKey("alignMoveTo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);

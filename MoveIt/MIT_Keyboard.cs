@@ -85,6 +85,33 @@ namespace MoveIt
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_ConvertToPOBtn");
                 }
+                else if (OptionsKeymapping.deselectAll.IsPressed(e))
+                {
+                    if (ToolState == ToolStates.Cloning)
+                    {
+                        StopCloning();
+                    }
+                    else if (ToolState == ToolStates.Aligning || ToolState == ToolStates.ToolActive || ToolState == ToolStates.Picking || ToolState != ToolStates.MouseDragging)
+                    {
+                        if (ToolState == ToolStates.Picking)
+                        {
+                            UIFilters.UpdatePickerButton(1);
+                        }
+                        DeactivateTool();
+                    }
+
+                    if (!(ActionQueue.instance.current is SelectAction))
+                    {
+                        SelectAction action = new SelectAction();
+                        ActionQueue.instance.Push(action);
+                    }
+                    else
+                    {
+                        Action.selection.Clear();
+                        ActionQueue.instance.Invalidate();
+                    }
+                    m_debugPanel.UpdatePanel();
+                }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_AlignHeightBtn");

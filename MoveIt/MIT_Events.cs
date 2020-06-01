@@ -444,8 +444,8 @@ namespace MoveIt
                 {
                     Action.selection.Clear();
                     ActionQueue.instance.Invalidate();
-                    m_debugPanel.UpdatePanel();
                 }
+                m_debugPanel.UpdatePanel();
             }
             else if (ToolState == ToolStates.Cloning)
             {
