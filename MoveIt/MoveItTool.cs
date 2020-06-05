@@ -51,9 +51,9 @@ namespace MoveIt
         public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
-        public static SavedBool hideChangesWindow = new SavedBool("hideChanges280", settingsFileName, false, true); 
-        public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
-        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
+        public static SavedBool hideChangesWindow = new SavedBool("hideChanges280b", settingsFileName, false, true); 
+        public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, true, true);
+        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
