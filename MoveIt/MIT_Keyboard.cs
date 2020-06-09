@@ -116,6 +116,10 @@ namespace MoveIt
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_AlignHeightBtn");
                 }
+                else if (OptionsKeymapping.alignTerrainHeight.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignTerrainHeightBtn");
+                }
                 else if (OptionsKeymapping.alignMirror.IsPressed(e))
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_AlignMirrorBtn");

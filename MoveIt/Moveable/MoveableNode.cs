@@ -407,6 +407,11 @@ namespace MoveIt
             newPosition.y = height;
             Move(newPosition, angle);
         }
+        
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleRawHeightSmooth(position));
+        }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {

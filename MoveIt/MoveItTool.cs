@@ -52,7 +52,7 @@ namespace MoveIt
 
         public static MoveItTool instance;
         public static SavedBool hideChangesWindow = new SavedBool("hideChanges280b", settingsFileName, false, true); 
-        public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, true, true);
+        public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
