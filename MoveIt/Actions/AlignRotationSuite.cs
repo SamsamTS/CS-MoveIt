@@ -40,21 +40,10 @@ namespace MoveIt
             Vector3 PoR;
             Matrix4x4 matrix = default;
             Bounds bounds = GetTotalBounds();
-            float angleDelta;//, firstValidAngle = 0;
+            float angleDelta;
             System.Random random = new System.Random();
             BuildingManager buildingManager = Singleton<BuildingManager>.instance;
 
-            //foreach (InstanceState state in m_states)
-            //{
-            //    if (state.instance.isValid)
-            //    {
-            //        if (state.instance is MoveableBuilding || state.instance is MoveableProp || state.instance is MoveableProc)
-            //        {
-            //            firstValidAngle = state.angle;
-            //            break;
-            //        }
-            //    }
-            //}
             angleDelta = 0 - GetAngle() + newAngle;
             PoR = bounds.center;
 
@@ -64,8 +53,6 @@ namespace MoveIt
                 {
                     if (state.instance is MoveableBuilding mb)
                     {
-                        //BuildingState bs = (BuildingState)state;
-
                         if (Mathf.Abs(Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(mb.position) - mb.position.y) > 0.01f)
                         {
                             mb.AddFixedHeightFlag(mb.id.Building);

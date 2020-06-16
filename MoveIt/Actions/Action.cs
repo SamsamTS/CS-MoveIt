@@ -43,6 +43,10 @@ namespace MoveIt
             {
                 angles.Add((i.angle % (Mathf.PI * 2)) * Mathf.Rad2Deg);
             }
+            if (angles.Count() == 0)
+            {
+                return 0f;
+            }
 
             return MeanAngle(angles.ToArray());
         }
