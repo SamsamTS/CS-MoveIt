@@ -5,6 +5,7 @@ using ICities;
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MoveIt
 {
@@ -143,6 +144,10 @@ namespace MoveIt
                 nsLabel.name = "nsLabel";
                 nsLabel.text = NS_Manager.getVersionText();
 
+                UILabel ncLabel = panel.AddUIComponent<UILabel>();
+                ncLabel.name = "ncLabel";
+                ncLabel.text = NodeController_Manager.getVersionText();
+
                 group = helper.AddGroup("Procedural Objects");
                 panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
@@ -192,5 +197,27 @@ namespace MoveIt
                 DebugUtils.LogException(e);
             }
         }
+
+        internal static bool InGame() => SceneManager.GetActiveScene().name == "Game";
+
+        public void OnEnabled()
+        {
+            if (InGame())
+            {
+                // basic ingame hot reload
+                MoveItLoader.loadMode = LoadMode.NewGame;
+                MoveItLoader.InstallMod();
+            }
+        }
+
+        public void OnDisabled()
+        {
+            if (InGame())
+            {
+                // basic in game hot unload
+                MoveItLoader.UninstallMod();
+            }
+        }
     }
+
 }

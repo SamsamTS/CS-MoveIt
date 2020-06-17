@@ -16,6 +16,15 @@ namespace MoveIt
         [XmlElement("segmentsSave")]
         public SegmentSave[] segmentsSave = new SegmentSave[8];
 
+        [XmlIgnore]
+        public byte[] NodeControllerData;
+
+        public string NodeControllerData64
+        {
+            get => Convert.ToBase64String(NodeControllerData);
+            set => Convert.FromBase64String(value);
+        }
+
         public struct SegmentSave
         {
             public Vector3 startDirection;
@@ -109,6 +118,8 @@ namespace MoveIt
 
             state.flags = nodeBuffer[node].m_flags;
 
+            state.NodeControllerData = MoveItTool.NodeController.CopyNode(node);
+
             MoveableBuilding pillarInstance = Pillar;
 
             if (Pillar != null)
@@ -156,6 +167,8 @@ namespace MoveIt
             {
                 nodeState.pillarState.instance.SetState(nodeState.pillarState);
             }
+
+            MoveItTool.NodeController.PasteNode(node, nodeState);
         }
 
         public override Vector3 position
