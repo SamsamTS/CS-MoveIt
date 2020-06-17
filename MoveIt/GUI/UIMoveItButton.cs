@@ -110,7 +110,12 @@ namespace MoveIt
 				"MoveIt_hover"
 			};
 
-            atlas = ResourceLoader.CreateTextureAtlas("MoveIt", spriteNames, "MoveIt.Icons.");
+            atlas = GetAtlas(spriteNames);
+        }
+
+        internal static UITextureAtlas GetAtlas(string[] spriteNames)
+        {
+            return ResourceLoader.CreateTextureAtlas("MoveIt", spriteNames, "MoveIt.Icons.");
         }
     }
 }

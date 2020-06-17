@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-
+﻿using System;
 using System.Collections.Generic;
-using System;
 using System.Xml.Serialization;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -119,15 +118,21 @@ namespace MoveIt
 
     public abstract class Instance
     {
-        protected static NetManager netManager = NetManager.instance;
-        protected static Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-        protected static NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-        protected static NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+        protected static NetManager netManager;
+        protected static Building[] buildingBuffer;
+        protected static NetSegment[] segmentBuffer;
+        protected static NetNode[] nodeBuffer;
+
+        public List<Instance> subInstances = new List<Instance>();
 
         public Instance(InstanceID instanceID)
         {
             id = instanceID;
-        }
+            netManager = NetManager.instance;
+            buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
+            segmentBuffer = NetManager.instance.m_segments.m_buffer;
+            nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+    }
 
         public InstanceID id
         {
@@ -140,9 +145,97 @@ namespace MoveIt
             get;
         }
 
+        internal bool _virtual = false;
+        public bool Virtual
+        {
+            get => _virtual;
+            set
+            {
+                if (value == true)
+                {
+                    if (_virtual == false)
+                    {
+                        _virtual = true;
+                        InitialiseTransform();
+                        SetHidden(true);
+                        foreach (Instance i in subInstances)
+                        {
+                            i.Virtual = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (_virtual == true)
+                    {
+                        _virtual = false;
+                        SetHidden(false);
+                        foreach (Instance i in subInstances)
+                        {
+                            i.Virtual = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        internal virtual void InitialiseTransform()
+        {
+            TransformPosition = position;
+            TransformAngle = angle;
+        }
+
+        internal virtual void SetHidden(bool hide) { }
+
+        internal Building.Flags ToggleBuildingHiddenFlag(ushort id, bool hide)
+        {
+            if (hide)
+            {
+                if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden)
+                {
+                    throw new Exception($"Building already hidden\n#{id}:{buildingBuffer[id].Info.name}");
+                }
+
+                return buildingBuffer[id].m_flags | Building.Flags.Hidden;
+            }
+            else
+            {
+                if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
+                {
+                    throw new Exception($"Building not hidden\n#{id}:{buildingBuffer[id].Info.name}");
+                }
+            }
+
+            return buildingBuffer[id].m_flags & ~Building.Flags.Hidden;
+        }
+
         public abstract Vector3 position { get; set; }
 
         public abstract float angle { get; set; }
+
+        public virtual Vector3 TransformPosition { get; set; }
+
+        public virtual float TransformAngle { get; set; }
+
+        public Vector3 OverlayPosition
+        {
+            get
+            {
+                if (Virtual)
+                    return TransformPosition;
+                return position;
+            }
+        }
+
+        public float OverlayAngle
+        {
+            get
+            {
+                if (Virtual)
+                    return TransformAngle;
+                return angle;
+            }
+        }
 
         public abstract bool isValid { get; }
 
@@ -178,11 +271,10 @@ namespace MoveIt
             }
         }
 
-        private IInfo info;
-        public IInfo Info { get => info; set => info = value; }
+        public IInfo Info { get; set; }
 
-        public abstract InstanceState GetState();
-        public abstract void SetState(InstanceState state);
+        public abstract InstanceState SaveToState();
+        public abstract void LoadFromState(InstanceState state);
         public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);
         public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);
@@ -193,12 +285,17 @@ namespace MoveIt
         public abstract void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor);
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
-
-        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor, int depth = 0) { }
+        public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor) { }
 
         public virtual void SetHeight()
         {
             SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+            //SetHeight(TerrainManager.instance.SampleRawHeightSmooth(position));
+        }
+
+        internal static bool isVirtual()
+        {
+            return ActionQueue.instance.current is TransformAction ta && ta.Virtual;
         }
 
         public static implicit operator Instance(InstanceID id)

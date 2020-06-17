@@ -30,11 +30,12 @@ namespace MoveIt
             Info = new Info_Prefab(TreeManager.instance.m_trees.m_buffer[instanceID.Tree].Info);
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
-            TreeState state = new TreeState();
-
-            state.instance = this;
+            TreeState state = new TreeState
+            {
+                instance = this
+            };
 
             uint tree = id.Tree;
             state.Info = Info;
@@ -47,7 +48,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is InstanceState treeState)) return;
 
@@ -182,6 +183,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
 
             uint tree = id.Tree;
             TreeManager treeManager = TreeManager.instance;
@@ -197,13 +199,15 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+
             TreeState state = instanceState as TreeState;
 
             TreeInfo info = state.Info.Prefab as TreeInfo;
 
             Randomizer randomizer = new Randomizer(state.instance.id.Tree);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
-            float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
+            //float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;

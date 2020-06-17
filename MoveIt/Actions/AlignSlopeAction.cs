@@ -1,6 +1,7 @@
-using System;
 using ColossalFramework;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MoveIt
@@ -13,7 +14,11 @@ namespace MoveIt
         protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
-        public bool IsQuick = false;
+        public enum Modes
+        {
+            Quick, Auto, Full
+        }
+        public Modes mode = Modes.Full;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
@@ -50,7 +55,7 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
                 }
             }
         }
@@ -62,39 +67,42 @@ namespace MoveIt
             float distance;
             Matrix4x4 matrix = default;
 
-            if (IsQuick)
+            if (mode == Modes.Quick)
             {
                 if (selection.Count != 1) return;
-                foreach (Instance instance in selection) // Is this really the best way to get the value of selection[0]?
+                Instance instance = selection.First();
+
+                if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
+
+                NetNode node = nodeBuffer[nodeInstance.id.NetNode];
+
+                int c = 0;
+                for (int i = 0; i < 8; i++)
                 {
-                    if (!instance.isValid || !(instance is MoveableNode nodeInstance)) return;
-
-                    NetNode node = nodeBuffer[nodeInstance.id.NetNode];
-
-                    int c = 0;
-                    for (int i = 0; i < 8; i++)
+                    ushort segId;
+                    if ((segId = node.GetSegment(i)) > 0)
                     {
-                        ushort segId = 0;
-                        if ((segId = node.GetSegment(i)) > 0)
-                        {
-                            if (c > 1) return; // More than 2 segments found
+                        if (c > 1) return; // More than 2 segments found
 
-                            NetSegment segment = segmentBuffer[segId];
-                            InstanceID instanceID = default;
-                            if (segment.m_startNode == nodeInstance.id.NetNode)
-                            {
-                                instanceID.NetNode = segment.m_endNode;
-                            }
-                            else
-                            {
-                                instanceID.NetNode = segment.m_startNode;
-                            }
-                            keyInstance[c] = new MoveableNode(instanceID);
-                            c++;
+                        NetSegment segment = segmentBuffer[segId];
+                        InstanceID instanceID = default;
+                        if (segment.m_startNode == nodeInstance.id.NetNode)
+                        {
+                            instanceID.NetNode = segment.m_endNode;
                         }
+                        else
+                        {
+                            instanceID.NetNode = segment.m_startNode;
+                        }
+                        keyInstance[c] = new MoveableNode(instanceID);
+                        c++;
                     }
-                    if (c != 2) return;
                 }
+            }
+            else if (mode == Modes.Auto)
+            {
+                if (selection.Count < 2) return;
+                GetExtremeObjects(out keyInstance[0], out keyInstance[1]);
             }
 
             angleDelta = 0 - (float)Math.Atan2(PointB.position.z - PointA.position.z, PointB.position.x - PointA.position.x);
@@ -116,7 +124,7 @@ namespace MoveIt
         {
             foreach (InstanceState state in m_states)
             {
-                state.instance.SetState(state);
+                state.instance.LoadFromState(state);
             }
 
             UpdateArea(GetTotalBounds(false));

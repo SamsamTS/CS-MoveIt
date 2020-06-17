@@ -7,7 +7,7 @@ namespace MoveIt
     {
         public static bool IsGameLoaded { get; private set; } = false;
         public static LoadMode loadMode;
-        private static GameObject DebugGameObject;
+        private static GameObject DebugGameObject, MoveToToolObject;
 
         public override void OnLevelLoaded(LoadMode mode)
         {
@@ -42,6 +42,10 @@ namespace MoveIt
             DebugGameObject.AddComponent<DebugPanel>();
             MoveItTool.m_debugPanel = DebugGameObject.GetComponent<DebugPanel>();
 
+            MoveToToolObject = new GameObject("MIT_MoveToPanel");
+            MoveToToolObject.AddComponent<MoveToPanel>();
+            MoveItTool.m_moveToPanel = MoveToToolObject.GetComponent<MoveToPanel>();
+
             UIFilters.FilterCBs.Clear();
             UIFilters.NetworkCBs.Clear();
 
@@ -63,6 +67,7 @@ namespace MoveIt
         {
             MoveItTool.m_debugPanel = null;
             Object.Destroy(DebugGameObject);
+            Object.Destroy(MoveToToolObject);
             UIToolOptionPanel.instance = null;
             UIMoreTools.MoreToolsPanel = null;
             UIMoreTools.MoreToolsBtn = null;

@@ -189,11 +189,11 @@ namespace MoveIt
 
             foreach (Instance instance in sorted)
             {
-                m_states.Add(instance.GetState());
+                m_states.Add(instance.SaveToState());
             }
             foreach (Instance instance in extraNodes)
             {
-                m_states.Add(instance.GetState());
+                m_states.Add(instance.SaveToState());
             }
         }
 
@@ -366,26 +366,26 @@ namespace MoveIt
             {
                 if (state is SegmentState segmentState)
                 {
-                    if (!clonedNodes.ContainsKey(segmentState.startNode))
+                    if (!clonedNodes.ContainsKey(segmentState.startNodeId))
                     {
                         InstanceID instanceID = InstanceID.Empty;
-                        instanceID.NetNode = segmentState.startNode;
+                        instanceID.NetNode = segmentState.startNodeId;
 
                         // Don't clone if node is missing
                         if (!((Instance)instanceID).isValid) continue;
 
-                        clonedNodes.Add(segmentState.startNode, segmentState.startNode);
+                        clonedNodes.Add(segmentState.startNodeId, segmentState.startNodeId);
                     }
 
-                    if (!clonedNodes.ContainsKey(segmentState.endNode))
+                    if (!clonedNodes.ContainsKey(segmentState.endNodeId))
                     {
                         InstanceID instanceID = InstanceID.Empty;
-                        instanceID.NetNode = segmentState.endNode;
+                        instanceID.NetNode = segmentState.endNodeId;
 
                         // Don't clone if node is missing
                         if (!((Instance)instanceID).isValid) continue;
 
-                        clonedNodes.Add(segmentState.endNode, segmentState.endNode);
+                        clonedNodes.Add(segmentState.endNodeId, segmentState.endNodeId);
                     }
 
                     Instance clone = state.instance.Clone(state, clonedNodes);
@@ -409,22 +409,20 @@ namespace MoveIt
             }
         }
 
-        public override void UpdateNodeIdInSegmentState(ushort oldId, ushort newId)
+        internal override void UpdateNodeIdInSegmentState(ushort oldId, ushort newId)
         {
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.id.Type == InstanceType.NetSegment)
+                if (state is SegmentState segState)
                 {
-                    SegmentState segState = state as SegmentState;
-                    
-                    if (segState.startNode == oldId)
+                    if (segState.startNodeId == oldId)
                     {
-                        segState.startNode = newId;
+                        segState.startNodeId = newId;
                         //Debug.Log($"SWITCHED (start)\nSegment #{state.instance.id.NetSegment} ({segState.startNode}-{segState.endNode})\nOld node Id:{oldId}, new node Id:{newId}");
                     }
-                    if (segState.endNode == oldId)
+                    if (segState.endNodeId == oldId)
                     {
-                        segState.endNode = newId;
+                        segState.endNodeId = newId;
                         //Debug.Log($"SWITCHED (end)\nSegment #{state.instance.id.NetSegment} ({segState.startNode}-{segState.endNode})\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                 }

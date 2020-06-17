@@ -11,7 +11,7 @@ namespace MoveIt
 
             lock (ActionQueue.instance)
             {
-                if (ToolState == ToolStates.Default)
+                if (ToolState == ToolStates.Default || ToolState == ToolStates.ToolActive)
                 {
                     if (OptionsKeymapping.undo.IsPressed(e))
                     {
@@ -73,94 +73,92 @@ namespace MoveIt
                     showDebugPanel.value = !showDebugPanel;
                     if (m_debugPanel != null)
                     {
+                        ClearDebugOverlays();
                         m_debugPanel.Visible(showDebugPanel);
                     }
                 }
                 else if (OptionsKeymapping.activatePO.IsPressed(e))
                 {
-                    if (PO.Active == false)
-                    {
-                        PO.Active = true;
-                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                        PO.ToolEnabled();
-                    }
-                    else
-                    {
-                        PO.Active = false;
-                        UIToolOptionPanel.instance.PO_button.activeStateIndex = 0;
-                    }
-                    UIFilters.POToggled();
+                    PO.InitialiseTool();
                 }
                 else if (OptionsKeymapping.convertToPO.IsPressed(e))
                 {
-                    if (PO.Enabled && ToolState == ToolStates.Default)
+                    UIMoreTools.MoreToolsClicked("MoveIt_ConvertToPOBtn");
+                }
+                else if (OptionsKeymapping.deselectAll.IsPressed(e))
+                {
+                    if (ToolState == ToolStates.Cloning)
                     {
-                        if (PO.Active == false)
-                        {
-                            PO.Active = true;
-                            UIToolOptionPanel.instance.PO_button.activeStateIndex = 1;
-                            PO.ToolEnabled();
-                            UIFilters.POToggled();
-                        }
-
-                        ConvertToPOAction convertAction = new ConvertToPOAction();
-                        ActionQueue.instance.Push(convertAction);
-                        ActionQueue.instance.Do();
+                        StopCloning();
                     }
+                    else if (ToolState == ToolStates.Aligning || ToolState == ToolStates.ToolActive || ToolState == ToolStates.Picking || ToolState != ToolStates.MouseDragging)
+                    {
+                        if (ToolState == ToolStates.Picking)
+                        {
+                            UIFilters.UpdatePickerButton(1);
+                        }
+                        DeactivateTool();
+                    }
+
+                    if (!(ActionQueue.instance.current is SelectAction))
+                    {
+                        SelectAction action = new SelectAction();
+                        ActionQueue.instance.Push(action);
+                    }
+                    else
+                    {
+                        Action.selection.Clear();
+                        ActionQueue.instance.Invalidate();
+                    }
+                    m_debugPanel.UpdatePanel();
                 }
                 else if (OptionsKeymapping.alignHeights.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Height);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignHeightBtn");
                 }
-                else if (OptionsKeymapping.alignSlope.IsPressed(e))
+                else if (OptionsKeymapping.alignTerrainHeight.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Slope);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignTerrainHeightBtn");
                 }
                 else if (OptionsKeymapping.alignMirror.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Mirror);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignMirrorBtn");
+                }
+                else if (OptionsKeymapping.alignLine.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignLineBtn");
+                }
+                else if (OptionsKeymapping.alignLineUnspaced.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignLineBtn", false, true);
+                }
+                else if (OptionsKeymapping.alignSlope.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn");
                 }
                 else if (OptionsKeymapping.alignSlopeQuick.IsPressed(e))
                 {
-                    AlignMode = AlignModes.SlopeNode;
-
-                    if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    AlignSlopeAction asa = new AlignSlopeAction
-                    {
-                        followTerrain = followTerrain,
-                        IsQuick = true
-                    };
-                    ActionQueue.instance.Push(asa);
-                    ActionQueue.instance.Do();
-                    if (autoCloseAlignTools) UIMoreTools.MoreToolsPanel.isVisible = false;
-                    DeactivateTool();
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn", true);
+                }
+                else if (OptionsKeymapping.alignSlopeFull.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignSlopeBtn", false, true);
                 }
                 else if (OptionsKeymapping.alignInplace.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Inplace);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignIndividualBtn");
                 }
                 else if (OptionsKeymapping.alignGroup.IsPressed(e))
                 {
-                    ProcessAligning(AlignModes.Group);
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignGroupBtn");
                 }
                 else if (OptionsKeymapping.alignRandom.IsPressed(e))
                 {
-                    AlignMode = AlignModes.Random;
-
-                    if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-                    {
-                        StopCloning();
-                    }
-
-                    AlignRandomAction action = new AlignRandomAction();
-                    action.followTerrain = followTerrain;
-                    ActionQueue.instance.Push(action);
-                    ActionQueue.instance.Do();
-                    DeactivateTool();
+                    UIMoreTools.MoreToolsClicked("MoveIt_AlignRandomBtn");
+                }
+                else if (OptionsKeymapping.alignMoveTo.IsPressed(e))
+                {
+                    UIMoreTools.MoreToolsClicked("MoveIt_MoveToBtn");
                 }
 
                 if (ToolState == ToolStates.Cloning)
@@ -185,9 +183,9 @@ namespace MoveIt
 
                         if (direction != Vector3.zero)
                         {
-                            direction.x = direction.x * XFACTOR;
-                            direction.y = direction.y * YFACTOR;
-                            direction.z = direction.z * ZFACTOR;
+                            direction.x *= XFACTOR;
+                            direction.y *= YFACTOR;
+                            direction.z *= ZFACTOR;
 
                             if (!useCardinalMoves)
                             {
@@ -200,6 +198,19 @@ namespace MoveIt
 
                         action.moveDelta += direction;
                         action.angleDelta += angle;
+                        action.followTerrain = followTerrain;
+
+                        m_nextAction = ToolAction.Do;
+                    }
+                    else if (ProcessScaleKeys(e, out float magnitude))
+                    {
+                        if (!(ActionQueue.instance.current is ScaleAction action))
+                        {
+                            action = new ScaleAction();
+                            ActionQueue.instance.Push(action);
+                        }
+
+                        action.magnitude += magnitude;
                         action.followTerrain = followTerrain;
 
                         m_nextAction = ToolAction.Do;

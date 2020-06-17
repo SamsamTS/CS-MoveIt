@@ -11,14 +11,18 @@ namespace MoveIt
 
         public Vector3 mirrorPivot;
         public float mirrorAngle;
+        private Bounds originalBounds;
 
         public override void Do()
         {
-            Bounds originalBounds = GetTotalBounds(false);
-            Matrix4x4 matrix4x = default;
+            originalBounds = GetTotalBounds(false);
 
             base.Do();
+        }
 
+        public void DoProcess()
+        {
+            Matrix4x4 matrix4x = default;
             foreach (Instance instance in m_clones)
             {
                 if (instance.isValid)
@@ -29,13 +33,13 @@ namespace MoveIt
                     {
                         if (pair.Value.id.RawData == instance.id.RawData)
                         {               
-                            if (pair.Value.id.NetSegment > 0)
+                            if (pair.Value is MoveableSegment)
                             { // Segments need original state because nodes move before clone's position is saved
-                                state = pair.Key.GetState();
+                                state = pair.Key.SaveToState();
                             }
                             else
                             { // Buildings need clone state to access correct subInstances. Others don't matter, but clone makes most sense
-                                state = pair.Value.GetState();
+                                state = pair.Value.SaveToState();
                             }
                             break;
                         }
@@ -45,17 +49,12 @@ namespace MoveIt
                         throw new NullReferenceException($"Original for cloned object not found.");
                     }
 
-
                     float faceDelta = getMirrorFacingDelta(state.angle, mirrorPivot, mirrorAngle);
                     float posDelta = getMirrorPositionDelta(state.position, mirrorPivot, mirrorAngle);
 
                     matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
                     instance.Transform(state, ref matrix4x, 0f, faceDelta, mirrorPivot, followTerrain);
-                    //Debug.Log($"{instance.Info.Name}\n" +
-                    //    $"Mirror:{mirrorPivot.x},{mirrorPivot.z}/{mirrorAngle} (follow:{followTerrain})\n\n" +
-                    //    $"Angle - Old:{state.angle}, New:{instance.angle}, Delta:{faceDelta}\n" +
-                    //    $"Position - Old:{state.position}, New:{instance.position}, Delta:{posDelta}");
                 }
             }
 

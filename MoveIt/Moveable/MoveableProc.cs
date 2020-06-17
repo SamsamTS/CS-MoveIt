@@ -10,7 +10,7 @@ namespace MoveIt
 
     public class MoveableProc : Instance
     {
-        internal IPO_Object m_procObj;
+        internal PO_Object m_procObj;
 
         public override HashSet<ushort> segmentList
         {
@@ -28,7 +28,7 @@ namespace MoveIt
             Info = m_procObj.Info;
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             ProcState state = new ProcState
             {
@@ -42,7 +42,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             m_procObj.Position = state.position;
             m_procObj.Angle = state.angle;
@@ -126,7 +126,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            MoveItTool.PO.Clone(m_procObj.Id, newPosition, state.angle + deltaAngle, action);
+            MoveItTool.PO.Clone((MoveableProc)state.instance, newPosition, state.angle + deltaAngle, action);
             return null;
         }
 
@@ -149,12 +149,15 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+
             m_procObj.RenderOverlay(cameraInfo, toolColor); 
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
 
             ProcState state = instanceState as ProcState;
 

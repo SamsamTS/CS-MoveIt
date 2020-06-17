@@ -16,9 +16,9 @@ namespace MoveIt
         {
             foreach (Instance instance in selection)
             {
-                //if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
+                if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace MoveIt
                         continue;
                     }
 
-                    IPO_Object obj = MoveItTool.PO.ConvertToPO(instance);
+                    PO_Object obj = MoveItTool.PO.ConvertToPO(instance);
                     if (obj == null)
                     {
                         continue;

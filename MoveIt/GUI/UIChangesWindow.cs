@@ -8,12 +8,16 @@ namespace MoveIt
     {
         public static UIChangesWindow instance;
 
-        private readonly string m_blurb =
-            "New in Move It 2.6.0:\n\n" +
-            "- Reset Objects Tool - cycle size/colour variations of selected objects and repair all damage.\n\n" +
-            "- Network Skins 2 integration - networks keep their skin when copied or imported.\n\n" +
-            "- Procedural Objects integration - PO can be manipulated similarly to props, and placed objects can be converted to PO with the powerful Convert Tool.\n\n" +
-            "- Handling of pipes, water service buildings, invisible markers and, in the asset editor, props improved.\n\n" +
+        private const string m_blurb =
+            "New in Move It 2.8.0:\n\n" +
+            "- Slope Align now automatically uses the 2 furthest apart select objects (Shift+Click on the tool icon to manually select the 2 points).\n\n" +
+            "- Toolbox (More Tools) menu redesigned, and some icons changed.\n\n" + 
+            "- Line Tool - Evenly space out objects in a straight line.\n\n" +
+            "- Set Position Tool - Change a selection's coordinates.\n\n" +
+            "- Move and delete paths for ship, aircraft, ferries, helicopters, etc.\n\n" +
+            "- Options page redesigned.\n\n" +
+            "- Many other tweaks and optimisations!\n\n" +
+            "Read the workshop Move It Guide for more information.\n\n" +
             "Click anywhere on this box to close it.";
 
         public override void Start()

@@ -24,14 +24,10 @@ namespace MoveIt
 
         public MoveableProp(InstanceID instanceID) : base(instanceID)
         {
-            //if (((PropInstance.Flags)PropManager.instance.m_props.m_buffer[instanceID.Prop].m_flags & PropInstance.Flags.Created) == PropInstance.Flags.None)
-            //{
-            //    throw new Exception($"Prop #{instanceID.Prop} not found!");
-            //}
             Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             PropState state = new PropState();
 
@@ -50,7 +46,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is PropState propState)) return;
 
@@ -201,6 +197,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
 
             ushort prop = id.Prop;
             PropManager propManager = PropManager.instance;
@@ -217,6 +214,8 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+
             PropState state = instanceState as PropState;
 
             PropInfo info = state.Info.Prefab as PropInfo;

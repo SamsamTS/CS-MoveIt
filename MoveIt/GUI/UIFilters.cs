@@ -171,9 +171,6 @@ namespace MoveIt
                 checkBox.isChecked = false;
             else if (isChecked == true)
                 checkBox.isChecked = true;
-
-            //UIToolOptionPanel.instance.m_picker.state = state;
-            //UIToolOptionPanel.instance.m_picker.normalBgSprite = "OptionsDropboxListbox";
         }
 
         public static void UpdatePickerButton(byte state)

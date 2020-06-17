@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using ColossalFramework;
+using ColossalFramework.Math;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-
-using ColossalFramework.Math;
+using UnityEngine;
 
 
 namespace MoveIt
@@ -24,6 +24,9 @@ namespace MoveIt
             get => Convert.ToBase64String(NodeControllerData);
             set => Convert.FromBase64String(value);
         }
+
+        [XmlElement("segmentsList")]
+        public List<ushort> segmentsList = new List<ushort>();
 
         public struct SegmentSave
         {
@@ -54,20 +57,11 @@ namespace MoveIt
         {
             get
             {
-                if(nodeBuffer[id.NetNode].m_building != 0)
+                foreach (Instance sub in subInstances)
                 {
-                    InstanceID pillarID = new InstanceID();
-                    pillarID.Building = nodeBuffer[id.NetNode].m_building;
-
-
-                    if ((BuildingManager.instance.m_buildings.m_buffer[pillarID.Building].m_flags & Building.Flags.Created) != Building.Flags.None)
+                    if (sub is MoveableBuilding mb)
                     {
-                        MoveableBuilding pillarInstance = new MoveableBuilding(pillarID);
-
-                        if (pillarInstance.isValid)
-                        {
-                            return pillarInstance;
-                        }
+                        return mb;
                     }
                 }
                 return null;
@@ -95,36 +89,29 @@ namespace MoveIt
 
         public MoveableNode(InstanceID instanceID) : base(instanceID)
         {
-            //if ((NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].m_flags & NetNode.Flags.Created) == NetNode.Flags.None)
-            //{
-            //    Debug.Log($"Node #{instanceID.NetNode} not found!");
-            //    return;
-            //    // TODO throw new Exception($"Node #{instanceID.NetNode} not found!");
-            //}
             Info = new Info_Prefab(NetManager.instance.m_nodes.m_buffer[instanceID.NetNode].Info);
+
+            subInstances = GetSubInstances();
         }
 
-        public override InstanceState GetState()
+        public override InstanceState SaveToState()
         {
             ushort node = id.NetNode;
 
-            NodeState state = new NodeState();
-
-            state.instance = this;
-            state.Info = Info;
-
-            state.position = nodeBuffer[node].m_position;
+            NodeState state = new NodeState
+            {
+                instance = this,
+                Info = Info,
+                position = nodeBuffer[node].m_position,
+                flags = nodeBuffer[node].m_flags
+            };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
-
-            state.flags = nodeBuffer[node].m_flags;
 
             state.NodeControllerData = MoveItTool.NodeController.CopyNode(node);
 
-            MoveableBuilding pillarInstance = Pillar;
-
             if (Pillar != null)
             {
-                state.pillarState = Pillar.GetState() as BuildingState;
+                state.pillarState = Pillar.SaveToState() as BuildingState;
             }
 
             for (int i = 0; i < 8; i++)
@@ -132,6 +119,7 @@ namespace MoveIt
                 ushort segment = nodeBuffer[node].GetSegment(i);
                 if (segment != 0)
                 {
+                    state.segmentsList.Add(segment);
                     state.segmentsSave[i].startDirection = segmentBuffer[segment].m_startDirection;
                     state.segmentsSave[i].endDirection = segmentBuffer[segment].m_endDirection;
                 }
@@ -140,7 +128,7 @@ namespace MoveIt
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is NodeState nodeState)) return;
 
@@ -151,7 +139,7 @@ namespace MoveIt
             for (int i = 0; i < 8; i++)
             {
                 ushort segment = nodeBuffer[node].GetSegment(i);
-                if (segment != 0)
+                if (segment != 0 && nodeState.segmentsList.Contains(segment))
                 {
                     segmentBuffer[segment].m_startDirection = nodeState.segmentsSave[i].startDirection;
                     segmentBuffer[segment].m_endDirection = nodeState.segmentsSave[i].endDirection;
@@ -165,7 +153,7 @@ namespace MoveIt
 
             if (nodeState.pillarState != null)
             {
-                nodeState.pillarState.instance.SetState(nodeState.pillarState);
+                nodeState.pillarState.instance.LoadFromState(nodeState.pillarState);
             }
 
             MoveItTool.NodeController.PasteNode(node, nodeState);
@@ -224,63 +212,117 @@ namespace MoveIt
             }
         }
 
+        public List<Instance> GetSubInstances()
+        {
+            List<Instance> instances = new List<Instance>();
+            ushort building = nodeBuffer[id.NetNode].m_building;
+            int count = 0;
+            while (building != 0)
+            {
+                InstanceID buildingID = default;
+                buildingID.Building = building;
+
+                instances.Add(new MoveableBuilding(buildingID));
+                building = buildingBuffer[building].m_subBuilding;
+
+                if (++count > 49152)
+                {
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
+                    break;
+                }
+            }
+
+            ushort node = buildingBuffer[id.Building].m_netNode;
+            count = 0;
+            while (node != 0)
+            {
+                ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
+                if (layer != ItemClass.Layer.PublicTransport)
+                {
+                    InstanceID nodeID = default;
+                    nodeID.NetNode = node;
+                    instances.Add(new MoveableNode(nodeID));
+                }
+
+                node = nodeBuffer[node].m_nextBuildingNode;
+                if ((nodeBuffer[node].m_flags & NetNode.Flags.Created) != NetNode.Flags.Created)
+                {
+                    node = 0;
+                }
+
+                if (++count > 32768)
+                {
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
+                    break;
+                }
+            }
+
+            return instances;
+        }
+
         public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
 
-            ushort node = id.NetNode;
-            Vector3 oldPosition = nodeBuffer[node].m_position;
+            TransformAngle = angle;
+            TransformPosition = location;
 
-            netManager.MoveNode(node, location);
-
-            for (int i = 0; i < 8; i++)
+            if (!isVirtual())
             {
-                ushort segment = nodeBuffer[node].GetSegment(i);
-                if (segment != 0 && !Action.IsSegmentSelected(segment)) // TODO: Is IsSegmentSelected sane?
+                ushort node = id.NetNode;
+                Vector3 oldPosition = nodeBuffer[node].m_position;
+
+                netManager.MoveNode(node, location);
+
+                for (int i = 0; i < 8; i++)
                 {
-                    ushort startNode = segmentBuffer[segment].m_startNode;
-                    ushort endNode = segmentBuffer[segment].m_endNode;
-
-                    Vector3 oldVector;
-                    if(node == endNode)
+                    ushort segment = nodeBuffer[node].GetSegment(i);
+                    if (segment != 0 && !Action.IsSegmentSelected(segment))
                     {
-                        oldVector = oldPosition - nodeBuffer[startNode].m_position;
-                    }
-                    else
-                    {
-                        oldVector = nodeBuffer[endNode].m_position - oldPosition;
-                    }
-                    oldVector.Normalize();
-                    
-                    Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
-                    Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
+                        ushort startNode = segmentBuffer[segment].m_startNode;
+                        ushort endNode = segmentBuffer[segment].m_endNode;
 
-                    Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
-                    Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
+                        Vector3 oldVector;
+                        if (node == endNode)
+                        {
+                            oldVector = oldPosition - nodeBuffer[startNode].m_position;
+                        }
+                        else
+                        {
+                            oldVector = nodeBuffer[endNode].m_position - oldPosition;
+                        }
+                        oldVector.Normalize();
 
-                    Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
-                    newVector.Normalize();
+                        Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
+                        Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
 
-                    segmentBuffer[segment].m_startDirection = startRotation * newVector;
-                    segmentBuffer[segment].m_endDirection = endRotation * -newVector;
+                        Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
+                        Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
 
-                    CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+                        Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                        newVector.Normalize();
 
-                    netManager.UpdateSegmentRenderer(segment, true);
-                    UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+                        segmentBuffer[segment].m_startDirection = startRotation * newVector;
+                        segmentBuffer[segment].m_endDirection = endRotation * -newVector;
 
-                    if (node != startNode)
-                    {
-                        netManager.UpdateNode(startNode);
-                    }
-                    else
-                    {
-                        netManager.UpdateNode(endNode);
+                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+
+                        netManager.UpdateSegmentRenderer(segment, true);
+                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                        if (node != startNode)
+                        {
+                            netManager.UpdateNode(startNode);
+                        }
+                        else
+                        {
+                            netManager.UpdateNode(endNode);
+                        }
                     }
                 }
-            }
 
-            netManager.UpdateNode(node);
+                netManager.UpdateNode(node);
+            }
         }
 
         public void AutoCurve(NetSegment segmentCurve)
@@ -289,7 +331,7 @@ namespace MoveIt
 
             if (segmentCurve.m_startNode != 0 && segmentCurve.m_endNode != 0)
             {
-                segmentCurve.GetClosestPositionAndDirection(position, out Vector3 p, out Vector3 tangent);
+                segmentCurve.GetClosestPositionAndDirection(position, out _, out Vector3 tangent);
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -378,6 +420,11 @@ namespace MoveIt
             newPosition.y = height;
             Move(newPosition, angle);
         }
+        
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleRawHeightSmooth(position));
+        }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
@@ -400,13 +447,13 @@ namespace MoveIt
 
                 InstanceID cloneID = default;
                 cloneID.NetNode = clone;
-                cloneInstance = new MoveableNode(cloneID);
 
                 nodeBuffer[clone].m_flags = state.flags;
 
-                // TODO: Clone pillar instead?
                 nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out BuildingInfo newBuilding, out float heightOffset);
                 nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
+
+                cloneInstance = new MoveableNode(cloneID);
             }
 
             return cloneInstance;
@@ -446,6 +493,16 @@ namespace MoveIt
         {
             ushort node = id.NetNode;
 
+            // In asset editor, second loads can cause null error
+            if (nodeBuffer[node].Info == null)
+            {
+                return new Bounds();
+            }
+
+            if (Virtual)
+            {
+                return new Bounds(OverlayPosition, new Vector3(nodeBuffer[node].Info.m_halfWidth, 0, nodeBuffer[node].Info.m_halfWidth));
+            }
             Bounds bounds = SanitizeBounds(node);
 
             if (nodeBuffer[node].Info.m_netAI is WaterPipeAI)
@@ -478,7 +535,7 @@ namespace MoveIt
             return bounds;
         }
 
-        private static Bounds SanitizeBounds(ushort id)
+        private Bounds SanitizeBounds(ushort id)
         {
             NetNode node = nodeBuffer[id];
             Bounds bounds = node.m_bounds;
@@ -495,6 +552,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (!isVirtual() && MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
 
             ushort node = id.NetNode;
             NetManager netManager = NetManager.instance;
@@ -504,11 +562,22 @@ namespace MoveIt
             float alpha = 1f;
             NetTool.CheckOverlayAlpha(netInfo, ref alpha);
             toolColor.a *= alpha;
-            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, position, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
+            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, OverlayPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
         }
 
         public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
 
         public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
+        
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)
+        {
+            foreach (Instance subInstance in subInstances)
+            {
+                if (subInstance is MoveableBuilding msb)
+                {
+                    msb.RenderGeometry(cameraInfo, toolColor);
+                }
+            }
+        }
     }
 }

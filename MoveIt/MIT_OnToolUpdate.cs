@@ -21,9 +21,9 @@ namespace MoveIt
                 }
 
                 StopCloning();
-                StopAligning();
+                StopTool();
 
-                ToolState = ToolStates.Default;
+                SetToolState();
 
                 UIView.library.Hide("PauseMenu");
 
@@ -85,7 +85,7 @@ namespace MoveIt
                     {
                         m_rightClickTime = 0;
 
-                        if (elapsed < 200)
+                        if (elapsed < 250)
                         {
                             OnRightClick();
                         }
@@ -102,6 +102,40 @@ namespace MoveIt
                     }
                 }
 
+                if (m_middleClickTime == 0 && Input.GetMouseButton(2) && Event.current.control)
+                {
+                    if (!isInsideUI)
+                    {
+                        m_middleClickTime = Stopwatch.GetTimestamp();
+                        OnMiddleMouseDown();
+                    }
+                }
+
+                if (m_middleClickTime != 0)
+                {
+                    long elapsed = ElapsedMilliseconds(m_middleClickTime);
+
+                    if (!Input.GetMouseButton(2))
+                    {
+                        m_middleClickTime = 0;
+
+                        if (elapsed < 200)
+                        {
+                            OnMiddleClick();
+                        }
+                        else
+                        {
+                            OnMiddleDragStop();
+                        }
+
+                        OnMiddleMouseUp();
+                    }
+                    else if (elapsed >= 200)
+                    {
+                        OnMiddleDrag();
+                    }
+                }
+
                 if (!isInsideUI && Cursor.visible)
                 {
                     Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -115,6 +149,7 @@ namespace MoveIt
                         case ToolStates.Default:
                         case ToolStates.Aligning:
                         case ToolStates.Picking:
+                        case ToolStates.ToolActive:
                             {
                                 RaycastHoverInstance(mouseRay);
                                 break;
@@ -127,46 +162,62 @@ namespace MoveIt
                                 float newAngle = action.angleDelta;
                                 float newSnapAngle = 0f;
 
-                                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                if (snapping)
                                 {
-                                    if (dragging)
-                                    {
-                                        foreach (Instance i in Action.selection)
-                                        {
-                                            if (i is MoveableBuilding mb)
-                                            {
-                                                mb.Virtual = !fastMove;
-                                            }
-                                        }
-                                    }
+                                    action.Virtual = false;
                                 }
                                 else
                                 {
-                                    foreach (Instance i in Action.selection)
+                                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                                     {
-                                        if (i is MoveableBuilding mb)
-                                        {
-                                            mb.Virtual = fastMove;
-                                        }
+                                        action.Virtual = !fastMove;
+                                    }
+                                    else
+                                    {
+                                        action.Virtual = fastMove;
                                     }
                                 }
                             
-
-                                if (m_leftClickTime > 0)
+                                if (m_leftClickTime > 0 != m_middleClickTime > 0)
                                 {
+                                    UpdateSensitivityMode();
+
                                     float y = action.moveDelta.y;
-                                    newMove = m_startPosition + RaycastMouseLocation(mouseRay) - m_mouseStartPosition;
+
+                                    if (m_isLowSensitivity || m_middleClickTime > 0)
+                                    {
+                                        Vector3 mouseDeltaBefore = m_sensitivityTogglePosAbs - m_clickPositionAbs;
+                                        Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / 5f;
+                                        newMove = m_dragStartRelative + mouseDeltaBefore + mouseDeltaAfter;
+                                    }
+                                    else
+                                    {
+                                        newMove = m_dragStartRelative + (RaycastMouseLocation(mouseRay) - m_clickPositionAbs);
+                                    }
+
                                     newMove.y = y;
                                 }
 
-
                                 if (m_rightClickTime > 0)
                                 {
-                                    newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
-                                    if (Event.current.control)
+                                    UpdateSensitivityMode();
+
+                                    if (m_isLowSensitivity)
+                                    {
+                                        float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
+                                        float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / 5;
+                                        float mouseTravel = (mouseRotateBefore + mouseRotateAfter - m_mouseStartX) / Screen.width * 1.2f;
+
+                                        newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
+                                    }
+                                    else
+                                    {
+                                        newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                    }
+                                    if (Event.current.alt)
                                     {
                                         float quarterPI = Mathf.PI / 4;
-                                        newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
+                                        newAngle = quarterPI * Mathf.Round(newAngle  / quarterPI);
                                     }
                                     newAngle += m_startAngle;
                                     action.autoCurve = false;
@@ -201,10 +252,22 @@ namespace MoveIt
                             {
                                 if (m_rightClickTime != 0) break;
 
+                                UpdateSensitivityMode();
+
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
+                                Vector3 newMove;
                                 float y = action.moveDelta.y;
-                                Vector3 newMove = RaycastMouseLocation(mouseRay) - action.center;
+                                if (m_isLowSensitivity)
+                                {
+                                    Vector3 mouseDeltaBefore = m_sensitivityTogglePosAbs - m_clickPositionAbs;
+                                    Vector3 mouseDeltaAfter = (RaycastMouseLocation(mouseRay) - m_sensitivityTogglePosAbs) / 5;
+                                    newMove = mouseDeltaBefore + mouseDeltaAfter;
+                                }
+                                else
+                                {
+                                    newMove = RaycastMouseLocation(mouseRay) - action.center;
+                                }
                                 newMove.y = y;
 
                                 if (snapping)
@@ -222,10 +285,26 @@ namespace MoveIt
                             }
                         case ToolStates.RightDraggingClone:
                             {
+                                UpdateSensitivityMode();
+
                                 CloneAction action = ActionQueue.instance.current as CloneAction;
 
-                                float newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width;
-                                if (Event.current.control)
+                                float newAngle;
+
+                                if (m_isLowSensitivity)
+                                {
+                                    float mouseRotateBefore = m_sensitivityTogglePosX - m_sensitivityAngleOffset;
+                                    float mouseRotateAfter = (Input.mousePosition.x - m_sensitivityTogglePosX) / 5;
+                                    float mouseTravel = (mouseRotateBefore + mouseRotateAfter - m_mouseStartX) / Screen.width * 1.2f;
+
+                                    newAngle = ushort.MaxValue * 9.58738E-05f * mouseTravel;
+                                }
+                                else
+                                {
+                                    newAngle = ushort.MaxValue * 9.58738E-05f * (Input.mousePosition.x - m_mouseStartX) / Screen.width * 1.2f;
+                                }
+
+                                if (Event.current.alt)
                                 {
                                     float quarterPI = Mathf.PI / 4;
                                     newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
@@ -260,47 +339,50 @@ namespace MoveIt
             angle = 0;
 
             float magnitude = 8f;
-            if (e.shift) magnitude = magnitude * 8f;
-            if (e.alt) magnitude = magnitude / 8f;
+            if (e.alt && e.shift)
+            {
+                magnitude /= 64f;
+            }
+            else
+            {
+                if (e.shift) magnitude *= 8f;
+                if (e.alt) magnitude /= 8f;
+            }
 
             if (IsKeyDown(OptionsKeymapping.moveXpos, e))
             {
-                direction.x = direction.x + magnitude;
+                direction.x += magnitude;
             }
-
             if (IsKeyDown(OptionsKeymapping.moveXneg, e))
             {
-                direction.x = direction.x - magnitude;
+                direction.x -= magnitude;
             }
 
             if (IsKeyDown(OptionsKeymapping.moveYpos, e))
             {
-                direction.y = direction.y + magnitude;
+                direction.y += magnitude;
             }
-
             if (IsKeyDown(OptionsKeymapping.moveYneg, e))
             {
-                direction.y = direction.y - magnitude;
+                direction.y -= magnitude;
             }
 
             if (IsKeyDown(OptionsKeymapping.moveZpos, e))
             {
-                direction.z = direction.z + magnitude;
+                direction.z += magnitude;
             }
-
             if (IsKeyDown(OptionsKeymapping.moveZneg, e))
             {
-                direction.z = direction.z - magnitude;
+                direction.z -= magnitude;
             }
 
             if (IsKeyDown(OptionsKeymapping.turnPos, e))
             {
-                angle = angle - magnitude * 20f * 9.58738E-05f;
+                angle -= magnitude * 20f * 9.58738E-05f;
             }
-
             if (IsKeyDown(OptionsKeymapping.turnNeg, e))
             {
-                angle = angle + magnitude * 20f * 9.58738E-05f;
+                angle += magnitude * 20f * 9.58738E-05f;
             }
 
             if (direction != Vector3.zero || angle != 0)
@@ -310,7 +392,7 @@ namespace MoveIt
                     m_keyTime = Stopwatch.GetTimestamp();
                     return true;
                 }
-                else if (ElapsedMilliseconds(m_keyTime) >= 250)
+                else if (ElapsedMilliseconds(m_keyTime) >= 333)
                 {
                     return true;
                 }
@@ -318,6 +400,45 @@ namespace MoveIt
             else
             {
                 m_keyTime = 0;
+            }
+
+            return false;
+        }
+
+        private bool ProcessScaleKeys(Event e, out float magnitude)
+        {
+            magnitude = 0.01f;
+            if (e.alt && e.shift)
+            {
+                magnitude /= 64f;
+            }
+            else
+            {
+                if (e.shift) magnitude *= 8f;
+                if (e.alt) magnitude /= 8f;
+            }
+
+            if (IsKeyDown(OptionsKeymapping.scaleIn, e))
+            {
+                magnitude = 0 - magnitude;
+            }
+            else if (IsKeyDown(OptionsKeymapping.scaleOut, e))
+            {
+            }
+            else
+            {
+                m_scaleKeyTime = 0;
+                return false;
+            }
+
+            if (m_scaleKeyTime == 0)
+            {
+                m_scaleKeyTime = Stopwatch.GetTimestamp();
+                return true;
+            }
+            else if (ElapsedMilliseconds(m_scaleKeyTime) >= 333)
+            {
+                return true;
             }
 
             return false;
@@ -742,7 +863,7 @@ namespace MoveIt
                             segment.m_startDirection = (nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
                             segment.m_endDirection = -segment.m_startDirection;
 
-                            segment.GetClosestPositionAndDirection(newPosition, out Vector3 testPos, out Vector3 direction);
+                            segment.GetClosestPositionAndDirection(newPosition, out Vector3 testPos, out _);
                             // Straight
                             if (TrySnapping(testPos, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                             {
@@ -799,7 +920,7 @@ namespace MoveIt
                                             }
                                             else
                                             {
-                                                segment.GetClosestPositionAndDirection(newPosition, out testPos, out direction);
+                                                segment.GetClosestPositionAndDirection(newPosition, out testPos, out _);
                                                 // Curve
                                                 if (TrySnapping(testPos, newPosition, minSqDistance, ref distanceSq, moveDelta, ref newMoveDelta))
                                                 {

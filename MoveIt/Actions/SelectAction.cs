@@ -10,7 +10,6 @@ namespace MoveIt
 
         public SelectAction(bool append = false)
         {
-
             m_oldSelection = selection;
 
             if (append && selection != null)
@@ -42,8 +41,6 @@ namespace MoveIt
 
         public override void Do()
         {
-            if (MoveItTool.POProcessing) return;
-
             selection = m_newSelection;
             MoveItTool.m_debugPanel.UpdatePanel();
         }

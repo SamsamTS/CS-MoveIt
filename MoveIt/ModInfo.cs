@@ -38,7 +38,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.6.0";
+        public const string version = "2.8.1";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -66,15 +66,15 @@ namespace MoveIt
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close More Tools menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close Toolbox menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)
                     {
-                        UIMoreTools.MoreToolsPanel.isVisible = false;
+                        UIMoreTools.CloseMenu();
                     }
                 });
-                checkBox.tooltip = "Check this to close the More Tools menu after choosing a tool.";
+                checkBox.tooltip = "Check this to close the Toolbox menu after choosing a tool.";
 
                 group.AddSpace(10);
 
@@ -83,6 +83,14 @@ namespace MoveIt
                     MoveItTool.fastMove.value = b;
                 });
                 checkBox.tooltip = "Helps you position objects when your frame-rate is poor.";
+
+                group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox("Hide selectors/overlays when in low-sensitivity mode", MoveItTool.hideSelectorsOnLowSensitivity.value, (b) =>
+                {
+                    MoveItTool.hideSelectorsOnLowSensitivity.value = b;
+                });
+                checkBox.tooltip = "When holding control, the selection overlays are hidden";
 
                 group.AddSpace(10);
 
@@ -107,11 +115,24 @@ namespace MoveIt
                 });
                 checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
 
-                group.AddSpace(15);
+                group.AddSpace(10);
+                group = helper.AddGroup("General Shortcuts");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
-                group.AddSpace(15);
+                group.AddSpace(10);
+                group = helper.AddGroup("Toolbox Shortcuts");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                group.AddSpace(10);
+
+                ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingToolbox>();
+
+                group.AddSpace(10);
+                group = helper.AddGroup("Extra Options");
+                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                group.AddSpace(10);
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", MoveItTool.CleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
@@ -165,22 +186,19 @@ namespace MoveIt
                     MoveItTool.POShowDeleteWarning.value = !b;
                 });
 
-                //checkBox = (UICheckBox)group.AddCheckbox("Limit Move It to only PO objects selected in PO", MoveItTool.POOnlySelectedAreVisible.value, (b) =>
-                //{
-                //    MoveItTool.POOnlySelectedAreVisible.value = b;
-                //    if (MoveItTool.PO != null)
-                //    {
-                //        MoveItTool.PO.ToolEnabled();
-                //    }
-                //});
-                //checkBox.tooltip = "If you have a lot of PO objects (250 or more), this is recommended.";
-
                 checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
                 {
                     MoveItTool.POHighlightUnselected.value = b;
                     if (MoveItTool.PO != null)
                     {
-                        MoveItTool.PO.ToolEnabled();
+                        try
+                        {
+                            MoveItTool.PO.ToolEnabled();
+                        }
+                        catch (ArgumentException e)
+                        {
+                            Debug.Log($"PO Integration failed:\n{e}");
+                        }
                     }
                 });
                 checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";

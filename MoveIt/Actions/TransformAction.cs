@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
-
 using System.Collections.Generic;
 
 namespace MoveIt
 {
+    public class TransformAction : BaseTransformAction
+    {
+    }
 
-    public class TransformAction : Action
+    public class MoveToAction : BaseTransformAction
+    {
+        internal Vector3 Original, Position;
+        internal float AngleOriginal, Angle;
+        internal bool AngleActive, HeightActive;
+    }
+
+    public abstract class BaseTransformAction : Action
     {
         public Vector3 moveDelta;
         public Vector3 center;
@@ -16,17 +25,50 @@ namespace MoveIt
         public bool autoCurve;
         public NetSegment segmentCurve;
 
-        private bool containsNetwork = false;
+        protected readonly bool containsNetwork = false;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
-        public TransformAction()
+        internal bool _virtual = false;
+        public bool Virtual
+        {
+            get => _virtual;
+            set
+            {
+                if (value == true)
+                {
+                    if (_virtual == false && selection.Count < MoveItTool.Fastmove_Max)
+                    {
+                        _virtual = true;
+                        foreach (Instance i in selection)
+                        {
+                            i.Virtual = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (_virtual == true)
+                    {
+                        _virtual = false;
+                        foreach (Instance i in selection)
+                        {
+                            i.Virtual = false;
+                        }
+                        Do();
+                        UpdateArea(GetTotalBounds(), true);
+                    }
+                }
+            }
+        }
+
+        public BaseTransformAction()
         {
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
 
                     if (instance is MoveableNode || instance is MoveableSegment)
                     {
@@ -47,7 +89,7 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.isValid)
+                if (state.instance.isValid && !(state is SegmentState))
                 {
                     state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta + snapAngle, center, followTerrain);
 
@@ -58,9 +100,23 @@ namespace MoveIt
                 }
             }
 
-            bool fast = MoveItTool.fastMove != Event.current.shift;
-            UpdateArea(originalBounds, !fast || containsNetwork);
-            UpdateArea(GetTotalBounds(false), !fast || containsNetwork);
+            // Move segments after the nodes have moved
+            foreach (InstanceState state in m_states)
+            {
+                if (state.instance.isValid && state is SegmentState)
+                {
+                    state.instance.Transform(state, ref matrix4x, moveDelta.y, angleDelta + snapAngle, center, followTerrain);
+                }
+            }
+
+            bool full = !(MoveItTool.fastMove != Event.current.shift);
+            if (!full)
+            {
+                full = selection.Count > MoveItTool.Fastmove_Max ? true : false;
+            }
+            UpdateArea(originalBounds, full);
+            Bounds fullbounds = GetTotalBounds(false);
+            UpdateArea(fullbounds, full);
         }
 
         public override void Undo()
@@ -69,7 +125,18 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                state.instance.SetState(state);
+                if (!(state is SegmentState))
+                {
+                    state.instance.LoadFromState(state);
+                }
+            }
+
+            foreach (InstanceState state in m_states)
+            {
+                if (state is SegmentState)
+                {
+                    state.instance.LoadFromState(state);
+                }
             }
 
             UpdateArea(bounds, true);
@@ -79,11 +146,11 @@ namespace MoveIt
         public void InitialiseDrag()
         {
             MoveItTool.dragging = true;
+            Virtual = false;
 
             foreach (InstanceState instanceState in m_states)
             {
-                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
-                if (mb != null)
+                if (instanceState.instance is MoveableBuilding mb)
                 {
                     mb.InitialiseDrag();
                 }
@@ -93,11 +160,11 @@ namespace MoveIt
         public void FinaliseDrag()
         {
             MoveItTool.dragging = false;
+            Virtual = false;
 
             foreach (InstanceState instanceState in m_states)
             {
-                MoveableBuilding mb = instanceState.instance as MoveableBuilding;
-                if (mb != null)
+                if (instanceState.instance is MoveableBuilding mb)
                 {
                     mb.FinaliseDrag();
                 }

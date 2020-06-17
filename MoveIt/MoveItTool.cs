@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -29,34 +30,35 @@ namespace MoveIt
             DrawingSelection,
             Cloning,
             Aligning,
-            Picking
+            Picking,
+            ToolActive
         }
 
-        public enum AlignModes
+        public enum MT_Tools
         {
             Off,
             Height,
-            TerrainHeight,
             Inplace,
             Group,
-            Random,
             Slope,
-            SlopeNode,
-            Mirror
+            Mirror,
+            MoveTo
         }
 
         public const string settingsFileName = "MoveItTool";
         public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
         public const int UI_Filter_CB_Height = 25;
+        public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
-        public static SavedBool hideChangesWindow = new SavedBool("hideChanges260", settingsFileName, false, true); 
+        public static SavedBool hideChangesWindow = new SavedBool("hideChanges280b", settingsFileName, false, true); 
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
-        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, true, true);
+        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
+        public static SavedBool hideSelectorsOnLowSensitivity = new SavedBool("hideSelectorsOnLowSensitivity", settingsFileName, true, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
@@ -79,6 +81,7 @@ namespace MoveIt
 
         public static StepOver stepOver;
         internal static DebugPanel m_debugPanel;
+        internal static MoveToPanel m_moveToPanel;
 
         public int segmentUpdateCountdown = -1;
         public HashSet<ushort> segmentsToUpdate = new HashSet<ushort>();
@@ -96,57 +99,46 @@ namespace MoveIt
         internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
         internal static Color m_POdisabledColor = new Color32(130, 95, 140, 70);
 
-        public static Shader shaderBlend = Shader.Find("Custom/Props/Decal/Blend");
-        public static Shader shaderSolid = Shader.Find("Custom/Props/Decal/Solid");
-
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
         internal static NodeController_Manager NodeController = null;
-        internal static uint _POProcessing = 0;
-        internal static bool POProcessing
+        private static int _POProcessing = 0;
+        internal static int POProcessing
         {
-            get => _POProcessing > 0;
-            set
+            get
             {
-                if (value)
-                    _POProcessing++;
-                else
-                    _POProcessing--;
+                return _POProcessing;
             }
-        }
-
-        private const float XFACTOR = 0.263671875f;
-        private const float YFACTOR = 0.015625f;
-        private const float ZFACTOR = 0.263671875f;
-
-        private ToolStates m_toolState = ToolStates.Default;
-        public ToolStates ToolState
-        {
-            get => m_toolState;
             set
             {
-                m_toolState = value;
+                _POProcessing = value;
                 if (m_debugPanel != null)
                 {
                     m_debugPanel.UpdatePanel();
                 }
             }
         }
-        private AlignModes m_alignMode = AlignModes.Off;
-        public AlignModes AlignMode
+
+        private const float XFACTOR = 0.25f; //63671875f;
+        private const float YFACTOR = 0.015625f; // 1/64
+        private const float ZFACTOR = 0.25f; //63671875f;
+
+        public static ToolStates ToolState { get; set; } = ToolStates.Default;
+        private static MT_Tools m_toolsMode = MT_Tools.Off;
+        public static MT_Tools MT_Tool
         { 
-            get => m_alignMode;
+            get => m_toolsMode;
             set
             {
-                m_alignMode = value;
+                m_toolsMode = value;
                 if (m_debugPanel != null)
                 {
                     m_debugPanel.UpdatePanel();
                 }
             }
         }
-        private ushort m_alignToolPhase = 0;
-        public ushort AlignToolPhase
+        private static ushort m_alignToolPhase = 0;
+        public static ushort AlignToolPhase
         {
             get => m_alignToolPhase;
             set
@@ -212,11 +204,6 @@ namespace MoveIt
             }
         }
 
-        //public HashSet<Instance> selection
-        //{
-        //    get { return Action.selection; }
-        //}
-
         private UIMoveItButton m_button;
         private UIComponent m_pauseMenu;
 
@@ -225,11 +212,15 @@ namespace MoveIt
         internal Instance m_lastInstance;
         private HashSet<Instance> m_marqueeInstances;
 
-        private Vector3 m_startPosition;
-        private Vector3 m_mouseStartPosition;
-
+        internal static bool m_isLowSensitivity;
+        private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
+        private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
+        private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
+        
         private float m_mouseStartX;
         private float m_startAngle;
+        private float m_sensitivityTogglePosX; // Where sensitivity was last toggled, X-axis absolute
+        private float m_sensitivityAngleOffset; // Accumulated angle offset from low sensitivity
 
         private NetSegment m_segmentGuide;
 
@@ -239,10 +230,26 @@ namespace MoveIt
         private static InfoManager.InfoMode m_prevInfoMode;
 
         private long m_keyTime;
+        private long m_scaleKeyTime;
         private long m_rightClickTime;
+        private long m_middleClickTime;
         private long m_leftClickTime;
 
+        protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+        protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+
         public ToolAction m_nextAction = ToolAction.None;
+
+        private static System.Random _rand = null;
+        internal static System.Random Rand
+        {
+            get
+            {
+                if (_rand == null)
+                    _rand = new System.Random();
+                return _rand;
+            }
+        }
         
         protected override void Awake()
         {
@@ -309,6 +316,23 @@ namespace MoveIt
                 PO.ToolEnabled();
                 ActionQueue.instance.Push(new TransformAction());
             }
+
+            UIMoreTools.UpdateMoreTools();
+
+            //string msg = $"Assemblies:";
+            //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            //{
+            //    msg += $"\n{assembly.GetName().Name.ToLower()}";
+            //}
+            //Debug.Log(msg);
+
+            // msg = "Plugins:";
+            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
+            //{
+            //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
+            //        $"\n - {pi.modPath}";
+            //}
+            //Debug.Log(msg);
         }
 
         protected override void OnDisable()
@@ -329,10 +353,7 @@ namespace MoveIt
 
                 UpdateAreas();
                 UpdateSegments();
-
-                ToolState = ToolStates.Default;
-                AlignMode = AlignModes.Off;
-                AlignToolPhase = 0;
+                SetToolState();
 
                 if (UIChangesWindow.instance != null)
                 {
@@ -342,6 +363,11 @@ namespace MoveIt
                 if (UIToolOptionPanel.instance != null)
                 {
                     UIToolOptionPanel.instance.isVisible = false;
+                }
+
+                if (m_moveToPanel != null)
+                {
+                    m_moveToPanel.Visible(false);
                 }
 
                 TerrainManager.instance.RenderZones = m_prevRenderZones;
@@ -358,6 +384,36 @@ namespace MoveIt
             }
         }
 
+        public static void SetToolState(ToolStates state = ToolStates.Default, MT_Tools tool = MT_Tools.Off, ushort toolPhase = 0)
+        {
+            ToolStates previousState = ToolState;
+            if (ToolState != state)
+            {
+                if (state != ToolStates.ToolActive && state != ToolStates.Aligning)
+                {
+                    UIMoreTools.m_activeToolMenu = null;
+                }
+
+                if (ToolState == ToolStates.ToolActive)
+                {
+                    if (MT_Tool == MT_Tools.MoveTo)
+                    {
+                        m_moveToPanel.Visible(false);
+                    }
+                }
+            }
+
+            ToolState = state;
+            m_toolsMode = tool;
+            m_alignToolPhase = toolPhase;
+
+            if (state == ToolStates.ToolActive || state == ToolStates.Aligning || previousState == ToolStates.ToolActive || previousState == ToolStates.Aligning)
+            {
+                UIMoreTools.UpdateMoreTools();
+            }
+            m_debugPanel?.UpdatePanel();
+        }
+
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
         {
             if (!enabled)
@@ -365,22 +421,28 @@ namespace MoveIt
                 return;
             }
 
-            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
+            if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking || ToolState == ToolStates.ToolActive)
             {
                 // Reset all PO
                 if (PO.Active && POHighlightUnselected)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         obj.Selected = false;
                     }
                 }
 
                 // Debug overlays
-                foreach (Quad3 q in DebugBoxes)
+                foreach (DebugOverlay d in DebugBoxes)
                 {
-                    Singleton<RenderManager>.instance.OverlayEffect.DrawQuad(cameraInfo, new Color32(255, 255, 255, 63), q, 0, 1000, false, false);
+                    Singleton<RenderManager>.instance.OverlayEffect.DrawQuad(cameraInfo, d.color, d.quad, 0, 1000, false, false);
                 }
+                foreach (Vector3 v in DebugPoints)
+                {
+                    Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, new Color32(255, 255, 255, 63), v, 8, 0, 1000, false, false);
+                }
+
+                ActionQueue.instance.current?.Overlays(cameraInfo, m_alignColor, m_despawnColor);
 
                 if (Action.selection.Count > 0)
                 {
@@ -403,7 +465,7 @@ namespace MoveIt
                             }
                         }
                     }
-                    if (ToolState == ToolStates.Aligning && AlignMode == AlignModes.Slope && AlignToolPhase == 2)
+                    if (ToolState == ToolStates.Aligning && MT_Tool == MT_Tools.Slope && AlignToolPhase == 2)
                     {
                         AlignSlopeAction action = ActionQueue.instance.current as AlignSlopeAction;
                         action.PointA.RenderOverlay(cameraInfo, m_alignColor, m_despawnColor);
@@ -441,7 +503,7 @@ namespace MoveIt
                 // Highlight unselected PO
                 if (PO.Active && POHighlightUnselected)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
                         if (!obj.Selected)
                         {
@@ -462,15 +524,16 @@ namespace MoveIt
                         }
                     }
 
-                    Vector3 center = Action.GetCenter();
-                    center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-
-                    RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
+                    if (!(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
+                    {
+                        Vector3 center = Action.GetCenter();
+                        center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
+                    }
 
                     if (snapping && m_segmentGuide.m_startNode != 0 && m_segmentGuide.m_endNode != 0)
                     {
                         NetManager netManager = NetManager.instance;
-                        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
                         NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
 
                         Bezier3 bezier;
@@ -614,7 +677,7 @@ namespace MoveIt
                             }
                     }
 
-                    bool inputHeld = m_keyTime != 0 || m_leftClickTime != 0 || m_rightClickTime != 0;
+                    bool inputHeld = m_scaleKeyTime != 0 || m_keyTime != 0 || m_leftClickTime != 0 || m_rightClickTime != 0;
 
                     if (segmentUpdateCountdown == 0)
                     {
@@ -646,28 +709,79 @@ namespace MoveIt
             }
         }
 
-        private List<Quad3> DebugBoxes = new List<Quad3>();
-        private void AddDebugBox(Bounds b)
+        #region Debug Overlays
+        internal struct DebugOverlay
         {
+            internal Quad3 quad;
+            internal Color32 color;
+
+            public DebugOverlay(Quad3 q, Color32 c)
+            {
+                quad = q;
+                color = c;
+            }
+        }
+        private static List<DebugOverlay> DebugBoxes = new List<DebugOverlay>();
+        private static List<Vector3> DebugPoints = new List<Vector3>();
+        internal static void AddDebugBox(Bounds b, Color32? c = null)
+        {
+            if (c == null)
+            {
+                c = new Color32(255, 255, 255, 63);
+            }
             Quad3 q = default;
             q.a = new Vector3(b.min.x, b.min.y, b.min.z);
             q.b = new Vector3(b.min.x, b.min.y, b.max.z);
             q.c = new Vector3(b.max.x, b.min.y, b.max.z);
             q.d = new Vector3(b.max.x, b.min.y, b.min.z);
-            DebugBoxes.Add(q);
+            DebugOverlay d = new DebugOverlay(q, (Color32)c);
+            DebugBoxes.Add(d);
             Debug.Log($"\nBounds:{b}");
         }
+        internal static void AddDebugPoint(Vector3 v)
+        {
+            DebugPoints.Add(v);
+            Debug.Log($"\nPoint:{v}");
+        }
+        internal void ClearDebugOverlays()
+        {
+            DebugBoxes.Clear();
+            DebugPoints.Clear();
+        }
+        internal static Color32 GetRandomDebugColor()
+        {
+            return new Color32(RandomByte(100, 255), RandomByte(100, 255), RandomByte(100, 255), 63);
+        }
+        #endregion
 
         public void UpdateAreas()
         {
+            //foreach (Bounds b in areasToUpdate)
+            //{
+            //    AddDebugBox(b, new Color32(255, 31, 31, 31));
+            //}
             HashSet<Bounds> merged = MergeBounds(areasToUpdate);
+            //foreach (Bounds b in merged)
+            //{
+            //    b.Expand(4f);
+            //    AddDebugBox(b, new Color32(31, 31, 255, 31));
+            //}
 
             foreach (Bounds bounds in merged)
             {
-                Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
-                bounds.Expand(512f);
-                Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                try
+                {
+                    bounds.Expand(64f);
+                    Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    bounds.Expand(512f);
+                    Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Debug.Log($"Failed to update bounds {bounds}");
+                }
             }
 
             areasToUpdate.Clear();
@@ -696,58 +810,50 @@ namespace MoveIt
             return ToolErrors.None;
         }
 
-        public void ProcessAligning(AlignModes mode)
+        public void ProcessAligning(MT_Tools mode)
         {
-            if (ToolState == ToolStates.Aligning && AlignMode == mode)
+            if (ToolState == ToolStates.Aligning && MT_Tool == mode)
             {
-                StopAligning();
+                StopTool();
             }
             else
             {
-                StartAligning(mode);
+                StartTool(ToolStates.Aligning, mode);
             }
         }
 
-        public void StartAligning(AlignModes mode)
+        public bool StartTool(ToolStates newToolState, MT_Tools mode)
         {
             if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
                 StopCloning();
             }
 
-            if (ToolState != ToolStates.Default) return;
+            if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
 
-            if (Action.selection.Count > 0)
-            {
-                ToolState = ToolStates.Aligning;
-                AlignMode = mode;
-                AlignToolPhase = 1;
-            }
+            if (Action.selection.Count == 0) return false;
 
-            UIMoreTools.UpdateMoreTools();
+            SetToolState(newToolState, mode, 1);
+            UIMoreTools.CheckCloseMenu();
+            return true;
         }
 
-        public void StopAligning()
+        // Called when a tool might not be active
+        public void StopTool()
         {
-            AlignMode = AlignModes.Off;
-            AlignToolPhase = 0;
-            if (ToolState == ToolStates.Aligning)
-            {
-                ToolState = ToolStates.Default;
-            }
-            UIMoreTools.UpdateMoreTools();
+            if (ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return;
+
+            DeactivateTool();
         }
 
-        public bool DeactivateTool(bool switchMode = true)
+        public bool DeactivateTool()
         {
-            if (switchMode)
+            if (MT_Tool == MT_Tools.MoveTo)
             {
-                AlignMode = AlignModes.Off;
-                ToolState = ToolStates.Default;
-                AlignToolPhase = 0;
+                m_moveToPanel.Visible(false);
             }
 
-            UIMoreTools.UpdateMoreTools();
+            SetToolState();
             Action.UpdateArea(Action.GetTotalBounds(false));
             return false;
         }
@@ -764,9 +870,13 @@ namespace MoveIt
 
                     if (action.Count > 0)
                     {
+                        UpdateSensitivityMode();
+
+                        m_sensitivityTogglePosAbs = m_clickPositionAbs = action.center;
+
                         ActionQueue.instance.Push(action);
 
-                        ToolState = ToolStates.Cloning;
+                        SetToolState(ToolStates.Cloning);
                         UIToolOptionPanel.RefreshCloneButton();
                         UIToolOptionPanel.RefreshAlignHeightButton();
                     }
@@ -780,9 +890,11 @@ namespace MoveIt
             {
                 if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
                 {
+                    ProcessSensitivityMode(false);
+
                     ActionQueue.instance.Undo();
                     ActionQueue.instance.Invalidate();
-                    ToolState = ToolStates.Default;
+                    SetToolState();
 
                     UIToolOptionPanel.RefreshCloneButton();
                 }
@@ -840,7 +952,7 @@ namespace MoveIt
                 int i = 0;
                 foreach (Instance instance in selection)
                 {
-                    selectionState.states[i++] = instance.GetState();
+                    selectionState.states[i++] = instance.SaveToState();
                 }
 
                 Directory.CreateDirectory(saveFolder);
@@ -868,20 +980,20 @@ namespace MoveIt
 
         public void Import(string filename)
         {
-            _import(filename, false);
+            ImportImpl(filename, false);
         }
 
         public void Restore(string filename)
         {
-            _import(filename, true);
+            ImportImpl(filename, true);
         }
 
-        private void _import(string filename, bool restore)
+        private void ImportImpl(string filename, bool restore)
         {
             lock (ActionQueue.instance)
             {
                 StopCloning();
-                StopAligning();
+                StopTool();
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                 Selection selectionState;
@@ -934,11 +1046,11 @@ namespace MoveIt
 
                         if (restore)
                         {
-                            ActionQueue.instance.Do(); // For paste
+                            ActionQueue.instance.Do(); // For restore to position
                         }
                         else
                         {
-                            ToolState = ToolStates.Cloning; // For clone
+                            SetToolState(ToolStates.Cloning); // For clone
                         }
 
                         UIToolOptionPanel.RefreshCloneButton();
@@ -968,10 +1080,17 @@ namespace MoveIt
             }
         }
 
+        internal static Vector3 RaycastMouseLocation()
+        {
+            return RaycastMouseLocation(Camera.main.ScreenPointToRay(Input.mousePosition));
+        }
+
         internal static Vector3 RaycastMouseLocation(Ray mouseRay)
         {
-            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane);
-            input.m_ignoreTerrain = false;
+            RaycastInput input = new RaycastInput(mouseRay, Camera.main.farClipPlane)
+            {
+                m_ignoreTerrain = false
+            };
             RayCast(input, out RaycastOutput output);
 
             return output.m_hitPos;
@@ -1001,17 +1120,17 @@ namespace MoveIt
         {
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
+            HashSet<Bounds> originalList = outerList;
 
             int c = 0;
-            foreach (Bounds b in outerList)
-            {
-                b.Expand(128f);
-            }
 
             do
             {
                 foreach (Bounds outer in outerList)
                 {
+                    //Color32 color = GetRandomDebugColor();
+                    //AddDebugBox(outer, color);
+
                     bool merged = false;
 
                     float outerVolume = outer.size.x * outer.size.y * outer.size.z;
@@ -1059,6 +1178,12 @@ namespace MoveIt
             }
             while (true);
 
+            //foreach (Bounds b in innerList)
+            //{
+            //    b.Expand(4f);
+            //    AddDebugBox(b, new Color32(255, 0, 0, 200));
+            //}
+            //Debug.Log($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
             return innerList;
         }
 
@@ -1107,6 +1232,35 @@ namespace MoveIt
                 message = "No ghost nodes found, nothing has been changed.";
             }
             panel.SetMessage("Removing Ghost Nodes", message, false);
+        }
+
+        internal static byte RandomByte(byte min, byte max)
+        {
+            return (byte)Rand.Next(min, max);
+        }
+
+        internal void ProcessMirror(AlignMirrorAction action)
+        {
+            StartCoroutine(ProcessMirrorIterate(action));
+        }
+
+        internal IEnumerator<object> ProcessMirrorIterate(AlignMirrorAction action)
+        {
+            const uint MaxAttempts = 1000_000;
+
+            uint c = 0;
+            while (c < MaxAttempts && POProcessing > 0)
+            {
+                c++;
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            if (c == MaxAttempts)
+            {
+                throw new Exception($"Failed to mirror PO");
+            }
+
+            action.DoProcess();
         }
     }
 }

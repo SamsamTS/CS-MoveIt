@@ -1,0 +1,2 @@
+Font: Corbel, 22px, Bold & Italic
+Shadow: 0,2; Width: 2,2; Opacity: 220

@@ -17,11 +17,11 @@ namespace MoveIt
             Vector3 vector = mouseRay.origin + normalized * Camera.main.farClipPlane;
             Segment3 ray = new Segment3(origin, vector);
 
-            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-            PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
-            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-            TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
+            Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+            PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+            TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
 
             Vector3 location = RaycastMouseLocation(mouseRay);
 
@@ -39,8 +39,6 @@ namespace MoveIt
             bool selectTrees = true;
             bool selectProc = PO.Active;
 
-            bool repeatSearch = false;
-
             if (marqueeSelection)
             {
                 selectPicker = filterPicker;
@@ -54,12 +52,12 @@ namespace MoveIt
                 selectProc = PO.Active ? filterProcs : false;
             }
 
-            if (AlignMode == AlignModes.Group || AlignMode == AlignModes.Inplace)
+            if (MT_Tool == MT_Tools.Group || MT_Tool == MT_Tools.Inplace)
             {
                 selectNodes = false;
                 selectTrees = false;
             }
-            else if (AlignMode == AlignModes.Mirror)
+            else if (MT_Tool == MT_Tools.Mirror)
             {
                 selectBuilding = false;
                 selectProps = false;
@@ -72,13 +70,14 @@ namespace MoveIt
 
             float smallestDist = 640000f;
 
+            bool repeatSearch;
             do
             {
                 if (PO.Active && selectProc)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
-                        if (stepOver.isValidPO(obj.Id))
+                        if (!obj.isHidden() && stepOver.isValidPO(obj.Id))
                         {
                             bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
                             bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
@@ -296,23 +295,22 @@ namespace MoveIt
             }
             while (repeatSearch);
 
-            if (m_debugPanel != null) m_debugPanel.UpdatePanel(id);
-
             m_hoverInstance = id;
+            m_debugPanel?.UpdatePanel(id);
+            ActionQueue.instance.current?.OnHover();
         }
-
 
         private HashSet<Instance> GetMarqueeList(Ray mouseRay)
         {
             HashSet<Instance> list = new HashSet<Instance>();
 
-            Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-            PropInstance[] propBuffer = PropManager.instance.m_props.m_buffer;
-            NetNode[] nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-            NetSegment[] segmentBuffer = NetManager.instance.m_segments.m_buffer;
-            TreeInstance[] treeBuffer = TreeManager.instance.m_trees.m_buffer;
+            Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+            PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+            NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+            TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
 
-            m_selection.a = m_mouseStartPosition;
+            m_selection.a = m_clickPositionAbs;
             m_selection.c = RaycastMouseLocation(mouseRay);
 
             if (m_selection.a.x == m_selection.c.x && m_selection.a.z == m_selection.c.z)
@@ -340,12 +338,6 @@ namespace MoveIt
                     m_selection.d = m_selection.a + dotDown * down;
                 }
 
-                // Disables select-during-drag
-                //if (ToolState == ToolStates.DrawingSelection)
-                //{
-                //    return list;
-                //}
-
                 Vector3 min = m_selection.Min();
                 Vector3 max = m_selection.Max();
 
@@ -359,9 +351,9 @@ namespace MoveIt
 
                 if (PO.Active && filterProcs)
                 {
-                    foreach (IPO_Object obj in PO.Objects)
+                    foreach (PO_Object obj in PO.Objects)
                     {
-                        if (PointInRectangle(m_selection, obj.Position))
+                        if (!obj.isHidden() && PointInRectangle(m_selection, obj.Position))
                         {
                             id.NetLane = obj.Id;
                             list.Add(id);
@@ -536,7 +528,6 @@ namespace MoveIt
             return list;
         }
 
-
         public static ushort FindOwnerBuilding(ushort segment, float maxDistance)
         {
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
@@ -603,18 +594,22 @@ namespace MoveIt
             {
                 itemLayers |= ItemClass.Layer.WaterPipes;
             }
+            if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Fishing)
+            {
+                itemLayers |= ItemClass.Layer.FishingPaths;
+            }
+            else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
+            { // Removes Default assignment
+                itemLayers = ItemClass.Layer.MetroTunnels | ItemClass.Layer.BlimpPaths | ItemClass.Layer.FerryPaths | ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths | ItemClass.Layer.HelicopterPaths;
+            }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Traffic || InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
             {
                 itemLayers |= ItemClass.Layer.MetroTunnels;
             }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground)
-            {
-                itemLayers = ItemClass.Layer.MetroTunnels; // Removes Default assignment
+            { // Removes Default assignment
+                itemLayers = ItemClass.Layer.MetroTunnels; 
             }
-            //else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Transport)
-            //{
-            //    itemLayers |= ItemClass.Layer.ShipPaths | ItemClass.Layer.AirplanePaths | ItemClass.Layer.BlimpPaths;
-            //}
             else
             {
                 itemLayers |= ItemClass.Layer.Markers;
@@ -622,16 +617,6 @@ namespace MoveIt
 
             return itemLayers;
         }
-
-        //private bool IsDecal(PropInfo prop)
-        //{
-        //    if (prop != null && prop.m_material != null)
-        //    {
-        //        return (prop.m_material.shader == shaderBlend || prop.m_material.shader == shaderSolid);
-        //    }
-
-        //    return false;
-        //}
 
         private bool IsBuildingValid(ref Building building, ItemClass.Layer itemLayers)
         {

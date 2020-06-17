@@ -40,6 +40,10 @@ namespace MoveIt
         {
             "Highway", "Pedestrian Path", "Train Track", "Monorail Track", "CableCar Facility"
         };
+        static readonly string[] PillarNameExceptions = new string[]
+        {
+            "Rock", "Classic Grey", "Mossy Grey", "Dover White", "Sedona Salmon", "Mossy Salmon", "Mountain Brown", "Mossy Brown", "Arid Yellow", "Dark Black"
+        };
         static readonly Type[] PylonAITypes = new Type[]
         {
             typeof(PowerPoleAI)
@@ -48,7 +52,7 @@ namespace MoveIt
         public static Dictionary<string, NetworkFilter> NetworkFilters = new Dictionary<string, NetworkFilter>
         {
             { "Roads", new NetworkFilter(true, new List<Type> { typeof(RoadBaseAI) }, new List<string> { "Pedestrian Path", "Beautification Item" } ) },
-            { "Tracks", new NetworkFilter(true, new List<Type> { typeof(TrainTrackBaseAI), typeof(MonorailTrackAI) } ) },
+            { "Tracks", new NetworkFilter(true, new List<Type> { typeof(TrainTrackBaseAI), typeof(MonorailTrackAI), typeof(MetroTrackBaseAI) } ) },
             { "Paths", new NetworkFilter(true, new List<Type> { typeof(PedestrianPathAI), typeof(PedestrianTunnelAI), typeof(PedestrianBridgeAI), typeof(PedestrianWayAI) } ) },
             { "Fences", new NetworkFilter(true, new List<Type> { typeof(DecorationWallAI) } ) },
             { "Powerlines", new NetworkFilter(true, new List<Type> { typeof(PowerLineAI) } ) },
@@ -215,7 +219,7 @@ namespace MoveIt
                 //Select P&P on hover with Alt
                 if (MoveItTool.altSelectNodeBuildings)
                 {
-                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
+                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)) && !Array.Exists(PillarNameExceptions, s => info.name.Contains(s)))
                     {
                         if (Event.current.alt)
                         {
@@ -250,7 +254,7 @@ namespace MoveIt
             {
                 if (MoveItTool.altSelectNodeBuildings)
                 {
-                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)))
+                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)) && !Array.Exists(PillarNameExceptions, s => info.name.Contains(s)))
                     {
                         return false;
                     }
@@ -320,7 +324,7 @@ namespace MoveIt
 
         public static bool Filter(NetNode node)
         {
-            if (MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Group || MoveItTool.instance.AlignMode == MoveItTool.AlignModes.Inplace)
+            if (MoveItTool.MT_Tool == MoveItTool.MT_Tools.Group || MoveItTool.MT_Tool == MoveItTool.MT_Tools.Inplace)
             {
                 return false;
             }

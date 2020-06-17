@@ -30,33 +30,21 @@ namespace MoveIt
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState());
                 }
             }
         }
-
 
         public override void Do()
         {
             Vector3 PoR;
             Matrix4x4 matrix = default;
-            Bounds bounds = GetTotalBounds(true, true);
-            float angleDelta, firstValidAngle = 0;
+            Bounds bounds = GetTotalBounds();
+            float angleDelta;
             System.Random random = new System.Random();
             BuildingManager buildingManager = Singleton<BuildingManager>.instance;
 
-            foreach (InstanceState state in m_states)
-            {
-                if (state.instance.isValid)
-                {
-                    if (state.instance is MoveableBuilding || state.instance is MoveableProp || state.instance is MoveableProc)
-                    {
-                        firstValidAngle = state.angle;
-                        break;
-                    }
-                }
-            }
-            angleDelta = 0 - firstValidAngle + newAngle;
+            angleDelta = 0 - GetAngle() + newAngle;
             PoR = bounds.center;
 
             foreach (InstanceState state in m_states)
@@ -65,8 +53,6 @@ namespace MoveIt
                 {
                     if (state.instance is MoveableBuilding mb)
                     {
-                        //BuildingState bs = (BuildingState)state;
-
                         if (Mathf.Abs(Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(mb.position) - mb.position.y) > 0.01f)
                         {
                             mb.AddFixedHeightFlag(mb.id.Building);
@@ -116,6 +102,22 @@ namespace MoveIt
                         matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                         mp.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
                     }
+                    else if (state.instance is MoveableNode mn)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - mn.angle + newAngle;
+                            PoR = state.position;
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - mn.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                        }
+
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        mn.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
                     else if (state.instance is MoveableProc mpo)
                     {
                         if (this is AlignIndividualAction)
@@ -143,10 +145,31 @@ namespace MoveIt
                 }
             }
 
-            MoveItTool.instance.ToolState = MoveItTool.ToolStates.Default;
-            MoveItTool.instance.AlignMode = MoveItTool.AlignModes.Off;
-            MoveItTool.instance.AlignToolPhase = 0;
-            UIMoreTools.UpdateMoreTools();
+            // Move segments after nodes, for updated positions
+            foreach (InstanceState state in m_states)
+            {
+                if (state.instance.isValid)
+                {
+                    if (state.instance is MoveableSegment ms)
+                    {
+                        if (this is AlignIndividualAction)
+                        {
+                            angleDelta = 0 - ms.angle + newAngle;
+                            PoR = state.position;
+                        }
+                        else if (this is AlignRandomAction)
+                        {
+                            angleDelta = 0 - ms.angle + (float)(random.NextDouble() * Math.PI * 2);
+                            PoR = state.position;
+                        }
+
+                        matrix.SetTRS(PoR, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+                        ms.Transform(state, ref matrix, 0f, angleDelta, PoR, followTerrain);
+                    }
+                }
+            }
+
+            MoveItTool.SetToolState();
             UpdateArea(bounds);
             UpdateArea(GetTotalBounds(false));
         }
@@ -158,7 +181,7 @@ namespace MoveIt
 
             foreach (InstanceState state in m_states)
             {
-                state.instance.SetState(state);
+                state.instance.LoadFromState(state);
             }
 
             UpdateArea(bounds);
