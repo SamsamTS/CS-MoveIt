@@ -276,7 +276,6 @@ namespace MoveIt
                     Instance clone = item.Value;
                     ushort nodeID0 = nodeState.instance.id.NetNode;
                     ushort nodeID = clone.id.NetNode;
-                    Debug.Log($"cloning {nodeID0} to {nodeID}, data is {nodeState.NodeControllerData}");
                     MoveItTool.NodeController.PasteNode(nodeID, nodeState);
                 }
             }
