@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -222,6 +223,7 @@ namespace MoveIt
             m_clones = new HashSet<Instance>();
             m_origToCloneUpdate = new Dictionary<Instance, Instance>();
             m_nodeOrigToClone = new Dictionary<ushort, ushort>();
+            var stateToClone = new Dictionary<InstanceState, Instance>();
 
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
@@ -235,6 +237,7 @@ namespace MoveIt
                     if (clone != null)
                     {
                         m_clones.Add(clone);
+                        stateToClone.Add(state, clone);
                         m_origToCloneUpdate.Add(state.instance.id, clone.id);
                         m_nodeOrigToClone.Add(state.instance.id.NetNode, clone.id.NetNode);
                     }
@@ -253,14 +256,27 @@ namespace MoveIt
                         Debug.Log($"Failed to clone {state}");
                         continue;
                     }
-                    
+
+                    stateToClone.Add(state, clone);
                     m_clones.Add(clone);
                     m_origToCloneUpdate.Add(state.instance.id, clone.id);
-
+                    
                     if (state is SegmentState segmentState)
                     {
                         MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
                     }
+                }
+            }
+
+            // Clone NodeController after segments have been added.
+            foreach (var item in stateToClone)
+            {
+                if (item.Key is NodeState nodeState)
+                {
+                    Instance clone = item.Value;
+                    ushort nodeID0 = nodeState.instance.id.NetNode;
+                    ushort nodeID = clone.id.NetNode;
+                    MoveItTool.NodeController.PasteNode(nodeID, nodeState);
                 }
             }
 

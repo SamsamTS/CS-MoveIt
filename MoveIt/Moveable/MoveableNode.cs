@@ -16,6 +16,15 @@ namespace MoveIt
         [XmlElement("segmentsSave")]
         public SegmentSave[] segmentsSave = new SegmentSave[8];
 
+        [XmlIgnore]
+        public byte[] NodeControllerData;
+
+        public string NodeControllerData64
+        {
+            get => Convert.ToBase64String(NodeControllerData);
+            set => Convert.FromBase64String(value);
+        }
+
         [XmlElement("segmentsList")]
         public List<ushort> segmentsList = new List<ushort>();
 
@@ -98,6 +107,8 @@ namespace MoveIt
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
+            state.NodeControllerData = MoveItTool.NodeController.CopyNode(node);
+
             if (Pillar != null)
             {
                 state.pillarState = Pillar.SaveToState() as BuildingState;
@@ -144,6 +155,8 @@ namespace MoveIt
             {
                 nodeState.pillarState.instance.LoadFromState(nodeState.pillarState);
             }
+
+            MoveItTool.NodeController.PasteNode(node, nodeState);
         }
 
         public override Vector3 position
