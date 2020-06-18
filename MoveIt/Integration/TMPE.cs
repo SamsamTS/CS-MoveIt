@@ -112,19 +112,6 @@ namespace MoveIt
             mTransfer.Invoke(record, args);
         }
 
-        internal string Encode(object record)
-        {
-            byte[] bytes = mSerialize.Invoke(record, null) as byte[];
-            return Convert.ToBase64String(bytes);
-        }
-
-        internal object Decode(string data)
-        {
-            byte[] bytes = Convert.FromBase64String(data);
-            var args = new object[] { bytes };
-            return mDeserialize.Invoke(null, args) as byte[];
-        }
-
         internal static bool isModInstalled()
         {
             return PluginManager.instance.GetPluginsInfo().Any(mod => (

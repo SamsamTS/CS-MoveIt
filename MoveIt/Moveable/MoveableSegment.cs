@@ -38,6 +38,46 @@ namespace MoveIt
             }
         }
 
+        [XmlIgnore]
+        public object TMPE_SegmentRecord;
+
+        public string TMPE_SegmentRecordBase64
+        {
+            get => MoveItTool.TMPE.Encode(TMPE_SegmentRecord);
+            set => TMPE_SegmentRecord = MoveItTool.TMPE.Decode(value);
+        }
+
+        [XmlIgnore]
+        public object TMPE_SegmentStartRecord;
+
+        public string TMPE_SegmentStartRecordBase64
+        {
+            get => MoveItTool.TMPE.Encode(TMPE_SegmentStartRecord);
+            set => TMPE_SegmentStartRecord = MoveItTool.TMPE.Decode(value);
+        }
+
+        [XmlIgnore]
+        public object TMPE_SegmentEndRecord;
+
+        public string TMPE_SegmentEndRecordBase64
+        {
+            get => MoveItTool.TMPE.Encode(TMPE_SegmentEndRecord);
+            set => TMPE_SegmentEndRecord = MoveItTool.TMPE.Decode(value);
+        }
+
+        [XmlIgnore]
+        public List<uint> LaneIDs;
+
+        public string TMPE_SegmentEndRecordBase64
+        {
+            get
+            {
+
+                MoveItTool.TMPE.Encode(TMPE_SegmentEndRecord);
+            }
+            set => TMPE_SegmentEndRecord = MoveItTool.TMPE.Decode(value);
+        }
+
         public override void ReplaceInstance(Instance instance)
         {
             base.ReplaceInstance(instance);
@@ -94,6 +134,10 @@ namespace MoveIt
                 endDirection = segmentBuffer[segment].m_endDirection,
 
                 NS_Modifiers = MoveItTool.NS.GetSegmentModifiers(segment),
+
+                TMPE_SegmentRecord = MoveItTool.TMPE.CopySegment(segment),
+                TMPE_SegmentStartRecord = MoveItTool.TMPE.CopySegmentEnd(segment, startNode: true),
+                TMPE_SegmentEndRecord = MoveItTool.TMPE.CopySegmentEnd(segment, startNode: false),
             };
 
             state.startPosition = nodeBuffer[state.startNodeId].m_position;

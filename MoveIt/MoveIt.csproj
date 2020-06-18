@@ -48,6 +48,7 @@
     <Compile Include="Actions\ScaleAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
+    <Compile Include="EncodeUtil.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="GUI\UIMoreTools.cs" />
