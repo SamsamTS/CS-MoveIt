@@ -524,26 +524,26 @@ namespace MoveIt
                         Vector3 center = Action.GetCenter();
                         center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
                         RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, m_selectedColor, center, 1f, -1f, 1280f, false, true);
-                    }
 
-                    if (snapping && m_segmentGuide.m_startNode != 0 && m_segmentGuide.m_endNode != 0)
-                    {
-                        NetManager netManager = NetManager.instance;
-                        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
+                        if (snapping && m_segmentGuide.m_startNode != 0 && m_segmentGuide.m_endNode != 0)
+                        {
+                            NetManager netManager = NetManager.instance;
+                            NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
 
-                        Bezier3 bezier;
-                        bezier.a = nodeBuffer[m_segmentGuide.m_startNode].m_position;
-                        bezier.d = nodeBuffer[m_segmentGuide.m_endNode].m_position;
+                            Bezier3 bezier;
+                            bezier.a = nodeBuffer[m_segmentGuide.m_startNode].m_position;
+                            bezier.d = nodeBuffer[m_segmentGuide.m_endNode].m_position;
 
-                        bool smoothStart = ((nodeBuffer[m_segmentGuide.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-                        bool smoothEnd = ((nodeBuffer[m_segmentGuide.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                            bool smoothStart = ((nodeBuffer[m_segmentGuide.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                            bool smoothEnd = ((nodeBuffer[m_segmentGuide.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
 
-                        NetSegment.CalculateMiddlePoints(
-                            bezier.a, m_segmentGuide.m_startDirection,
-                            bezier.d, m_segmentGuide.m_endDirection,
-                            smoothStart, smoothEnd, out bezier.b, out bezier.c);
+                            NetSegment.CalculateMiddlePoints(
+                                bezier.a, m_segmentGuide.m_startDirection,
+                                bezier.d, m_segmentGuide.m_endDirection,
+                                smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                        RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, m_selectedColor, bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
+                            RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, m_selectedColor, bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
+                        }
                     }
                 }
             }
