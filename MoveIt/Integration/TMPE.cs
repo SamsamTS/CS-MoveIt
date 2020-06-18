@@ -1,5 +1,4 @@
 ﻿using ColossalFramework.Plugins;
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +10,16 @@ namespace MoveIt
 {
     internal class TMPE_Manager
     {
+        const string NAME = "TrafficManager";
+        const UInt64 ID1 = 1806963141;
+        const UInt64 ID2 = 1637663252;
+
         internal bool Enabled = false;
         internal readonly Assembly Assembly;
 
-        internal readonly Type tRecordable, tNodeRecord, tSegmentRecord, tSegmentEndRecord;
-        internal MethodInfo mRecord, mTransfer;
-        internal MethodInfo mRecord, mTransfer;
+        internal readonly Type tRecordable, tNodeRecord, tSegmentRecord, tSegmentEndRecord, tRecordUtil;
+        internal readonly MethodInfo mRecord, mTransfer, mSerialize, mDeserialize;
+        internal readonly ConstructorInfo mNewNodeRecord, mNewSegmentRecord, mNewSegmentEndRecord;
 
         internal TMPE_Manager()
         {
@@ -27,7 +30,7 @@ namespace MoveIt
                 Assembly = null;
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "TrafficManager")
+                    if (assembly.FullName.StartsWith(NAME))
                     {
                         Assembly = assembly;
                         break;
@@ -47,6 +50,31 @@ namespace MoveIt
 
                 tSegmentEndRecord = Assembly.GetType("TrafficManager.Util.Record.SegmentEndRecord")
                     ?? throw new Exception("Type TrafficManager.Util.Record.SegmentEndRecord not found (Failed [TMPE-F5])");
+
+                tRecordUtil = Assembly.GetType("TrafficManager.Util.Record.RecordUtil")
+                    ?? throw new Exception("Type TrafficManager.Util.Record.RecordUtil not found (Failed [TMPE-F6])");
+
+                mRecord = tRecordable.GetMethod("Record")
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Record() not found (Failed [TMPE-F1-10)");
+
+                mTransfer = tRecordable.GetMethod("Transfer")
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Transfer(map) not found (Failed [TMPE-F11])");
+
+                mSerialize = tRecordable.GetMethod("Serialize")
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Serialize() not found (Failed [TMPE-F12])");
+
+                mDeserialize = tRecordUtil.GetMethod("Deserialize")
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Deserialize(byte[]) not found (Failed [TMPE-F13])");
+
+                mNewNodeRecord = tNodeRecord.GetConstructor(new Type[] { typeof(ushort) })
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.NodeRecord..ctor(id) not found (Failed [TMPE-F20])");
+
+                mNewSegmentRecord = tSegmentRecord.GetConstructor(new Type[] { typeof(ushort) })
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.SegmentRecord..ctor(id) not found (Failed [TMPE-F21])");
+
+                mNewSegmentEndRecord = tSegmentEndRecord.GetConstructor(new Type[] { typeof(ushort), typeof(bool) })
+                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.SegmentEndRecord..ctor(id,startNode) not found (Failed [TMPE-F22])");
+
             }
             else
             {
@@ -54,102 +82,66 @@ namespace MoveIt
             }
         }
 
-
-        public void SetSegmentModifiers(ushort id, SegmentState state)
+        internal object CopyNode(ushort nodeId)
         {
-            if (!Enabled) return;
-
-            BindingFlags f = BindingFlags.Public | BindingFlags.Instance;
-            object modifiers = state.TMPE_Modifiers;
-            if (modifiers == null)
-            {
-                return;
-            }
-
-            object modDict = Activator.CreateInstance(tDictMods);
-            tDictMods.GetMethod("Add", f, null, new Type[] { typeof(NetInfo), tListMods }, null).Invoke(modDict, new[] { (NetInfo)state.Info.Prefab, modifiers });
-
-            tTMPEM.GetMethod("SetActiveModifiers", f, null, new Type[] { tDictMods }, null).Invoke(TMPEM, new[] { modDict });
-            tTMPEM.GetMethod("OnSegmentPlaced", f, null, new Type[] { typeof(ushort) }, null).Invoke(TMPEM, new object[] { id });
+            var args = new object[] { nodeId };
+            object record = mNewNodeRecord.Invoke(args);
+            mRecord.Invoke(record, null);
+            return record;
         }
 
-        public object GetSegmentModifiers(ushort id)
+        internal object CopySegment(ushort segmentId)
         {
-            if (!Enabled) return null;
-
-            object skin = _GetSegmentSkin(id);
-            if (skin == null)
-            {
-                return null;
-            }
-
-            return tTMPE.GetField("_modifiers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(skin);
+            var args = new object[] { segmentId };
+            object record = mNewSegmentRecord.Invoke(args);
+            mRecord.Invoke(record, null);
+            return record;
         }
 
-        private object _GetSegmentSkin(ushort id)
+        internal object CopySegmentEnd(ushort segmentId, bool startNode)
         {
-            if (!Enabled) return null;
+            var args = new object[] { segmentId, startNode };
+            object record = mNewSegmentRecord.Invoke(args);
+            mRecord.Invoke(record, null);
+            return record;
+        }
 
-            object[] SegmentSkinsArray = (object[])tTMPEM.GetField("SegmentSkins").GetValue(TMPEM);
-            return SegmentSkinsArray[id];
+        internal void Paste(object record, Dictionary<InstanceID,InstanceID> map)
+        {
+            var args = new object[] { map };
+            mTransfer.Invoke(record, args);
+        }
+
+        internal string Encode(object record)
+        {
+            byte[] bytes = mSerialize.Invoke(record, null) as byte[];
+            return Convert.ToBase64String(bytes);
+        }
+
+        internal object Decode(string data)
+        {
+            byte[] bytes = Convert.FromBase64String(data);
+            var args = new object[] { bytes };
+            return mDeserialize.Invoke(null, args) as byte[];
         }
 
         internal static bool isModInstalled()
         {
-            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
-                    mod.publishedFileID.AsUInt64 == 1758376843uL ||
-                    mod.name.Contains("NetworkSkins2") ||
-                    mod.name.Contains("1758376843")
-            ) && mod.isEnabled))
-            {
-                return false;
-            }
-
-            if (PluginManager.instance.GetPluginsInfo().Any(mod => 
-                    mod.publishedFileID.AsUInt64 == 543722850uL ||
-                    (mod.name.Contains("NetworkSkins") && !mod.name.Contains("NetworkSkins2")) ||
-                    mod.name.Contains("543722850")
-            ))
-            {
-                return false;
-            }
-
-            return true;
+            return PluginManager.instance.GetPluginsInfo().Any(mod => (
+                    mod.publishedFileID.AsUInt64 == ID1 ||
+                    mod.publishedFileID.AsUInt64 == ID2 ||
+                    mod.name.Contains(NAME)
+            ) && mod.isEnabled);
         }
 
         internal static string getVersionText()
         {
             if (isModInstalled())
             {
-                return "Network Skins 2 found, integration enabled!\n ";
+                return "Traffic manager found, integration enabled!\n ";
             }
 
-            return "Network Skins 2 not found, or TMPE1 and TMPE2 both subscribed, integration disabled.\n ";
-        }
-
-        public string EncodeModifiers(object obj)
-        {
-            if (!Enabled) return null;
-            if (obj == null) return null;
-
-            Type t = Assembly.GetType("NetworkSkins.Skins.Serialization.ModifierDataSerializer");
-
-            var bytes = (byte[])t.GetMethod("Serialize", BindingFlags.Public | BindingFlags.Static, null, new Type[] { tListMods }, null).Invoke(null, new[] { obj });
-            var base64 = Convert.ToBase64String(bytes);
-
-            return base64;
-        }
-
-        public object DecodeModifiers(string base64String)
-        {
-            if (!Enabled) return null;
-
-            Type t = Assembly.GetType("NetworkSkins.Skins.Serialization.ModifierDataSerializer");
-
-            var bytes = Convert.FromBase64String(base64String);
-            var modifiers = t.GetMethod("Deserialize", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(byte[]) }, null).Invoke(null, new[] { bytes });
-
-            return modifiers;
+            return "Traffic manager not found, integration disabled.\n ";
         }
     }
 }
