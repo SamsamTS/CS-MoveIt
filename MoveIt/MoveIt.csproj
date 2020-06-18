@@ -53,6 +53,7 @@
     <Compile Include="GUI\UIMoreTools.cs" />
     <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
+    <Compile Include="Integration\TMPE.cs" />
     <Compile Include="Integration\NodeController.cs" />
     <Compile Include="GUI\UIMoreToPanel.cs" />
     <Compile Include="Integration\PO_Object.cs" />
