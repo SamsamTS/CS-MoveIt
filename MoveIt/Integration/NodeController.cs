@@ -67,6 +67,17 @@ namespace MoveIt
             return mCopy.Invoke(null, new object[] {nodeID}) as byte[];
         }
 
+        internal string Encode64(byte[] data)
+        {
+            if (!Enabled || data == null || data.Length == 0) return null;
+            return Convert.ToBase64String(data);
+        }
+        internal byte[] Decode64(string base64Data)
+        {
+            if (!Enabled || base64Data == null || base64Data.Length == 0) return null;
+            return Convert.FromBase64String(base64Data);
+        }
+
         internal static bool isModInstalled()
         {
             return PluginManager.instance.GetPluginsInfo().Any( mod =>{

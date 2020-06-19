@@ -274,7 +274,7 @@ namespace MoveIt
                         {
                             var lane0 = new InstanceID { NetLane = segmentState.LaneIDs[i] };
                             var lane = new InstanceID { NetLane = clonedLaneIds[i] };
-                            Debug.Log($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
+                            // Debug.Log($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
                             InstanceID_origToClone.Add(lane0, lane);
                         }
                     }

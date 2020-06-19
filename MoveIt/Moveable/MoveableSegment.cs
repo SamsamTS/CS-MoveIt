@@ -47,8 +47,8 @@ namespace MoveIt
         [UsedImplicitly]
         public string TMPE_SegmentRecordBase64
         {
-            get => EncodeUtil.Encode64(TMPE_SegmentRecord);
-            set => TMPE_SegmentRecord = EncodeUtil.Decode64(value);
+            get => MoveItTool.TMPE.Encode64(TMPE_SegmentRecord);
+            set => TMPE_SegmentRecord = MoveItTool.TMPE.Decode64(value);
         }
 
         [XmlIgnore]
@@ -57,8 +57,8 @@ namespace MoveIt
         [UsedImplicitly]
         public string TMPE_SegmentStartRecordBase64
         {
-            get => EncodeUtil.Encode64(TMPE_SegmentStartRecord);
-            set => TMPE_SegmentStartRecord = EncodeUtil.Decode64(value);
+            get => MoveItTool.TMPE.Encode64(TMPE_SegmentStartRecord);
+            set => TMPE_SegmentStartRecord = MoveItTool.TMPE.Decode64(value);
         }
 
         [XmlIgnore]
@@ -67,8 +67,8 @@ namespace MoveIt
         [UsedImplicitly]
         public string TMPE_SegmentEndRecordBase64
         {
-            get => EncodeUtil.Encode64(TMPE_SegmentEndRecord);
-            set => TMPE_SegmentEndRecord = EncodeUtil.Decode64(value);
+            get => MoveItTool.TMPE.Encode64(TMPE_SegmentEndRecord);
+            set => TMPE_SegmentEndRecord = MoveItTool.TMPE.Decode64(value);
         }
 
         [XmlIgnore]

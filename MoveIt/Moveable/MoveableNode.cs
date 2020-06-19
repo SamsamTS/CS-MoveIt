@@ -21,8 +21,8 @@ namespace MoveIt
 
         public string NodeControllerData64
         {
-            get => NodeControllerData == null ? "" : Convert.ToBase64String(NodeControllerData);
-            set => Convert.FromBase64String(value);
+            get => MoveItTool.NodeController.Encode64(NodeControllerData);
+            set => NodeControllerData = MoveItTool.NodeController.Decode64(value);
         }
 
         [XmlIgnore]
@@ -30,8 +30,8 @@ namespace MoveIt
 
         public string TMPE_NodeRecordBase64
         {
-            get => EncodeUtil.Encode64(TMPE_NodeRecord);
-            set => TMPE_NodeRecord = EncodeUtil.Decode64(value);
+            get => MoveItTool.TMPE.Encode64(TMPE_NodeRecord);
+            set => TMPE_NodeRecord = MoveItTool.TMPE.Decode64(value);
         }
 
         [XmlElement("segmentsList")]

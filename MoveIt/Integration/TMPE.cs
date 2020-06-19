@@ -40,13 +40,9 @@ namespace MoveIt
 
                 if (Assembly == null) throw new Exception("Assembly not found (Failed [TMPE-F1])");
 
-                Type tMod = Assembly.GetType("TrafficManager.TrafficManagerMod")
-                    ?? throw new Exception("Type TrafficManager.TrafficManagerMod not found (Failed [TMPE-F0])");
-
-                FieldInfo fVersion = tMod.GetField("ModVersion", BindingFlags.Public | BindingFlags.Static)
-                    ?? throw new Exception("Type TrafficManagerMod.ModVersion not found (Failed [TMPE-F1])");
-
-                Version = (Version)fVersion.GetValue(null);
+                Version = Assembly.GetName().Version;
+                if (Version < MinVersion)
+                    return;
 
                 tRecordable = Assembly.GetType("TrafficManager.Util.Record.IRecordable")
                     ?? throw new Exception("Type TrafficManager.Util.Record.IRecordable not found (Failed [TMPE-F2])");
@@ -111,10 +107,23 @@ namespace MoveIt
 
         internal void Paste(object record, Dictionary<InstanceID,InstanceID> map)
         {
-            if (record == null)
+            if (Version < MinVersion || record == null)
                 return;
             var args = new object[] { map };
             mTransfer.Invoke(record, args);
+        }
+
+        internal string Encode64(object record)
+        {
+            if (Version < MinVersion || record == null)
+                return null;
+            return EncodeUtil.Encode64(record);
+        }
+        internal object Decode64(string base64Data)
+        {
+            if (Version < MinVersion || base64Data == null || base64Data=="")
+                return null;
+            return EncodeUtil.Decode64(base64Data);
         }
 
         internal static bool isModInstalled()

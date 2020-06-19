@@ -42,7 +42,7 @@ namespace MoveIt
         internal static string Encode64(object obj)
         {
             if (obj == null)
-                return "";
+                return null;
             var bytes = Serialize(obj);
             return Convert.ToBase64String(bytes);
         }
