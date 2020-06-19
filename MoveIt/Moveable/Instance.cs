@@ -122,6 +122,7 @@ namespace MoveIt
         protected static Building[] buildingBuffer;
         protected static NetSegment[] segmentBuffer;
         protected static NetNode[] nodeBuffer;
+        protected static NetLane[] laneBuffer = NetManager.instance.m_lanes.m_buffer;
 
         public List<Instance> subInstances = new List<Instance>();
 
