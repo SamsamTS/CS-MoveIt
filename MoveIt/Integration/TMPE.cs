@@ -14,8 +14,10 @@ namespace MoveIt
         const string NAME = "TrafficManager";
         const UInt64 ID1 = 1806963141;
         const UInt64 ID2 = 1637663252;
+        internal static readonly Version MinVersion = new Version(11, 5, 1, 0);
+        
+        internal readonly Version Version;
 
-        internal bool Enabled = false;
         internal readonly Assembly Assembly;
 
         internal readonly Type tRecordable, tNodeRecord, tSegmentRecord, tSegmentEndRecord;
@@ -26,8 +28,6 @@ namespace MoveIt
         {
             if (isModInstalled())
             {
-                Enabled = true;
-
                 Assembly = null;
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
@@ -39,6 +39,14 @@ namespace MoveIt
                 }
 
                 if (Assembly == null) throw new Exception("Assembly not found (Failed [TMPE-F1])");
+
+                Type tMod = Assembly.GetType("TrafficManager.TrafficManagerMod")
+                    ?? throw new Exception("Type TrafficManager.TrafficManagerMod not found (Failed [TMPE-F0])");
+
+                FieldInfo fVersion = tMod.GetField("ModVersion", BindingFlags.Public | BindingFlags.Static)
+                    ?? throw new Exception("Type TrafficManagerMod.ModVersion not found (Failed [TMPE-F1])");
+
+                Version = (Version)fVersion.GetValue(null);
 
                 tRecordable = Assembly.GetType("TrafficManager.Util.Record.IRecordable")
                     ?? throw new Exception("Type TrafficManager.Util.Record.IRecordable not found (Failed [TMPE-F2])");
@@ -70,12 +78,13 @@ namespace MoveIt
             }
             else
             {
-                Enabled = false;
+                Version = new Version(0,0);
             }
         }
 
         internal object CopyNode(ushort nodeId)
         {
+            if (Version < MinVersion) return null;
             var args = new object[] { nodeId };
             object record = mNewNodeRecord.Invoke(args);
             mRecord.Invoke(record, null);
@@ -84,6 +93,7 @@ namespace MoveIt
 
         internal object CopySegment(ushort segmentId)
         {
+            if (Version < MinVersion) return null;
             var args = new object[] { segmentId };
             object record = mNewSegmentRecord.Invoke(args);
             mRecord.Invoke(record, null);
@@ -92,8 +102,8 @@ namespace MoveIt
 
         internal object CopySegmentEnd(ushort segmentId, bool startNode)
         {
+            if (Version < MinVersion) return null;
             object[] args = new object[] { segmentId, startNode };
-            //UnityEngine.Debug.Log($"invoking {mNewSegmentEndRecord} with parameters {args[0]}, {args[1]} args.len={args.Length}");
             object record = mNewSegmentEndRecord.Invoke(args);
             mRecord.Invoke(record, null);
             return record;
@@ -101,6 +111,8 @@ namespace MoveIt
 
         internal void Paste(object record, Dictionary<InstanceID,InstanceID> map)
         {
+            if (record == null)
+                return;
             var args = new object[] { map };
             mTransfer.Invoke(record, args);
         }

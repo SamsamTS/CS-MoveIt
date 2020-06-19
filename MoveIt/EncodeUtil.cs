@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ColossalFramework;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -32,12 +33,16 @@ namespace MoveIt
 
         internal static object Decode64(string base64Data)
         {
+            if (base64Data == null || base64Data == "")
+                return null;
             byte[] bytes = Convert.FromBase64String(base64Data);
             return Deserialize(bytes);
         }
 
         internal static string Encode64(object obj)
         {
+            if (obj == null)
+                return "";
             var bytes = Serialize(obj);
             return Convert.ToBase64String(bytes);
         }

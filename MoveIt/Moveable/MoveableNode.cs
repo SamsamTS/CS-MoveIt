@@ -21,7 +21,7 @@ namespace MoveIt
 
         public string NodeControllerData64
         {
-            get => Convert.ToBase64String(NodeControllerData);
+            get => NodeControllerData == null ? "" : Convert.ToBase64String(NodeControllerData);
             set => Convert.FromBase64String(value);
         }
 
