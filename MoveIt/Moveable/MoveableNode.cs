@@ -25,6 +25,15 @@ namespace MoveIt
             set => Convert.FromBase64String(value);
         }
 
+        [XmlIgnore]
+        public object TMPE_NodeRecord;
+
+        public string TMPE_NodeRecordBase64
+        {
+            get => EncodeUtil.Encode64(TMPE_NodeRecord);
+            set => TMPE_NodeRecord = EncodeUtil.Decode64(value);
+        }
+
         [XmlElement("segmentsList")]
         public List<ushort> segmentsList = new List<ushort>();
 
@@ -108,6 +117,8 @@ namespace MoveIt
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
             state.NodeControllerData = MoveItTool.NodeController.CopyNode(node);
+
+            state.TMPE_NodeRecord = MoveItTool.TMPE.CopyNode(node);
 
             if (Pillar != null)
             {

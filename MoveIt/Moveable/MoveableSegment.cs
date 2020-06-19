@@ -1,7 +1,9 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -26,6 +28,7 @@ namespace MoveIt
         [XmlIgnore]
         public object NS_Modifiers;
 
+        [UsedImplicitly]
         public string NS_ModifiersBase64
         {
             get
@@ -41,41 +44,41 @@ namespace MoveIt
         [XmlIgnore]
         public object TMPE_SegmentRecord;
 
+        [UsedImplicitly]
         public string TMPE_SegmentRecordBase64
         {
-            get => MoveItTool.TMPE.Encode(TMPE_SegmentRecord);
-            set => TMPE_SegmentRecord = MoveItTool.TMPE.Decode(value);
+            get => EncodeUtil.Encode64(TMPE_SegmentRecord);
+            set => TMPE_SegmentRecord = EncodeUtil.Decode64(value);
         }
 
         [XmlIgnore]
         public object TMPE_SegmentStartRecord;
 
+        [UsedImplicitly]
         public string TMPE_SegmentStartRecordBase64
         {
-            get => MoveItTool.TMPE.Encode(TMPE_SegmentStartRecord);
-            set => TMPE_SegmentStartRecord = MoveItTool.TMPE.Decode(value);
+            get => EncodeUtil.Encode64(TMPE_SegmentStartRecord);
+            set => TMPE_SegmentStartRecord = EncodeUtil.Decode64(value);
         }
 
         [XmlIgnore]
         public object TMPE_SegmentEndRecord;
 
+        [UsedImplicitly]
         public string TMPE_SegmentEndRecordBase64
         {
-            get => MoveItTool.TMPE.Encode(TMPE_SegmentEndRecord);
-            set => TMPE_SegmentEndRecord = MoveItTool.TMPE.Decode(value);
+            get => EncodeUtil.Encode64(TMPE_SegmentEndRecord);
+            set => TMPE_SegmentEndRecord = EncodeUtil.Decode64(value);
         }
 
         [XmlIgnore]
         public List<uint> LaneIDs;
 
-        public string TMPE_SegmentEndRecordBase64
+        [UsedImplicitly]
+        public string LaneIDsBase64
         {
-            get
-            {
-
-                MoveItTool.TMPE.Encode(TMPE_SegmentEndRecord);
-            }
-            set => TMPE_SegmentEndRecord = MoveItTool.TMPE.Decode(value);
+            get => EncodeUtil.Encode64(LaneIDs);
+            set => LaneIDs = EncodeUtil.Decode64(value) as List<uint>;
         }
 
         public override void ReplaceInstance(Instance instance)
@@ -138,6 +141,8 @@ namespace MoveIt
                 TMPE_SegmentRecord = MoveItTool.TMPE.CopySegment(segment),
                 TMPE_SegmentStartRecord = MoveItTool.TMPE.CopySegmentEnd(segment, startNode: true),
                 TMPE_SegmentEndRecord = MoveItTool.TMPE.CopySegmentEnd(segment, startNode: false),
+                
+                LaneIDs = GetLaneIds(segment),
             };
 
             state.startPosition = nodeBuffer[state.startNodeId].m_position;
@@ -149,6 +154,26 @@ namespace MoveIt
             state.invert = ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert);
 
             return state;
+        }
+
+        public static List<uint> GetLaneIds(ushort segmentId)
+        {
+            int idx = 0;
+            if (segmentBuffer[segmentId].Info == null)
+            {
+                Debug.LogError("null info: potentially cuased by missing assets");
+                return null;
+            }
+
+            var lanes = segmentBuffer[segmentId].Info.m_lanes;
+            List<uint> ret = new List<uint>(lanes.Length);
+            uint laneId = segmentBuffer[segmentId].m_lanes;
+            for (int laneIndex = 0; laneIndex < lanes.Length && laneId !=0; ++laneIndex)
+            {
+                ret.Add(laneId);
+                laneId = laneBuffer[laneId].m_nextLane;
+            }
+            return ret; 
         }
 
         public override void LoadFromState(InstanceState state)

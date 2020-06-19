@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace MoveIt
 {
@@ -44,6 +45,32 @@ namespace MoveIt
         {
             Debug.LogError(modPrefix + "Intercepted exception (not game breaking):");
             Debug.LogException(e);
+        }
+
+        public static void AssertEq(object lhs, object rhs, string m)
+        {
+
+            if (!lhs.Equals(rhs))
+            {
+#if DEBUG
+                throw new AssertionException($"expected {lhs} == {rhs}", m);
+#else
+                Debug.LogError($"Error - Assertion failed: expected {lhs} == {rhs}\n" + m);
+#endif
+            }
+
+        }
+
+        public static void AssertNeq(object lhs, object rhs, string m)
+        {
+            if (lhs.Equals(rhs))
+            {
+#if DEBUG
+                throw new AssertionException($"expected {lhs} != {rhs}", m);
+#else
+                Debug.LogError($"Error - Assertion failed: expected {lhs} != {rhs}\n" + m);
+#endif
+            }
         }
 
         private static string m_lastWarning;

@@ -1,6 +1,7 @@
 ﻿using ColossalFramework.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -17,8 +18,8 @@ namespace MoveIt
         internal bool Enabled = false;
         internal readonly Assembly Assembly;
 
-        internal readonly Type tRecordable, tNodeRecord, tSegmentRecord, tSegmentEndRecord, tRecordUtil;
-        internal readonly MethodInfo mRecord, mTransfer, mSerialize, mDeserialize;
+        internal readonly Type tRecordable, tNodeRecord, tSegmentRecord, tSegmentEndRecord;
+        internal readonly MethodInfo mRecord, mTransfer;
         internal readonly ConstructorInfo mNewNodeRecord, mNewSegmentRecord, mNewSegmentEndRecord;
 
         internal TMPE_Manager()
@@ -51,20 +52,11 @@ namespace MoveIt
                 tSegmentEndRecord = Assembly.GetType("TrafficManager.Util.Record.SegmentEndRecord")
                     ?? throw new Exception("Type TrafficManager.Util.Record.SegmentEndRecord not found (Failed [TMPE-F5])");
 
-                tRecordUtil = Assembly.GetType("TrafficManager.Util.Record.RecordUtil")
-                    ?? throw new Exception("Type TrafficManager.Util.Record.RecordUtil not found (Failed [TMPE-F6])");
-
                 mRecord = tRecordable.GetMethod("Record")
                     ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Record() not found (Failed [TMPE-F1-10)");
 
                 mTransfer = tRecordable.GetMethod("Transfer")
                     ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Transfer(map) not found (Failed [TMPE-F11])");
-
-                mSerialize = tRecordable.GetMethod("Serialize")
-                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Serialize() not found (Failed [TMPE-F12])");
-
-                mDeserialize = tRecordUtil.GetMethod("Deserialize")
-                    ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.Deserialize(byte[]) not found (Failed [TMPE-F13])");
 
                 mNewNodeRecord = tNodeRecord.GetConstructor(new Type[] { typeof(ushort) })
                     ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.NodeRecord..ctor(id) not found (Failed [TMPE-F20])");
@@ -100,8 +92,9 @@ namespace MoveIt
 
         internal object CopySegmentEnd(ushort segmentId, bool startNode)
         {
-            var args = new object[] { segmentId, startNode };
-            object record = mNewSegmentRecord.Invoke(args);
+            object[] args = new object[] { segmentId, startNode };
+            //UnityEngine.Debug.Log($"invoking {mNewSegmentEndRecord} with parameters {args[0]}, {args[1]} args.len={args.Length}");
+            object record = mNewSegmentEndRecord.Invoke(args);
             mRecord.Invoke(record, null);
             return record;
         }

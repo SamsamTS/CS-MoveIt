@@ -1,4 +1,5 @@
-﻿using ICities;
+﻿using ColossalFramework;
+using ICities;
 using UnityEngine;
 
 namespace MoveIt
@@ -11,7 +12,6 @@ namespace MoveIt
 
         public override void OnLevelLoaded(LoadMode mode)
         {
-            base.OnLevelLoaded(mode);
             loadMode = mode;
             InstallMod();
         }
@@ -19,7 +19,6 @@ namespace MoveIt
         public override void OnLevelUnloading()
         {
             UninstallMod();
-            base.OnLevelUnloading();
         }
 
         public static void InstallMod()
@@ -65,6 +64,9 @@ namespace MoveIt
 
         public static void UninstallMod()
         {
+            if (ToolsModifierControl.toolController.CurrentTool is MoveItTool)
+                ToolsModifierControl.SetTool<DefaultTool>();
+
             MoveItTool.m_debugPanel = null;
             Object.Destroy(DebugGameObject);
             Object.Destroy(MoveToToolObject);
