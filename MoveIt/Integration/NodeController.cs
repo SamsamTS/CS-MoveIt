@@ -1,19 +1,13 @@
 ﻿using ColossalFramework.Plugins;
-using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
-// Network Skins wrapper, supports 2.0
 
 namespace MoveIt
 {
     internal class NodeController_Manager
     {
         internal bool Enabled = false;
-        //internal static readonly string[] VersionNames = { "2" };
         internal readonly Type tNodeManager;
         internal readonly MethodInfo mCopy, mPaste;
         internal readonly Assembly Assembly;
@@ -36,7 +30,7 @@ namespace MoveIt
                         break;
                     }
                 }
-                if (Assembly == null) throw new Exception("Assembly not found (Failed [NS-F1])");
+                if (Assembly == null) throw new Exception("Assembly not found (Failed [NC-F1])");
 
                 tNodeManager = Assembly.GetType("NodeController.NodeManager")
                     ?? throw new Exception("Type NodeManager not found (Failed [NC-F2])");

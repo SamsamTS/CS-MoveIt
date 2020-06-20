@@ -169,6 +169,10 @@ namespace MoveIt
                 ncLabel.name = "ncLabel";
                 ncLabel.text = NodeController_Manager.getVersionText();
 
+                UILabel tmpeLabel = panel.AddUIComponent<UILabel>();
+                tmpeLabel.name = "tmpeLabel";
+                tmpeLabel.text = TMPE_Manager.getVersionText();
+
                 group = helper.AddGroup("Procedural Objects");
                 panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
 
