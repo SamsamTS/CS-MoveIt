@@ -5,8 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-// TMPE wrapper, supports 2.0
-
 namespace MoveIt
 {
     internal class TMPE_Manager
@@ -16,7 +14,7 @@ namespace MoveIt
         const UInt64 ID2 = 1637663252;
         internal static readonly Version MinVersion = new Version(11, 5, 1, 0);
         
-        internal readonly Version Version;
+        internal readonly bool Enabled;
 
         internal readonly Assembly Assembly;
 
@@ -24,25 +22,23 @@ namespace MoveIt
         internal readonly MethodInfo mRecord, mTransfer;
         internal readonly ConstructorInfo mNewNodeRecord, mNewSegmentRecord, mNewSegmentEndRecord;
 
+        
+        private static Assembly GetAssermly()
+        {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.FullName.StartsWith(NAME))
+
+                    return assembly;
+            }
+            return null;
+        }
         internal TMPE_Manager()
         {
             if (isModInstalled())
             {
-                Assembly = null;
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    if (assembly.FullName.StartsWith(NAME))
-                    {
-                        Assembly = assembly;
-                        break;
-                    }
-                }
-
+                Assembly = GetAssermly();
                 if (Assembly == null) throw new Exception("Assembly not found (Failed [TMPE-F1])");
-
-                Version = Assembly.GetName().Version;
-                if (Version < MinVersion)
-                    return;
 
                 tRecordable = Assembly.GetType("TrafficManager.Util.Record.IRecordable")
                     ?? throw new Exception("Type TrafficManager.Util.Record.IRecordable not found (Failed [TMPE-F2])");
@@ -71,16 +67,17 @@ namespace MoveIt
                 mNewSegmentEndRecord = tSegmentEndRecord.GetConstructor(new Type[] { typeof(ushort), typeof(bool) })
                     ?? throw new Exception("Method TrafficManager.Util.Record.IRecordable.SegmentEndRecord..ctor(id,startNode) not found (Failed [TMPE-F22])");
 
+                Enabled = true;
             }
             else
             {
-                Version = new Version(0,0);
+                Enabled = false;
             }
         }
 
         internal object CopyNode(ushort nodeId)
         {
-            if (Version < MinVersion) return null;
+            if (!Enabled) return null;
             var args = new object[] { nodeId };
             object record = mNewNodeRecord.Invoke(args);
             mRecord.Invoke(record, null);
@@ -89,7 +86,7 @@ namespace MoveIt
 
         internal object CopySegment(ushort segmentId)
         {
-            if (Version < MinVersion) return null;
+            if (!Enabled) return null;
             var args = new object[] { segmentId };
             object record = mNewSegmentRecord.Invoke(args);
             mRecord.Invoke(record, null);
@@ -98,7 +95,7 @@ namespace MoveIt
 
         internal object CopySegmentEnd(ushort segmentId, bool startNode)
         {
-            if (Version < MinVersion) return null;
+            if (!Enabled) return null;
             object[] args = new object[] { segmentId, startNode };
             object record = mNewSegmentEndRecord.Invoke(args);
             mRecord.Invoke(record, null);
@@ -107,27 +104,28 @@ namespace MoveIt
 
         internal void Paste(object record, Dictionary<InstanceID,InstanceID> map)
         {
-            if (Version < MinVersion || record == null)
-                return;
+            if (!Enabled || record == null) return;
             var args = new object[] { map };
             mTransfer.Invoke(record, args);
         }
 
         internal string Encode64(object record)
         {
-            if (Version < MinVersion || record == null)
-                return null;
+            if (!Enabled || record == null) return null;
             return EncodeUtil.Encode64(record);
         }
         internal object Decode64(string base64Data)
         {
-            if (Version < MinVersion || base64Data == null || base64Data=="")
+            if (!Enabled || base64Data == null || base64Data=="")
                 return null;
             return EncodeUtil.Decode64(base64Data);
         }
 
         internal static bool isModInstalled()
         {
+            var assembly = GetAssermly();
+            if (assembly == null || assembly.GetName().Version < MinVersion)
+                return false;
             return PluginManager.instance.GetPluginsInfo().Any(mod => (
                     mod.publishedFileID.AsUInt64 == ID1 ||
                     mod.publishedFileID.AsUInt64 == ID2 ||
