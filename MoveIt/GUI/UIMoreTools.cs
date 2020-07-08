@@ -153,6 +153,7 @@ namespace MoveIt
         public static void MoreToolsClicked(string name, bool simAlt = false, bool simShift = false)
         {
             MoveItTool.instance.DeactivateTool();
+            MoveItTool.m_isLowSensitivity = false;
 
             switch (name)
             {
