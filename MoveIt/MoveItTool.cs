@@ -9,11 +9,14 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
+using MoveItIntegration;
 
 namespace MoveIt
 {
     public partial class MoveItTool : ToolBase
     {
+        static List<IMoveItIntegration> Integrations { get; } = IntegrationHelper.GetIntegrations();
+
         public enum ToolAction
         {
             None,
