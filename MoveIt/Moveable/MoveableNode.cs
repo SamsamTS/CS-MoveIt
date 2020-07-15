@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
+using MoveItIntegration;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -120,6 +121,11 @@ namespace MoveIt
 
             state.TMPE_NodeRecord = MoveItTool.TMPE.CopyNode(node);
 
+            foreach(var intergation in MoveItTool.Integrations)
+            {
+                state.IntegrationData[intergation] = intergation.CopyNode(node);
+            }
+
             if (Pillar != null)
             {
                 state.pillarState = Pillar.SaveToState() as BuildingState;
@@ -168,6 +174,11 @@ namespace MoveIt
             }
 
             MoveItTool.NodeController.PasteNode(node, nodeState);
+
+            //foreach(var data in nodeState.IntegrationData)
+            //{
+            //    data.Key.PasteNode(node, data.Value);
+            //}
         }
 
         public override Vector3 position

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using ColossalFramework.PlatformServices;
 
 namespace MoveIt
 {
@@ -280,6 +281,27 @@ namespace MoveIt
                     }
                 }
             }
+
+
+            foreach(var item in stateToClone)
+            {
+                switch (item.Key)
+                {
+                    case NodeState nodeState:
+                        foreach (var data in nodeState.IntegrationData)
+                        {
+                            data.Key.PasteNode(item.Value.id.NetNode, data.Value, InstanceID_origToClone);
+                        }
+                        break;
+                    case SegmentState segmentState:
+                        foreach (var data in segmentState.IntegrationData)
+                        {
+                            data.Key.PasteSegment(item.Value.id.NetSegment, data.Value, InstanceID_origToClone);
+                        }
+                        break;
+                }
+            }
+
 
             // Clone NodeController after segments have been added.
             foreach (var item in stateToClone)

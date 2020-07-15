@@ -15,7 +15,7 @@ namespace MoveIt
 {
     public partial class MoveItTool : ToolBase
     {
-        static List<IMoveItIntegration> Integrations { get; } = IntegrationHelper.GetIntegrations();
+        public static List<IMoveItIntegration> Integrations { get; } = IntegrationHelper.GetIntegrations();
 
         public enum ToolAction
         {

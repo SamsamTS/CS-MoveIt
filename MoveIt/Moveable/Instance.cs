@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoveItIntegration;
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -95,6 +96,9 @@ namespace MoveIt
                 DebugUtils.Warning($"Mismatching instances info:\n{Info.Prefab.name} <{Info.GetHashCode()}>\n{newInstance.Info.Prefab.name} <{newInstance.Info.GetHashCode()}>\n");
             }
         }
+
+        [XmlIgnore]
+        public Dictionary<IMoveItIntegration, object> IntegrationData = new Dictionary<IMoveItIntegration, object>();
     }
 
     public interface IInfo

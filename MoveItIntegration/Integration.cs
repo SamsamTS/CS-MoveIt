@@ -20,7 +20,7 @@ namespace MoveItIntegration
         void PasteSegment(ushort segmentId, object record, Dictionary<InstanceID, InstanceID> map);
 
         object CopyNode(ushort nodeID);
-        void PasteNode(ushort nodeID, object record);
+        void PasteNode(ushort nodeID, object record, Dictionary<InstanceID, InstanceID> map);
     }
 
     public static class IntegrationHelper
