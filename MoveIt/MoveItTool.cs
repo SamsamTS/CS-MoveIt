@@ -1043,7 +1043,19 @@ namespace MoveIt
                         DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
 
                         UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n" + string.Join("\n", missingPrefabs.ToArray()), false);
+                    }
 
+                    // Set props to fixed-height if in asset editor
+                    if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
+                    {
+                        foreach (InstanceState state in selectionState.states)
+                        {
+                            if (state is PropState ps)
+                            {
+                                ps.fixedHeight = true;
+                                ps.position.y = ps.position.y - ps.terrainHeight + 60f; // 60 is editor's terrain height
+                            }
+                        }
                     }
 
                     CloneAction action = new CloneAction(selectionState.states, selectionState.center);

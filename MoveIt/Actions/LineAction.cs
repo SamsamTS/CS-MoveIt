@@ -148,9 +148,9 @@ namespace MoveIt
             }
         }
 
-        private double GetAngleBetweenPoints(Vector3 a, Vector3 b)
-        {
-            return (Math.Atan2(b.x - a.x, b.z - a.z) + (Mathf.PI * 2)) % (Mathf.PI * 2);
-        }
+        //private double GetAngleBetweenPoints(Vector3 a, Vector3 b)
+        //{
+        //    return (Math.Atan2(b.x - a.x, b.z - a.z) + (Mathf.PI * 2)) % (Mathf.PI * 2);
+        //}
     }
 }

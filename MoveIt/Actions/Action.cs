@@ -38,6 +38,10 @@ namespace MoveIt
 
         public static float GetAngle()
         {
+            if (selection.Count() == 0)
+            {
+                return 0f;
+            }
             List<float> angles = new List<float>();
             foreach (Instance i in selection.Where(i => i is MoveableBuilding || i is MoveableProc || i is MoveableProp))
             {
@@ -45,17 +49,56 @@ namespace MoveIt
             }
             if (angles.Count() == 0)
             {
-                return 0f;
+                GetExtremeObjects(out Instance a, out Instance b);
+                return (Mathf.PI / 2) - (float)GetAngleBetweenPoints(a.position, b.position);
             }
 
-            return MeanAngle(angles.ToArray());
+            return ModeAngle(angles.ToArray());
         }
 
-        private static float MeanAngle(float[] angles)
+        protected static double GetAngleBetweenPoints(Vector3 a, Vector3 b)
         {
-            var x = angles.Sum(a => Mathf.Cos(a * Mathf.PI / 180)) / angles.Length;
-            var y = angles.Sum(a => Mathf.Sin(a * Mathf.PI / 180)) / angles.Length;
-            return (Mathf.Atan2(y, x) * 180 / Mathf.PI) * Mathf.Deg2Rad;
+            return (Math.Atan2(b.x - a.x, b.z - a.z) + (Mathf.PI * 2)) % (Mathf.PI * 2);
+        }
+
+        //private static float MeanAngle(float[] angles)
+        //{
+        //    var x = angles.Sum(a => Mathf.Cos(a * Mathf.PI / 180)) / angles.Length;
+        //    var y = angles.Sum(a => Mathf.Sin(a * Mathf.PI / 180)) / angles.Length;
+        //    return (Mathf.Atan2(y, x) * 180 / Mathf.PI) * Mathf.Deg2Rad;
+        //}
+
+        private static float ModeAngle(float[] angles)
+        {
+            Dictionary<float, uint> angleCount = new Dictionary<float, uint>();
+
+            foreach (float a in angles)
+            {
+                if (!angleCount.ContainsKey(a))
+                {
+                    angleCount[a] = 1;
+                }
+                else
+                {
+                    angleCount[a]++;
+                }
+            }
+
+            float angle = 0f;
+            uint max = 0;
+            foreach (KeyValuePair<float, uint> pair in angleCount)
+            {
+                //Debug.Log($"AAA {pair.Key}: {pair.Value}");
+                if (pair.Value > max)
+                {
+                    angle = pair.Key;
+                    max = pair.Value;
+                }
+            }
+
+            //Debug.Log($"Angle: {angle} ({angle * Mathf.Deg2Rad})");
+
+            return angle * Mathf.Deg2Rad;
         }
 
         public static void ClearPOFromSelection()
