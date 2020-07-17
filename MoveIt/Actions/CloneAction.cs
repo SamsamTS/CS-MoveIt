@@ -265,7 +265,7 @@ namespace MoveIt
                     stateToClone.Add(state, clone);
                     InstanceID_origToClone.Add(state.instance.id, clone.id);
                     m_origToCloneUpdate.Add(state.instance.id, clone.id);
-
+;
                     if (state is SegmentState segmentState)
                     {
                         MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
@@ -282,8 +282,7 @@ namespace MoveIt
                 }
             }
 
-
-            foreach(var item in stateToClone)
+            foreach (var item in stateToClone)
             {
                 switch (item.Key)
                 {
@@ -301,7 +300,6 @@ namespace MoveIt
                         break;
                 }
             }
-
 
             // Clone NodeController after segments have been added.
             foreach (var item in stateToClone)

@@ -38,7 +38,7 @@ namespace MoveIt
             get { return "Move things"; }
         }
 
-        public const string version = "2.8.5";
+        public const string version = "2.9.0";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -136,6 +136,15 @@ namespace MoveIt
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", MoveItTool.CleanGhostNodes);
                 button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
+
+                group.AddSpace(10);
+
+                button = (UIButton)group.AddButton("Reset Button Position", () =>
+                {
+                    UIMoveItButton.savedX.value = -1000;
+                    UIMoveItButton.savedY.value = -1000;
+                    MoveItTool.instance?.m_button?.ResetPosition();
+                });
 
                 group.AddSpace(20);
 

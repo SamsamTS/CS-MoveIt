@@ -12,6 +12,20 @@ namespace MoveIt
 
         private UIChangesWindow m_changesWindow;
 
+        private UIComponent BulldoserButton
+        {
+            get
+            {
+                UIComponent bulldoserButton = GetUIView().FindUIComponent<UIComponent>("MarqueeBulldozer");
+
+                if (bulldoserButton == null)
+                {
+                    bulldoserButton = GetUIView().FindUIComponent<UIComponent>("BulldozerButton");
+                }
+                return bulldoserButton;
+            }
+        }
+
         public override void Start()
         {
             LoadResources();
@@ -19,15 +33,8 @@ namespace MoveIt
             m_changesWindow = GetUIView().AddUIComponent(typeof(UIChangesWindow)) as UIChangesWindow;
             m_changesWindow.isVisible = false;
 
-            UIComponent bulldoserButton = GetUIView().FindUIComponent<UIComponent>("MarqueeBulldozer");
-
-            if (bulldoserButton == null)
-            {
-                bulldoserButton = GetUIView().FindUIComponent<UIComponent>("BulldozerButton");
-            }
-
             name = "MoveIt";
-            tooltip = "Move It! " + ModInfo.version;
+            tooltip = "Move It " + ModInfo.version;
 
             normalFgSprite = "MoveIt";
             hoveredFgSprite = "MoveIt_hover";
@@ -38,12 +45,17 @@ namespace MoveIt
 
             if (savedX.value == -1000)
             {
-                absolutePosition = new Vector2(bulldoserButton.absolutePosition.x - width - 5, bulldoserButton.parent.absolutePosition.y);
+                absolutePosition = new Vector2(BulldoserButton.absolutePosition.x - width - 5, BulldoserButton.parent.absolutePosition.y);
             }
             else
             {
                 absolutePosition = new Vector2(savedX.value, savedY.value);
             }
+        }
+
+        public void ResetPosition()
+        {
+            absolutePosition = new Vector2(BulldoserButton.absolutePosition.x - width - 5, BulldoserButton.parent.absolutePosition.y);
         }
 
         protected override void OnClick(UIMouseEventParameter p)

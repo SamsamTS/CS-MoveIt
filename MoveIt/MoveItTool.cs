@@ -123,9 +123,9 @@ namespace MoveIt
             }
         }
 
-        private const float XFACTOR = 0.25f; //63671875f;
+        private const float XFACTOR = 0.25f;
         private const float YFACTOR = 0.015625f; // 1/64
-        private const float ZFACTOR = 0.25f; //63671875f;
+        private const float ZFACTOR = 0.25f;
 
         public static ToolStates ToolState { get; set; } = ToolStates.Default;
         private static MT_Tools m_toolsMode = MT_Tools.Off;
@@ -208,7 +208,7 @@ namespace MoveIt
             }
         }
 
-        private UIMoveItButton m_button;
+        internal UIMoveItButton m_button;
         private UIComponent m_pauseMenu;
 
         private Quad3 m_selection; // Marquee selection box
