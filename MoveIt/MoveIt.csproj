@@ -164,8 +164,6 @@
     <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
     <MangedDLLPath>$(CSPath)\Cities_Data\Managed</MangedDLLPath>
     <MangedDLLPath Condition="!  Exists ('$(MangedDLLPath)')">..\dependencies</MangedDLLPath>
-    <UnityPath>$(MSBuildExtensionsPath64)\..\Unity\</UnityPath>
-    <UnityPath Condition="! Exists ('$(UnityPath)')">..\Unity\</UnityPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
