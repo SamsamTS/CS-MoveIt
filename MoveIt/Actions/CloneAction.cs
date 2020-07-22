@@ -269,14 +269,18 @@ namespace MoveIt
                     if (state is SegmentState segmentState)
                     {
                         MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
-                        var clonedLaneIds = MoveableSegment.GetLaneIds(clone.id.NetSegment);
-                        DebugUtils.AssertEq(clonedLaneIds.Count, segmentState.LaneIDs.Count, "clonedLaneIds.Count, segmentState.LaneIDs.Count");
-                        for (int i=0;i< clonedLaneIds.Count; ++i)
+                        if(segmentState.LaneIDs!=null)
                         {
-                            var lane0 = new InstanceID { NetLane = segmentState.LaneIDs[i] };
-                            var lane = new InstanceID { NetLane = clonedLaneIds[i] };
-                            // Debug.Log($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
-                            InstanceID_origToClone.Add(lane0, lane);
+                            // old version does not store lane ids
+                            var clonedLaneIds = MoveableSegment.GetLaneIds(clone.id.NetSegment);
+                            DebugUtils.AssertEq(clonedLaneIds.Count, segmentState.LaneIDs.Count, "clonedLaneIds.Count, segmentState.LaneIDs.Count");
+                            for (int i=0;i< clonedLaneIds.Count; ++i)
+                            {
+                                var lane0 = new InstanceID { NetLane = segmentState.LaneIDs[i] };
+                                var lane = new InstanceID { NetLane = clonedLaneIds[i] };
+                                // Debug.Log($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
+                                InstanceID_origToClone.Add(lane0, lane);
+                            }
                         }
                     }
                 }
