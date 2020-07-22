@@ -81,7 +81,7 @@ namespace MoveIt
             set
             {
                 if (id.IsEmpty) return;
-                PropManager.instance.m_props.m_buffer[id.Prop].Angle = value;
+                PropManager.instance.m_props.m_buffer[id.Prop].Angle = (value + Mathf.PI * 2) % Mathf.PI * 2;
             }
         }
 

@@ -205,10 +205,7 @@ namespace MoveIt
 
         public override float angle
         {
-            get
-            {
-                return 0f;
-            }
+            get { return 0f; }
             set { }
         }
 

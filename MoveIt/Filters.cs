@@ -42,7 +42,7 @@ namespace MoveIt
         };
         static readonly string[] PillarNameExceptions = new string[]
         {
-            "Rock", "Classic Grey", "Mossy Grey", "Dover White", "Sedona Salmon", "Mossy Salmon", "Mountain Brown", "Mossy Brown", "Arid Yellow", "Dark Black"
+            "Rock", "Classic Grey", "Classic Mossy", "Mossy Grey", "Dover White", "Sedona Salmon", "Mossy Salmon", "Mountain Brown", "Mossy Brown", "Arid Yellow", "Dark Black"
         };
         static readonly Type[] PylonAITypes = new Type[]
         {

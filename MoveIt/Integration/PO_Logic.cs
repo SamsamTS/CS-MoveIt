@@ -88,12 +88,25 @@ namespace MoveIt
 
         public IEnumerator<object> RetrieveClone(MoveableProc original, Vector3 position, float angle, Action action)
         {
-            const uint MaxAttempts = 1000_000;
+            const uint MaxAttempts = 100_000;
             CloneAction ca = (CloneAction)action;
+
+            if (!(original.m_procObj is PO_Object))
+            {
+                Debug.Log($"PO Cloning failed: object not found");
+                MoveItTool.POProcessing--;
+                yield break;
+            }
 
             Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
             object[] paramList = new[] { original.m_procObj.GetProceduralObject(), null, null };
-            MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null );
+            MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null);
+            if (retrieve == null)
+            {
+                Debug.Log($"PO Cloning failed: retrieve not found");
+                MoveItTool.POProcessing--;
+                yield break;
+            }
 
             uint c = 0;
             while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
@@ -115,30 +128,37 @@ namespace MoveIt
                 throw new Exception($"Failed to clone object #{original.m_procObj.Id}! [PO-F4]");
             }
 
-            PO_Object clone = new PO_Object(paramList[1])
+            try
             {
-                POColor = original.m_procObj.POColor
-            };
+                PO_Object clone = new PO_Object(paramList[1])
+                {
+                    POColor = original.m_procObj.POColor
+                };
 
-            InstanceID cloneID = default;
-            cloneID.NetLane = clone.Id;
-            MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
+                InstanceID cloneID = default;
+                cloneID.NetLane = clone.Id;
+                MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
 
-            MoveableProc cloneInstance = new MoveableProc(cloneID)
+                MoveableProc cloneInstance = new MoveableProc(cloneID)
+                {
+                    position = position,
+                    angle = angle
+                };
+
+                Action.selection.Add(cloneInstance);
+                ca.m_clones.Add(cloneInstance);
+                ca.m_origToClone.Add(original, cloneInstance);
+
+                MoveItTool.SetToolState();
+                MoveItTool.instance.ProcessSensitivityMode(false);
+                Debug.Log($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
+            }
+            catch (Exception e)
             {
-                position = position,
-                angle = angle
-            };
-
-            Action.selection.Add(cloneInstance);
-            ca.m_clones.Add(cloneInstance);
-            ca.m_origToClone.Add(original, cloneInstance);
-
-            MoveItTool.SetToolState();
-            MoveItTool.instance.ProcessSensitivityMode(false);
+                Debug.Log($"Exception when cloning PO:\n{e}");
+            }
 
             yield return new WaitForSeconds(0.25f);
-            Debug.Log($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
             MoveItTool.POProcessing--;
         }
 

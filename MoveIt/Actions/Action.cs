@@ -50,13 +50,13 @@ namespace MoveIt
             if (angles.Count() == 0)
             {
                 GetExtremeObjects(out Instance a, out Instance b);
-                return (Mathf.PI / 2) - (float)GetAngleBetweenPoints(a.position, b.position);
+                return (Mathf.PI / 2) - (float)GetAngleBetweenPointsRads(a.position, b.position);
             }
 
             return ModeAngle(angles.ToArray());
         }
 
-        protected static double GetAngleBetweenPoints(Vector3 a, Vector3 b)
+        protected static double GetAngleBetweenPointsRads(Vector3 a, Vector3 b)
         {
             return (Math.Atan2(b.x - a.x, b.z - a.z) + (Mathf.PI * 2)) % (Mathf.PI * 2);
         }

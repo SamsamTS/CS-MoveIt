@@ -107,6 +107,7 @@ namespace MoveIt
         internal static NodeController_Manager NodeController = null;
         internal static TMPE_Manager TMPE = null;
         private static int _POProcessing = 0;
+        private static float POProcessingStart = 0;
         internal static int POProcessing
         {
             get
@@ -116,6 +117,7 @@ namespace MoveIt
             set
             {
                 _POProcessing = value;
+                POProcessingStart = Time.time;
                 if (m_debugPanel != null)
                 {
                     m_debugPanel.UpdatePanel();
@@ -277,7 +279,7 @@ namespace MoveIt
             {
                 NS = new NS_Manager();
             }
-            if(NodeController == null)
+            if (NodeController == null)
             {
                 NodeController = new NodeController_Manager();
             }
@@ -322,6 +324,10 @@ namespace MoveIt
             if (PO.Active)
             {
                 PO.ToolEnabled();
+                if (Time.time > POProcessingStart + 300)
+                { // If it's been more than 5 mins since PO last started copying, give up and reset
+                    POProcessing = 0;
+                }
                 ActionQueue.instance.Push(new TransformAction());
             }
 

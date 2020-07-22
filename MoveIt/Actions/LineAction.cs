@@ -64,7 +64,7 @@ namespace MoveIt
             Matrix4x4 matrix4x = default;
 
             GetExtremeObjects(out keyInstance[0], out keyInstance[1]);
-            double angleToB = GetAngleBetweenPoints(PointA.position, PointB.position);
+            double angleToB = GetAngleBetweenPointsRads(PointA.position, PointB.position);
 
             foreach (InstanceState state in m_states)
             {
@@ -75,7 +75,7 @@ namespace MoveIt
                     continue;
                 }
 
-                double angle = (GetAngleBetweenPoints(PointA.position, inst.position) - angleToB + (Mathf.PI * 2)) % (Mathf.PI * 2);
+                double angle = (GetAngleBetweenPointsRads(PointA.position, inst.position) - angleToB + (Mathf.PI * 2)) % (Mathf.PI * 2);
                 float distance = Mathf.Cos((float)angle) * (inst.position - PointA.position).magnitude;
                 distances.Add(state, distance);
             }

@@ -79,7 +79,6 @@ namespace MoveIt
             }
         }
 
-
         protected override void OnMouseMove(UIMouseEventParameter p)
         {
             if (p.buttons.IsFlagSet(UIMouseButton.Right))

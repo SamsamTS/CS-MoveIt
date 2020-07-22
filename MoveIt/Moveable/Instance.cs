@@ -137,7 +137,7 @@ namespace MoveIt
             buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
             segmentBuffer = NetManager.instance.m_segments.m_buffer;
             nodeBuffer = NetManager.instance.m_nodes.m_buffer;
-    }
+        }
 
         public InstanceID id
         {

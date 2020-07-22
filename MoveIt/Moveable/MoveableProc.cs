@@ -72,7 +72,7 @@ namespace MoveIt
             set
             {
                 if (!isValid) return;
-                m_procObj.Angle = value;
+                m_procObj.Angle = (value + Mathf.PI * 2) % Mathf.PI * 2;
             }
         }
 

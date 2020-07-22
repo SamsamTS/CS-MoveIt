@@ -64,7 +64,7 @@ namespace MoveIt
             try
             {
                 UIHelperBase group = helper.AddGroup(Name);
-                UIPanel panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                UIPanel panel = ((UIHelper)group).self as UIPanel;
 
                 UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close Toolbox menu", MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
@@ -117,21 +117,21 @@ namespace MoveIt
 
                 group.AddSpace(10);
                 group = helper.AddGroup("General Shortcuts");
-                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
                 group.AddSpace(10);
                 group = helper.AddGroup("Toolbox Shortcuts");
-                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingToolbox>();
 
                 group.AddSpace(10);
                 group = helper.AddGroup("Extra Options");
-                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
                 UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", MoveItTool.CleanGhostNodes);
@@ -183,7 +183,7 @@ namespace MoveIt
                 tmpeLabel.text = TMPE_Manager.getVersionText();
 
                 group = helper.AddGroup("Procedural Objects");
-                panel = ((UIPanel)((UIHelper)group).self) as UIPanel;
+                panel = ((UIHelper)group).self as UIPanel;
 
                 UILabel poLabel = panel.AddUIComponent<UILabel>();
                 poLabel.name = "poLabel";
