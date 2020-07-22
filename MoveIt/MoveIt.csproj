@@ -220,12 +220,12 @@ del "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName
 xcopy /y "$(TargetPath)" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
 xcopy /y "$(TargetDir)MoveItIntegration.dll" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
 
-set UNITY_PATH="$(MSBuildExtensionsPath64)\..\Unity"
-IF not EXIST "%25UNITY_PATH%25 " set UNITY_PATH="$(SolutionDir)Unity"
-set MONODIR="%25UNITY_PATH%25\Editor\Data\MonoBleedingEdge\"
-echo MONODIR is "MONODIR%25"
+set "UNITY_PATH=$(MSBuildExtensionsPath64)\..\Unity"
+IF not EXIST "%25UNITY_PATH%25 " set "UNITY_PATH=$(SolutionDir)Unity"
+set "MONODIR=%25UNITY_PATH%25\Editor\Data\MonoBleedingEdge\"
+echo MONODIR is %25MONODIR%25
 "%25MONODIR%25\bin\mono.exe" "%25MONODIR%25\lib\mono\4.5\pdb2mdb.exe" "$(TargetPath)"
-xcopy /y "$(TargetPath).mdb" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
+IF EXIST "$(TargetPath).mdb" xcopy /y "$(TargetPath).mdb" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
