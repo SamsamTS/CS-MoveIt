@@ -156,7 +156,7 @@ namespace MoveIt
             set
             {
                 if (id.IsEmpty) return;
-                buildingBuffer[id.Building].m_angle = (value + Mathf.PI * 2) % Mathf.PI * 2;
+                buildingBuffer[id.Building].m_angle = (value + Mathf.PI * 2) % (Mathf.PI * 2);
             }
         }
 
@@ -736,7 +736,7 @@ namespace MoveIt
             //}
 
             data.m_position = position;
-            data.m_angle = (angle + Mathf.PI * 2) % Mathf.PI * 2;
+            data.m_angle = (angle + Mathf.PI * 2) % (Mathf.PI * 2);
 
             AddToGrid(building, ref data);
             data.CalculateBuilding(building);

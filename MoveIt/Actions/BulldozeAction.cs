@@ -286,78 +286,85 @@ namespace MoveIt
             // Recreate everything except nodes and segments
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.id.Type == InstanceType.NetNode) continue;
-                if (state.instance.id.Type == InstanceType.NetSegment) continue;
-                if (state is ProcState) continue;
-
-                Instance clone = state.instance.Clone(state, clonedNodes);
-                toReplace.Add(state.instance, clone);
-
-                if (state.instance.id.Type == InstanceType.Prop)
+                try
                 {
-                    PropManager.instance.m_props.m_buffer[clone.id.Prop].FixedHeight = ((PropState)state).fixedHeight;
-                }
-                else if (state.instance.id.Type == InstanceType.Building)
-                {
-                    // Add attached nodes to the clonedNode list so other segments reconnect
-                    BuildingState buildingState = state as BuildingState;
-                    List<ushort> origNodeIds = new List<ushort>();
+                    if (state.instance.id.Type == InstanceType.NetNode) continue;
+                    if (state.instance.id.Type == InstanceType.NetSegment) continue;
+                    if (state is ProcState) continue;
 
-                    MoveableBuilding cb = clone as MoveableBuilding;
-                    ushort cloneNodeId = ((Building)cb.data).m_netNode;
+                    Instance clone = state.instance.Clone(state, clonedNodes);
+                    toReplace.Add(state.instance, clone);
 
-                    if (reset)
+                    if (state.instance.id.Type == InstanceType.Prop)
                     {
-                        ushort cloneId = cb.id.Building;
-
-                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.BurnedDown;
-                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
-                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
-                        buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
-                        Thread.Sleep(50);
+                        PropManager.instance.m_props.m_buffer[clone.id.Prop].FixedHeight = ((PropState)state).fixedHeight;
                     }
-
-                    if (cloneNodeId != 0)
+                    else if (state.instance.id.Type == InstanceType.Building)
                     {
-                        int c = 0;
-                        foreach (InstanceState i in buildingState.subStates)
+                        // Add attached nodes to the clonedNode list so other segments reconnect
+                        BuildingState buildingState = state as BuildingState;
+                        List<ushort> origNodeIds = new List<ushort>();
+
+                        MoveableBuilding cb = clone as MoveableBuilding;
+                        ushort cloneNodeId = ((Building)cb.data).m_netNode;
+
+                        if (reset)
                         {
-                            if (i is NodeState ns)
-                            {
-                                InstanceID instanceID = default;
-                                instanceID.RawData = ns.id;
-                                origNodeIds.Insert(c++, instanceID.NetNode);
-                            }
+                            ushort cloneId = cb.id.Building;
+
+                            buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.BurnedDown;
+                            buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
+                            buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
+                            buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
+                            Thread.Sleep(50);
                         }
 
-                        c = 0;
-                        while (cloneNodeId != 0)
+                        if (cloneNodeId != 0)
                         {
-                            ushort origNodeId = origNodeIds[c];
-
-                            NetNode clonedAttachedNode = Singleton<NetManager>.instance.m_nodes.m_buffer[cloneNodeId];
-                            if (clonedAttachedNode.Info.GetAI() is TransportLineAI)
+                            int c = 0;
+                            foreach (InstanceState i in buildingState.subStates)
                             {
+                                if (i is NodeState ns)
+                                {
+                                    InstanceID instanceID = default;
+                                    instanceID.RawData = ns.id;
+                                    origNodeIds.Insert(c++, instanceID.NetNode);
+                                }
+                            }
+
+                            c = 0;
+                            while (cloneNodeId != 0)
+                            {
+                                ushort origNodeId = origNodeIds[c];
+
+                                NetNode clonedAttachedNode = Singleton<NetManager>.instance.m_nodes.m_buffer[cloneNodeId];
+                                if (clonedAttachedNode.Info.GetAI() is TransportLineAI)
+                                {
+                                    cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
+                                    continue;
+                                }
+
+                                if (clonedNodes.ContainsKey(origNodeId))
+                                {
+                                    Debug.Log($"Node #{origNodeId} is already in clone list!");
+                                }
+
+                                clonedNodes.Add(origNodeId, cloneNodeId);
+
                                 cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
-                                continue;
-                            }
 
-                            if (clonedNodes.ContainsKey(origNodeId))
-                            {
-                                Debug.Log($"Node #{origNodeId} is already in clone list!");
-                            }
-
-                            clonedNodes.Add(origNodeId, cloneNodeId);
-
-                            cloneNodeId = clonedAttachedNode.m_nextBuildingNode;
-
-                            if (++c > 32768)
-                            {
-                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
-                                break;
+                                if (++c > 32768)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
+                                    break;
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"Undo Bulldoze failed!\n{e}");
                 }
             }
 

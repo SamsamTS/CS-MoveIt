@@ -42,6 +42,11 @@ namespace MoveIt
             {
                 return 0f;
             }
+            else if (selection.Count() == 1)
+            {
+                foreach (Instance i in selection)
+                    return i.angle;
+            }
             List<float> angles = new List<float>();
             foreach (Instance i in selection.Where(i => i is MoveableBuilding || i is MoveableProc || i is MoveableProp))
             {
