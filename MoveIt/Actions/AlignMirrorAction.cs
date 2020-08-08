@@ -49,7 +49,7 @@ namespace MoveIt
                         throw new NullReferenceException($"Original for cloned object not found.");
                     }
 
-                    float faceDelta = getMirrorFacingDelta(state.angle, mirrorPivot, mirrorAngle);
+                    float faceDelta = getMirrorFacingDelta(state.angle, mirrorAngle);
                     float posDelta = getMirrorPositionDelta(state.position, mirrorPivot, mirrorAngle);
 
                     matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -63,7 +63,7 @@ namespace MoveIt
             UpdateArea(GetTotalBounds(false), !fast);
         }
 
-        public static float getMirrorFacingDelta(float startAngle, Vector3 mirrorOrigin, float mirrorAngle)
+        public static float getMirrorFacingDelta(float startAngle, float mirrorAngle)
         {
             return (startAngle - ((startAngle - mirrorAngle) * 2) - startAngle) % ((float)Math.PI * 2);
         }

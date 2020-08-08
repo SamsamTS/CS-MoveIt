@@ -121,9 +121,9 @@ namespace MoveIt
 
             state.TMPE_NodeRecord = MoveItTool.TMPE.CopyNode(node);
 
-            foreach(var intergation in MoveItTool.Integrations)
+            foreach(var integration in MoveItTool.Integrations)
             {
-                state.IntegrationData[intergation] = intergation.CopyNode(node);
+                state.IntegrationData[integration] = integration.CopyNode(node);
             }
 
             if (Pillar != null)

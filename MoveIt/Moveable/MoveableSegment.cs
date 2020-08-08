@@ -145,6 +145,11 @@ namespace MoveIt
                 LaneIDs = GetLaneIds(segment),
             };
 
+            foreach (var integration in MoveItTool.Integrations)
+            {
+                state.IntegrationData[integration] = integration.CopySegment(segment);
+            }
+
             state.startPosition = nodeBuffer[state.startNodeId].m_position;
             state.endPosition = nodeBuffer[state.endNodeId].m_position;
 

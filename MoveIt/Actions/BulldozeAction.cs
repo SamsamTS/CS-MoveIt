@@ -274,12 +274,19 @@ namespace MoveIt
             // Recreate nodes
             foreach (InstanceState state in m_states)
             {
-                if (state.instance.id.Type == InstanceType.NetNode)
+                try
                 {
-                    Instance clone = state.instance.Clone(state, null);
-                    toReplace.Add(state.instance, clone);
-                    clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
-                    ActionQueue.instance.UpdateNodeIdInStateHistory(state.instance.id.NetNode, clone.id.NetNode);
+                    if (state.instance.id.Type == InstanceType.NetNode)
+                    {
+                        Instance clone = state.instance.Clone(state, null);
+                        toReplace.Add(state.instance, clone);
+                        clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
+                        ActionQueue.instance.UpdateNodeIdInStateHistory(state.instance.id.NetNode, clone.id.NetNode);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
                 }
             }
 
@@ -364,40 +371,47 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Debug.Log($"Undo Bulldoze failed!\n{e}");
+                    Debug.Log($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
                 }
             }
 
             // Recreate segments
             foreach (InstanceState state in m_states)
             {
-                if (state is SegmentState segmentState)
+                try
                 {
-                    if (!clonedNodes.ContainsKey(segmentState.startNodeId))
+                    if (state is SegmentState segmentState)
                     {
-                        InstanceID instanceID = InstanceID.Empty;
-                        instanceID.NetNode = segmentState.startNodeId;
+                        if (!clonedNodes.ContainsKey(segmentState.startNodeId))
+                        {
+                            InstanceID instanceID = InstanceID.Empty;
+                            instanceID.NetNode = segmentState.startNodeId;
 
-                        // Don't clone if node is missing
-                        if (!((Instance)instanceID).isValid) continue;
+                            // Don't clone if node is missing
+                            if (!((Instance)instanceID).isValid) continue;
 
-                        clonedNodes.Add(segmentState.startNodeId, segmentState.startNodeId);
+                            clonedNodes.Add(segmentState.startNodeId, segmentState.startNodeId);
+                        }
+
+                        if (!clonedNodes.ContainsKey(segmentState.endNodeId))
+                        {
+                            InstanceID instanceID = InstanceID.Empty;
+                            instanceID.NetNode = segmentState.endNodeId;
+
+                            // Don't clone if node is missing
+                            if (!((Instance)instanceID).isValid) continue;
+
+                            clonedNodes.Add(segmentState.endNodeId, segmentState.endNodeId);
+                        }
+
+                        Instance clone = state.instance.Clone(state, clonedNodes);
+                        toReplace.Add(state.instance, clone);
+                        MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
                     }
-
-                    if (!clonedNodes.ContainsKey(segmentState.endNodeId))
-                    {
-                        InstanceID instanceID = InstanceID.Empty;
-                        instanceID.NetNode = segmentState.endNodeId;
-
-                        // Don't clone if node is missing
-                        if (!((Instance)instanceID).isValid) continue;
-
-                        clonedNodes.Add(segmentState.endNodeId, segmentState.endNodeId);
-                    }
-
-                    Instance clone = state.instance.Clone(state, clonedNodes);
-                    toReplace.Add(state.instance, clone);
-                    MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
                 }
             }
 

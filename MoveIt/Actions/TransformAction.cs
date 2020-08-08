@@ -12,6 +12,13 @@ namespace MoveIt
         internal Vector3 Original, Position;
         internal float AngleOriginal, Angle;
         internal bool AngleActive, HeightActive;
+
+        public override void Undo()
+        {
+            MoveItTool.instance.DeactivateTool();
+            
+            base.Undo();
+        }
     }
 
     public abstract class BaseTransformAction : Action
@@ -112,7 +119,7 @@ namespace MoveIt
             bool full = !(MoveItTool.fastMove != Event.current.shift);
             if (!full)
             {
-                full = selection.Count > MoveItTool.Fastmove_Max ? true : false;
+                full = selection.Count > MoveItTool.Fastmove_Max;
             }
             UpdateArea(originalBounds, full);
             Bounds fullbounds = GetTotalBounds(false);

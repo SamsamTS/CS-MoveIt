@@ -505,7 +505,7 @@ namespace MoveIt
                     }
                     else if (Action.selection.Contains(m_hoverInstance))
                     {
-                        if(Event.current.shift)
+                        if (Event.current.shift)
                         {
                             color = m_removeColor;
                         }

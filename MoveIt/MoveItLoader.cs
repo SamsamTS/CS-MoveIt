@@ -1,5 +1,4 @@
-﻿using ColossalFramework;
-using ICities;
+﻿using ICities;
 using UnityEngine;
 
 namespace MoveIt
@@ -76,6 +75,7 @@ namespace MoveIt
             Action.selection.Clear();
             Filters.Picker = null;
             MoveItTool.PO = null;
+            Object.Destroy(MoveItTool.instance.m_button);
 
             if (MoveItTool.instance != null)
             {
