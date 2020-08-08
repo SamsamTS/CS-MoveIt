@@ -1,8 +1,11 @@
 ﻿using ColossalFramework;
+using ColossalFramework.Globalization;
 using ColossalFramework.IO;
 using ColossalFramework.UI;
 using ICities;
+using MoveIt.Localization;
 using System;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,8 +38,10 @@ namespace MoveIt
 
         public string Description
         {
-            get { return "Move things"; }
+            get { return Str.mod_description; }
         }
+
+        internal static CultureInfo Culture => new CultureInfo(SingletonLite<LocaleManager>.instance.language == "zh" ? "zh-cn" : SingletonLite<LocaleManager>.instance.language);
 
         public const string version = "2.9.0";
 
@@ -63,10 +68,14 @@ namespace MoveIt
         {
             try
             {
+                LocaleManager.eventLocaleChanged -= MoveItLoader.LocaleChanged;
+                MoveItLoader.LocaleChanged();
+                LocaleManager.eventLocaleChanged += MoveItLoader.LocaleChanged;
+
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIHelper)group).self as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close Toolbox menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox(Str.options_AutoCloseToolbox, MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)
