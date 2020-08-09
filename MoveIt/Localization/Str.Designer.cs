@@ -97,6 +97,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move It.
+        /// </summary>
+        internal static string baseUI_MoveItButton {
+            get {
+                return ResourceManager.GetString("baseUI_MoveItButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Single Selection.
         /// </summary>
         internal static string baseUI_Single_Tooltip {
@@ -309,6 +318,286 @@ namespace MoveIt.Localization {
         internal static string options_AutoCloseToolbox {
             get {
                 return ResourceManager.GetString("options_AutoCloseToolbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Angle.
+        /// </summary>
+        internal static string setpos_A_Tooltip {
+            get {
+                return ResourceManager.GetString("setpos_A_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go.
+        /// </summary>
+        internal static string setpos_Go {
+            get {
+                return ResourceManager.GetString("setpos_Go", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Height.
+        /// </summary>
+        internal static string setpos_H_Tooltip {
+            get {
+                return ResourceManager.GetString("setpos_H_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Position.
+        /// </summary>
+        internal static string setpos_Title {
+            get {
+                return ResourceManager.GetString("setpos_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert To PO.
+        /// </summary>
+        internal static string toolbox_ConvertToPO {
+            get {
+                return ResourceManager.GetString("toolbox_ConvertToPO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Selection.
+        /// </summary>
+        internal static string toolbox_ExportSelection {
+            get {
+                return ResourceManager.GetString("toolbox_ExportSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Height Tools.
+        /// </summary>
+        internal static string toolbox_HeightTools_Tooltip {
+            get {
+                return ResourceManager.GetString("toolbox_HeightTools_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Selection.
+        /// </summary>
+        internal static string toolbox_ImportSelection {
+            get {
+                return ResourceManager.GetString("toolbox_ImportSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Up Objects.
+        /// </summary>
+        internal static string toolbox_LineUpObjects {
+            get {
+                return ResourceManager.GetString("toolbox_LineUpObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mirror Objects.
+        /// </summary>
+        internal static string toolbox_MirrorObjects {
+            get {
+                return ResourceManager.GetString("toolbox_MirrorObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other Tools.
+        /// </summary>
+        internal static string toolbox_OtherTools_Tooltip {
+            get {
+                return ResourceManager.GetString("toolbox_OtherTools_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Objects.
+        /// </summary>
+        internal static string toolbox_ResetObjects {
+            get {
+                return ResourceManager.GetString("toolbox_ResetObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate At Centre.
+        /// </summary>
+        internal static string toolbox_RotateAtCentre {
+            get {
+                return ResourceManager.GetString("toolbox_RotateAtCentre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate In-Place.
+        /// </summary>
+        internal static string toolbox_RotateInPlace {
+            get {
+                return ResourceManager.GetString("toolbox_RotateInPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate Randomly.
+        /// </summary>
+        internal static string toolbox_RotateRandomly {
+            get {
+                return ResourceManager.GetString("toolbox_RotateRandomly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotation Tools.
+        /// </summary>
+        internal static string toolbox_RotationTools_Tooltip {
+            get {
+                return ResourceManager.GetString("toolbox_RotationTools_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Position.
+        /// </summary>
+        internal static string toolbox_SetPosition {
+            get {
+                return ResourceManager.GetString("toolbox_SetPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slope Objects.
+        /// </summary>
+        internal static string toolbox_SlopeObjects {
+            get {
+                return ResourceManager.GetString("toolbox_SlopeObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To Object Height.
+        /// </summary>
+        internal static string toolbox_ToObjectHeight {
+            get {
+                return ResourceManager.GetString("toolbox_ToObjectHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To Terrain Height.
+        /// </summary>
+        internal static string toolbox_ToTerrainHeight {
+            get {
+                return ResourceManager.GetString("toolbox_ToTerrainHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to delete the file &apos;{0}&apos; permanently?.
+        /// </summary>
+        internal static string xml_DeleteConfirmMessage {
+            get {
+                return ResourceManager.GetString("xml_DeleteConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete file.
+        /// </summary>
+        internal static string xml_DeleteConfirmTitle {
+            get {
+                return ResourceManager.GetString("xml_DeleteConfirmTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete saved selection.
+        /// </summary>
+        internal static string xml_DeleteLabel {
+            get {
+                return ResourceManager.GetString("xml_DeleteLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        internal static string xml_Export {
+            get {
+                return ResourceManager.GetString("xml_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string xml_Import {
+            get {
+                return ResourceManager.GetString("xml_Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; already exists.
+        ///Do you want to overwrite it?.
+        /// </summary>
+        internal static string xml_OverwriteMessage {
+            get {
+                return ResourceManager.GetString("xml_OverwriteMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite file.
+        /// </summary>
+        internal static string xml_OverwriteTitle {
+            get {
+                return ResourceManager.GetString("xml_OverwriteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore.
+        /// </summary>
+        internal static string xml_Restore {
+            get {
+                return ResourceManager.GetString("xml_Restore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import the selection to the position it was exported.
+        /// </summary>
+        internal static string xml_Restore_Tooltip {
+            get {
+                return ResourceManager.GetString("xml_Restore_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selection is empty or invalid..
+        /// </summary>
+        internal static string xml_SelectionInvalidMessage {
+            get {
+                return ResourceManager.GetString("xml_SelectionInvalidMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selection invalid.
+        /// </summary>
+        internal static string xml_SelectionInvalidTitle {
+            get {
+                return ResourceManager.GetString("xml_SelectionInvalidTitle", resourceCulture);
             }
         }
     }

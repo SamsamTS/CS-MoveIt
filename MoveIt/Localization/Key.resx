@@ -117,185 +117,103 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="baseUI_Bulldoze_Tooltip" xml:space="preserve">
+  <data name="main_Bulldoze" xml:space="preserve">
     <value>Bulldoze</value>
   </data>
-  <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>Copy (Alt+Click to duplicate in-place)</value>
+  <data name="main_Clone" xml:space="preserve">
+    <value>Copy</value>
   </data>
-  <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>Follow Terrain</value>
+  <data name="main_DeselectAll" xml:space="preserve">
+    <value>Deselect All</value>
   </data>
-  <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+  <data name="main_MoveDown" xml:space="preserve">
+    <value>Move Down</value>
   </data>
-  <data name="baseUI_MoveItButton" xml:space="preserve">
-    <value>Move It</value>
+  <data name="main_MoveEast" xml:space="preserve">
+    <value>Move East</value>
   </data>
-  <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+  <data name="main_MoveNorth" xml:space="preserve">
+    <value>Move North</value>
   </data>
-  <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+  <data name="main_MoveSouth" xml:space="preserve">
+    <value>Move South</value>
   </data>
-  <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+  <data name="main_MoveUp" xml:space="preserve">
+    <value>Move Up</value>
   </data>
-  <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+  <data name="main_MoveWest" xml:space="preserve">
+    <value>Move West</value>
   </data>
-  <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
+  <data name="main_Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="main_RotateCCW" xml:space="preserve">
+    <value>Rotate Counterclockwise</value>
+  </data>
+  <data name="main_RotateCW" xml:space="preserve">
+    <value>Rotate Clockwise</value>
+  </data>
+  <data name="main_ScaleIn" xml:space="preserve">
+    <value>Scale Inwards</value>
+  </data>
+  <data name="main_ScaleOut" xml:space="preserve">
+    <value>Scale Outwards</value>
+  </data>
+  <data name="main_StepOver" xml:space="preserve">
+    <value>Step Over</value>
+  </data>
+  <data name="main_ToggleDebugPanel" xml:space="preserve">
+    <value>Toggle Debug Panel</value>
+  </data>
+  <data name="main_ToggleGridView" xml:space="preserve">
+    <value>Toggle Grid View</value>
+  </data>
+  <data name="main_ToggleTool" xml:space="preserve">
+    <value>Toggle Tool</value>
+  </data>
+  <data name="main_ToggleUndergroundView" xml:space="preserve">
     <value>Toggle Underground View</value>
   </data>
-  <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+  <data name="main_Undo" xml:space="preserve">
+    <value>Undo</value>
   </data>
-  <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+  <data name="tool_FullSlope" xml:space="preserve">
+    <value>Full Slope</value>
   </data>
-  <data name="filter_Decals" xml:space="preserve">
-    <value>Decals</value>
+  <data name="tool_LineUpSpaced" xml:space="preserve">
+    <value>Line Up (Spaced)</value>
   </data>
-  <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+  <data name="tool_LineUpUnspaced" xml:space="preserve">
+    <value>Line Up (Unspaced)</value>
   </data>
-  <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
-  </data>
-  <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
-  </data>
-  <data name="filter_Paths" xml:space="preserve">
-    <value>Paths</value>
-  </data>
-  <data name="filter_Picker" xml:space="preserve">
-    <value>Picker</value>
-  </data>
-  <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Pick an object to filter for objects of the same type</value>
-  </data>
-  <data name="filter_PO" xml:space="preserve">
-    <value>PO</value>
-  </data>
-  <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
-  </data>
-  <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
-  </data>
-  <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
-  </data>
-  <data name="filter_Segments" xml:space="preserve">
-    <value>Segments</value>
-  </data>
-  <data name="filter_Surfaces" xml:space="preserve">
-    <value>Surfaces</value>
-  </data>
-  <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
-  </data>
-  <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
-  </data>
-  <data name="mod_description" xml:space="preserve">
-    <value>Move things</value>
-  </data>
-  <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Auto-close Toolbox menu</value>
-  </data>
-  <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
-  </data>
-  <data name="setpos_Go" xml:space="preserve">
-    <value>Go</value>
-  </data>
-  <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
-  </data>
-  <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
-  </data>
-  <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
-  </data>
-  <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
-  </data>
-  <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
-  </data>
-  <data name="toolbox_ImportSelection" xml:space="preserve">
-    <value>Import Selection</value>
-  </data>
-  <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
-  </data>
-  <data name="toolbox_MirrorObjects" xml:space="preserve">
+  <data name="tool_MirrorObjects" xml:space="preserve">
     <value>Mirror Objects</value>
   </data>
-  <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
-    <value>Other Tools</value>
+  <data name="tool_QuickSlopeNode" xml:space="preserve">
+    <value>Quick Slope Node</value>
   </data>
-  <data name="toolbox_ResetObjects" xml:space="preserve">
+  <data name="tool_ResetObjects" xml:space="preserve">
     <value>Reset Objects</value>
   </data>
-  <data name="toolbox_RotateAtCentre" xml:space="preserve">
+  <data name="tool_RotateAtCentre" xml:space="preserve">
     <value>Rotate At Centre</value>
   </data>
-  <data name="toolbox_RotateInPlace" xml:space="preserve">
+  <data name="tool_RotateInPlace" xml:space="preserve">
     <value>Rotate In-Place</value>
   </data>
-  <data name="toolbox_RotateRandomly" xml:space="preserve">
+  <data name="tool_RotateRandomly" xml:space="preserve">
     <value>Rotate Randomly</value>
   </data>
-  <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
-  </data>
-  <data name="toolbox_SetPosition" xml:space="preserve">
+  <data name="tool_SetPosition" xml:space="preserve">
     <value>Set Position</value>
   </data>
-  <data name="toolbox_SlopeObjects" xml:space="preserve">
+  <data name="tool_SlopeObjects" xml:space="preserve">
     <value>Slope Objects</value>
   </data>
-  <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>To Object Height</value>
+  <data name="tool_ToObjectHeight" xml:space="preserve">
+    <value>Align To Object Height</value>
   </data>
-  <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>To Terrain Height</value>
-  </data>
-  <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
-  </data>
-  <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
-  </data>
-  <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
-  </data>
-  <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
-  </data>
-  <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
-  </data>
-  <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
-  </data>
-  <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
-  </data>
-  <data name="xml_Restore" xml:space="preserve">
-    <value>Restore</value>
-  </data>
-  <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
-  </data>
-  <data name="xml_SelectionInvalidMessage" xml:space="preserve">
-    <value>The selection is empty or invalid.</value>
-  </data>
-  <data name="xml_SelectionInvalidTitle" xml:space="preserve">
-    <value>Selection invalid</value>
+  <data name="tool_ToTerrainHeight" xml:space="preserve">
+    <value>Align To Terrain Height</value>
   </data>
 </root>

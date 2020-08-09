@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
+using MoveIt.Localization;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -34,7 +34,7 @@ namespace MoveIt
             m_changesWindow.isVisible = false;
 
             name = "MoveIt";
-            tooltip = "Move It " + ModInfo.version;
+            tooltip = Str.baseUI_MoveItButton + " " + ModInfo.version;
 
             normalFgSprite = "MoveIt";
             hoveredFgSprite = "MoveIt_hover";

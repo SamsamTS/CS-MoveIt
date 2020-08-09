@@ -488,26 +488,26 @@ namespace MoveIt
             #endregion
 
             #region More Tools / Toolbox buttons
-            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", "Other Tools", "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));
+            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", Str.toolbox_OtherTools_Tooltip, "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));
             if (MoveItTool.PO.Enabled)
-                othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", "Convert To PO", "ConvertToPO");
-            othersBtn.CreateSubButton("MoveIt_AlignLineBtn", "Line Up Objects", "AlignLine");
-            othersBtn.CreateSubButton("MoveIt_AlignMirrorBtn", "Mirror Objects", "AlignMirror");
-            othersBtn.CreateSubButton("MoveIt_ResetObjectBtn", "Reset Objects", "ResetObject");
-            othersBtn.CreateSubButton("MoveIt_MoveToBtn", "Set Position", "MoveTo");
+                othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", Str.toolbox_ConvertToPO, "ConvertToPO");
+            othersBtn.CreateSubButton("MoveIt_AlignLineBtn", Str.toolbox_LineUpObjects, "AlignLine");
+            othersBtn.CreateSubButton("MoveIt_AlignMirrorBtn", Str.toolbox_MirrorObjects, "AlignMirror");
+            othersBtn.CreateSubButton("MoveIt_ResetObjectBtn", Str.toolbox_ResetObjects, "ResetObject");
+            othersBtn.CreateSubButton("MoveIt_MoveToBtn", Str.toolbox_SetPosition, "MoveTo");
             othersBtn.CreateSubSeparator("MoveIt_FileSeparator");
-            othersBtn.CreateSubButton("MoveIt_LoadBtn", "Import Selection", "Load");
-            othersBtn.CreateSubButton("MoveIt_SaveBtn", "Export Selection", "Save");
+            othersBtn.CreateSubButton("MoveIt_LoadBtn", Str.toolbox_ImportSelection, "Load");
+            othersBtn.CreateSubButton("MoveIt_SaveBtn", Str.toolbox_ExportSelection, "Save");
 
-            UIMoreToolsBtn rotateBtn = new UIMoreToolsBtn(this, "MoveIt_RotateBtn", "Rotation Tools", "MenuRotate", mtpContainer, "m_mtRotateList", 3f);
-            rotateBtn.CreateSubButton("MoveIt_AlignRandomBtn", "Rotate Randomly", "AlignRandom");
-            rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", "Rotate At Centre", "AlignGroup");
-            rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", "Rotate In-Place", "AlignIndividual");
+            UIMoreToolsBtn rotateBtn = new UIMoreToolsBtn(this, "MoveIt_RotateBtn", Str.toolbox_RotationTools_Tooltip, "MenuRotate", mtpContainer, "m_mtRotateList", 3f);
+            rotateBtn.CreateSubButton("MoveIt_AlignRandomBtn", Str.toolbox_RotateRandomly, "AlignRandom");
+            rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", Str.toolbox_RotateAtCentre, "AlignGroup");
+            rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", Str.toolbox_RotateInPlace, "AlignIndividual");
 
-            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", "Height Tools", "MenuHeight", mtpContainer, "m_mtHeightList", 3f);
-            heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", "Slope Objects", "AlignSlope");
-            heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", "To Terrain Height", "AlignTerrainHeight");
-            heightBtn.CreateSubButton("MoveIt_AlignHeightBtn", "To Object Height", "AlignHeight");
+            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", Str.toolbox_HeightTools_Tooltip, "MenuHeight", mtpContainer, "m_mtHeightList", 3f);
+            heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", Str.toolbox_SlopeObjects, "AlignSlope");
+            heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", Str.toolbox_ToTerrainHeight, "AlignTerrainHeight");
+            heightBtn.CreateSubButton("MoveIt_AlignHeightBtn", Str.toolbox_ToObjectHeight, "AlignHeight");
             #endregion
             #endregion
 

@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.UI;
+using MoveIt.Localization;
 using System.Collections.Generic;
 using UnityEngine;
 using UIUtils = SamsamTS.UIUtils;
@@ -180,7 +181,7 @@ namespace MoveIt
                     }
                     else
                     {
-                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Selection invalid", "The selection is empty or invalid.", false);
+                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage(Str.xml_SelectionInvalidTitle, Str.xml_SelectionInvalidMessage, false);
                     }
                     break;
 
