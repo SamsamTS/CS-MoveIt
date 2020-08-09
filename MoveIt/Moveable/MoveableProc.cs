@@ -149,7 +149,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+            if (MoveItTool.m_isLowSensitivity) return;
 
             m_procObj.RenderOverlay(cameraInfo, toolColor); 
         }
@@ -157,7 +157,7 @@ namespace MoveIt
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
             if (!isValid) return;
-            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+            if (MoveItTool.m_isLowSensitivity) return;
 
             ProcState state = instanceState as ProcState;
 

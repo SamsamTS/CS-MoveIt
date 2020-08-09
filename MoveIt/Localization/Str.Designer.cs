@@ -304,6 +304,402 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Node Controller found, integration enabled!.
+        /// </summary>
+        internal static string integration_NC_Found {
+            get {
+                return ResourceManager.GetString("integration_NC_Found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Node Controller not found, integration disabled..
+        /// </summary>
+        internal static string integration_NC_Notfound {
+            get {
+                return ResourceManager.GetString("integration_NC_Notfound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Network Skins 2 found, integration enabled!.
+        /// </summary>
+        internal static string integration_NS2_Found {
+            get {
+                return ResourceManager.GetString("integration_NS2_Found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled..
+        /// </summary>
+        internal static string integration_NS2_Notfound {
+            get {
+                return ResourceManager.GetString("integration_NS2_Notfound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PO version {0} found, integration enabled!.
+        /// </summary>
+        internal static string integration_PO_Found {
+            get {
+                return ResourceManager.GetString("integration_PO_Found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PO is not available. To use these options please quit Cities Skylines and subscribe to PO..
+        /// </summary>
+        internal static string integration_PO_Notfound {
+            get {
+                return ResourceManager.GetString("integration_PO_Notfound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PO integration failed - found version {0} (required: 1.6).
+        /// </summary>
+        internal static string integration_PO_WrongVersion {
+            get {
+                return ResourceManager.GetString("integration_PO_WrongVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Traffic Manager found, integration enabled!.
+        /// </summary>
+        internal static string integration_TMPE_Found {
+            get {
+                return ResourceManager.GetString("integration_TMPE_Found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Traffic manager not found, integration disabled..
+        /// </summary>
+        internal static string integration_TMPE_Notfound {
+            get {
+                return ResourceManager.GetString("integration_TMPE_Notfound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bulldoze.
+        /// </summary>
+        internal static string key_Bulldoze {
+            get {
+                return ResourceManager.GetString("key_Bulldoze", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        internal static string key_Clone {
+            get {
+                return ResourceManager.GetString("key_Clone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert selected objects to PO.
+        /// </summary>
+        internal static string key_ConvertToPO {
+            get {
+                return ResourceManager.GetString("key_ConvertToPO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deselect All.
+        /// </summary>
+        internal static string key_DeselectAll {
+            get {
+                return ResourceManager.GetString("key_DeselectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Down.
+        /// </summary>
+        internal static string key_MoveDown {
+            get {
+                return ResourceManager.GetString("key_MoveDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move East.
+        /// </summary>
+        internal static string key_MoveEast {
+            get {
+                return ResourceManager.GetString("key_MoveEast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move North.
+        /// </summary>
+        internal static string key_MoveNorth {
+            get {
+                return ResourceManager.GetString("key_MoveNorth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move South.
+        /// </summary>
+        internal static string key_MoveSouth {
+            get {
+                return ResourceManager.GetString("key_MoveSouth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Up.
+        /// </summary>
+        internal static string key_MoveUp {
+            get {
+                return ResourceManager.GetString("key_MoveUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move West.
+        /// </summary>
+        internal static string key_MoveWest {
+            get {
+                return ResourceManager.GetString("key_MoveWest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        internal static string key_Redo {
+            get {
+                return ResourceManager.GetString("key_Redo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate Counterclockwise.
+        /// </summary>
+        internal static string key_RotateCCW {
+            get {
+                return ResourceManager.GetString("key_RotateCCW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate Clockwise.
+        /// </summary>
+        internal static string key_RotateCW {
+            get {
+                return ResourceManager.GetString("key_RotateCW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scale Inwards.
+        /// </summary>
+        internal static string key_ScaleIn {
+            get {
+                return ResourceManager.GetString("key_ScaleIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scale Outwards.
+        /// </summary>
+        internal static string key_ScaleOut {
+            get {
+                return ResourceManager.GetString("key_ScaleOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step Over.
+        /// </summary>
+        internal static string key_StepOver {
+            get {
+                return ResourceManager.GetString("key_StepOver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Debug Panel.
+        /// </summary>
+        internal static string key_ToggleDebugPanel {
+            get {
+                return ResourceManager.GetString("key_ToggleDebugPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Grid View.
+        /// </summary>
+        internal static string key_ToggleGridView {
+            get {
+                return ResourceManager.GetString("key_ToggleGridView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle PO Active/Inactive.
+        /// </summary>
+        internal static string key_TogglePO {
+            get {
+                return ResourceManager.GetString("key_TogglePO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Tool.
+        /// </summary>
+        internal static string key_ToggleTool {
+            get {
+                return ResourceManager.GetString("key_ToggleTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Underground View.
+        /// </summary>
+        internal static string key_ToggleUndergroundView {
+            get {
+                return ResourceManager.GetString("key_ToggleUndergroundView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full Slope.
+        /// </summary>
+        internal static string key_ToolFullSlope {
+            get {
+                return ResourceManager.GetString("key_ToolFullSlope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Up (Spaced).
+        /// </summary>
+        internal static string key_ToolLineUpSpaced {
+            get {
+                return ResourceManager.GetString("key_ToolLineUpSpaced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Up (Unspaced).
+        /// </summary>
+        internal static string key_ToolLineUpUnspaced {
+            get {
+                return ResourceManager.GetString("key_ToolLineUpUnspaced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mirror Objects.
+        /// </summary>
+        internal static string key_ToolMirrorObjects {
+            get {
+                return ResourceManager.GetString("key_ToolMirrorObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quick Slope Node.
+        /// </summary>
+        internal static string key_ToolQuickSlopeNode {
+            get {
+                return ResourceManager.GetString("key_ToolQuickSlopeNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Objects.
+        /// </summary>
+        internal static string key_ToolResetObjects {
+            get {
+                return ResourceManager.GetString("key_ToolResetObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate At Centre.
+        /// </summary>
+        internal static string key_ToolRotateAtCentre {
+            get {
+                return ResourceManager.GetString("key_ToolRotateAtCentre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate In-Place.
+        /// </summary>
+        internal static string key_ToolRotateInPlace {
+            get {
+                return ResourceManager.GetString("key_ToolRotateInPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate Randomly.
+        /// </summary>
+        internal static string key_ToolRotateRandomly {
+            get {
+                return ResourceManager.GetString("key_ToolRotateRandomly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Position.
+        /// </summary>
+        internal static string key_ToolSetPosition {
+            get {
+                return ResourceManager.GetString("key_ToolSetPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slope Objects.
+        /// </summary>
+        internal static string key_ToolSlopeObjects {
+            get {
+                return ResourceManager.GetString("key_ToolSlopeObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Align To Object Height.
+        /// </summary>
+        internal static string key_ToolToObjectHeight {
+            get {
+                return ResourceManager.GetString("key_ToolToObjectHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Align To Terrain Height.
+        /// </summary>
+        internal static string key_ToolToTerrainHeight {
+            get {
+                return ResourceManager.GetString("key_ToolToTerrainHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        internal static string key_Undo {
+            get {
+                return ResourceManager.GetString("key_Undo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move things.
         /// </summary>
         internal static string mod_description {
@@ -313,11 +709,192 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select pylons and pillars by holding Alt only.
+        /// </summary>
+        internal static string options_AltForPillars {
+            get {
+                return ResourceManager.GetString("options_AltForPillars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto-close Toolbox menu.
         /// </summary>
         internal static string options_AutoCloseToolbox {
             get {
                 return ResourceManager.GetString("options_AutoCloseToolbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check this to close the Toolbox menu after choosing a tool..
+        /// </summary>
+        internal static string options_AutoCloseToolbox_Tooltip {
+            get {
+                return ResourceManager.GetString("options_AutoCloseToolbox_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable debug messages logging.
+        /// </summary>
+        internal static string options_DisableDebugLogging {
+            get {
+                return ResourceManager.GetString("options_DisableDebugLogging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If checked, debug messages won&apos;t be logged..
+        /// </summary>
+        internal static string options_DisableDebugLogging_Tooltip {
+            get {
+                return ResourceManager.GetString("options_DisableDebugLogging_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extra Options.
+        /// </summary>
+        internal static string options_ExtraOptions {
+            get {
+                return ResourceManager.GetString("options_ExtraOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide the PO deletion warning.
+        /// </summary>
+        internal static string options_HidePODeletionWarning {
+            get {
+                return ResourceManager.GetString("options_HidePODeletionWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please note: you can not undo Bulldozed PO. This means if you delete
+        ///PO objects with Move It, they are immediately PERMANENTLY gone..
+        /// </summary>
+        internal static string options_PODeleteWarning {
+            get {
+                return ResourceManager.GetString("options_PODeleteWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefer fast, low-detail moving (hold Shift to temporarily switch).
+        /// </summary>
+        internal static string options_PreferFastmove {
+            get {
+                return ResourceManager.GetString("options_PreferFastmove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Helps you position objects when your frame-rate is poor..
+        /// </summary>
+        internal static string options_PreferFastmove_Tooltip {
+            get {
+                return ResourceManager.GetString("options_PreferFastmove_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedural Objects.
+        /// </summary>
+        internal static string options_ProceduralObjects {
+            get {
+                return ResourceManager.GetString("options_ProceduralObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Ghost Nodes.
+        /// </summary>
+        internal static string options_RemoveGhostNodes {
+            get {
+                return ResourceManager.GetString("options_RemoveGhostNodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It&apos;s undo history!.
+        /// </summary>
+        internal static string options_RemoveGhostNodes_Tooltip {
+            get {
+                return ResourceManager.GetString("options_RemoveGhostNodes_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Button Position.
+        /// </summary>
+        internal static string options_ResetButtonPosition {
+            get {
+                return ResourceManager.GetString("options_ResetButtonPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right click cancels cloning.
+        /// </summary>
+        internal static string options_RightClickCancel {
+            get {
+                return ResourceManager.GetString("options_RightClickCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If checked, Right click will cancel cloning instead of rotating 45°..
+        /// </summary>
+        internal static string options_RightClickCancel_Tooltip {
+            get {
+                return ResourceManager.GetString("options_RightClickCancel_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General Shortcuts.
+        /// </summary>
+        internal static string options_ShortcutsGeneral {
+            get {
+                return ResourceManager.GetString("options_ShortcutsGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toolbox Shortcuts.
+        /// </summary>
+        internal static string options_ShortcutsToolbox {
+            get {
+                return ResourceManager.GetString("options_ShortcutsToolbox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Move It debug panel.
+        /// </summary>
+        internal static string options_ShowDebugPanel {
+            get {
+                return ResourceManager.GetString("options_ShowDebugPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use cardinal movements.
+        /// </summary>
+        internal static string options_UseCardinal {
+            get {
+                return ResourceManager.GetString("options_UseCardinal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If checked, Up will move in the North direction, Down is South, Left is West, Right is East..
+        /// </summary>
+        internal static string options_UseCardinal_Tooltip {
+            get {
+                return ResourceManager.GetString("options_UseCardinal_Tooltip", resourceCulture);
             }
         }
         

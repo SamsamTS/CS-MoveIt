@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.Plugins;
+using MoveIt.Localization;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -83,9 +84,9 @@ namespace MoveIt
         internal static string getVersionText()
         {
             if (isModInstalled())
-                return "Node Controller found, integration enabled!\n ";
+                return Str.integration_NC_Found;
             else
-                return "Node Controller not found, integration disabled.\n ";
+                return Str.integration_NC_Notfound;
         }
     }
 }

@@ -2,6 +2,7 @@
 using ColossalFramework.Math;
 using ColossalFramework.IO;
 using ColossalFramework.UI;
+using MoveItIntegration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
-using MoveItIntegration;
 
 namespace MoveIt
 {
@@ -56,12 +56,10 @@ namespace MoveIt
         public static MoveItTool instance;
         public static SavedBool hideChangesWindow = new SavedBool("hideChanges280b", settingsFileName, false, true); 
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
-        public static SavedBool POHighlightUnselected = new SavedBool("POHighlightUnselected", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
-        public static SavedBool hideSelectorsOnLowSensitivity = new SavedBool("hideSelectorsOnLowSensitivity", settingsFileName, true, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
         public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
@@ -100,7 +98,6 @@ namespace MoveIt
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 230);
         internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
-        internal static Color m_POdisabledColor = new Color32(130, 95, 140, 70);
 
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
@@ -438,13 +435,13 @@ namespace MoveIt
             if (ToolState == ToolStates.Default || ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking || ToolState == ToolStates.ToolActive)
             {
                 // Reset all PO
-                if (PO.Active && POHighlightUnselected)
-                {
-                    foreach (PO_Object obj in PO.Objects)
-                    {
-                        obj.Selected = false;
-                    }
-                }
+                //if (PO.Active && POHighlightUnselected)
+                //{
+                //    foreach (PO_Object obj in PO.Objects)
+                //    {
+                //        obj.Selected = false;
+                //    }
+                //}
 
                 // Debug overlays
                 foreach (DebugOverlay d in DebugBoxes)
@@ -513,18 +510,6 @@ namespace MoveIt
 
                     m_hoverInstance.RenderOverlay(cameraInfo, color, m_despawnColor);
                 }
-
-                // Highlight unselected PO
-                if (PO.Active && POHighlightUnselected)
-                {
-                    foreach (PO_Object obj in PO.Objects)
-                    {
-                        if (!obj.Selected)
-                        {
-                            obj.RenderOverlay(cameraInfo, m_POdisabledColor);
-                        }
-                    }
-                }
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
@@ -538,7 +523,7 @@ namespace MoveIt
                         }
                     }
 
-                    if (!(m_isLowSensitivity && hideSelectorsOnLowSensitivity))
+                    if (!m_isLowSensitivity)
                     {
                         Vector3 center = Action.GetCenter();
                         center.y = TerrainManager.instance.SampleRawHeightSmooth(center);

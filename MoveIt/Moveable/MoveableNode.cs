@@ -574,7 +574,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            if (!isVirtual() && MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+            if (!isVirtual() && MoveItTool.m_isLowSensitivity) return;
 
             ushort node = id.NetNode;
             NetManager netManager = NetManager.instance;

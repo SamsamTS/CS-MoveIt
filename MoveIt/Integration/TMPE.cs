@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.Plugins;
+using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -137,10 +138,10 @@ namespace MoveIt
         {
             if (isModInstalled())
             {
-                return "Traffic manager found, integration enabled!\n ";
+                return Str.integration_TMPE_Found;
             }
 
-            return "Traffic manager not found, integration disabled.\n ";
+            return Str.integration_TMPE_Notfound;
         }
     }
 }

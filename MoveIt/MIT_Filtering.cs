@@ -111,7 +111,7 @@ namespace MoveIt
                             {
                                 if (stepOver.isValidB(building) && IsBuildingValid(ref buildingBuffer[building], itemLayers) && buildingBuffer[building].RayCast(building, ray, out float t) && t < smallestDist)
                                 {
-                                    if (Filters.Filter(buildingBuffer[building].Info, true))
+                                    if (Filters.Filter(buildingBuffer[building].Info, ref buildingBuffer[building], true))
                                     {
                                         id.Building = Building.FindParentBuilding(building);
                                         if (id.Building == 0) id.Building = building;
@@ -373,7 +373,7 @@ namespace MoveIt
                             {
                                 if (IsBuildingValid(ref buildingBuffer[building], itemLayers) && PointInRectangle(m_selection, buildingBuffer[building].m_position))
                                 {
-                                    if (Filters.Filter(buildingBuffer[building].Info))
+                                    if (Filters.Filter(buildingBuffer[building].Info, ref buildingBuffer[building]))
                                     {
                                         id.Building = Building.FindParentBuilding(building);
                                         if (id.Building == 0) id.Building = building;
