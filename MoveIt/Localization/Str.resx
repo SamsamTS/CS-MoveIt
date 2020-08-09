@@ -411,51 +411,67 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
     <value>Convert To PO</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
     <value>Export Selection</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
     <value>Height Tools</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
     <value>Import Selection</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
     <value>Line Up Objects</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
     <value>Mirror Objects</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
     <value>Other Tools</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
     <value>Reset Objects</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
     <value>Rotate At Centre</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
     <value>Rotate In-Place</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
     <value>Rotate Randomly</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
     <value>Rotation Tools</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
     <value>Set Position</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
     <value>Slope Objects</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
     <value>To Object Height</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
     <value>To Terrain Height</value>
+    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Do you want to delete the file '{0}' permanently?</value>
