@@ -51,6 +51,7 @@ namespace MoveIt
 
         internal static string XML2String(object obj)
         {
+            if (obj == null) return null;
             XmlSerializer xmlSerializer = new XmlSerializer(obj.GetType());
             StringWriter sw = new StringWriter();
             XmlWriter writer = XmlWriter.Create(sw);
@@ -60,6 +61,7 @@ namespace MoveIt
 
         internal static object String2XML(string data, Type dataType)
         {
+            if (data == null || data == "") return null;
             XmlSerializer xmlSerializer = new XmlSerializer(dataType);
             StringReader sr = new StringReader(data);
             XmlReader reader = XmlReader.Create(sr);

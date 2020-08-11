@@ -7,14 +7,15 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    struct IntegrationEntry
-    {
-        public string ID;
+    [XmlType("IntegrationEntry")]
+    public struct IntegrationEntry {
+    public string ID;
         public string Version;
         public string Data; 
     }
 
-    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
+    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState)),
+     XmlInclude(typeof(IntegrationEntry))]
     public class InstanceState
     {
         [XmlIgnore]
@@ -108,31 +109,33 @@ namespace MoveIt
         [XmlIgnore]
         public Dictionary<IMoveItIntegration, object> IntegrationData = new Dictionary<IMoveItIntegration, object>();
 
-        public string IntegrationData64
+        [XmlArray("IntegrationEntry_List")]
+        [XmlArrayItem("IntegrationEntry_Item")]
+        public List<IntegrationEntry> IntegrationData64
         {
             get {
-                List<IntegrationEntry> list = new List<IntegrationEntry>();
+                List<IntegrationEntry> ret = new List<IntegrationEntry>();
                 foreach (var item in IntegrationData)
                 {
                     IMoveItIntegration integration = item.Key;
-                    list.Add(new IntegrationEntry
+                    ret.Add(new IntegrationEntry
                     {
                         ID = integration.ID,
                         Version = integration.DataVersion.ToString(),
                         Data = integration.Encode64(item.Value),
                     });
                 }
-                return EncodeUtil.XML2String(list);
+                return ret;
             }
             set {
-                List<IntegrationEntry> list = 
-                    EncodeUtil.String2XML(value, typeof(IntegrationEntry)) as List<IntegrationEntry>;
+                Debug.Log("Instance.IntegrationData64.set = " + value);
                 IntegrationData = new Dictionary<IMoveItIntegration, object>();
-                foreach(var entry in list)
+                if (value == null)  return;
+                Debug.Log("Instance.IntegrationData64.set : value.Count: " + value.Count);
+                foreach (var entry in value)
                 {
-                     IMoveItIntegration integration = 
-                        MoveItTool.Integrations.Where(item => item.ID == entry.ID)
-                        .FirstOrDefault();
+                    IMoveItIntegration integration = MoveItTool.GetIntegrationByID(entry.ID);
+                    Debug.Log($"GetIntegrationByID({entry.ID})->{integration}(ID={integration?.ID})");
                     Version version = new Version(entry.Version);
                     IntegrationData[integration] = 
                         integration.Decode64(entry.Data, version);

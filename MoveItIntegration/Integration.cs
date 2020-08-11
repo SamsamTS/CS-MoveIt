@@ -12,6 +12,9 @@ namespace MoveItIntegration
         IMoveItIntegration GetInstance();
     }
 
+    /// <summary>
+    /// implementation of IMoveItIntegrationFactory is required to get instance of IMoveItIntegration.
+    /// </summary>
     public interface IMoveItIntegration
     {
         /// <summary>
@@ -34,6 +37,7 @@ namespace MoveItIntegration
         object Decode64(string base64Data, Version dataVersion);
 
         object CopySegment(ushort sourceSegmentID);
+        object CopyNode(ushort sourceNodeID);
 
         /// <summary>Paste segment data</summary>
         /// <param name="record">data returned by <see cref="CopySegment(ushort)"/></param>
@@ -42,7 +46,6 @@ namespace MoveItIntegration
         /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
         void PasteSegment(ushort targetSegmentID, object record, Dictionary<InstanceID, InstanceID> map);
 
-        object CopyNode(ushort sourceNodeID);
 
         /// <summary>Paste node data</summary>
         /// <param name="record">data returned by <see cref="CopyNode(ushort)(ushort)"/></param>

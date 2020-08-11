@@ -33,7 +33,7 @@ namespace MoveIt
                 }
                 if (Assembly == null) throw new Exception("Assembly not found (Failed [NC-F1])");
                 var version = Assembly.GetName().Version;
-                NoCopy = version < new Version(2,0,0,0);
+                NoCopy = version >= new Version(2,0,0,0);
 
                 tNodeManager = Assembly.GetType("NodeController.NodeManager")
                     ?? throw new Exception("Type NodeManager not found (Failed [NC-F2])");
