@@ -11,16 +11,45 @@ namespace MoveItIntegration
         string Description { get; }
         IMoveItIntegration GetInstance();
     }
+
     public interface IMoveItIntegration
     {
+        /// <summary>
+        /// unique ID to identify the integration. must not change for the sake of backward compatibility.
+        /// </summary>
+        string ID { get; }
+
+        /// <summary>
+        /// the version of data that can be read later for backward compatibility.
+        /// </summary>
+        Version DataVersion { get; }
+
+        /// <summary>converts data to base 64 string.</summary>
+        /// <param name="record">record returned by <see cref="CopyNode(ushort)"/> 
+        /// or <see cref="CopySegment(ushort)"/></param>
         string Encode64(object record);
-        object Decode64(string base64Data);
 
-        object CopySegment(ushort segmentId);
-        void PasteSegment(ushort segmentId, object record, Dictionary<InstanceID, InstanceID> map);
+        /// <summary>decode the record encoded by <see cref="Encode64(object)".</summary>
+        /// <param name="dataVersion"><see cref="DataVersion"/> when data was stored</param>
+        object Decode64(string base64Data, Version dataVersion);
 
-        object CopyNode(ushort nodeID);
-        void PasteNode(ushort nodeID, object record, Dictionary<InstanceID, InstanceID> map);
+        object CopySegment(ushort sourceSegmentID);
+
+        /// <summary>Paste segment data</summary>
+        /// <param name="record">data returned by <see cref="CopySegment(ushort)"/></param>
+        /// <param name="map">a dictionary of source instance ID to target instance ID.
+        /// this maps all the nodes, segments and lanes. 
+        /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
+        void PasteSegment(ushort targetSegmentID, object record, Dictionary<InstanceID, InstanceID> map);
+
+        object CopyNode(ushort sourceNodeID);
+
+        /// <summary>Paste node data</summary>
+        /// <param name="record">data returned by <see cref="CopyNode(ushort)(ushort)"/></param>
+        /// <param name="map">a dictionary of source instance ID to target instance ID.
+        /// this maps all the nodes, segments and lanes. 
+        /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
+        void PasteNode(ushort targetNodeID, object record, Dictionary<InstanceID, InstanceID> map);
     }
 
     public static class IntegrationHelper

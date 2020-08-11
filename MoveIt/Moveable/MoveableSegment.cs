@@ -121,7 +121,7 @@ namespace MoveIt
 
         public override InstanceState SaveToState()
         {
-            ushort segment  = id.NetSegment;
+            ushort segment = id.NetSegment;
 
             SegmentState state = new SegmentState
             {

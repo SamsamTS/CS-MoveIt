@@ -1,11 +1,19 @@
 ﻿using MoveItIntegration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
 
 namespace MoveIt
 {
+    struct IntegrationEntry
+    {
+        public string ID;
+        public string Version;
+        public string Data; 
+    }
+
     [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
     public class InstanceState
     {
@@ -99,6 +107,38 @@ namespace MoveIt
 
         [XmlIgnore]
         public Dictionary<IMoveItIntegration, object> IntegrationData = new Dictionary<IMoveItIntegration, object>();
+
+        public string IntegrationData64
+        {
+            get {
+                List<IntegrationEntry> list = new List<IntegrationEntry>();
+                foreach (var item in IntegrationData)
+                {
+                    IMoveItIntegration integration = item.Key;
+                    list.Add(new IntegrationEntry
+                    {
+                        ID = integration.ID,
+                        Version = integration.DataVersion.ToString(),
+                        Data = integration.Encode64(item.Value),
+                    });
+                }
+                return EncodeUtil.XML2String(list);
+            }
+            set {
+                List<IntegrationEntry> list = 
+                    EncodeUtil.String2XML(value, typeof(IntegrationEntry)) as List<IntegrationEntry>;
+                IntegrationData = new Dictionary<IMoveItIntegration, object>();
+                foreach(var entry in list)
+                {
+                     IMoveItIntegration integration = 
+                        MoveItTool.Integrations.Where(item => item.ID == entry.ID)
+                        .FirstOrDefault();
+                    Version version = new Version(entry.Version);
+                    IntegrationData[integration] = 
+                        integration.Decode64(entry.Data, version);
+                }
+            } 
+        }
     }
 
     public interface IInfo

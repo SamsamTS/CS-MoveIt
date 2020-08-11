@@ -173,12 +173,7 @@ namespace MoveIt
                 nodeState.pillarState.instance.LoadFromState(nodeState.pillarState);
             }
 
-            MoveItTool.NodeController.PasteNode(node, nodeState);
 
-            //foreach(var data in nodeState.IntegrationData)
-            //{
-            //    data.Key.PasteNode(node, data.Value);
-            //}
         }
 
         public override Vector3 position
