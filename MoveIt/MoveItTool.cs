@@ -973,6 +973,11 @@ namespace MoveIt
                     selectionState.states[i++] = instance.SaveToState();
                 }
 
+                foreach (InstanceState state in selectionState.states)
+                {
+                    state.ExportIntegrationXML();
+                }
+
                 Directory.CreateDirectory(saveFolder);
 
                 using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
@@ -1024,6 +1029,11 @@ namespace MoveIt
                     using (FileStream stream = new FileStream(path, FileMode.Open))
                     {
                         selectionState = xmlSerializer.Deserialize(stream) as Selection;
+
+                        foreach (InstanceState state in selectionState.states)
+                        {
+                            state.ImportIntegrationXML();
+                        }
                     }
                 }
                 catch (Exception e)
