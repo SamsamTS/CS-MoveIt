@@ -357,6 +357,7 @@
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Please note: you can not undo Bulldozed PO. This means if you delete
 PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
     <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
@@ -475,6 +476,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Do you want to delete the file '{0}' permanently?</value>
+    <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
     <value>Delete file</value>
@@ -491,6 +493,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>The file '{0}' already exists.
 Do you want to overwrite it?</value>
+    <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
     <value>Overwrite file</value>
