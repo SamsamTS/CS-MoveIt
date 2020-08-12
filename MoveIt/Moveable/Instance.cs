@@ -111,39 +111,36 @@ namespace MoveIt
 
         [XmlArray("IntegrationEntry_List")]
         [XmlArrayItem("IntegrationEntry_Item")]
-        public List<IntegrationEntry> IntegrationData64 { get; set; }
-
-        public void ExportIntegrationXML()
+        public List<IntegrationEntry> IntegrationData64
         {
-            IntegrationData64 = new List<IntegrationEntry>();
-            foreach (var item in IntegrationData)
-            {
-                Debug.Log($"Item:{item}");
-                IMoveItIntegration integration = item.Key;
-                IntegrationData64.Add(new IntegrationEntry
+            get {
+                List<IntegrationEntry> ret = new List<IntegrationEntry>();
+                foreach (var item in IntegrationData)
                 {
-                    ID = integration.ID,
-                    Version = integration.DataVersion.ToString(),
-                    Data = integration.Encode64(item.Value),
-                });
+                    IMoveItIntegration integration = item.Key;
+                    ret.Add(new IntegrationEntry
+                    {
+                        ID = integration.ID,
+                        Version = integration.DataVersion.ToString(),
+                        Data = integration.Encode64(item.Value),
+                    });
+                }
+                return ret;
             }
-            Debug.Log($"Count:{IntegrationData64.Count}; {IntegrationData64}");
-        }
-
-        public void ImportIntegrationXML()
-        {
-            Debug.Log("Instance.IntegrationData64.set = " + IntegrationData64);
-            IntegrationData = new Dictionary<IMoveItIntegration, object>();
-            if (IntegrationData64 == null) return;
-            Debug.Log("Instance.IntegrationData64.set : value.Count: " + IntegrationData64.Count);
-            foreach (var entry in IntegrationData64)
-            {
-                IMoveItIntegration integration = MoveItTool.GetIntegrationByID(entry.ID);
-                Debug.Log($"GetIntegrationByID({entry.ID})->{integration}(ID={integration?.ID})");
-                Version version = new Version(entry.Version);
-                IntegrationData[integration] =
-                    integration.Decode64(entry.Data, version);
-            }
+            set {
+                Debug.Log("Instance.IntegrationData64.set = " + value);
+                IntegrationData = new Dictionary<IMoveItIntegration, object>();
+                if (value == null)  return;
+                Debug.Log("Instance.IntegrationData64.set : value.Count: " + value.Count);
+                foreach (var entry in value)
+                {
+                    IMoveItIntegration integration = MoveItTool.GetIntegrationByID(entry.ID);
+                    Debug.Log($"GetIntegrationByID({entry.ID})->{integration}(ID={integration?.ID})");
+                    Version version = new Version(entry.Version);
+                    IntegrationData[integration] = 
+                        integration.Decode64(entry.Data, version);
+                }
+            } 
         }
     }
 
