@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
 using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -147,8 +148,17 @@ namespace MoveIt
 
             foreach (var integration in MoveItTool.Integrations)
             {
-                state.IntegrationData[integration] = integration.CopySegment(segment);
-            }
+                try
+                {
+                    state.IntegrationData[integration] = integration.CopySegment(segment);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to copy segment {id.NetSegment} using integration: " + integration);
+                    DebugUtils.LogException(e);
+                }
+
+        }
 
             state.startPosition = nodeBuffer[state.startNodeId].m_position;
             state.endPosition = nodeBuffer[state.endNodeId].m_position;
