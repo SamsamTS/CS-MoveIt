@@ -123,7 +123,16 @@ namespace MoveIt
 
             foreach(var integration in MoveItTool.Integrations)
             {
-                state.IntegrationData[integration] = integration.CopyNode(node);
+                try
+                {
+                    state.IntegrationData[integration] = integration.CopyNode(node);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to copy node {id.NetNode} using integration: " + integration);
+                    DebugUtils.LogException(e);
+                }
+
             }
 
             if (Pillar != null)

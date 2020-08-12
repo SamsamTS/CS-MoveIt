@@ -7,15 +7,14 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    [XmlType("IntegrationEntry")]
+    [Serializable]
     public struct IntegrationEntry {
-    public string ID;
+        public string ID;
         public string Version;
         public string Data; 
     }
 
-    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState)),
-     XmlInclude(typeof(IntegrationEntry))]
+    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
     public class InstanceState
     {
         [XmlIgnore]
@@ -111,34 +110,48 @@ namespace MoveIt
 
         [XmlArray("IntegrationEntry_List")]
         [XmlArrayItem("IntegrationEntry_Item")]
-        public List<IntegrationEntry> IntegrationData64
+         
+        
+        public IntegrationEntry[] IntegrationData64
         {
             get {
                 List<IntegrationEntry> ret = new List<IntegrationEntry>();
                 foreach (var item in IntegrationData)
                 {
-                    IMoveItIntegration integration = item.Key;
-                    ret.Add(new IntegrationEntry
+                    try
                     {
-                        ID = integration.ID,
-                        Version = integration.DataVersion.ToString(),
-                        Data = integration.Encode64(item.Value),
-                    });
+                        IMoveItIntegration integration = item.Key;
+                        ret.Add(new IntegrationEntry
+                        {
+                            ID = integration.ID,
+                            Version = integration.DataVersion.ToString(),
+                            Data = integration.Encode64(item.Value),
+                        });
+                    }catch(Exception e)
+                    {
+                        Debug.LogError("Failed to export integration: " + item.Key);
+                        DebugUtils.LogException(e);
+                    }
                 }
-                return ret;
+                return ret.ToArray();
             }
             set {
-                Debug.Log("Instance.IntegrationData64.set = " + value);
                 IntegrationData = new Dictionary<IMoveItIntegration, object>();
                 if (value == null)  return;
-                Debug.Log("Instance.IntegrationData64.set : value.Count: " + value.Count);
                 foreach (var entry in value)
                 {
-                    IMoveItIntegration integration = MoveItTool.GetIntegrationByID(entry.ID);
-                    Debug.Log($"GetIntegrationByID({entry.ID})->{integration}(ID={integration?.ID})");
-                    Version version = new Version(entry.Version);
-                    IntegrationData[integration] = 
+                    try { 
+                        IMoveItIntegration integration = MoveItTool.GetIntegrationByID(entry.ID);
+                        Version version = new Version(entry.Version);
+                        IntegrationData[integration] = 
                         integration.Decode64(entry.Data, version);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Failed to import integration: " + entry.ID);
+                        DebugUtils.LogException(e);
+                    }
+
                 }
             } 
         }

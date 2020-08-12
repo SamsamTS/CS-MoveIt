@@ -293,13 +293,29 @@ namespace MoveIt
                     case NodeState nodeState:
                         foreach (var data in nodeState.IntegrationData)
                         {
-                            data.Key.PasteNode(item.Value.id.NetNode, data.Value, InstanceID_origToClone);
+                            try
+                            {
+                                data.Key.PasteNode(item.Value.id.NetNode, data.Value, InstanceID_origToClone);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogError($"Failed to paste node to {item.Value.id.NetNode} using integration: " + data.Key);
+                                DebugUtils.LogException(e);
+                            }
                         }
                         break;
                     case SegmentState segmentState:
                         foreach (var data in segmentState.IntegrationData)
                         {
-                            data.Key.PasteSegment(item.Value.id.NetSegment, data.Value, InstanceID_origToClone);
+                            try
+                            {
+                                data.Key.PasteSegment(item.Value.id.NetSegment, data.Value, InstanceID_origToClone);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogError($"Failed to paste node to {item.Value.id.NetSegment} using integration: " + data.Key);
+                                DebugUtils.LogException(e);
+                            }
                         }
                         break;
                 }
