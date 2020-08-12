@@ -106,7 +106,7 @@ namespace MoveIt
         }
 
         [XmlIgnore]
-        public Dictionary<IMoveItIntegration, object> IntegrationData = new Dictionary<IMoveItIntegration, object>();
+        public Dictionary<MoveItIntegrationBase, object> IntegrationData = new Dictionary<MoveItIntegrationBase, object>();
 
         [XmlArray("IntegrationEntry_List")]
         [XmlArrayItem("IntegrationEntry_Item")]
@@ -120,7 +120,7 @@ namespace MoveIt
                 {
                     try
                     {
-                        IMoveItIntegration integration = item.Key;
+                        MoveItIntegrationBase integration = item.Key;
                         ret.Add(new IntegrationEntry
                         {
                             ID = integration.ID,
@@ -136,12 +136,12 @@ namespace MoveIt
                 return ret.ToArray();
             }
             set {
-                IntegrationData = new Dictionary<IMoveItIntegration, object>();
+                IntegrationData = new Dictionary<MoveItIntegrationBase, object>();
                 if (value == null)  return;
                 foreach (var entry in value)
                 {
                     try { 
-                        IMoveItIntegration integration = MoveItTool.GetIntegrationByID(entry.ID);
+                        MoveItIntegrationBase integration = MoveItTool.GetIntegrationByID(entry.ID);
                         Version version = new Version(entry.Version);
                         IntegrationData[integration] = 
                         integration.Decode64(entry.Data, version);
@@ -153,7 +153,23 @@ namespace MoveIt
                     }
 
                 }
-            } 
+            }
+        }
+
+        public virtual void SaveIntegrations()
+        {
+            foreach (var integration in MoveItTool.Integrations)
+            {
+                try
+                {
+                    IntegrationData[integration] = integration.Copy(instance.id);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"integration {integration} Failed to copy  {instance?.id}" + integration);
+                    DebugUtils.LogException(e);
+                }
+            }
         }
     }
 

@@ -121,20 +121,6 @@ namespace MoveIt
 
             state.TMPE_NodeRecord = MoveItTool.TMPE.CopyNode(node);
 
-            foreach(var integration in MoveItTool.Integrations)
-            {
-                try
-                {
-                    state.IntegrationData[integration] = integration.CopyNode(node);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Failed to copy node {id.NetNode} using integration: " + integration);
-                    DebugUtils.LogException(e);
-                }
-
-            }
-
             if (Pillar != null)
             {
                 state.pillarState = Pillar.SaveToState() as BuildingState;
@@ -150,6 +136,8 @@ namespace MoveIt
                     state.segmentsSave[i].endDirection = segmentBuffer[segment].m_endDirection;
                 }
             }
+
+            state.SaveIntegrations();
 
             return state;
         }

@@ -146,20 +146,6 @@ namespace MoveIt
                 LaneIDs = GetLaneIds(segment),
             };
 
-            foreach (var integration in MoveItTool.Integrations)
-            {
-                try
-                {
-                    state.IntegrationData[integration] = integration.CopySegment(segment);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Failed to copy segment {id.NetSegment} using integration: " + integration);
-                    DebugUtils.LogException(e);
-                }
-
-        }
-
             state.startPosition = nodeBuffer[state.startNodeId].m_position;
             state.endPosition = nodeBuffer[state.endNodeId].m_position;
 
@@ -168,12 +154,13 @@ namespace MoveIt
 
             state.invert = ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert);
 
+            state.SaveIntegrations();
+
             return state;
         }
 
         public static List<uint> GetLaneIds(ushort segmentId)
         {
-            int idx = 0;
             if (segmentBuffer[segmentId].Info == null)
             {
                 Debug.LogError("null info: potentially cuased by missing assets");
