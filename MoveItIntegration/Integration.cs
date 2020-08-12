@@ -54,7 +54,6 @@ namespace MoveItIntegration
         /// <summary>decode the record encoded by <see cref="Encode64(object)".</summary>
         /// <param name="dataVersion"><see cref="DataVersion"/> when data was stored</param>
         public abstract object Decode64(string base64Data, Version dataVersion);
-
     }
 
     public static class IntegrationHelper

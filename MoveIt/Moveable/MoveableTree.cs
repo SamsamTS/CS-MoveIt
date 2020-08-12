@@ -45,6 +45,8 @@ namespace MoveIt
 
             state.single = TreeManager.instance.m_trees.m_buffer[tree].Single;
 
+            state.SaveIntegrations();
+
             return state;
         }
 

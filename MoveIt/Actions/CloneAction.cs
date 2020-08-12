@@ -286,28 +286,7 @@ namespace MoveIt
                 }
             }
 
-            foreach (var item in stateToClone)
-            {
-                switch (item.Key)
-                {
-                    case NodeState nodeState:
-                    case SegmentState segmentState:
-                        foreach (var data in item.Key.IntegrationData)
-                        {
-                            try
-                            {
-                                data.Key.Paste(item.Value.id, data.Value, InstanceID_origToClone);
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.LogError($"integration {data.Key} Failed to paste from {item.Key.id}to {item.Value.id}");
-                                DebugUtils.LogException(e);
-                            }
-                        }
-                        break;
-                }
-            }
-
+            // backward compatibility.
             // Clone NodeController after segments have been added.
             foreach (var item in stateToClone)
             {
@@ -319,7 +298,7 @@ namespace MoveIt
                 }
             }
 
-            // Clone TMPE rules
+            // Clone TMPE rules // TODO remove when TMPE switches to integration
             foreach (var state in m_states)
             {
                 if (state is NodeState nodeState)
@@ -341,6 +320,24 @@ namespace MoveIt
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
+            }
+
+            // clone integrations.
+            foreach (var item in stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        data.Key.Paste(item.Value.id, data.Value, InstanceID_origToClone);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"integration {data.Key} Failed to paste from {item.Key.id}to {item.Value.id}");
+                        DebugUtils.LogException(e);
+                    }
+                }
+                break;
             }
 
             if (m_origToClone != null)
