@@ -44,7 +44,7 @@ namespace MoveItIntegration
         /// this maps all the nodes, segments and lanes. 
         /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
         ///         public abstract object Paste(InstanceID instanceID);
-        public abstract object Paste(InstanceID targetrInstanceID, object record, Dictionary<InstanceID, InstanceID> map);
+        public abstract void Paste(InstanceID targetrInstanceID, object record, Dictionary<InstanceID, InstanceID> map);
 
 
         /// <summary>converts data to base 64 string.</summary>
