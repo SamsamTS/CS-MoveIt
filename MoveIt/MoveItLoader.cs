@@ -1,4 +1,6 @@
-﻿using ICities;
+﻿using ColossalFramework.Globalization;
+using ICities;
+using MoveIt.Localization;
 using UnityEngine;
 
 namespace MoveIt
@@ -83,6 +85,14 @@ namespace MoveIt
             }
 
             IsGameLoaded = false;
+
+            LocaleManager.eventLocaleChanged -= LocaleChanged;
+        }
+
+        internal static void LocaleChanged()
+        {
+            Debug.Log($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name}");
+            Str.Culture = ModInfo.Culture;
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using ColossalFramework.Plugins;
-using UnityEngine;
+using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 // Network Skins wrapper, supports 2.0
 
@@ -120,10 +121,10 @@ namespace MoveIt
         {
             if (isModInstalled())
             {
-                return "Network Skins 2 found, integration enabled!\n ";
+                return Str.integration_NS2_Found;
             }
 
-            return "Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.\n ";
+            return Str.integration_NS2_Notfound;
         }
 
         public string EncodeModifiers(object obj)

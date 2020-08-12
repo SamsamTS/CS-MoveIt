@@ -1,8 +1,11 @@
 ﻿using ColossalFramework;
+using ColossalFramework.Globalization;
 using ColossalFramework.IO;
 using ColossalFramework.UI;
 using ICities;
+using MoveIt.Localization;
 using System;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,8 +38,10 @@ namespace MoveIt
 
         public string Description
         {
-            get { return "Move things"; }
+            get { return Str.mod_description; }
         }
+
+        internal static CultureInfo Culture => new CultureInfo(SingletonLite<LocaleManager>.instance.language == "zh" ? "zh-cn" : SingletonLite<LocaleManager>.instance.language);
 
         public const string version = "2.9.0";
 
@@ -63,10 +68,14 @@ namespace MoveIt
         {
             try
             {
+                LocaleManager.eventLocaleChanged -= MoveItLoader.LocaleChanged;
+                MoveItLoader.LocaleChanged();
+                LocaleManager.eventLocaleChanged += MoveItLoader.LocaleChanged;
+
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIHelper)group).self as UIPanel;
 
-                UICheckBox checkBox = (UICheckBox)group.AddCheckbox("Auto-close Toolbox menu", MoveItTool.autoCloseAlignTools.value, (b) =>
+                UICheckBox checkBox = (UICheckBox)group.AddCheckbox(Str.options_AutoCloseToolbox, MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
                     MoveItTool.autoCloseAlignTools.value = b;
                     if (UIMoreTools.MoreToolsPanel != null)
@@ -74,72 +83,64 @@ namespace MoveIt
                         UIMoreTools.CloseMenu();
                     }
                 });
-                checkBox.tooltip = "Check this to close the Toolbox menu after choosing a tool.";
+                checkBox.tooltip = Str.options_AutoCloseToolbox_Tooltip;
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Prefer fast, low-detail moving (hold Shift to temporarily switch)", MoveItTool.fastMove.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_PreferFastmove, MoveItTool.fastMove.value, (b) =>
                 {
                     MoveItTool.fastMove.value = b;
                 });
-                checkBox.tooltip = "Helps you position objects when your frame-rate is poor.";
+                checkBox.tooltip = Str.options_PreferFastmove_Tooltip;
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Hide selectors/overlays when in low-sensitivity mode", MoveItTool.hideSelectorsOnLowSensitivity.value, (b) =>
-                {
-                    MoveItTool.hideSelectorsOnLowSensitivity.value = b;
-                });
-                checkBox.tooltip = "When holding control, the selection overlays are hidden";
-
-                group.AddSpace(10);
-
-                checkBox = (UICheckBox)group.AddCheckbox("Select pylons and pillars by holding Alt only", MoveItTool.altSelectNodeBuildings.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_AltForPillars, MoveItTool.altSelectNodeBuildings.value, (b) =>
                 {
                     MoveItTool.altSelectNodeBuildings.value = b;
                 });
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Use cardinal movements", MoveItTool.useCardinalMoves.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_UseCardinal, MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;
                 });
-                checkBox.tooltip = "If checked, Up will move in the North direction, Down is South, Left is West, Right is East.";
+                checkBox.tooltip = Str.options_UseCardinal_Tooltip;
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Right click cancels cloning", MoveItTool.rmbCancelsCloning.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_RightClickCancel, MoveItTool.rmbCancelsCloning.value, (b) =>
                 {
                     MoveItTool.rmbCancelsCloning.value = b;
                 });
-                checkBox.tooltip = "If checked, Right click will cancel cloning instead of rotating 45°.";
+                checkBox.tooltip = Str.options_RightClickCancel_Tooltip;
 
                 group.AddSpace(10);
-                group = helper.AddGroup("General Shortcuts");
+                group = helper.AddGroup(Str.options_ShortcutsGeneral);
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingMain>();
 
                 group.AddSpace(10);
-                group = helper.AddGroup("Toolbox Shortcuts");
+                group = helper.AddGroup(Str.options_ShortcutsToolbox);
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
                 ((UIPanel)((UIHelper)group).self).gameObject.AddComponent<OptionsKeymappingToolbox>();
 
                 group.AddSpace(10);
-                group = helper.AddGroup("Extra Options");
+                group = helper.AddGroup(Str.options_ExtraOptions);
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
-                UIButton button = (UIButton)group.AddButton("Remove Ghost Nodes", MoveItTool.CleanGhostNodes);
-                button.tooltip = "Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!";
+                UIButton button = (UIButton)group.AddButton(Str.options_RemoveGhostNodes, MoveItTool.CleanGhostNodes);
+                button.tooltip = Str.options_RemoveGhostNodes_Tooltip;
 
                 group.AddSpace(10);
 
-                button = (UIButton)group.AddButton("Reset Button Position", () =>
+                button = (UIButton)group.AddButton(Str.options_ResetButtonPosition, () =>
                 {
                     UIMoveItButton.savedX.value = -1000;
                     UIMoveItButton.savedY.value = -1000;
@@ -148,13 +149,13 @@ namespace MoveIt
 
                 group.AddSpace(20);
 
-                checkBox = (UICheckBox)group.AddCheckbox("Disable debug messages logging", DebugUtils.hideDebugMessages.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_DisableDebugLogging, DebugUtils.hideDebugMessages.value, (b) =>
                 {
                     DebugUtils.hideDebugMessages.value = b;
                 });
-                checkBox.tooltip = "If checked, debug messages won't be logged.";
+                checkBox.tooltip = Str.options_DisableDebugLogging_Tooltip;
 
-                checkBox = (UICheckBox)group.AddCheckbox("Show Move It debug panel\n", MoveItTool.showDebugPanel.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_ShowDebugPanel, MoveItTool.showDebugPanel.value, (b) =>
                 {
                     MoveItTool.showDebugPanel.value = b;
                     if (MoveItTool.m_debugPanel != null)
@@ -164,25 +165,22 @@ namespace MoveIt
                 });
                 checkBox.name = "MoveIt_DebugPanel";
 
-                UILabel debugLabel = panel.AddUIComponent<UILabel>();
-                debugLabel.name = "debugLabel";
-                debugLabel.text = "      Shows information about the last highlighted object. Slightly decreases\n" +
-                    "      performance, do not enable unless you have a specific reason.\n ";
-
                 group.AddSpace(5);
                 UILabel nsLabel = panel.AddUIComponent<UILabel>();
                 nsLabel.name = "nsLabel";
                 nsLabel.text = NS_Manager.getVersionText();
 
+                group.AddSpace(5);
                 UILabel ncLabel = panel.AddUIComponent<UILabel>();
                 ncLabel.name = "ncLabel";
                 ncLabel.text = NodeController_Manager.getVersionText();
 
+                group.AddSpace(5);
                 UILabel tmpeLabel = panel.AddUIComponent<UILabel>();
                 tmpeLabel.name = "tmpeLabel";
                 tmpeLabel.text = TMPE_Manager.getVersionText();
 
-                group = helper.AddGroup("Procedural Objects");
+                group = helper.AddGroup(Str.options_ProceduralObjects);
                 panel = ((UIHelper)group).self as UIPanel;
 
                 UILabel poLabel = panel.AddUIComponent<UILabel>();
@@ -191,30 +189,13 @@ namespace MoveIt
 
                 UILabel poWarning = panel.AddUIComponent<UILabel>();
                 poWarning.name = "poWarning";
-                poWarning.text = "      Please note: you can not undo Bulldozed PO. This means if you delete \n" +
-                    "      PO objects with Move It, they are immediately PERMANENTLY gone.\n ";
+                poWarning.padding = new RectOffset(25, 0, 0, 15);
+                poWarning.text = Str.options_PODeleteWarning;
 
-                checkBox = (UICheckBox)group.AddCheckbox("Hide the PO deletion warning", !MoveItTool.POShowDeleteWarning.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_HidePODeletionWarning, !MoveItTool.POShowDeleteWarning.value, (b) =>
                 {
                     MoveItTool.POShowDeleteWarning.value = !b;
                 });
-
-                checkBox = (UICheckBox)group.AddCheckbox("Highlight unselected visible PO objects", MoveItTool.POHighlightUnselected.value, (b) =>
-                {
-                    MoveItTool.POHighlightUnselected.value = b;
-                    if (MoveItTool.PO != null)
-                    {
-                        try
-                        {
-                            MoveItTool.PO.ToolEnabled();
-                        }
-                        catch (ArgumentException e)
-                        {
-                            Debug.Log($"PO Integration failed:\n{e}");
-                        }
-                    }
-                });
-                checkBox.tooltip = "Show a faded purple circle around PO objects that aren't selected.";
 
                 group.AddSpace(15);
 

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
+using MoveIt.Localization;
+using System;
 
 using UIUtils = SamsamTS.UIUtils;
 
@@ -49,11 +51,11 @@ namespace MoveIt
             deleteButton.text = "X";
             deleteButton.size = new Vector2(40f, 30f);
             deleteButton.relativePosition = new Vector3((UISaveWindow.instance != null ? 430 : 510) - deleteButton.width - 8, 8);
-            deleteButton.tooltip = "Delete saved selection";
+            deleteButton.tooltip = Str.xml_DeleteLabel;
 
             saveLoadButton = UIUtils.CreateButton(this);
             saveLoadButton.name = "MoveIt_SaveLoadFileButton";
-            saveLoadButton.text = UISaveWindow.instance != null ? "Export" : "Import";
+            saveLoadButton.text = UISaveWindow.instance != null ? Str.xml_Export : Str.xml_Import;
             saveLoadButton.size = new Vector2(80f, 30f);
             saveLoadButton.relativePosition = new Vector3(deleteButton.relativePosition.x - saveLoadButton.width - 8, 8);
 
@@ -61,8 +63,8 @@ namespace MoveIt
             {
                 loadToPosition = UIUtils.CreateButton(this);
                 loadToPosition.name = "MoveIt_loadToPosition";
-                loadToPosition.text = "Restore";
-                loadToPosition.tooltip = "Import the selection to the position it was exported";
+                loadToPosition.text = Str.xml_Restore;
+                loadToPosition.tooltip = Str.xml_Restore_Tooltip;
                 loadToPosition.size = new Vector2(80f, 30f);
                 loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
 
@@ -95,7 +97,7 @@ namespace MoveIt
 
             deleteButton.eventClicked += (c, p) =>
             {
-                ConfirmPanel.ShowModal("Delete file", "Do you want to delete the file '" + fileNameLabel.text + "' permanently?", (comp, ret) =>
+                ConfirmPanel.ShowModal(Str.xml_DeleteConfirmTitle, String.Format(Str.xml_DeleteConfirmMessage, fileNameLabel.text), (comp, ret) =>
                 {
                     if (ret == 1)
                     {

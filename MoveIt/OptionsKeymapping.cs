@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
 using ColossalFramework.UI;
+using MoveIt.Localization;
 using System.Reflection;
 using UnityEngine;
 
@@ -10,26 +11,26 @@ namespace MoveIt
     {
         private void Awake()
         {
-            AddKeymapping("Toggle Tool", toggleTool);
-            AddKeymapping("Move North", moveZpos);
-            AddKeymapping("Move South", moveZneg);
-            AddKeymapping("Move East", moveXpos);
-            AddKeymapping("Move West", moveXneg);
-            AddKeymapping("Move Up", moveYpos);
-            AddKeymapping("Move Down", moveYneg);
-            AddKeymapping("Rotate Counterclockwise", turnNeg);
-            AddKeymapping("Rotate Clockwise", turnPos);
-            AddKeymapping("Scale Inwards", scaleIn);
-            AddKeymapping("Scale Outwards", scaleOut);
-            AddKeymapping("Deselect All", deselectAll);
-            AddKeymapping("Undo", undo);
-            AddKeymapping("Redo", redo);
-            AddKeymapping("Clone", clone);
-            AddKeymapping("Bulldoze", bulldoze);
-            AddKeymapping("Toggle Grid View", viewGrid);
-            AddKeymapping("Toggle Underground View", viewUnderground);
-            AddKeymapping("Toggle Debug Panel", viewDebug);
-            AddKeymapping("Step Over", stepOverKey);
+            AddKeymapping(Str.key_ToggleTool, toggleTool);
+            AddKeymapping(Str.key_MoveNorth, moveZpos);
+            AddKeymapping(Str.key_MoveSouth, moveZneg);
+            AddKeymapping(Str.key_MoveEast, moveXpos);
+            AddKeymapping(Str.key_MoveWest, moveXneg);
+            AddKeymapping(Str.key_MoveUp, moveYpos);
+            AddKeymapping(Str.key_MoveDown, moveYneg);
+            AddKeymapping(Str.key_RotateCCW, turnNeg);
+            AddKeymapping(Str.key_RotateCW, turnPos);
+            AddKeymapping(Str.key_ScaleIn, scaleIn);
+            AddKeymapping(Str.key_ScaleOut, scaleOut);
+            AddKeymapping(Str.key_DeselectAll, deselectAll);
+            AddKeymapping(Str.key_Undo, undo);
+            AddKeymapping(Str.key_Redo, redo);
+            AddKeymapping(Str.key_Clone, clone);
+            AddKeymapping(Str.key_Bulldoze, bulldoze);
+            AddKeymapping(Str.key_ToggleGridView, viewGrid);
+            AddKeymapping(Str.key_ToggleUndergroundView, viewUnderground);
+            AddKeymapping(Str.key_ToggleDebugPanel, viewDebug);
+            AddKeymapping(Str.key_StepOver, stepOverKey);
         }
     }
 
@@ -37,19 +38,19 @@ namespace MoveIt
     {
         private void Awake()
         {
-            AddKeymapping("Line Up (Spaced)", alignLine);
-            AddKeymapping("Line Up (Unspaced)", alignLineUnspaced);
-            AddKeymapping("Mirror Objects", alignMirror);
-            AddKeymapping("Reset Objects", reset);
-            AddKeymapping("Set Position", alignMoveTo);
-            AddKeymapping("Rotate Randomly", alignRandom);
-            AddKeymapping("Rotate At Centre", alignGroup);
-            AddKeymapping("Rotate In-Place", alignInplace);
-            AddKeymapping("Slope Objects", alignSlope);
-            AddKeymapping("Quick Slope", alignSlopeQuick);
-            AddKeymapping("Full Slope", alignSlopeFull);
-            AddKeymapping("Align To Terrain Height", alignTerrainHeight);
-            AddKeymapping("Align Heights", alignHeights);
+            AddKeymapping(Str.key_ToolLineUpSpaced, alignLine);
+            AddKeymapping(Str.key_ToolLineUpUnspaced, alignLineUnspaced);
+            AddKeymapping(Str.key_ToolMirrorObjects, alignMirror);
+            AddKeymapping(Str.key_ToolResetObjects, reset);
+            AddKeymapping(Str.key_ToolSetPosition, alignMoveTo);
+            AddKeymapping(Str.key_ToolRotateRandomly, alignRandom);
+            AddKeymapping(Str.key_ToolRotateAtCentre, alignGroup);
+            AddKeymapping(Str.key_ToolRotateInPlace, alignInplace);
+            AddKeymapping(Str.key_ToolSlopeObjects, alignSlope);
+            AddKeymapping(Str.key_ToolQuickSlopeNode, alignSlopeQuick);
+            AddKeymapping(Str.key_ToolFullSlope, alignSlopeFull);
+            AddKeymapping(Str.key_ToolToTerrainHeight, alignTerrainHeight);
+            AddKeymapping(Str.key_ToolToObjectHeight, alignHeights);
         }
     }
 
@@ -57,8 +58,8 @@ namespace MoveIt
     {
         private void Awake()
         {
-            AddKeymapping("  Toggle PO Active/Inactive", activatePO);
-            AddKeymapping("  Convert selected objects to PO", convertToPO);
+            AddKeymapping("  " + Str.key_TogglePO, activatePO);
+            AddKeymapping("  " + Str.key_ConvertToPO, convertToPO);
         }
     }
 

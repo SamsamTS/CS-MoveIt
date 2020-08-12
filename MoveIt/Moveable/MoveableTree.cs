@@ -185,7 +185,7 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
-            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+            if (MoveItTool.m_isLowSensitivity) return;
 
             uint tree = id.Tree;
             TreeManager treeManager = TreeManager.instance;
@@ -201,7 +201,7 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            if (MoveItTool.m_isLowSensitivity && MoveItTool.hideSelectorsOnLowSensitivity) return;
+            if (MoveItTool.m_isLowSensitivity) return;
 
             TreeState state = instanceState as TreeState;
 

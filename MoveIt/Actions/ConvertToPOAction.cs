@@ -25,22 +25,6 @@ namespace MoveIt
 
         public override void Do()
         {
-            if (m_states.Count < 20)
-            {
-                DoImplementation();
-                return;
-            }
-
-            ConfirmPanel panel = UIView.library.ShowModal<ConfirmPanel>("ConfirmPanel", delegate (UIComponent comp, int value)
-            {
-                if (value == 1)
-                    DoImplementation();
-            });
-            panel.SetMessage("Converting to PO", "Converting many objects to Procedural Objects at once can take along time. The game will appear to have frozen, but it will eventually complete. Continue?");
-        }
-
-        public void DoImplementation()
-        {
             if (!firstRun) return; // Disables Redo
             m_clones.Clear();
             m_oldSelection = new HashSet<Instance>();

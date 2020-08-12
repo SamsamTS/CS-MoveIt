@@ -1,12 +1,9 @@
-﻿using System;
-using System.IO;
-
-using UnityEngine;
-
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
-
+using MoveIt.Localization;
+using System.IO;
 using UIUtils = SamsamTS.UIUtils;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -54,7 +51,7 @@ namespace MoveIt
 
             UILabel label = AddUIComponent<UILabel>();
             label.textScale = 0.9f;
-            label.text = "Import";
+            label.text = Str.xml_Import;
             label.relativePosition = new Vector2(8, 8);
             label.SendToBack();
 

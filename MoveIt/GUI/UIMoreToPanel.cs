@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
+using MoveIt.Localization;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -118,7 +119,7 @@ namespace MoveIt
             TitleCaption = TitleContainer.AddUIComponent<UILabel>();
             TitleCaption.anchor = UIAnchorStyle.CenterHorizontal | UIAnchorStyle.CenterVertical;
             TitleCaption.size = new Vector2(Panel.width, 40);
-            TitleCaption.text = "Position";
+            TitleCaption.text = Str.setpos_Title;
 
             TitleDrag = TitleContainer.AddUIComponent(typeof(UIDragHandle)) as UIDragHandle;
             TitleDrag.relativePosition = new Vector3(0, 0);
@@ -160,7 +161,7 @@ namespace MoveIt
             YLabel = Panel.AddUIComponent<UILabel>();
             YLabel.relativePosition = new Vector3(8, 120);
             YLabel.text = "H:";
-            YLabel.tooltip = "Height";
+            YLabel.tooltip = Str.setpos_H_Tooltip;
             YInput = UIUtils.CreateTextField(Panel);
             YInput.relativePosition = new Vector3(30, 116);
             YInput.size = new Vector2(148, 24);
@@ -171,7 +172,7 @@ namespace MoveIt
             ALabel = Panel.AddUIComponent<UILabel>();
             ALabel.relativePosition = new Vector3(8, 154);
             ALabel.text = "A:";
-            ALabel.tooltip = "Angle";
+            ALabel.tooltip = Str.setpos_A_Tooltip;
             AInput = UIUtils.CreateTextField(Panel);
             AInput.relativePosition = new Vector3(30, 150);
             AInput.size = new Vector2(100, 24);
@@ -182,7 +183,7 @@ namespace MoveIt
             Submit = UIUtils.CreateButton(Panel);
             Submit.relativePosition = new Vector3(138, 146);
             Submit.size = new Vector2(40, 30);
-            Submit.text = "Go";
+            Submit.text = Str.setpos_Go;
             Submit.tabIndex = 4;
             Submit.eventClicked += (UIComponent c, UIMouseEventParameter p) =>
             {
