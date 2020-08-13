@@ -333,11 +333,13 @@ namespace MoveIt
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError($"integration {data.Key} Failed to paste from {item.Key.id}to {item.Value.id}");
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
                         DebugUtils.LogException(e);
                     }
                 }
-                break;
             }
 
             if (m_origToClone != null)

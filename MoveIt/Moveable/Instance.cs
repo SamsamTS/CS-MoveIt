@@ -166,7 +166,7 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"integration {integration} Failed to copy  {instance?.id}" + integration);
+                    Debug.LogError($"integration {integration} Failed to copy {instance?.id}" + integration);
                     DebugUtils.LogException(e);
                 }
             }
