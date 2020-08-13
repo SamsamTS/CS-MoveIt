@@ -36,18 +36,18 @@ namespace MoveIt
             "1471531686", // vilgard92's Concrete Brushes
             "1762784478." // Clipping
         };
-        static readonly string[] PillarClassNames = new string[]
-        {
-            "Highway", "Pedestrian Path", "Train Track", "Monorail Track", "CableCar Facility"
-        };
-        static readonly string[] PillarNameExceptions = new string[]
-        {
-            "Rock", "Classic Grey", "Classic Mossy", "Mossy Grey", "Dover White", "Sedona Salmon", "Mossy Salmon", "Mountain Brown", "Mossy Brown", "Arid Yellow", "Dark Black"
-        };
-        static readonly Type[] PylonAITypes = new Type[]
-        {
-            typeof(PowerPoleAI)
-        };
+        //static readonly string[] PillarClassNames = new string[]
+        //{
+        //    "Highway", "Pedestrian Path", "Train Track", "Monorail Track", "CableCar Facility"
+        //};
+        //static readonly string[] PillarNameExceptions = new string[]
+        //{
+        //    "Rock", "Classic Grey", "Classic Mossy", "Mossy Grey", "Dover White", "Sedona Salmon", "Mossy Salmon", "Mountain Brown", "Mossy Brown", "Arid Yellow", "Dark Black"
+        //};
+        //static readonly Type[] PylonAITypes = new Type[]
+        //{
+        //    typeof(PowerPoleAI)
+        //};
 
         public static Dictionary<string, NetworkFilter> NetworkFilters = new Dictionary<string, NetworkFilter>
         {
@@ -208,7 +208,7 @@ namespace MoveIt
             return false;
         }
 
-        public static bool Filter(BuildingInfo info, bool isHover = false)
+        public static bool Filter(BuildingInfo info, ref Building building, bool isHover = false)
         {
             if (MoveItTool.filterPicker && info == Picker.Info)
             {
@@ -217,27 +217,40 @@ namespace MoveIt
             if (isHover)
             {
                 //Select P&P on hover with Alt
-                if (MoveItTool.altSelectNodeBuildings)
+                if ((building.m_flags & Building.Flags.Untouchable) == Building.Flags.Untouchable)
                 {
-                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)) && !Array.Exists(PillarNameExceptions, s => info.name.Contains(s)))
+                    if (MoveItTool.altSelectNodeBuildings)
                     {
-                        if (Event.current.alt)
+                        if (!Event.current.alt)
                         {
-                            return true;
+                            return false;
                         }
-                        return false;
                     }
-
-                    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
-                    {
-                        if (Event.current.alt)
-                        {
-                            return true;
-                        }
-                        return false;
-                    }
+                    return true;
                 }
 
+                //if (MoveItTool.altSelectNodeBuildings)
+                //{
+                //    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)) && !Array.Exists(PillarNameExceptions, s => info.name.Contains(s)))
+                //    {
+                //        if (Event.current.alt)
+                //        {
+                //            return true;
+                //        }
+                //        return false;
+                //    }
+
+                //    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
+                //    {
+                //        if (Event.current.alt)
+                //        {
+                //            return true;
+                //        }
+                //        return false;
+                //    }
+                //}
+
+                // If single mode, filters don't apply
                 if (!MoveItTool.marqueeSelection)
                 {
                     return true;
@@ -252,18 +265,30 @@ namespace MoveIt
 
             if (MoveItTool.filterBuildings)
             {
-                if (MoveItTool.altSelectNodeBuildings)
+                //Select P&P on hover with Alt
+                if ((building.m_flags & Building.Flags.Untouchable) == Building.Flags.Untouchable)
                 {
-                    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)) && !Array.Exists(PillarNameExceptions, s => info.name.Contains(s)))
+                    if (MoveItTool.altSelectNodeBuildings)
                     {
-                        return false;
+                        if (!Event.current.alt)
+                        {
+                            return false;
+                        }
                     }
-
-                    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
-                    {
-                        return false;
-                    }
+                    return true;
                 }
+                //if (MoveItTool.altSelectNodeBuildings)
+                //{
+                //    if (Array.Exists(PillarClassNames, s => s.Equals(info.m_class.name)) && !Array.Exists(PillarNameExceptions, s => info.name.Contains(s)))
+                //    {
+                //        return false;
+                //    }
+
+                //    if (Array.Exists(PylonAITypes, s => s.Equals(info.GetAI().GetType())))
+                //    {
+                //        return false;
+                //    }
+                //}
                 return true;
             }
             return false;

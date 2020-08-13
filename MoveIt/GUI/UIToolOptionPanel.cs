@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
+using ColossalFramework.Globalization;
 using ColossalFramework.UI;
+using MoveIt.Localization;
 using System;
+using System.Globalization;
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
@@ -47,7 +50,7 @@ namespace MoveIt
             m_followTerrain = AddUIComponent<UIMultiStateButton>();
             m_followTerrain.atlas = GetFollowTerrainAtlas();
             m_followTerrain.name = "MoveIt_FollowTerrain";
-            m_followTerrain.tooltip = "Follow Terrain";
+            m_followTerrain.tooltip = Str.baseUI_FollowTerrain_Tooltip;
             m_followTerrain.playAudioEvents = true;
 
             m_followTerrain.size = new Vector2(36, 36);
@@ -84,7 +87,7 @@ namespace MoveIt
             m_snapping = AddUIComponent<UIMultiStateButton>();
             m_snapping.atlas = UIUtils.GetAtlas("Ingame");
             m_snapping.name = "MoveIt_Snapping";
-            m_snapping.tooltip = "Toggle Snapping";
+            m_snapping.tooltip = Str.baseUI_ToggleSnapping_Tooltip;
             m_snapping.playAudioEvents = true;
 
             m_snapping.size = new Vector2(36, 36);
@@ -134,7 +137,7 @@ namespace MoveIt
             m_single = m_tabStrip.AddTab("MoveIt_Single", null, false);
             m_single.group = m_tabStrip;
             m_single.atlas = UIUtils.GetAtlas("Ingame");
-            m_single.tooltip = "Single Selection";
+            m_single.tooltip = Str.baseUI_Single_Tooltip;
             m_single.playAudioEvents = true;
 
             m_single.size = new Vector2(36, 36);
@@ -158,7 +161,7 @@ namespace MoveIt
             m_marquee = m_tabStrip.AddTab("MoveIt_Marquee", null, false);
             m_marquee.group = m_tabStrip;
             m_marquee.atlas = UIUtils.GetAtlas("Ingame");
-            m_marquee.tooltip = "Marquee Selection";
+            m_marquee.tooltip = Str.baseUI_Marquee_Tooltip;
             m_marquee.playAudioEvents = true;
 
             m_marquee.size = new Vector2(36, 36);
@@ -224,25 +227,25 @@ namespace MoveIt
             m_picker.eventClick += OnPickerClick;
             m_picker.eventDoubleClick += OnPickerDoubleClick;
             m_picker.name = "mit_pickerButton";
-
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Picker", null, false);
+            
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Picker", Str.filter_Picker, false);
             checkBox.width -= 21;
-            UIFilters.UpdatePickerLabel("Picker", "Pick an object to filter for objects of the same type", UIFilters.InactiveLabelColor, false);
+            UIFilters.UpdatePickerLabel(Str.filter_Picker, Str.filter_Picker_Tooltip, UIFilters.InactiveLabelColor, false);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Buildings");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Buildings", Str.filter_Buildings);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Props");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Props", Str.filter_Props);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Decals");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Decals", Str.filter_Decals);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Surfaces");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Surfaces", Str.filter_Surfaces);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Trees");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Trees", Str.filter_Trees);
             checkBox.eventDoubleClick += OnDoubleClick;
 
             if (MoveItTool.PO.Enabled)
@@ -251,15 +254,15 @@ namespace MoveIt
                 {
                     m_filtersPanel.height += 20f;
                 }
-                checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "PO");
+                checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "PO", Str.filter_PO);
                 checkBox.eventDoubleClick += OnDoubleClick;
                 checkBox.isVisible = MoveItTool.PO.Active;
             }
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Nodes");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Nodes", Str.filter_Nodes);
             checkBox.eventDoubleClick += OnDoubleClick;
 
-            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Segments");
+            checkBox = UIFilters.CreateFilterCB(m_filtersPanelList, "Segments", Str.filter_Segments);
             checkBox.eventDoubleClick += OnDoubleClick;
             #endregion
 
@@ -278,22 +281,22 @@ namespace MoveIt
                 UIFilters.RefreshFilters();
             }
 
-            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Roads");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Roads", Str.filter_Roads);
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Tracks");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Tracks", Str.filter_Tracks);
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Paths");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Paths", Str.filter_Paths);
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Fences");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Fences", Str.filter_Fences);
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Powerlines");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Powerlines", Str.filter_Powerlines);
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
-            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Others");
+            checkBox = UIFilters.CreateNetworkFilterCB(m_filtersPanelList, "Others", Str.filter_Others);
             checkBox.eventDoubleClick += OnDoubleClickNetworkFilter;
 
             UIFilters.RefreshFilters();
@@ -357,7 +360,7 @@ namespace MoveIt
             m_copy.name = "MoveIt_Copy";
             m_copy.group = m_tabStrip;
             m_copy.atlas = GetIconsAtlas();
-            m_copy.tooltip = "Copy (Alt+Click to duplicate in-place)";
+            m_copy.tooltip = Str.baseUI_Clone_Tooltip;;
             m_copy.playAudioEvents = true;
 
             m_copy.size = new Vector2(36, 36);
@@ -407,7 +410,7 @@ namespace MoveIt
             m_bulldoze.name = "MoveIt_Bulldoze";
             m_bulldoze.group = m_tabStrip;
             m_bulldoze.atlas = GetIconsAtlas();
-            m_bulldoze.tooltip = "Bulldoze";
+            m_bulldoze.tooltip = Str.baseUI_Bulldoze_Tooltip;
             m_bulldoze.playAudioEvents = true;
 
             m_bulldoze.size = new Vector2(36, 36);
@@ -437,7 +440,7 @@ namespace MoveIt
             m_moreTools.name = "MoveIt_MoreToolsBtn";
             m_moreTools.group = m_tabStrip;
             m_moreTools.atlas = GetIconsAtlas();
-            m_moreTools.tooltip = "Toolbox";
+            m_moreTools.tooltip = Str.baseUI_Toolbox_Tooltip;
             m_moreTools.playAudioEvents = true;
             m_moreTools.size = new Vector2(36, 36);
             m_moreTools.normalBgSprite = "OptionBase";
@@ -485,26 +488,26 @@ namespace MoveIt
             #endregion
 
             #region More Tools / Toolbox buttons
-            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", "Other Tools", "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));
+            UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", Str.toolbox_OtherTools_Tooltip, "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));
             if (MoveItTool.PO.Enabled)
-                othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", "Convert To PO", "ConvertToPO");
-            othersBtn.CreateSubButton("MoveIt_AlignLineBtn", "Line Up Objects", "AlignLine");
-            othersBtn.CreateSubButton("MoveIt_AlignMirrorBtn", "Mirror Objects", "AlignMirror");
-            othersBtn.CreateSubButton("MoveIt_ResetObjectBtn", "Reset Objects", "ResetObject");
-            othersBtn.CreateSubButton("MoveIt_MoveToBtn", "Set Position", "MoveTo");
+                othersBtn.CreateSubButton("MoveIt_ConvertToPOBtn", Str.toolbox_ConvertToPO, "ConvertToPO");
+            othersBtn.CreateSubButton("MoveIt_AlignLineBtn", Str.toolbox_LineUpObjects, "AlignLine");
+            othersBtn.CreateSubButton("MoveIt_AlignMirrorBtn", Str.toolbox_MirrorObjects, "AlignMirror");
+            othersBtn.CreateSubButton("MoveIt_ResetObjectBtn", Str.toolbox_ResetObjects, "ResetObject");
+            othersBtn.CreateSubButton("MoveIt_MoveToBtn", Str.toolbox_SetPosition, "MoveTo");
             othersBtn.CreateSubSeparator("MoveIt_FileSeparator");
-            othersBtn.CreateSubButton("MoveIt_LoadBtn", "Import Selection", "Load");
-            othersBtn.CreateSubButton("MoveIt_SaveBtn", "Export Selection", "Save");
+            othersBtn.CreateSubButton("MoveIt_LoadBtn", Str.toolbox_ImportSelection, "Load");
+            othersBtn.CreateSubButton("MoveIt_SaveBtn", Str.toolbox_ExportSelection, "Save");
 
-            UIMoreToolsBtn rotateBtn = new UIMoreToolsBtn(this, "MoveIt_RotateBtn", "Rotation Tools", "MenuRotate", mtpContainer, "m_mtRotateList", 3f);
-            rotateBtn.CreateSubButton("MoveIt_AlignRandomBtn", "Rotate Randomly", "AlignRandom");
-            rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", "Rotate At Centre", "AlignGroup");
-            rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", "Rotate In-Place", "AlignIndividual");
+            UIMoreToolsBtn rotateBtn = new UIMoreToolsBtn(this, "MoveIt_RotateBtn", Str.toolbox_RotationTools_Tooltip, "MenuRotate", mtpContainer, "m_mtRotateList", 3f);
+            rotateBtn.CreateSubButton("MoveIt_AlignRandomBtn", Str.toolbox_RotateRandomly, "AlignRandom");
+            rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", Str.toolbox_RotateAtCentre, "AlignGroup");
+            rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", Str.toolbox_RotateInPlace, "AlignIndividual");
 
-            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", "Height Tools", "MenuHeight", mtpContainer, "m_mtHeightList", 3f);
-            heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", "Slope Objects", "AlignSlope");
-            heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", "To Terrain Height", "AlignTerrainHeight");
-            heightBtn.CreateSubButton("MoveIt_AlignHeightBtn", "To Object Height", "AlignHeight");
+            UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", Str.toolbox_HeightTools_Tooltip, "MenuHeight", mtpContainer, "m_mtHeightList", 3f);
+            heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", Str.toolbox_SlopeObjects, "AlignSlope");
+            heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", Str.toolbox_ToTerrainHeight, "AlignTerrainHeight");
+            heightBtn.CreateSubButton("MoveIt_AlignHeightBtn", Str.toolbox_ToObjectHeight, "AlignHeight");
             #endregion
             #endregion
 
@@ -520,7 +523,7 @@ namespace MoveIt
             grid = m_viewOptions.AddUIComponent<UIMultiStateButton>();
             grid.atlas = GetIconsAtlas();
             grid.name = "MoveIt_GridView";
-            grid.tooltip = "Toggle Grid";
+            grid.tooltip = Str.baseUI_ToggleGrid_Tooltip;
             grid.playAudioEvents = true;
 
             grid.size = new Vector2(36, 36);
@@ -555,7 +558,7 @@ namespace MoveIt
             underground = m_viewOptions.AddUIComponent<UIMultiStateButton>();
             underground.atlas = UIUtils.GetAtlas("Ingame");
             underground.name = "MoveIt_UndergroundView";
-            underground.tooltip = "Toggle Underground View";
+            underground.tooltip = Str.baseUI_ToggleUnderground_Tooltip;
             underground.playAudioEvents = true;
 
             underground.size = new Vector2(36, 36);
@@ -592,7 +595,7 @@ namespace MoveIt
                 PO_button = m_viewOptions.AddUIComponent<UIMultiStateButton>();
                 PO_button.atlas = GetIconsAtlas();
                 PO_button.name = "MoveIt_PO_button";
-                PO_button.tooltip = "Toggle Procedural Objects";
+                PO_button.tooltip = Str.baseUI_TogglePO_Tooltip;
                 PO_button.playAudioEvents = true;
 
                 PO_button.size = new Vector2(36, 36);

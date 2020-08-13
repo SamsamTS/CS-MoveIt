@@ -1,8 +1,9 @@
 ﻿using ColossalFramework.Plugins;
-using UnityEngine;
+using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -219,15 +220,15 @@ namespace MoveIt
             {
                 if (VersionNames.Contains(PO_Logic.getVersion().Substring(0, 3)))
                 {
-                    return $"PO version {PO_Logic.getVersion().Substring(0, 3)} found, integration enabled!\n ";
+                    return String.Format(Str.integration_PO_Found, PO_Logic.getVersion().Substring(0, 3));
                 }
                 else
                 {
-                    return $"PO integration failed - found version {PO_Logic.getVersion().Substring(0, 3)} (required: 1.6)\n ";
+                    return String.Format(Str.integration_PO_WrongVersion, PO_Logic.getVersion().Substring(0, 3));
                 }
             }
 
-            return "PO is not available. To use these options please quit Cities Skylines and subscribe to PO.\n ";
+            return Str.integration_PO_Notfound;
         }
 
         internal static string getVersion()
