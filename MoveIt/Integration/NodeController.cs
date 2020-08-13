@@ -12,6 +12,7 @@ namespace MoveIt
         internal readonly Type tNodeManager;
         internal readonly MethodInfo mCopy, mPaste;
         internal readonly Assembly Assembly;
+        internal readonly bool NoCopy; // using integration instead.
         internal const UInt64 ID = 2085403475ul;
         internal const string NAME = "NodeController";
 
@@ -32,6 +33,8 @@ namespace MoveIt
                     }
                 }
                 if (Assembly == null) throw new Exception("Assembly not found (Failed [NC-F1])");
+                var version = Assembly.GetName().Version;
+                NoCopy = version >= new Version(2,0,0,0);
 
                 tNodeManager = Assembly.GetType("NodeController.NodeManager")
                     ?? throw new Exception("Type NodeManager not found (Failed [NC-F2])");
@@ -58,7 +61,7 @@ namespace MoveIt
 
         public byte[] CopyNode(ushort nodeID)
         {
-            if (!Enabled) return null;
+            if (!Enabled || NoCopy) return null;
             return mCopy.Invoke(null, new object[] {nodeID}) as byte[];
         }
 

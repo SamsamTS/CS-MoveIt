@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
 using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -121,7 +122,7 @@ namespace MoveIt
 
         public override InstanceState SaveToState()
         {
-            ushort segment  = id.NetSegment;
+            ushort segment = id.NetSegment;
 
             SegmentState state = new SegmentState
             {
@@ -145,11 +146,6 @@ namespace MoveIt
                 LaneIDs = GetLaneIds(segment),
             };
 
-            foreach (var integration in MoveItTool.Integrations)
-            {
-                state.IntegrationData[integration] = integration.CopySegment(segment);
-            }
-
             state.startPosition = nodeBuffer[state.startNodeId].m_position;
             state.endPosition = nodeBuffer[state.endNodeId].m_position;
 
@@ -157,6 +153,8 @@ namespace MoveIt
             state.smoothEnd = ((nodeBuffer[state.endNodeId].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
 
             state.invert = ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert);
+
+            state.SaveIntegrations();
 
             return state;
         }

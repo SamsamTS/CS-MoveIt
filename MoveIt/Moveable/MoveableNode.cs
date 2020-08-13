@@ -121,11 +121,6 @@ namespace MoveIt
 
             state.TMPE_NodeRecord = MoveItTool.TMPE.CopyNode(node);
 
-            foreach(var integration in MoveItTool.Integrations)
-            {
-                state.IntegrationData[integration] = integration.CopyNode(node);
-            }
-
             if (Pillar != null)
             {
                 state.pillarState = Pillar.SaveToState() as BuildingState;
@@ -141,6 +136,8 @@ namespace MoveIt
                     state.segmentsSave[i].endDirection = segmentBuffer[segment].m_endDirection;
                 }
             }
+
+            state.SaveIntegrations();
 
             return state;
         }
@@ -173,12 +170,7 @@ namespace MoveIt
                 nodeState.pillarState.instance.LoadFromState(nodeState.pillarState);
             }
 
-            MoveItTool.NodeController.PasteNode(node, nodeState);
 
-            //foreach(var data in nodeState.IntegrationData)
-            //{
-            //    data.Key.PasteNode(node, data.Value);
-            //}
         }
 
         public override Vector3 position

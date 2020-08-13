@@ -43,6 +43,8 @@ namespace MoveIt
             state.single = PropManager.instance.m_props.m_buffer[prop].Single;
             state.fixedHeight = PropManager.instance.m_props.m_buffer[prop].FixedHeight;
 
+            state.SaveIntegrations();
+
             return state;
         }
 

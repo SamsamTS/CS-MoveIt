@@ -108,6 +108,8 @@ namespace MoveIt
             if (subStates.Count > 0)
                 state.subStates = subStates.ToArray();
 
+            state.SaveIntegrations();
+
             return state;
         }
 

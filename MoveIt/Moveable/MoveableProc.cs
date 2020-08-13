@@ -39,6 +39,8 @@ namespace MoveIt
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
+            state.SaveIntegrations();
+
             return state;
         }
 

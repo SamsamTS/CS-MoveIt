@@ -286,25 +286,7 @@ namespace MoveIt
                 }
             }
 
-            foreach (var item in stateToClone)
-            {
-                switch (item.Key)
-                {
-                    case NodeState nodeState:
-                        foreach (var data in nodeState.IntegrationData)
-                        {
-                            data.Key.PasteNode(item.Value.id.NetNode, data.Value, InstanceID_origToClone);
-                        }
-                        break;
-                    case SegmentState segmentState:
-                        foreach (var data in segmentState.IntegrationData)
-                        {
-                            data.Key.PasteSegment(item.Value.id.NetSegment, data.Value, InstanceID_origToClone);
-                        }
-                        break;
-                }
-            }
-
+            // backward compatibility.
             // Clone NodeController after segments have been added.
             foreach (var item in stateToClone)
             {
@@ -316,7 +298,7 @@ namespace MoveIt
                 }
             }
 
-            // Clone TMPE rules
+            // Clone TMPE rules // TODO remove when TMPE switches to integration
             foreach (var state in m_states)
             {
                 if (state is NodeState nodeState)
@@ -337,6 +319,26 @@ namespace MoveIt
                 if (state is ProcState)
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
+                }
+            }
+
+            // clone integrations.
+            foreach (var item in stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        data.Key.Paste(item.Value.id, data.Value, InstanceID_origToClone);
+                    }
+                    catch (Exception e)
+                    {
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                        DebugUtils.LogException(e);
+                    }
                 }
             }
 

@@ -1,11 +1,19 @@
 ﻿using MoveItIntegration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
 
 namespace MoveIt
 {
+    [Serializable]
+    public struct IntegrationEntry {
+        public string ID;
+        public string Version;
+        public string Data; 
+    }
+
     [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
     public class InstanceState
     {
@@ -98,7 +106,71 @@ namespace MoveIt
         }
 
         [XmlIgnore]
-        public Dictionary<IMoveItIntegration, object> IntegrationData = new Dictionary<IMoveItIntegration, object>();
+        public Dictionary<MoveItIntegrationBase, object> IntegrationData = new Dictionary<MoveItIntegrationBase, object>();
+
+        [XmlArray("IntegrationEntry_List")]
+        [XmlArrayItem("IntegrationEntry_Item")]
+         
+        
+        public IntegrationEntry[] IntegrationData64
+        {
+            get {
+                List<IntegrationEntry> ret = new List<IntegrationEntry>();
+                foreach (var item in IntegrationData)
+                {
+                    try
+                    {
+                        MoveItIntegrationBase integration = item.Key;
+                        ret.Add(new IntegrationEntry
+                        {
+                            ID = integration.ID,
+                            Version = integration.DataVersion.ToString(),
+                            Data = integration.Encode64(item.Value),
+                        });
+                    }catch(Exception e)
+                    {
+                        Debug.LogError("Failed to export integration: " + item.Key);
+                        DebugUtils.LogException(e);
+                    }
+                }
+                return ret.ToArray();
+            }
+            set {
+                IntegrationData = new Dictionary<MoveItIntegrationBase, object>();
+                if (value == null)  return;
+                foreach (var entry in value)
+                {
+                    try { 
+                        MoveItIntegrationBase integration = MoveItTool.GetIntegrationByID(entry.ID);
+                        Version version = new Version(entry.Version);
+                        IntegrationData[integration] = 
+                        integration.Decode64(entry.Data, version);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Failed to import integration: " + entry.ID);
+                        DebugUtils.LogException(e);
+                    }
+
+                }
+            }
+        }
+
+        public virtual void SaveIntegrations()
+        {
+            foreach (var integration in MoveItTool.Integrations)
+            {
+                try
+                {
+                    IntegrationData[integration] = integration.Copy(instance.id);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"integration {integration} Failed to copy {instance?.id}" + integration);
+                    DebugUtils.LogException(e);
+                }
+            }
+        }
     }
 
     public interface IInfo
