@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
-using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using MoveIt.Localization;
-using System;
-using System.Globalization;
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
@@ -498,16 +495,19 @@ namespace MoveIt
             othersBtn.CreateSubSeparator("MoveIt_FileSeparator");
             othersBtn.CreateSubButton("MoveIt_LoadBtn", Str.toolbox_ImportSelection, "Load");
             othersBtn.CreateSubButton("MoveIt_SaveBtn", Str.toolbox_ExportSelection, "Save");
+            othersBtn.UpdateWidth();
 
             UIMoreToolsBtn rotateBtn = new UIMoreToolsBtn(this, "MoveIt_RotateBtn", Str.toolbox_RotationTools_Tooltip, "MenuRotate", mtpContainer, "m_mtRotateList", 3f);
             rotateBtn.CreateSubButton("MoveIt_AlignRandomBtn", Str.toolbox_RotateRandomly, "AlignRandom");
             rotateBtn.CreateSubButton("MoveIt_AlignGroupBtn", Str.toolbox_RotateAtCentre, "AlignGroup");
             rotateBtn.CreateSubButton("MoveIt_AlignIndividualBtn", Str.toolbox_RotateInPlace, "AlignIndividual");
+            rotateBtn.UpdateWidth();
 
             UIMoreToolsBtn heightBtn = new UIMoreToolsBtn(this, "MoveIt_HeightBtn", Str.toolbox_HeightTools_Tooltip, "MenuHeight", mtpContainer, "m_mtHeightList", 3f);
             heightBtn.CreateSubButton("MoveIt_AlignSlopeBtn", Str.toolbox_SlopeObjects, "AlignSlope");
             heightBtn.CreateSubButton("MoveIt_AlignTerrainHeightBtn", Str.toolbox_ToTerrainHeight, "AlignTerrainHeight");
             heightBtn.CreateSubButton("MoveIt_AlignHeightBtn", Str.toolbox_ToObjectHeight, "AlignHeight");
+            heightBtn.UpdateWidth();
             #endregion
             #endregion
 

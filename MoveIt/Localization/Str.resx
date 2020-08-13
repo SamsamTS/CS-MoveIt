@@ -129,7 +129,7 @@
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
     <value>Marquee Selection</value>
   </data>
-  <data name="baseUI_MoveItButton" xml:space="preserve">
+  <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
     <value>Move It</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
@@ -176,6 +176,7 @@
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
+    <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
     <value>Powerlines</value>
@@ -200,30 +201,39 @@
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
     <value>Node Controller found, integration enabled!</value>
+    <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
     <value>Node Controller not found, integration disabled.</value>
+    <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
     <value>Network Skins 2 found, integration enabled!</value>
+    <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
     <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
     <value>PO version {0} found, integration enabled!</value>
+    <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>PO is not available. To use these options please quit Cities Skylines and subscribe to PO.</value>
+    <value>PO not found, integration disabled.</value>
+    <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
     <value>PO integration failed - found version {0} (required: 1.6)</value>
+    <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
     <value>Traffic Manager found, integration enabled!</value>
+    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
     <value>Traffic manager not found, integration disabled.</value>
+    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
     <value>Bulldoze</value>
@@ -233,6 +243,7 @@
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
     <value>Convert selected objects to PO</value>
+    <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
     <value>Deselect All</value>
@@ -281,6 +292,7 @@
   </data>
   <data name="key_TogglePO" xml:space="preserve">
     <value>Toggle PO Active/Inactive</value>
+    <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
     <value>Toggle Tool</value>
@@ -353,6 +365,7 @@
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>Hide the PO deletion warning</value>
+    <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Please note: you can not undo Bulldozed PO. This means if you delete
@@ -412,67 +425,67 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
     <value>Convert To PO</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
     <value>Export Selection</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
     <value>Height Tools</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
     <value>Import Selection</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
     <value>Line Up Objects</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
     <value>Mirror Objects</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
     <value>Other Tools</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
     <value>Reset Objects</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
     <value>Rotate At Centre</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
     <value>Rotate In-Place</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
     <value>Rotate Randomly</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
     <value>Rotation Tools</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
     <value>Set Position</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
     <value>Slope Objects</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
     <value>To Object Height</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
     <value>To Terrain Height</value>
-    <comment>Length needs to be very short, no longer than "Rotate At Centre".</comment>
+    <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Do you want to delete the file '{0}' permanently?</value>

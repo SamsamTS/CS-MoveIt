@@ -34,7 +34,7 @@ namespace MoveIt
             m_changesWindow.isVisible = false;
 
             name = "MoveIt";
-            tooltip = Str.baseUI_MoveItButton + " " + ModInfo.version;
+            tooltip = Str.baseUI_MoveItButton_Tooltip + " " + ModInfo.version;
 
             normalFgSprite = "MoveIt";
             hoveredFgSprite = "MoveIt_hover";

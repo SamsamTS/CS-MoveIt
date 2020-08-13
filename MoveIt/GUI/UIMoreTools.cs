@@ -60,7 +60,7 @@ namespace MoveIt
             m_panel.atlas = UIUtils.GetAtlas("Ingame");
             m_panel.backgroundSprite = "SubcategoriesPanel";
             m_panel.clipChildren = true;
-            m_panel.size = new Vector2(160, 12 + (entries * 32f));
+            m_panel.size = new Vector2(160, 12 + (entries * 32f)); // Width is changed at runtime
             m_panel.isVisible = false;
             m_subpanel.name = subName;
             m_subpanel.padding = new RectOffset(1, 1, 6, 6);
@@ -100,7 +100,8 @@ namespace MoveIt
             subButton.name = name;
             subButton.atlas = m_toolbar.GetIconsAtlas();
             subButton.playAudioEvents = true;
-            subButton.size = new Vector2(158, 30);
+            //subButton.size = new Vector2(158, 30);
+            subButton.autoSize = true;
             subButton.text = text;
             subButton.textHorizontalAlignment = UIHorizontalAlignment.Left;
             subButton.textScale = 0.8f;
@@ -128,6 +129,30 @@ namespace MoveIt
             separator.backgroundSprite = "SubmenuSeparator";
 
             return separator;
+        }
+
+        internal void UpdateWidth()
+        {
+            float widest = 100f;
+            foreach (KeyValuePair<string, UIButton> entry in UIMoreTools.MoreSubButtons[this])
+            {
+                if (entry.Value.size.x > widest)
+                {
+                    widest = entry.Value.size.x;
+                }
+                entry.Value.autoSize = false;
+                entry.Value.height = 30f;
+            }
+            foreach (UIComponent entry in m_subpanel.GetComponentsInChildren<UIComponent>())
+            {
+                if (entry == m_subpanel)
+                    continue;
+                entry.width = widest + 6f;
+            }
+
+            m_panel.width = widest + 8f;
+            m_subpanel.width = m_panel.width;
+            m_panel.absolutePosition = UIMoreTools.MoreToolsBtn.absolutePosition + new Vector3(-m_panel.width, -m_panel.height - 10);
         }
     }
 

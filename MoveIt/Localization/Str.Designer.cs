@@ -99,9 +99,9 @@ namespace MoveIt.Localization {
         /// <summary>
         ///   Looks up a localized string similar to Move It.
         /// </summary>
-        internal static string baseUI_MoveItButton {
+        internal static string baseUI_MoveItButton_Tooltip {
             get {
-                return ResourceManager.GetString("baseUI_MoveItButton", resourceCulture);
+                return ResourceManager.GetString("baseUI_MoveItButton_Tooltip", resourceCulture);
             }
         }
         
@@ -349,7 +349,7 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PO is not available. To use these options please quit Cities Skylines and subscribe to PO..
+        ///   Looks up a localized string similar to PO not found, integration disabled..
         /// </summary>
         internal static string integration_PO_Notfound {
             get {
