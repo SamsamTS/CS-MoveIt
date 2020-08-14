@@ -148,7 +148,7 @@
     <value>Включить подземный вид</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>Инструменты</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
     <value>Здания</value>
