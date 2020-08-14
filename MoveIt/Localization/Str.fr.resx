@@ -195,6 +195,7 @@
   </data>
   <data name="filter_Tracks" xml:space="preserve">
     <value>Tracks</value>
+    <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
     <value>Trees</value>
@@ -405,11 +406,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Show Move It debug panel</value>
   </data>
-  <data name="options_UseCardinal" xml:space="preserve">
-    <value>Use cardinal movements</value>
+  <data name="options_UseCompass" xml:space="preserve">
+    <value>Use compass movements</value>
   </data>
-  <data name="options_UseCardinal_Tooltip" xml:space="preserve">
-    <value>If checked, Up will move in the North direction, Down is South, Left is West, Right is East.</value>
+  <data name="options_UseCompass_Tooltip" xml:space="preserve">
+    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Angle</value>
