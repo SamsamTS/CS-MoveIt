@@ -118,58 +118,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="baseUI_Bulldoze_Tooltip" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>Бульдозер</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>Copy (Alt+Click to duplicate in-place)</value>
+    <value>Копировать (Alt+Click дубликат в этом же месте)</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>Follow Terrain</value>
+    <value>Следовать за уровнем земли</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+    <value>Область выделения</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
     <value>Move It</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>Одиночное выделение</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>Включить сетку</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>Включить Процедурные объекты</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>Включить привязку</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>Включить подземный вид</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>Toolbox</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>Здания</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
-    <value>Decals</value>
+    <value>Наклейки</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+    <value>Заборы</value>
   </data>
   <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
+    <value>Узлы</value>
   </data>
   <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
+    <value>Другое</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
     <value>Paths</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
-    <value>Picker</value>
+    <value>Пипетка</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
     <value>Pick an object to filter for objects of the same type</value>
@@ -179,101 +179,102 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
+    <value>Линии электропередач</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
+    <value>Реквизит</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
+    <value>Дороги</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
-    <value>Segments</value>
+    <value>Сегменты</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
     <value>Surfaces</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
+    <value>Рельсы</value>
+    <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
+    <value>Деревья</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller found, integration enabled!</value>
+    <value>Node Controller обнаружен, интеграция активна!</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller not found, integration disabled.</value>
+    <value>Node Controller не обнаружен, интеграция не активна.</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>Network Skins 2 обнаружен, интеграция активна!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>Network Skins 2 не обнаружен, или подписаны одновременно на NS1 и на NS2, интеграция не активна.</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
-    <value>PO version {0} found, integration enabled!</value>
+    <value>PO версии {0} обнаружен, интеграция активна!</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>PO not found, integration disabled.</value>
+    <value>PO не обнаружен, интеграция не активна.</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO integration failed - found version {0} (required: 1.6)</value>
+    <value>Неудачная интеграция PO - обнаружена версия {0} (требуется: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager found, integration enabled!</value>
+    <value>Traffic Manager обнаружен, интеграция активна!</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic manager not found, integration disabled.</value>
+    <value>Traffic manager не обнаружен, интеграция не активна.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>Бульдозер</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
-    <value>Copy</value>
+    <value>Копировать</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convert selected objects to PO</value>
+    <value>Преобразовать выделенный объект в PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
-    <value>Deselect All</value>
+    <value>Снять выделение со всех объектов</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>Опустить вниз</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Move East</value>
+    <value>Подвинуть на запад</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Move North</value>
+    <value>Подвинуть на север</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Move South</value>
+    <value>Подвинуть на юг</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>Поднять вверх</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Move West</value>
+    <value>Подвинуть на восток</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>Redo</value>
+    <value>Повторить</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotate Counterclockwise</value>
+    <value>Повернуть против часовой стрелки</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Rotate Clockwise</value>
+    <value>Повернуть по часовой стрелке</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
     <value>Scale Inwards</value>
@@ -285,20 +286,20 @@
     <value>Step Over</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>Включить панель отладки</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>Toggle Grid View</value>
+    <value>Включить сетку</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>Включить PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>Toggle Tool</value>
+    <value>Активировать инструмент</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>Включить подземный вид</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
     <value>Full Slope</value>
@@ -310,7 +311,7 @@
     <value>Line Up (Unspaced)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>Отзеркалить объекты</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
     <value>Quick Slope Node</value>
@@ -322,28 +323,28 @@
     <value>Rotate At Centre</value>
   </data>
   <data name="key_ToolRotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>Поворот на месте</value>
   </data>
   <data name="key_ToolRotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>Повернуть случайным образом</value>
   </data>
   <data name="key_ToolSetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>Задать позицию</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
     <value>Slope Objects</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
-    <value>Align To Object Height</value>
+    <value>Выровнять по высоте объекта</value>
   </data>
   <data name="key_ToolToTerrainHeight" xml:space="preserve">
-    <value>Align To Terrain Height</value>
+    <value>Выровнять по высоте земли</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
-    <value>Undo</value>
+    <value>Отменить</value>
   </data>
   <data name="mod_description" xml:space="preserve">
-    <value>Move things</value>
+    <value>Инструмент для перемещение объектов</value>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
     <value>Select pylons and pillars by holding Alt only</value>
@@ -355,16 +356,16 @@
     <value>Check this to close the Toolbox menu after choosing a tool.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
-    <value>Disable debug messages logging</value>
+    <value>Выключить сообщения отладки</value>
   </data>
   <data name="options_DisableDebugLogging_Tooltip" xml:space="preserve">
-    <value>If checked, debug messages won't be logged.</value>
+    <value>Если выбрано, сообщения отладки не будут писаться в лог.</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
-    <value>Extra Options</value>
+    <value>Дополнительные настройки</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
-    <value>Hide the PO deletion warning</value>
+    <value>Скрыть предупреждение о удалении PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
@@ -379,16 +380,16 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Helps you position objects when your frame-rate is poor.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
-    <value>Procedural Objects</value>
+    <value>Процедурные объекты</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>Удалить узлы без сегментов</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
     <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>Сбросить расположение кнопки</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
     <value>Right click cancels cloning</value>
@@ -397,38 +398,38 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>General Shortcuts</value>
+    <value>Горячие клавиши</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
     <value>Toolbox Shortcuts</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>Показать панель отладки Move It</value>
   </data>
-  <data name="options_UseCardinal" xml:space="preserve">
-    <value>Use cardinal movements</value>
+  <data name="options_UseCompass" xml:space="preserve">
+    <value>Use compass movements</value>
   </data>
-  <data name="options_UseCardinal_Tooltip" xml:space="preserve">
-    <value>If checked, Up will move in the North direction, Down is South, Left is West, Right is East.</value>
+  <data name="options_UseCompass_Tooltip" xml:space="preserve">
+    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
+    <value>Угол</value>
   </data>
   <data name="setpos_Go" xml:space="preserve">
     <value>Go</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>Высота</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>Позиция</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>Конвертировать в PO</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>Экспортировать выделенное</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
@@ -448,7 +449,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
-    <value>Other Tools</value>
+    <value>Другие инструменты</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
@@ -460,11 +461,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>Поворот на месте</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>Повернуть случайно</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
@@ -472,7 +473,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>Задать позицию</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
@@ -480,39 +481,39 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>To Object Height</value>
+    <value>На высоту объекта</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>To Terrain Height</value>
+    <value>На высоту земли</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>Вы хотите удалить файл '{0}' безвозвратно?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
+    <value>Удалить файл</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>Удалить сохраненное выделение</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>Экспорт</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>Импорт</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>Файл '{0}' уже существует.
+Вы хотите его перезаписать?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
+    <value>Перезаписать файл</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>Восстановить</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
     <value>Import the selection to the position it was exported</value>
