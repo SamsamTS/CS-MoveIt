@@ -1,24 +1,19 @@
-﻿using ColossalFramework;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
 
 namespace MoveItIntegration
 {
     public static class EncodeUtil
     {
-        internal static BinaryFormatter GetBinaryFormatter =>
-                new BinaryFormatter { AssemblyFormat = FormatterAssemblyStyle.Simple };
+        internal static BinaryFormatter GetBinaryFormatter => new BinaryFormatter { AssemblyFormat = FormatterAssemblyStyle.Simple };
 
         internal static object Deserialize(byte[] data)
         {
-            if (data == null)
-                return null;
-            //Log.Debug($"SerializationUtil.Deserialize(data): data.Length={data?.Length}");
+            if (data == null) return null;
 
             var memoryStream = new MemoryStream();
             memoryStream.Write(data, 0, data.Length);
@@ -34,33 +29,32 @@ namespace MoveItIntegration
             return memoryStream.ToArray();
         }
 
-        public static object Decode64(string base64Data)
+        /// <summary>
+        /// Converts Base64 string to object
+        /// </summary>
+        public static object BinaryDecode64(string base64Data)
         {
-            if (base64Data == null || base64Data == "")
-                return null;
+            if (base64Data == null || base64Data == "") return null;
             byte[] bytes = Convert.FromBase64String(base64Data);
             return Deserialize(bytes);
         }
 
-        public static string Encode64(object obj)
+        /// <summary>
+        /// Converts object to Base64 string
+        /// </summary>
+        public static string BinaryEncode64(object obj)
         {
-            if (obj == null)
-                return null;
+            if (obj == null) return null;
             var bytes = Serialize(obj);
             return Convert.ToBase64String(bytes);
         }
 
-        public static string XML2String(object obj)
-        {
-            if (obj == null) return null;
-            XmlSerializer xmlSerializer = new XmlSerializer(obj.GetType());
-            StringWriter sw = new StringWriter();
-            XmlWriter writer = XmlWriter.Create(sw);
-            xmlSerializer.Serialize(writer, obj);
-            return sw.ToString(); // Your xml
-        }
-
-        public static object String2XML(string data, Type dataType)
+        /// <summary>
+        /// Converts string to XML
+        /// </summary>
+        /// <paramref name="data">the string to convert</param>
+        /// <param name="dataType">the type of the returned XML object</param>
+        public static object XMLEncode(string data, Type dataType)
         {
             if (data == null || data == "") return null;
             XmlSerializer xmlSerializer = new XmlSerializer(dataType);
@@ -69,5 +63,17 @@ namespace MoveItIntegration
             return xmlSerializer.Deserialize(reader);
         }
 
+        /// <summary>
+        /// Converts XML to string
+        /// </summary>
+        public static string XMLDecode(object obj)
+        {
+            if (obj == null) return null;
+            XmlSerializer xmlSerializer = new XmlSerializer(obj.GetType());
+            StringWriter sw = new StringWriter();
+            XmlWriter writer = XmlWriter.Create(sw);
+            xmlSerializer.Serialize(writer, obj);
+            return sw.ToString(); // Your xml
+        }
     }
 }
