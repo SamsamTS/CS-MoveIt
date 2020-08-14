@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EncodeUtil.cs" />
     <Compile Include="Integration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -110,8 +110,6 @@ namespace MoveIt
 
         [XmlArray("IntegrationEntry_List")]
         [XmlArrayItem("IntegrationEntry_Item")]
-         
-        
         public IntegrationEntry[] IntegrationData64
         {
             get {
@@ -127,7 +125,8 @@ namespace MoveIt
                             Version = integration.DataVersion.ToString(),
                             Data = integration.Encode64(item.Value),
                         });
-                    }catch(Exception e)
+                    }
+                    catch (Exception e)
                     {
                         Debug.LogError("Failed to export integration: " + item.Key);
                         DebugUtils.LogException(e);
@@ -137,14 +136,15 @@ namespace MoveIt
             }
             set {
                 IntegrationData = new Dictionary<MoveItIntegrationBase, object>();
-                if (value == null)  return;
+                if (value == null) return;
                 foreach (var entry in value)
                 {
+                    if (entry.Data == null) continue;
                     try { 
                         MoveItIntegrationBase integration = MoveItTool.GetIntegrationByID(entry.ID);
+                        if (integration == null) continue;
                         Version version = new Version(entry.Version);
-                        IntegrationData[integration] = 
-                        integration.Decode64(entry.Data, version);
+                        IntegrationData[integration] = integration.Decode64(entry.Data, version);
                     }
                     catch (Exception e)
                     {

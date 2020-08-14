@@ -79,6 +79,9 @@ namespace MoveIt
             MoveItTool.PO = null;
             Object.Destroy(MoveItTool.instance.m_button);
 
+            UILoadWindow.Close();
+            UISaveWindow.Close();
+
             if (MoveItTool.instance != null)
             {
                 MoveItTool.instance.enabled = false;

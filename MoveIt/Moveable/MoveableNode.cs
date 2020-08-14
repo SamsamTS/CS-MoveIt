@@ -17,6 +17,7 @@ namespace MoveIt
         [XmlElement("segmentsSave")]
         public SegmentSave[] segmentsSave = new SegmentSave[8];
 
+        #region Depreciated
         [XmlIgnore]
         public byte[] NodeControllerData;
 
@@ -34,6 +35,7 @@ namespace MoveIt
             get => MoveItTool.TMPE.Encode64(TMPE_NodeRecord);
             set => TMPE_NodeRecord = MoveItTool.TMPE.Decode64(value);
         }
+        #endregion
 
         [XmlElement("segmentsList")]
         public List<ushort> segmentsList = new List<ushort>();

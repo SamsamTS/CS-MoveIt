@@ -42,6 +42,7 @@ namespace MoveIt
             }
         }
 
+        #region Depreciated
         [XmlIgnore]
         public object TMPE_SegmentRecord;
 
@@ -81,6 +82,7 @@ namespace MoveIt
             get => EncodeUtil.Encode64(LaneIDs);
             set => LaneIDs = EncodeUtil.Decode64(value) as List<uint>;
         }
+        #endregion
 
         public override void ReplaceInstance(Instance instance)
         {
