@@ -102,11 +102,11 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox(Str.options_UseCardinal, MoveItTool.useCardinalMoves.value, (b) =>
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_UseCompass, MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;
                 });
-                checkBox.tooltip = Str.options_UseCardinal_Tooltip;
+                checkBox.tooltip = Str.options_UseCompass_Tooltip;
 
                 group.AddSpace(10);
 

@@ -881,20 +881,20 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use cardinal movements.
+        ///   Looks up a localized string similar to Use compass movements.
         /// </summary>
-        internal static string options_UseCardinal {
+        internal static string options_UseCompass {
             get {
-                return ResourceManager.GetString("options_UseCardinal", resourceCulture);
+                return ResourceManager.GetString("options_UseCompass", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If checked, Up will move in the North direction, Down is South, Left is West, Right is East..
+        ///   Looks up a localized string similar to If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East..
         /// </summary>
-        internal static string options_UseCardinal_Tooltip {
+        internal static string options_UseCompass_Tooltip {
             get {
-                return ResourceManager.GetString("options_UseCardinal_Tooltip", resourceCulture);
+                return ResourceManager.GetString("options_UseCompass_Tooltip", resourceCulture);
             }
         }
         
