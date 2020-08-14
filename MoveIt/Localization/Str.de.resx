@@ -277,16 +277,16 @@
     <value>Im Uhrzeigersinn drehen</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>Nach innen skalieren</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>Nach außen skalieren</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>Überspringen</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>Debugmodus ein-/ausschalten</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
     <value>Gitterlinien ein-/ausschalten</value>
@@ -302,19 +302,19 @@
     <value>Unterirdische Ansicht ein-/ausschalten</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>Volle Neigung</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>Ausrichten (mit Zwischenraum)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>Ausrichten (ohne Zwischenraum)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>Objekte spiegeln</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>Schnellneigung Node</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
     <value>Objekte zurücksetzen</value>
@@ -332,7 +332,7 @@
     <value>Position setzen</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>Objekte neigen</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
     <value>Auf Objekthöhe ausrichten</value>
@@ -407,10 +407,10 @@ PO-Objekte mit Move It löscht, sind diese dauerhaft verschwunden.</value>
     <value>Den Move It Debug-Bereich anzeigen</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>Kompassbewegung verwenden</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>Ist diese Option aktiviert, wird die Hoch-Taste in Richtung Norden bewegen, unten nach Süden, links nach Westen und rechts nach Osten.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Winkel</value>
@@ -493,35 +493,35 @@ PO-Objekte mit Move It löscht, sind diese dauerhaft verschwunden.</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
+    <value>Datei löschen</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>Gespeicherte Auswahl löschen</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>Exportieren</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>Importieren</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>Die Datei '{0}' existiert bereits.
+Soll sie überschrieben werden?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
+    <value>Dateien überschreiben</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>Wiederherstellen</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>Importiert die Auswahl an die Position, von der sie exportiert wurde</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
-    <value>The selection is empty or invalid.</value>
+    <value>Die Auswahl ist leer oder ungültig.</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
-    <value>Selection invalid</value>
+    <value>Auswahl ungültig</value>
   </data>
 </root>
