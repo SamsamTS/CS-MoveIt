@@ -166,7 +166,7 @@
     <value>Другое</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
-    <value>Paths</value>
+    <value>Пешеходная дорожка</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
     <value>Пипетка</value>
@@ -320,7 +320,7 @@
     <value>Reset Objects</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>Вращать относительно центра</value>
   </data>
   <data name="key_ToolRotateInPlace" xml:space="preserve">
     <value>Поворот на месте</value>
@@ -350,10 +350,10 @@
     <value>Select pylons and pillars by holding Alt only</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Auto-close Toolbox menu</value>
+    <value>Автозакрытие меню инструментов</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
-    <value>Check this to close the Toolbox menu after choosing a tool.</value>
+    <value>Выберите это для закрытия меню после выбора инструмента.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Выключить сообщения отладки</value>
@@ -369,8 +369,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
-    <value>Please note: you can not undo Bulldozed PO. This means if you delete
-PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <value>Вы не можете отменить удаление PO. Если вы удалите PO объект с помощью Move It, он пропадёт безвозвратно.</value>
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
@@ -401,7 +400,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Горячие клавиши</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>Горячие клавиши инструментов</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Показать панель отладки Move It</value>
@@ -445,7 +444,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>Отзеркалить объекты</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
@@ -469,7 +468,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
+    <value>Инструменты вращения</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
