@@ -172,7 +172,7 @@
     <value>Пипетка</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Pick an object to filter for objects of the same type</value>
+    <value>Нажмите на объект для задания фильтра этого типа</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
@@ -433,11 +433,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>Инструменты высоты</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
-    <value>Import Selection</value>
+    <value>Импорт выделения</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
