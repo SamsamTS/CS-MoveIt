@@ -148,22 +148,22 @@
     <value>Toggle Underground View</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>กล่องเครื่องมือ</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>อาคาร/สิ่งปลูกสร้าง</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
     <value>Decals</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+    <value>รั้ว</value>
   </data>
   <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
+    <value>โหนด</value>
   </data>
   <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
+    <value>อื่น ๆ</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
     <value>Paths</value>
@@ -185,20 +185,20 @@
     <value>Props</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
+    <value>ถนน</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
     <value>Segments</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
-    <value>Surfaces</value>
+    <value>พื้นผิว</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
+    <value>ราง</value>
     <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
+    <value>ต้นไม้</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
     <value>Node Controller found, integration enabled!</value>
@@ -240,14 +240,14 @@
     <value>Bulldoze</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
-    <value>Copy</value>
+    <value>คัดลอก</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
     <value>Convert selected objects to PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
-    <value>Deselect All</value>
+    <value>ยกเลิกการเลือกทั้งหมด</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
     <value>Move Down</value>
@@ -268,13 +268,13 @@
     <value>Move West</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>Redo</value>
+    <value>ทำซ้ำ</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotate Counterclockwise</value>
+    <value>หมุนทวนเข็มนาฬิกา</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Rotate Clockwise</value>
+    <value>หมุนตามเข็มนาฬิกา</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
     <value>Scale Inwards</value>
