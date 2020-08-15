@@ -136,16 +136,16 @@
     <value>单个选择</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>调出网格</value>
+    <value>网格开关</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>调出PO面板</value>
+    <value>魔物面板开关</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>调出吸附模式</value>
+    <value>吸附模式开关</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>调出地下视角</value>
+    <value>地下视角开关</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>工具箱</value>
@@ -175,7 +175,7 @@
     <value>选择一个物体对象以筛选相同类型的物体对象</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
-    <value>PO</value>
+    <value>魔物</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
@@ -191,7 +191,7 @@
     <value>路段</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
-    <value>平面</value>
+    <value>地皮</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
     <value>轨道</value>
@@ -217,15 +217,15 @@
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
-    <value>已找到PO {0} 版本，已启用整合功能！</value>
+    <value>已找到PO（魔物） {0} 版本，已启用整合功能！</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>找不到PO，整合功能已禁用。</value>
+    <value>找不到PO（魔物），整合功能已禁用。</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO整合失败 - 找到 {0} 版本（需要版本：1.6）</value>
+    <value>PO（魔物）整合失败 - 找到 {0} 版本（需要版本：1.6）</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
@@ -243,7 +243,7 @@
     <value>复制</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>将选中对象转换为 PO</value>
+    <value>将选中对象转换为魔物</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
@@ -286,20 +286,20 @@
     <value>逐步选择</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>切出调试控制面板</value>
+    <value>调试控制面板开关</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>切换为网格视图</value>
+    <value>网格视图开关</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>切换 PO 为激活/不激活状态</value>
+    <value>PO 为激活/不激活开关</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>调出工具</value>
+    <value>工具开关</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>调出地下视角</value>
+    <value>地下视角开关</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
     <value>全斜面</value>
@@ -380,7 +380,7 @@
     <value>在您的帧速较低时帮助您移动调整对象。</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
-    <value>Procedural Objects</value>
+    <value>Procedural Objects（魔物）</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
     <value>移除幽灵节点</value>
@@ -425,7 +425,7 @@
     <value>位置</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>转换为PO</value>
+    <value>转换为魔物</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
