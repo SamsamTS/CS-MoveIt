@@ -118,22 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="baseUI_Bulldoze_Tooltip" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>รื้อถอน</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>Copy (Alt+Click to duplicate in-place)</value>
+    <value>คัดลอก (กดปุ่ม Alt + คลิกเพื่อทำการคัดลอกในตำแหน่งเดียวกัน)</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>Follow Terrain</value>
+    <value>บังคับวัตถุให้เป็นไปตามภูมิประเทศ</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+    <value>การคลุมและเลือกวัตถุ</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
     <value>Move It</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>เลือกแบบเดี่ยว</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
     <value>Toggle Grid</value>
@@ -179,10 +179,10 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
+    <value>สายไฟฟ้า</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
+    <value>วัตถุตกแต่ง</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
     <value>ถนน</value>
@@ -237,7 +237,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>รื้อถอน</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
     <value>คัดลอก</value>
@@ -341,7 +341,7 @@
     <value>Align To Terrain Height</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
-    <value>Undo</value>
+    <value>เลิกทำ</value>
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>Move things</value>
@@ -350,7 +350,7 @@
     <value>Select pylons and pillars by holding Alt only</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Auto-close Toolbox menu</value>
+    <value>ปิดเมนูเครื่องมือโดยอัตโนมัติ</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
     <value>Check this to close the Toolbox menu after choosing a tool.</value>
@@ -362,10 +362,10 @@
     <value>If checked, debug messages won't be logged.</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
-    <value>Extra Options</value>
+    <value>เครื่องมือเพิ่มเติม</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
-    <value>Hide the PO deletion warning</value>
+    <value>ซ่อนการแจ้งเตือนการลบวัตถุที่เป็น PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
@@ -383,7 +383,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>ลบโหนดที่ร่องหน</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
     <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
@@ -413,31 +413,31 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
+    <value>มุม</value>
   </data>
   <data name="setpos_Go" xml:space="preserve">
-    <value>Go</value>
+    <value>ไป</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>ความสูง</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>ตำแหน่ง</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>แปลงเป็นวัตถุแบบ PO</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>ส่งออกสิ่งที่เลือกไว้</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>เครื่องมือปรับความสูง</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
-    <value>Import Selection</value>
+    <value>นำเข้าสิ่งที่เลือก</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
@@ -449,7 +449,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
-    <value>Other Tools</value>
+    <value>เครื่องมืออื่น ๆ</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
@@ -457,19 +457,19 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>หมุน ณ จุดศูนย์กลาง</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>หมุน ณ พื้นที่</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>หมุนแบบสุ่ม</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
+    <value>เครื่องมือการหมุน</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
@@ -489,39 +489,39 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>คุณต้องการลบไฟล์ '{0}' โดยถาวรหรือไม่?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
+    <value>ลบไฟล์</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>ลบสิ่งที่บันทึกการเลือก</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>ส่งออก</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>นำเข้า</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>ไฟล์ '{0}' มีอยู่แล้ว
+คุณต้องการเขียนทับไฟล์นี้หรือไม่?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
+    <value>เขียนทับไฟล์</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>คืนค่า</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
     <value>Import the selection to the position it was exported</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
-    <value>The selection is empty or invalid.</value>
+    <value>สิ่งที่เลือกไว้ว่างเปล่า หรือไม่ถูกต้อง</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
-    <value>Selection invalid</value>
+    <value>การเลือกที่ไม่ถูกต้อง</value>
   </data>
 </root>
