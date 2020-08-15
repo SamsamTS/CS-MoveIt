@@ -121,7 +121,7 @@
     <value>推土机</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>复制（单击+Alt即可就地复制）</value>
+    <value>复制（单击+Alt即可原地复制）</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
     <value>跟随地形</value>
@@ -136,16 +136,16 @@
     <value>单个选择</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>切换网格</value>
+    <value>调出网格</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>切换PO</value>
+    <value>调出PO面板</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>切换为吸附模式</value>
+    <value>调出吸附模式</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>切换为地下视角</value>
+    <value>调出地下视角</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>工具箱</value>
@@ -166,7 +166,7 @@
     <value>其它</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
-    <value>小路</value>
+    <value>小径</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
     <value>拾取器</value>
@@ -191,7 +191,7 @@
     <value>路段</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
-    <value>表面</value>
+    <value>平面</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
     <value>轨道</value>
@@ -283,157 +283,157 @@
     <value>向外缩放</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>逐步选择</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>切出调试控制面板</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>Toggle Grid View</value>
+    <value>切换为网格视图</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>切换 PO 为激活/不激活状态</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>Toggle Tool</value>
+    <value>调出工具</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>调出地下视角</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>全斜面</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>排列（有间隔）</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>排列（无间隔）</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>将对象镜像</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>快速倾斜节点</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>重置对象</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>中心旋转</value>
   </data>
   <data name="key_ToolRotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>原地旋转</value>
   </data>
   <data name="key_ToolRotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>随机旋转</value>
   </data>
   <data name="key_ToolSetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>设置位置</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>将对象倾斜</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
-    <value>Align To Object Height</value>
+    <value>对齐至对象高度</value>
   </data>
   <data name="key_ToolToTerrainHeight" xml:space="preserve">
-    <value>Align To Terrain Height</value>
+    <value>对齐至地形高度</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
-    <value>Undo</value>
+    <value>撤销</value>
   </data>
   <data name="mod_description" xml:space="preserve">
-    <value>Move things</value>
+    <value>移动一切物品</value>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
-    <value>Select pylons and pillars by holding Alt only</value>
+    <value>按住Alt来只选择桥塔和桥墩类型</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Auto-close Toolbox menu</value>
+    <value>自动关闭工具箱菜单</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
-    <value>Check this to close the Toolbox menu after choosing a tool.</value>
+    <value>选择工具后，选中此项以关闭工具箱菜单。</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
-    <value>Disable debug messages logging</value>
+    <value>禁用调试消息记录</value>
   </data>
   <data name="options_DisableDebugLogging_Tooltip" xml:space="preserve">
-    <value>If checked, debug messages won't be logged.</value>
+    <value>如果选中此项，调试信息将不会被记录。</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
-    <value>Extra Options</value>
+    <value>附加选项</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
-    <value>Hide the PO deletion warning</value>
+    <value>隐藏魔物删除警告</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
-    <value>Please note: you can not undo Bulldozed PO. This means if you delete
-PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <value>请注意：您不能撤回已经删除的魔物对象。这意味着如果您用Move It删除
+了魔物对象，它们将【永远】地消失。</value>
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
-    <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
+    <value>更好的快速、低细节移动(按住Shift键以暂时切换)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
-    <value>Helps you position objects when your frame-rate is poor.</value>
+    <value>在您的帧速较低时帮助您移动调整对象。</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>移除幽灵节点</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
+    <value>在游戏中使用此按钮来移除幽灵节点（即没有和路段连接的节点）。注意：此行为会清除掉Move It的撤销历史！</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>重置按钮位置</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
-    <value>Right click cancels cloning</value>
+    <value>右键单击取消克隆操作</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
+    <value>如果选中，右键单击将取消克隆而不是旋转45°。</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>General Shortcuts</value>
+    <value>通用快捷键</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>工具箱快捷键</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>显示Move It调试面板</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>使用指南针运动</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>如果选中，上键将是向北方向移动。下键是南方向，左键是西方向，右键是东方向。</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
+    <value>角度</value>
   </data>
   <data name="setpos_Go" xml:space="preserve">
-    <value>Go</value>
+    <value>转至</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>高度</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>位置</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>转换为PO</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>导出选择</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>高度工具</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
@@ -519,7 +519,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>将选择内容导入到导出位置</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
-    <value>选择为空或无效。</value>
+    <value>选择区域为空或无效。</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
     <value>选择无效</value>
