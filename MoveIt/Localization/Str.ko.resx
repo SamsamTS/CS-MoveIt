@@ -250,7 +250,7 @@
     <value>전체 선택 해제</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>아래로 이동</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
     <value>Move East</value>
@@ -262,7 +262,7 @@
     <value>Move South</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>위로 이동</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
     <value>Move West</value>
@@ -286,13 +286,13 @@
     <value>Step Over</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>디버그 창 토글</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>Toggle Grid View</value>
+    <value>격자모드 토글</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>PO모드 활성화/비활성화 토글</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
@@ -389,7 +389,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>무브 잇 버튼 위치 초기화</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
     <value>Right click cancels cloning</value>
@@ -401,7 +401,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>General Shortcuts</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>도구박스 바로가기</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Show Move It debug panel</value>
@@ -449,7 +449,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
-    <value>Other Tools</value>
+    <value>기타 도구</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
@@ -469,7 +469,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
+    <value>회전 도구</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
