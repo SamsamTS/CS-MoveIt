@@ -209,31 +209,31 @@
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>พบ Network Skins 2, การทำงานร่วมกันได้เปิดการใช้งาน!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>ไม่พบ Network Skins 2 และ/หรือทั้ง NS1 และ NS2 ได้ติดตั้งไว้พร้อมกัน, การทำงานร่วมกันได้ปิดการใช้งาน.</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
-    <value>PO version {0} found, integration enabled!</value>
+    <value>พบ PO เวอร์ชัน {0}, การทำงานร่วมกันได้เปิดการใช้งาน!</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>PO not found, integration disabled.</value>
+    <value>ไม่พบ PO, การทำงานร่วมกันได้ปิดการใช้งาน</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO integration failed - found version {0} (required: 1.6)</value>
+    <value>การทำงานร่วมกันกับ PO มีความผิดพลาด - พบเวอร์ชัน {0} (จำเป็นต้องเป็น: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager found, integration enabled!</value>
+    <value>พบ Traffic Manager, การทำงานร่วมกันได้เปิดการใช้งาน!</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic manager not found, integration disabled.</value>
+    <value>ไม่พบ Traffic manager, การทำงานร่วมกันได้ปิดการใช้งาน</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -243,29 +243,29 @@
     <value>คัดลอก</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convert selected objects to PO</value>
+    <value>แปลงสิ่งที่เลือกไว้ไปเป็นแบบ PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
     <value>ยกเลิกการเลือกทั้งหมด</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>เลื่อนลง</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Move East</value>
+    <value>เลื่อนไปทางทิศตะวันออก</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Move North</value>
+    <value>เลื่อนไปทางทิศเหนือ</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Move South</value>
+    <value>เลื่อนไปทางทิศใต้</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>เลื่อนขึ้น</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Move West</value>
+    <value>เลื่อนไปทางทิศตะวันตก</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>ทำซ้ำ</value>
@@ -389,7 +389,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>รีเซ็ตตำแหน่งปุ่ม</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
     <value>Right click cancels cloning</value>
