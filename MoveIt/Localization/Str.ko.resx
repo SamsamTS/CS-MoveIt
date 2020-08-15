@@ -268,7 +268,7 @@
     <value>Move West</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>다시 실행</value>
+    <value>되돌리기</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
     <value>반시계방향으로 회전</value>
@@ -280,7 +280,7 @@
     <value>내부로 축적 조정</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>외부로 축적 조정</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Step Over</value>
@@ -296,10 +296,10 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>Toggle Tool</value>
+    <value>토글 도구</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>지하 시점 토글</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
     <value>Full Slope</value>
@@ -317,7 +317,7 @@
     <value>Quick Slope Node</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>개체 초기화</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
     <value>Rotate At Centre</value>
@@ -341,7 +341,7 @@
     <value>Align To Terrain Height</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
-    <value>Undo</value>
+    <value>실행 취소</value>
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>Move things</value>
@@ -350,7 +350,7 @@
     <value>Select pylons and pillars by holding Alt only</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Auto-close Toolbox menu</value>
+    <value>도구박스 메뉴 자동 종료</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
     <value>Check this to close the Toolbox menu after choosing a tool.</value>
@@ -362,7 +362,7 @@
     <value>If checked, debug messages won't be logged.</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
-    <value>Extra Options</value>
+    <value>추가 옵션</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>Hide the PO deletion warning</value>
@@ -413,19 +413,19 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
+    <value>각도</value>
   </data>
   <data name="setpos_Go" xml:space="preserve">
     <value>Go</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>높이</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>위치</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>PO로 변환</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
@@ -433,7 +433,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>높이 도구</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
@@ -453,7 +453,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>개체 초기화</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
@@ -465,7 +465,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>무작위로 회전</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
@@ -481,11 +481,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>To Object Height</value>
+    <value>선택한 개체 높이로</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>To Terrain Height</value>
+    <value>지면 높이로</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
@@ -493,16 +493,16 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
+    <value>파일 삭제</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>저장된 선택 삭제</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>내보내기</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>가져오기</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>The file '{0}' already exists.
@@ -510,7 +510,7 @@ Do you want to overwrite it?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
+    <value>파일 덮어쓰기</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
     <value>복원</value>
