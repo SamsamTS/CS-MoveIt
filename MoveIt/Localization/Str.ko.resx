@@ -253,19 +253,19 @@
     <value>아래로 이동</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Move East</value>
+    <value>동쪽으로 이동</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Move North</value>
+    <value>북쪽으로 이동</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Move South</value>
+    <value>남쪽으로 이동</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
     <value>위로 이동</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Move West</value>
+    <value>서쪽으로 이동</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>되돌리기</value>
@@ -302,13 +302,13 @@
     <value>지하 시점 토글</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>전체 경사</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>일렬 정렬 (간격)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>일렬 정렬 (간격없음)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>Mirror Objects</value>
@@ -326,19 +326,19 @@
     <value>Rotate In-Place</value>
   </data>
   <data name="key_ToolRotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>무작위로 회전</value>
   </data>
   <data name="key_ToolSetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>위치 설정</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>경사지 개체</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
-    <value>Align To Object Height</value>
+    <value>개체 높이에 맞추기</value>
   </data>
   <data name="key_ToolToTerrainHeight" xml:space="preserve">
-    <value>Align To Terrain Height</value>
+    <value>지면 높이에 맞추기</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
     <value>실행 취소</value>
@@ -383,7 +383,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>세그먼트 없는 유령 노드 삭제</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
     <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
@@ -404,13 +404,13 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>도구박스 바로가기</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>무브 잇의 디버그 창 보이기</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>나침만 이동 사용</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>이 옵션이 활성화될 경우, 키보드의 방향키를 누르면 해당하는 방향의 방위로 이동합니다. 방향키를 위로 누르면 북쪽으로, 아래로 누르면 남쪽으로 이동합니다.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>각도</value>
@@ -429,7 +429,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>내보내기 선택</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
@@ -437,11 +437,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
-    <value>Import Selection</value>
+    <value>가져오기 선택</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>개체를 일렬로 정렬</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
@@ -457,11 +457,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>중심에서 회전</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>내부에서 회전</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
@@ -473,11 +473,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>위치 설정</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>경사 개체</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
@@ -489,7 +489,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>영구적으로 '{0}' 개의 파일을 삭제하시겠습니까?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
@@ -505,8 +505,8 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>가져오기</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>'{0}' 개의 파일이 이미 존재합니다.
+덮어쓰시겠습니까?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
