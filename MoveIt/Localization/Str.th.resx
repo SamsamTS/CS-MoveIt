@@ -136,16 +136,16 @@
     <value>เลือกแบบเดี่ยว</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>แสดงกริด</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>แสดงวัตถุที่เป็น Procedural</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>เปิดการยืดติด</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>แสดงในมุมมองใต้ดิน</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>กล่องเครื่องมือ</value>
@@ -154,7 +154,7 @@
     <value>อาคาร/สิ่งปลูกสร้าง</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
-    <value>Decals</value>
+    <value>ดีคอล</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
     <value>รั้ว</value>
