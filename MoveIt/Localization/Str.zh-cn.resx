@@ -145,7 +145,7 @@
     <value>吸附模式开关</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>地下视角开关</value>
+    <value>地下视图开关</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>工具箱</value>
@@ -283,7 +283,7 @@
     <value>向外缩放</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>逐步选择</value>
+    <value>逐层选择</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>调试控制面板开关</value>
