@@ -148,7 +148,7 @@
     <value>Activer/désactiver la vue souterraine</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Outils</value>
+    <value>Boîte à Outils</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
     <value>Bâtiments</value>
@@ -179,7 +179,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Lignes HV</value>
+    <value>Lignes élec.</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
     <value>Props</value>
@@ -209,11 +209,11 @@
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 trouvé, intégration réussie!</value>
+    <value>Mod Network Skins 2 trouvé, intégration réussie!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 non trouvé, ou l'intégration désactivés. *vérifier si NS1 et NS2 tous les deux présents</value>
+    <value>Mod Network Skins 2 non trouvé, ou l'intégration désactivés. *vérifier si NS1 et NS2 tous les deux présents</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
@@ -268,10 +268,10 @@
     <value>Vers l'Ouest</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>Refaire</value>
+    <value>Refaire (redo)</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotation anti-horaire</value>
+    <value>Rotation (anti-horaire)</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
     <value>Rotation horaire</value>
