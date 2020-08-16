@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="baseUI_Bulldoze_Tooltip" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>Buldożer</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
     <value>Copy (Alt+Click to duplicate in-place)</value>
@@ -133,25 +133,25 @@
     <value>Move It</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>Pojedynczy wybór</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>Przełącz siatkę</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
     <value>Toggle Procedural Objects</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>Przełącz przyciąganie</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
     <value>Toggle Underground View</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>Narzędzia</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>Budynki</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
     <value>Decals</value>
