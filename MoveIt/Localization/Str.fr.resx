@@ -133,59 +133,59 @@
     <value>Move It</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>Sélection unique</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>Activer/désactiver la grille</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>Activer/désactiver les PO</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>Activer/désactiver l'accrochage</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>Activer/désactiver la vue souterraine</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>Outils</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>Bâtiments</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
     <value>Decals</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+    <value>Clôtures</value>
   </data>
   <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
+    <value>Nœuds</value>
   </data>
   <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
+    <value>Autres</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
-    <value>Paths</value>
+    <value>Chemins</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
-    <value>Picker</value>
+    <value>Sélecteur</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Pick an object to filter for objects of the same type</value>
+    <value>Seuls les objets identiques à celui-ci peuvent être sélectionnés</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
+    <value>Lignes HV</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
     <value>Props</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
+    <value>Routes</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
     <value>Segments</value>
@@ -194,26 +194,26 @@
     <value>Surfaces</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
+    <value>Voies</value>
     <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
+    <value>Arbres</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller found, integration enabled!</value>
+    <value>Node Controller trouvé, intégration réussie!</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller not found, integration disabled.</value>
+    <value>Node Controller introuvable, intégration désactivée.</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>Network Skins 2 trouvé, intégration réussie!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>Network Skins 2 non trouvé, ou l'intégration désactivés. *vérifier si NS1 et NS2 tous les deux présents</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
@@ -237,47 +237,47 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>Supprimer</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
-    <value>Copy</value>
+    <value>Copier</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convert selected objects to PO</value>
+    <value>Convertir les objets sélectionnés en PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
-    <value>Deselect All</value>
+    <value>Annuler sélection</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>Vers le Bas</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Move East</value>
+    <value>Vers l'Est</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Move North</value>
+    <value>Vers le Nord</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Move South</value>
+    <value>Vers le Sud</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>Vers le Haut</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Move West</value>
+    <value>Vers l'Ouest</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>Redo</value>
+    <value>Refaire</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotate Counterclockwise</value>
+    <value>Rotation anti-horaire</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Rotate Clockwise</value>
+    <value>Rotation horaire</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>Réduire l'Échelle</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
     <value>Scale Outwards</value>
@@ -419,21 +419,21 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Go</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>Élévation</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
     <value>Position</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>Convertir en PO</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>Exporter la sélection</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>Outils Élévation</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
@@ -449,7 +449,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
-    <value>Other Tools</value>
+    <value>Outils Extra</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
@@ -469,11 +469,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
+    <value>Outils Rotation</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>Position manuelle</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
