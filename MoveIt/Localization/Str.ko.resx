@@ -136,16 +136,16 @@
     <value>단일 선택</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>격자 토글</value>
+    <value>격자 모드 켜기</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
     <value>Procedural Objects 토글</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>스냅핑 토글</value>
+    <value>스냅핑 켜기</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>지하 시점 토글</value>
+    <value>지하 시점 켜기</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>도구박스</value>
@@ -277,7 +277,7 @@
     <value>시계방향으로 회전</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>내부로 축적 조정</value>
+    <value>축적 축소</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
     <value>외부로 축적 조정</value>
@@ -286,10 +286,10 @@
     <value>건너띄기</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>디버그 창 토글</value>
+    <value>디버그 창 켜기</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>격자모드 토글</value>
+    <value>격자모드 켜기</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
     <value>PO모드 활성화/비활성화 토글</value>
@@ -299,7 +299,7 @@
     <value>토글 도구</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>지하 시점 토글</value>
+    <value>지하 시점 켜기</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
     <value>전체 경사</value>
