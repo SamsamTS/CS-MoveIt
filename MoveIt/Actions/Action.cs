@@ -93,15 +93,12 @@ namespace MoveIt
             uint max = 0;
             foreach (KeyValuePair<float, uint> pair in angleCount)
             {
-                //Debug.Log($"AAA {pair.Key}: {pair.Value}");
                 if (pair.Value > max)
                 {
                     angle = pair.Key;
                     max = pair.Value;
                 }
             }
-
-            //Debug.Log($"Angle: {angle} ({angle * Mathf.Deg2Rad})");
 
             return angle * Mathf.Deg2Rad;
         }

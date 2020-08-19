@@ -196,7 +196,7 @@ namespace MoveIt
 
             set
             {
-                if(value)
+                if (value)
                 {
                     m_prevInfoMode = InfoManager.instance.CurrentMode;
                     InfoManager.instance.SetCurrentMode(InfoManager.InfoMode.Underground, InfoManager.instance.CurrentSubMode);

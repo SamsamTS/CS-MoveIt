@@ -376,7 +376,7 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Traffic manager not found, integration disabled..
+        ///   Looks up a localized string similar to Traffic Manager not found, integration disabled..
         /// </summary>
         internal static string integration_TMPE_Notfound {
             get {
