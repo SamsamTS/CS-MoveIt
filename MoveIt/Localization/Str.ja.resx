@@ -305,10 +305,10 @@
     <value>Full Slope</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>整列(間隔を空ける)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>整列(間隔を空けない)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>オブジェクトを反転</value>
@@ -344,7 +344,7 @@
     <value>元に戻す</value>
   </data>
   <data name="mod_description" xml:space="preserve">
-    <value>Move things</value>
+    <value>いろいろなものを移動させます</value>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
     <value>Select pylons and pillars by holding Alt only</value>
@@ -353,95 +353,95 @@
     <value>ツールボックスメニューを自動で閉じる</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
-    <value>Check this to close the Toolbox menu after choosing a tool.</value>
+    <value>チェックを入れると、ツールを選択後にツールボックスのメニューを閉じます。</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
-    <value>Disable debug messages logging</value>
+    <value>デバッグメッセージのログを無効にする</value>
   </data>
   <data name="options_DisableDebugLogging_Tooltip" xml:space="preserve">
-    <value>If checked, debug messages won't be logged.</value>
+    <value>チェックを入れた場合、デバッグメッセージは記録されません。</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
-    <value>Extra Options</value>
+    <value>追加のオプション</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
-    <value>Hide the PO deletion warning</value>
+    <value>PO削除時の警告を非表示にする</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
-    <value>Please note: you can not undo Bulldozed PO. This means if you delete
-PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <value>注意: Bulldozed POを元に戻すことはできません。つまり、Move Itを使用して
+POオブジェクトを削除すると、完全に消去されます。</value>
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
     <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
-    <value>Helps you position objects when your frame-rate is poor.</value>
+    <value>フレームレートが低い場合にオブジェクトを配置するのに役立ちます。</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>ゴーストノードの削除</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
+    <value>ゲーム内でゴーストノード(セグメントが接続されていないノード) を削除するときにこのボタンを使用します。注意: これは「元に戻す」の履歴を消去します。復元できません。</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>ボタンの位置をリセット</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
-    <value>Right click cancels cloning</value>
+    <value>右クリックで複製を解除</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
+    <value>チェックされている場合、右クリックでコピーを解除します。(デフォルトでは45°回転する)</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>General Shortcuts</value>
+    <value>一般的なショートカット</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>ツールボックスのショートカット</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>デバッグ画面を表示</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>方角を合わせる</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>チェックされている場合、Upキーで北に、Downキーで南に、左キーで西に、右キーで東に移動します。</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
+    <value>角度</value>
   </data>
   <data name="setpos_Go" xml:space="preserve">
     <value>実行</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>高さ</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>位置</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
     <value>POに変換</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>選択したものをエクスポート</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>高さツール</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
-    <value>Import Selection</value>
+    <value>選択したものをインポート</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>オブジェクトを整列</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
@@ -469,7 +469,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
+    <value>回転ツール</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
@@ -477,51 +477,51 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>オブジェクトを傾ける</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>To Object Height</value>
+    <value>オブジェクトの高さに合わせる</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>To Terrain Height</value>
+    <value>地形の高さに合わせる</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>ファイル '{0}' を完全に削除しますか？</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
+    <value>ファイルを削除</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>保存済み選択項目を削除</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>エクスポート</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>インポート</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>ファイル '{0}' はすでに存在します。
+上書きしますか?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
+    <value>ファイルを上書き</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>復元する</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>エクスポートされた元の位置に選択したものをインポートします</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
-    <value>The selection is empty or invalid.</value>
+    <value>何も選択されていないか、無効です。</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
-    <value>Selection invalid</value>
+    <value>選択が無効です</value>
   </data>
 </root>
