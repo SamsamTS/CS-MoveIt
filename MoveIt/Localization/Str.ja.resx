@@ -118,114 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="baseUI_Bulldoze_Tooltip" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>ブルドーザー</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>Copy (Alt+Click to duplicate in-place)</value>
+    <value>コピー (Alt+クリックで複製)</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>Follow Terrain</value>
+    <value>地形に追従する</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+    <value>連続選択</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
-    <value>Move It</value>
+    <value>移動</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>単一選択</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>グリッドの切り替え</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>Procedual Objectsの切り替え</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>スナップの切り替え</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>地下表示の切り替え</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>ツールボックス</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>建物</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
-    <value>Decals</value>
+    <value>デカール</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+    <value>フェンス</value>
   </data>
   <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
+    <value>ノード</value>
   </data>
   <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
+    <value>その他</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
-    <value>Paths</value>
+    <value>パス</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
-    <value>Picker</value>
+    <value>スポイト</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Pick an object to filter for objects of the same type</value>
+    <value>同じ種類のオブジェクトに対してフィルタリングするオブジェクトを選択</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
+    <value>送電線</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
+    <value>Prop</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
+    <value>道路</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
-    <value>Segments</value>
+    <value>セグメント</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
-    <value>Surfaces</value>
+    <value>サーフェス</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
+    <value>線路</value>
     <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
+    <value>樹木</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller found, integration enabled!</value>
+    <value>Node Controllerが見つかったため、Move Itと統合しました。</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller not found, integration disabled.</value>
+    <value>Node Controllerが見つからないため、Move Itとの統合が無効化されました。</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>Network Skins 2が見つかったため、Move Itと統合しました。</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>Network Skins 2が見つからないか、NS1とNS2の両方がサブスクライブされています。Move Itと統合できません。</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
-    <value>PO version {0} found, integration enabled!</value>
+    <value>POのバージョン{0} が見つかりました。Move Itと統合します。</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>PO not found, integration disabled.</value>
+    <value>POが見つかりませんでした。Move Itと統合されません。</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO integration failed - found version {0} (required: 1.6)</value>
+    <value>PO の統合に失敗しました - 見つかったバージョン {0} (必須: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
