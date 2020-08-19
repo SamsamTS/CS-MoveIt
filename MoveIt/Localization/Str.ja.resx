@@ -229,77 +229,77 @@
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager found, integration enabled!</value>
+    <value>TM: PEが見つかりました。Move Itとの統合を有効にしました。</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic manager not found, integration disabled.</value>
+    <value>TM: PEが見つかりません。Move Itとの統合が無効化されました。</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>ブルドーザー</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
-    <value>Copy</value>
+    <value>コピー</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convert selected objects to PO</value>
+    <value>選択したオブジェクトをPO に変換</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
-    <value>Deselect All</value>
+    <value>すべて選択解除</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>下に移動</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Move East</value>
+    <value>東に移動</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Move North</value>
+    <value>北に移動</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Move South</value>
+    <value>南へ移動</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>上に移動</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Move West</value>
+    <value>西に移動</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>Redo</value>
+    <value>やり直し</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotate Counterclockwise</value>
+    <value>反時計回りに回転します。</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Rotate Clockwise</value>
+    <value>時計回りに回転</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>内側に拡大縮小</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>外側に拡大縮小</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>ステップ実行</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>デバッグパネルの切り替え</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>Toggle Grid View</value>
+    <value>グリッド表示の切り替え</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>POのアクティブ/非アクティブの切り替え</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>Toggle Tool</value>
+    <value>ツールの切り替え</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>地下表示の切り替え</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
     <value>Full Slope</value>
