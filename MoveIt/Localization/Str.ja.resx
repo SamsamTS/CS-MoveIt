@@ -311,16 +311,16 @@
     <value>Line Up (Unspaced)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>オブジェクトを反転</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
     <value>Quick Slope Node</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>オブジェクトをリセット</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>中心を基準に回転</value>
   </data>
   <data name="key_ToolRotateInPlace" xml:space="preserve">
     <value>Rotate In-Place</value>
