@@ -277,13 +277,13 @@
     <value>หมุนตามเข็มนาฬิกา</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>ขยายเข้าด้านใน</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>ขยายออกด้านนอก</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>ก้าวข้ามวัตถุที่ตำแหน่งเมาส์ปัจจุบัน</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>แสดงแผงข้อบกพร่อง</value>
@@ -305,10 +305,10 @@
     <value>ลาดเอียงเต็มรูปแบบ</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>เรียงวัตถุเป็นเส้นตรง (มีเว้นเป็นช่องว่าง)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>เรียงวัตถุเป็นเส้นตรง (ไม่เว้นเป็นช่องว่าง)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>คัดลอกแบบกลับด้าน หรือสะท้อน</value>
@@ -440,7 +440,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>เรียงวัตถุให้เป็นเส้นตรง</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
