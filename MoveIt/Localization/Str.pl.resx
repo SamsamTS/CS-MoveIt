@@ -356,7 +356,7 @@
     <value>Zaznacz, aby zamknąć menu Narzędzia po wybraniu narzędzia.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
-    <value>Disable debug messages logging</value>
+    <value>Wyłącz logowanie wiadomości debugowania</value>
   </data>
   <data name="options_DisableDebugLogging_Tooltip" xml:space="preserve">
     <value>If checked, debug messages won't be logged.</value>
