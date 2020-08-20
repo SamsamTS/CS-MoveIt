@@ -69,6 +69,7 @@ namespace MoveIt
         public MoveableBuilding(InstanceID instanceID, bool sub = false) : base(instanceID)
         {
             isSubInstance = sub;
+            isHidden = (buildingBuffer[id.Building].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden;
             Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
 
             ResetSubInstances();
@@ -667,6 +668,8 @@ namespace MoveIt
 
         public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (isHidden) return;
+            if (!Virtual) return;
             BuildingInfo buildingInfo = Info.Prefab as BuildingInfo;
             Color color = GetColor(id.Building, buildingInfo);
 

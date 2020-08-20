@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -239,6 +238,8 @@ namespace MoveIt
         private long m_middleClickTime;
         private long m_leftClickTime;
 
+        internal static Dictionary<ushort, ushort> m_pillarMap;
+
         protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
 
@@ -330,6 +331,7 @@ namespace MoveIt
             }
 
             UIMoreTools.UpdateMoreTools();
+            UpdatePillarMap();
 
             //string msg = $"Assemblies:";
             //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -753,6 +755,22 @@ namespace MoveIt
             return new Color32(RandomByte(100, 255), RandomByte(100, 255), RandomByte(100, 255), 63);
         }
         #endregion
+
+        internal static void UpdatePillarMap()
+        {
+            m_pillarMap = new Dictionary<ushort, ushort>();
+            for (ushort i = 0; i < nodeBuffer.Length; i++)
+            {
+                NetNode n = nodeBuffer[i];
+                if ((n.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)
+                {
+                    if (n.m_building > 0)
+                    {
+                        m_pillarMap.Add(n.m_building, i);
+                    }
+                }
+            }
+        }
 
         public void UpdateAreas()
         {

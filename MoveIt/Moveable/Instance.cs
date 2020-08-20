@@ -201,6 +201,7 @@ namespace MoveIt
         protected static NetLane[] laneBuffer = NetManager.instance.m_lanes.m_buffer;
 
         public List<Instance> subInstances = new List<Instance>();
+        internal bool isHidden = false;
 
         public Instance(InstanceID instanceID)
         {
@@ -266,6 +267,7 @@ namespace MoveIt
 
         internal Building.Flags ToggleBuildingHiddenFlag(ushort id, bool hide)
         {
+            if (isHidden) return buildingBuffer[id].m_flags;
             if (hide)
             {
                 if ((buildingBuffer[id].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden)

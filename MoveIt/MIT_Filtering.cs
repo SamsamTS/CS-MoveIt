@@ -49,7 +49,7 @@ namespace MoveIt
                 selectNodes = filterNodes;
                 selectSegments = filterSegments;
                 selectTrees = filterTrees;
-                selectProc = PO.Active ? filterProcs : false;
+                selectProc = PO.Active && filterProcs;
             }
 
             if (MT_Tool == MT_Tools.Group || MT_Tool == MT_Tools.Inplace)

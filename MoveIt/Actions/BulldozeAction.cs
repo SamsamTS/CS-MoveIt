@@ -255,6 +255,7 @@ namespace MoveIt
 
             selection = new HashSet<Instance>();
             MoveItTool.m_debugPanel.UpdatePanel();
+            MoveItTool.UpdatePillarMap();
         }
 
         public override void Undo()
@@ -428,6 +429,7 @@ namespace MoveIt
                 }
                 MoveItTool.m_debugPanel.UpdatePanel();
             }
+            MoveItTool.UpdatePillarMap();
         }
 
         internal override void UpdateNodeIdInSegmentState(ushort oldId, ushort newId)

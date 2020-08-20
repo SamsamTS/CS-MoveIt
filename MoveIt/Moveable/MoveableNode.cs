@@ -220,6 +220,14 @@ namespace MoveIt
 
             if (state.pillarState != null)
             {
+                //ushort pillarId = state.pillarState.instance.id.Building;
+                //ref Building buildingData = ref BuildingManager.instance.m_buildings.m_buffer[pillarId];
+                //if ((buildingData.m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
+                //{
+                //    buildingData.m_flags |= Building.Flags.Hidden;
+                //    state.pillarState.instance.isHidden = true;
+                //}
+
                 Vector3 subPosition = state.pillarState.position - center;
                 subPosition = matrix4x.MultiplyPoint(subPosition);
                 subPosition.y = state.pillarState.position.y - state.position.y + newPosition.y;
@@ -571,10 +579,7 @@ namespace MoveIt
             if (!isVirtual() && MoveItTool.m_isLowSensitivity) return;
 
             ushort node = id.NetNode;
-            NetManager netManager = NetManager.instance;
             NetInfo netInfo = nodeBuffer[node].Info;
-            Vector3 position = nodeBuffer[node].m_position;
-            Randomizer randomizer = new Randomizer(node);
             float alpha = 1f;
             NetTool.CheckOverlayAlpha(netInfo, ref alpha);
             toolColor.a *= alpha;

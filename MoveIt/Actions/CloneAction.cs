@@ -362,6 +362,7 @@ namespace MoveIt
             MoveItTool.m_debugPanel.UpdatePanel();
 
             UpdateArea(GetTotalBounds(false));
+            MoveItTool.UpdatePillarMap();
         }
 
         public override void Undo()
@@ -382,6 +383,7 @@ namespace MoveIt
             MoveItTool.m_debugPanel.UpdatePanel();
 
             UpdateArea(bounds);
+            MoveItTool.UpdatePillarMap();
         }
 
         public override void ReplaceInstances(Dictionary<Instance, Instance> toReplace)
