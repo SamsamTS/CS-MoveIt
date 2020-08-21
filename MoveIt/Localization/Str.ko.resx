@@ -346,13 +346,6 @@
   <data name="mod_description" xml:space="preserve">
     <value>모든 사물 이동</value>
   </data>
-  <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
-  </data>
-  <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
-    <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
-  </data>
   <data name="options_AltForPillars" xml:space="preserve">
     <value>오직 Alt 키를 꾹 누르는 것으로만 철탑과 기둥을 선택하기</value>
   </data>
@@ -493,9 +486,6 @@
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
     <value>지면 높이로 맞추기</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
-  </data>
-  <data name="whatsNew" xml:space="preserve">
-    <value>(Coming soon, do not translate yet!)</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>영구적으로 '{0}' 개의 파일을 삭제하시겠습니까?</value>
