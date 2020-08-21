@@ -121,13 +121,13 @@
     <value>Buldożer</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>Copy (Alt+Click to duplicate in-place)</value>
+    <value>Kopiuj (Alt+Kliknij, aby skopiować w miejscu)</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>Follow Terrain</value>
+    <value>Śledź ukształtowanie terenu</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+    <value>Zaznaczenie ramki</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
     <value>Move It</value>
@@ -145,7 +145,7 @@
     <value>Przełącz przyciąganie</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>Przełącz widok podziemny</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>Narzędzia</value>
@@ -243,7 +243,7 @@
     <value>Kopiuj</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convert selected objects to PO</value>
+    <value>Konwertuj zaznaczone obiekty na PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
