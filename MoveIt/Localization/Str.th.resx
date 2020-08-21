@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>ไม่พบ Traffic manager, การทำงานร่วมกันได้ปิดการใช้งาน</value>
+    <value>Traffic Manager not found, integration disabled.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -345,6 +345,13 @@
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>ย้ายสิ่งต่าง ๆ</value>
+  </data>
+  <data name="options_AdvancedPillarControl" xml:space="preserve">
+    <value>Use Advanced Pillar Control</value>
+  </data>
+  <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
+    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
     <value>เลือกเสาไฟ และเสา โดยการกดปุ่ม Alt บนแป้นพิมพ์ค้างไว้เท่านั้น</value>
@@ -486,6 +493,18 @@
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
     <value>ให้เท่ากับระดับภูมิประเทศ</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
+  </data>
+  <data name="whatsNew" xml:space="preserve">
+    <value>New in Move It 2.9.0:
+
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
+
+Read the workshop Move It Guide for more information.
+
+Click anywhere on this box to close it.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>คุณต้องการลบไฟล์ '{0}' โดยถาวรหรือไม่?</value>
