@@ -496,16 +496,7 @@ un PO con Move It, desaparecerán PERMANENTEMENTE.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
-
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
-
-Read the workshop Move It Guide for more information.
-
-Click anywhere on this box to close it.</value>
+    <value>(Coming soon, do not translate yet!)</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Quieres eliminar {0} permanentemente?</value>
