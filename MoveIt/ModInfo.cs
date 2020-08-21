@@ -117,6 +117,14 @@ namespace MoveIt
                 checkBox.tooltip = Str.options_RightClickCancel_Tooltip;
 
                 group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_AdvancedPillarControl, MoveItTool.advancedPillarControl.value, (b) =>
+                {
+                    MoveItTool.advancedPillarControl.value = b;
+                });
+                checkBox.tooltip = Str.options_AdvancedPillarControl_Tooltip;
+
+                group.AddSpace(10);
                 group = helper.AddGroup(Str.options_ShortcutsGeneral);
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);

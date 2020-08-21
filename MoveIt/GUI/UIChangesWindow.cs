@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
+using MoveIt.Localization;
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
@@ -8,17 +9,17 @@ namespace MoveIt
     {
         public static UIChangesWindow instance;
 
-        private const string m_blurb =
-            "New in Move It 2.8.0:\n\n" +
-            "- Slope Align now automatically uses the 2 furthest apart select objects (Shift+Click on the tool icon to manually select the 2 points).\n\n" +
-            "- Toolbox (More Tools) menu redesigned, and some icons changed.\n\n" + 
-            "- Line Tool - Evenly space out objects in a straight line.\n\n" +
-            "- Set Position Tool - Change a selection's coordinates.\n\n" +
-            "- Move and delete paths for ship, aircraft, ferries, helicopters, etc.\n\n" +
-            "- Options page redesigned.\n\n" +
-            "- Many other tweaks and optimisations!\n\n" +
-            "Read the workshop Move It Guide for more information.\n\n" +
-            "Click anywhere on this box to close it.";
+        private readonly string m_blurb = Str.whatsNew;
+            //"New in Move It 2.8.0:\n\n" +
+            //"- Slope Align now automatically uses the 2 furthest apart select objects (Shift+Click on the tool icon to manually select the 2 points).\n\n" +
+            //"- Toolbox (More Tools) menu redesigned, and some icons changed.\n\n" + 
+            //"- Line Tool - Evenly space out objects in a straight line.\n\n" +
+            //"- Set Position Tool - Change a selection's coordinates.\n\n" +
+            //"- Move and delete paths for ship, aircraft, ferries, helicopters, etc.\n\n" +
+            //"- Options page redesigned.\n\n" +
+            //"- Many other tweaks and optimisations!\n\n" +
+            //"Read the workshop Move It Guide for more information.\n\n" +
+            //"Click anywhere on this box to close it.";
 
         public override void Start()
         {

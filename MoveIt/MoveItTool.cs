@@ -59,6 +59,7 @@ namespace MoveIt
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
         public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
+        public static SavedBool advancedPillarControl = new SavedBool("advancedPillarControl", settingsFileName, false, true);
         public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
         public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
         public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
@@ -759,6 +760,8 @@ namespace MoveIt
 
         internal static void UpdatePillarMap()
         {
+            if (!advancedPillarControl) return;
+
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             m_pillarMap = new Dictionary<ushort, ushort>();

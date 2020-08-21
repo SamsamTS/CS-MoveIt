@@ -34,9 +34,6 @@ namespace MoveIt
         public NetSegment segmentCurve;
 
         protected readonly bool containsNetwork = false;
-        protected Dictionary<BuildingState, BuildingState> pillarsCloneToOriginal = new Dictionary<BuildingState, BuildingState>();
-
-        private bool PillarsProcessed;
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
@@ -88,63 +85,13 @@ namespace MoveIt
                 }
             }
 
-            ProcessPillars();
+            m_states = ProcessPillars(m_states, false);
             center = GetCenter();
-        }
-
-        private void ProcessPillars()
-        {
-            HashSet<ushort> nodesWithAttachments = new HashSet<ushort>();
-
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-            foreach (InstanceState instanceState in m_states)
-            {
-                if (instanceState is NodeState ns && ((NetNode)(ns.instance.data)).m_building > 0 && 
-                    ((buildingBuffer[((NetNode)(ns.instance.data)).m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden))
-                {
-                    nodesWithAttachments.Add(ns.instance.id.NetNode);
-                    Debug.Log($"Node {ns.instance.id.NetNode} found");
-                }
-            }
-            HashSet<InstanceState> newStates = new HashSet<InstanceState>(m_states);
-            foreach (InstanceState instanceState in m_states)
-            {
-                ushort buildingId = instanceState.instance.id.Building;
-                if (instanceState is BuildingState originalState && MoveItTool.m_pillarMap.ContainsKey(buildingId) && MoveItTool.m_pillarMap[buildingId] > 0)
-                {
-                    ushort nodeId = MoveItTool.m_pillarMap[buildingId];
-                    if (nodesWithAttachments.Contains(nodeId)) // The node is also selected
-                    {
-                        Debug.Log($"Pillar {buildingId} for selected node {nodeId}");
-                        continue;
-                    }
-                    MoveableBuilding original = (MoveableBuilding)instanceState.instance;
-                    buildingBuffer[buildingId].m_flags |= Building.Flags.Hidden;
-                    MoveableBuilding clone = original.Duplicate();
-                    BuildingState cloneState = (BuildingState)clone.SaveToState();
-                    pillarsCloneToOriginal.Add(cloneState, originalState);
-                    Debug.Log($"Pillar {buildingId} for node {nodeId} duplicated to {clone.id.Building}");
-                    selection.Remove(original);
-                    selection.Add(clone);
-                    newStates.Remove(originalState);
-                    newStates.Add(cloneState);
-                    original.isHidden = true;
-                }
-            }
-            if (pillarsCloneToOriginal.Count > 0)
-            {
-                MoveItTool.UpdatePillarMap();
-            }
-            m_states = newStates;
-            watch.Stop();
-            Debug.Log($"Pillars handled in {watch.ElapsedMilliseconds} ms\nSelected nodes:{nodesWithAttachments.Count}, total selection:{m_states.Count}, dups mapped:{pillarsCloneToOriginal.Count}");
-            PillarsProcessed = true;
         }
 
         public override void Do()
         {
-            if (!PillarsProcessed) ProcessPillars();
+            if (!PillarsProcessed) ProcessPillars(m_states, false);
 
             Bounds originalBounds = GetTotalBounds(false);
 
@@ -205,6 +152,7 @@ namespace MoveIt
                 }
             }
 
+            // Does not check MoveItTool.advancedPillarControl, because even if disabled now advancedPillarControl may have been active earlier in action queue
             foreach (KeyValuePair<BuildingState, BuildingState> pillarClone in pillarsCloneToOriginal)
             {
                 BuildingState cloneState = pillarClone.Key;
