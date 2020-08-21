@@ -139,7 +139,7 @@
     <value>Przełącz siatkę</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>Przełącz obiekty proceduralne (PO)</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
     <value>Przełącz przyciąganie</value>
@@ -217,23 +217,23 @@
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
-    <value>PO version {0} found, integration enabled!</value>
+    <value>Znaleziono wersję {0} PO, integracja włączona!</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>PO not found, integration disabled.</value>
+    <value>Nie znaleziono PO, integracja wyłączona.</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO integration failed - found version {0} (required: 1.6)</value>
+    <value>Integracja PO nie powiodła się - znaleziona wersja {0} (wymagana: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager found, integration enabled!</value>
+    <value>Znaleziono TM:PE, integracja włączona!</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic manager not found, integration disabled.</value>
+    <value>Nie znaleziono TM:PE, integracja wyłączona.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -271,10 +271,10 @@
     <value>Powtórz</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotate Counterclockwise</value>
+    <value>Obróć przeciwnie do ruchu wskazówek zegara</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Rotate Clockwise</value>
+    <value>Obróć zgodnie z ruchem wskazówek zegara</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
     <value>Skaluj do wewnąrz</value>
@@ -286,7 +286,7 @@
     <value>Step Over</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>Przełącz panel debugowania</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
     <value>Przełącz widok siatki</value>
@@ -329,7 +329,7 @@
     <value>Obróć losowo</value>
   </data>
   <data name="key_ToolSetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>Ustaw pozycję</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
     <value>Slope Objects</value>
@@ -347,7 +347,7 @@
     <value>Move things</value>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
-    <value>Select pylons and pillars by holding Alt only</value>
+    <value>Wybierz pylony i filary trzymając tylko Alt</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
     <value>Automatycznie zamknij menu Narzędzia</value>
@@ -359,43 +359,43 @@
     <value>Wyłącz logowanie wiadomości debugowania</value>
   </data>
   <data name="options_DisableDebugLogging_Tooltip" xml:space="preserve">
-    <value>If checked, debug messages won't be logged.</value>
+    <value>Jeśli zaznaczone, komunikaty debugowania nie będą rejestrowane.</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>Opcje dodatkowe</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
-    <value>Hide the PO deletion warning</value>
+    <value>Ukryj ostrzeżenie o usunięciu PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
-    <value>Please note: you can not undo Bulldozed PO. This means if you delete
-PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <value>Uwaga: nie można cofnąć usuniętych PO. Oznacza to, że jeśli usuniesz
+obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
-    <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
+    <value>Preferuj szybkie, niedokładne przesuwanie (przytrzymaj Shift, aby tymczasowo przełączyć)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
-    <value>Helps you position objects when your frame-rate is poor.</value>
+    <value>Pomaga pozycjonować obiekty przy niskiej częstotliwości wyświetlania klatek.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>Usuń węzły widmo</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
     <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>Resetuj pozycję przycisku</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
-    <value>Right click cancels cloning</value>
+    <value>Prawy przycisk anuluje klonowanie</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
+    <value>Jeśli zaznaczone, kliknięcie prawym przyciskiem myszy spowoduje anulowanie klonowania zamiast obrotu o 45°.</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
     <value>Skróty ogólne</value>
@@ -404,13 +404,13 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Skróty narzędzi</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>Pokaż panel debugowania Move It</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>Użyj ruchów wg kierunków kompasu</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>Jeśli zaznaczone, strzałka do góry przesunie na północ, strzałka do dołu przesunie na południe, strzałka w lewo przesunie na zachód, strzałka w prawo przesunie na wschód.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Kąt</value>
@@ -422,10 +422,10 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Wysokość</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>Pozycja</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>Konwertuj na PO</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
@@ -445,7 +445,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>Odbicie lustrzane</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
@@ -489,7 +489,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>Czy chcesz trwale usunąć plik '{0}'?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
@@ -505,8 +505,8 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>Import</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>Plik '{0}' już istnieje.
+Czy chcesz go nadpisać?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
