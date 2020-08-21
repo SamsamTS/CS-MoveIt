@@ -118,410 +118,429 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="baseUI_Bulldoze_Tooltip" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>ブルドーザー</value>
   </data>
   <data name="baseUI_Clone_Tooltip" xml:space="preserve">
-    <value>Copy (Alt+Click to duplicate in-place)</value>
+    <value>コピー (Alt+クリックで複製)</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>Follow Terrain</value>
+    <value>地形に追従する</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+    <value>連続選択</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
-    <value>Move It</value>
+    <value>移動</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>単一選択</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>グリッドの切り替え</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>Procedual Objectsの切り替え</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>スナップの切り替え</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>地下表示の切り替え</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>ツールボックス</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>建物</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
-    <value>Decals</value>
+    <value>デカール</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+    <value>フェンス</value>
   </data>
   <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
+    <value>ノード</value>
   </data>
   <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
+    <value>その他</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
-    <value>Paths</value>
+    <value>パス</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
-    <value>Picker</value>
+    <value>スポイト</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Pick an object to filter for objects of the same type</value>
+    <value>同じ種類のオブジェクトに対してフィルタリングするオブジェクトを選択</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
+    <value>送電線</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
+    <value>Prop</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
+    <value>道路</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
-    <value>Segments</value>
+    <value>セグメント</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
-    <value>Surfaces</value>
+    <value>サーフェス</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
+    <value>線路</value>
     <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
+    <value>樹木</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller found, integration enabled!</value>
+    <value>Node Controllerが見つかったため、Move Itと統合しました。</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller not found, integration disabled.</value>
+    <value>Node Controllerが見つからないため、Move Itとの統合が無効化されました。</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>Network Skins 2が見つかったため、Move Itと統合しました。</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>Network Skins 2が見つからないか、NS1とNS2の両方がサブスクライブされています。Move Itと統合できません。</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
-    <value>PO version {0} found, integration enabled!</value>
+    <value>POのバージョン{0} が見つかりました。Move Itと統合します。</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>PO not found, integration disabled.</value>
+    <value>POが見つかりませんでした。Move Itと統合されません。</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO integration failed - found version {0} (required: 1.6)</value>
+    <value>PO の統合に失敗しました - 見つかったバージョン {0} (必須: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager found, integration enabled!</value>
+    <value>TM: PEが見つかりました。Move Itとの統合を有効にしました。</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic manager not found, integration disabled.</value>
+    <value>Traffic Manager not found, integration disabled.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>ブルドーザー</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
-    <value>Copy</value>
+    <value>コピー</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convert selected objects to PO</value>
+    <value>選択したオブジェクトをPO に変換</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
-    <value>Deselect All</value>
+    <value>すべて選択解除</value>
   </data>
   <data name="key_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>下に移動</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Move East</value>
+    <value>東に移動</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Move North</value>
+    <value>北に移動</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Move South</value>
+    <value>南へ移動</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>上に移動</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Move West</value>
+    <value>西に移動</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
-    <value>Redo</value>
+    <value>やり直し</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Rotate Counterclockwise</value>
+    <value>反時計回りに回転します。</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Rotate Clockwise</value>
+    <value>時計回りに回転</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>内側に拡大縮小</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>外側に拡大縮小</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>ステップ実行</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>デバッグパネルの切り替え</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>Toggle Grid View</value>
+    <value>グリッド表示の切り替え</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>POのアクティブ/非アクティブの切り替え</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>Toggle Tool</value>
+    <value>ツールの切り替え</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>地下表示の切り替え</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>スロープ状に並べる</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>整列(間隔を空ける)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>整列(間隔を空けない)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>オブジェクトを反転</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>１つのノードをスロープ状に並べる</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>オブジェクトをリセット</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>中心を基準に回転</value>
   </data>
   <data name="key_ToolRotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>その場で回転</value>
   </data>
   <data name="key_ToolRotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>ランダムに回転</value>
   </data>
   <data name="key_ToolSetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>座標を指定</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>オブジェクトをスロープ状に並べる</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
-    <value>Align To Object Height</value>
+    <value>オブジェクトの高さに合わせる</value>
   </data>
   <data name="key_ToolToTerrainHeight" xml:space="preserve">
-    <value>Align To Terrain Height</value>
+    <value>地形の高さに合わせる</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
-    <value>Undo</value>
+    <value>元に戻す</value>
   </data>
   <data name="mod_description" xml:space="preserve">
-    <value>Move things</value>
+    <value>いろいろなものを移動させます</value>
+  </data>
+  <data name="options_AdvancedPillarControl" xml:space="preserve">
+    <value>Use Advanced Pillar Control</value>
+  </data>
+  <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
+    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
-    <value>Select pylons and pillars by holding Alt only</value>
+    <value>Altキーを押してる間のみパイロンと橋脚を選択します</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Auto-close Toolbox menu</value>
+    <value>ツールボックスメニューを自動で閉じる</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
-    <value>Check this to close the Toolbox menu after choosing a tool.</value>
+    <value>チェックを入れると、ツールを選択後にツールボックスのメニューを閉じます。</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
-    <value>Disable debug messages logging</value>
+    <value>デバッグメッセージのログを無効にする</value>
   </data>
   <data name="options_DisableDebugLogging_Tooltip" xml:space="preserve">
-    <value>If checked, debug messages won't be logged.</value>
+    <value>チェックを入れた場合、デバッグメッセージは記録されません。</value>
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
-    <value>Extra Options</value>
+    <value>追加のオプション</value>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
-    <value>Hide the PO deletion warning</value>
+    <value>PO削除時の警告を非表示にする</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
-    <value>Please note: you can not undo Bulldozed PO. This means if you delete
-PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <value>注意: Bulldozed POを元に戻すことはできません。つまり、Move Itを使用して
+POオブジェクトを削除すると、完全に消去されます。</value>
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
-    <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
+    <value>詳細描画を省き、移動を高速にします(Shiftキー押下中は一時的に切り替え可能)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
-    <value>Helps you position objects when your frame-rate is poor.</value>
+    <value>フレームレートが低い場合にオブジェクトを配置するのに役立ちます。</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remove Ghost Nodes</value>
+    <value>ゴーストノードの削除</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
+    <value>ゲーム内でゴーストノード(セグメントが接続されていないノード) を削除するときにこのボタンを使用します。注意: これは「元に戻す」の履歴を消去します。復元できません。</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>ボタンの位置をリセット</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
-    <value>Right click cancels cloning</value>
+    <value>右クリックで複製を解除</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
+    <value>チェックされている場合、右クリックでコピーを解除します。(デフォルトでは45°回転する)</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>General Shortcuts</value>
+    <value>一般的なショートカット</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>ツールボックスのショートカット</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>デバッグ画面を表示</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>方角を合わせる</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>チェックされている場合、Upキーで北に、Downキーで南に、左キーで西に、右キーで東に移動します。</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
-    <value>Angle</value>
+    <value>角度</value>
   </data>
   <data name="setpos_Go" xml:space="preserve">
-    <value>Go</value>
+    <value>実行</value>
   </data>
   <data name="setpos_H_Tooltip" xml:space="preserve">
-    <value>Height</value>
+    <value>高さ</value>
   </data>
   <data name="setpos_Title" xml:space="preserve">
-    <value>Position</value>
+    <value>位置</value>
   </data>
   <data name="toolbox_ConvertToPO" xml:space="preserve">
-    <value>Convert To PO</value>
+    <value>POに変換</value>
     <comment>Do not translate 'PO'. Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ExportSelection" xml:space="preserve">
-    <value>Export Selection</value>
+    <value>選択したものをエクスポート</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Height Tools</value>
+    <value>高さツール</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
-    <value>Import Selection</value>
+    <value>選択したものをインポート</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>オブジェクトを整列</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>オブジェクトを反転</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
-    <value>Other Tools</value>
+    <value>その他のツール</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>オブジェクトをリセット</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>中心を基準に回転</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
-    <value>Rotate In-Place</value>
+    <value>その場で回転</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
-    <value>Rotate Randomly</value>
+    <value>ランダムに回転</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotationTools_Tooltip" xml:space="preserve">
-    <value>Rotation Tools</value>
+    <value>回転ツール</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>座標を指定</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>スロープ状に並べる</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>To Object Height</value>
+    <value>オブジェクトの高さに合わせる</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>To Terrain Height</value>
+    <value>地形の高さに合わせる</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
+  <data name="whatsNew" xml:space="preserve">
+    <value>New in Move It 2.9.0:
+
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
+
+Read the workshop Move It Guide for more information.
+
+Click anywhere on this box to close it.</value>
+  </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>ファイル '{0}' を完全に削除しますか？</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
-    <value>Delete file</value>
+    <value>ファイルを削除</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>保存済み選択項目を削除</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>エクスポート</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>インポート</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>ファイル '{0}' はすでに存在します。
+上書きしますか?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Overwrite file</value>
+    <value>ファイルを上書き</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>復元する</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>エクスポートされた元の位置に選択したものをインポートします</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
-    <value>The selection is empty or invalid.</value>
+    <value>何も選択されていないか、無効です。</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
-    <value>Selection invalid</value>
+    <value>選択が無効です</value>
   </data>
 </root>

@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>ไม่พบ Traffic manager, การทำงานร่วมกันได้ปิดการใช้งาน</value>
+    <value>Traffic Manager not found, integration disabled.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -277,22 +277,22 @@
     <value>หมุนตามเข็มนาฬิกา</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>ขยายเข้าด้านใน</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>ขยายออกด้านนอก</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>ก้าวข้ามวัตถุที่ตำแหน่งเมาส์ปัจจุบัน</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>Toggle Debug Panel</value>
+    <value>แสดงแผงข้อบกพร่อง</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
     <value>แสดงกริด</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>สลับการเปิด/ปิดการใช้งาน PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
@@ -302,22 +302,22 @@
     <value>แสดงในมุมมองใต้ดิน</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>ลาดเอียงเต็มรูปแบบ</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>เรียงวัตถุเป็นเส้นตรง (มีเว้นเป็นช่องว่าง)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>เรียงวัตถุเป็นเส้นตรง (ไม่เว้นเป็นช่องว่าง)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>คัดลอกแบบกลับด้าน หรือสะท้อน</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>ปรับโหนดให้ลาดเอียงแบบด่วน</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>คืนค่าวัตถุใด ๆ</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
     <value>หมุน ณ จุดศูนย์กลาง</value>
@@ -332,7 +332,7 @@
     <value>ตั้งตำแหน่ง</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>ปรับวัตถุให้ลาดเอียง</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
     <value>ปรับตำแหน่งให้เท่ากับระดับของวัตถุ</value>
@@ -346,14 +346,21 @@
   <data name="mod_description" xml:space="preserve">
     <value>ย้ายสิ่งต่าง ๆ</value>
   </data>
+  <data name="options_AdvancedPillarControl" xml:space="preserve">
+    <value>Use Advanced Pillar Control</value>
+  </data>
+  <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
+    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
+  </data>
   <data name="options_AltForPillars" xml:space="preserve">
-    <value>Select pylons and pillars by holding Alt only</value>
+    <value>เลือกเสาไฟ และเสา โดยการกดปุ่ม Alt บนแป้นพิมพ์ค้างไว้เท่านั้น</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
     <value>ปิดเมนูเครื่องมือโดยอัตโนมัติ</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
-    <value>Check this to close the Toolbox menu after choosing a tool.</value>
+    <value>เลือกตัวเลือกนี้ เพื่อปิดเมนูกล่องเครื่องมือหลังจากเลือกเครื่องมือแล้ว</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>ปิดใช้งานบันทึกข้อความข้อบกพร่อง</value>
@@ -369,12 +376,11 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
-    <value>Please note: you can not undo Bulldozed PO. This means if you delete
-PO objects with Move It, they are immediately PERMANENTLY gone.</value>
+    <value>โปรดทราบ: คุณไม่สามารถย้อนการกระทำของการรื้อถอนใด ๆ ที่เป็นวัตถุแบบ PO นั่นหมายความว่า ถ้าคุณลบวัตถุที่เป็น PO โดยการใช้ Move It จะทำให้หายไปทันทีและเป็นอย่างถาวร</value>
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
-    <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
+    <value>ต้องการความรวดเร็ว แต่มีย้ายไปอย่างช้า ๆ อย่างละเอียด (กดปุ่ม Shift บนแป้นพิมพ์ค้างไว้ เพื่อทำการสลับชั่วคราว)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
     <value>ช่วยให้คุณในการระบุตำแหน่งวัตถุ เมื่อเฟรมเรตของคุณแย่</value>
@@ -398,19 +404,19 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>หากมีการเลือกไว้ การคลิกขวาจะยกเลิกการโคลนแทนที่จะหมุน 45 องศา</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>General Shortcuts</value>
+    <value>ปุ่มทางลัดทั่วไป</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>ปุ่มทางลัดกล่องเครื่องมือ</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>แสดงแผงข้อบกพร่องของ Move It</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>ใช้เข็มทิศในการเคลื่อนย้าย</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>หากมีการเลือกตัวเลือกนี้ ปุ่ม Up จะเคลื่อนย้ายไปทางทิศเหนือ, ปุ่ม Down ไปทางทิศใต้, ปุ่ม Left ไปทางทิศตะวันตก และปุ่ม Right ไปทางทิศตะวันออก</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>มุม</value>
@@ -441,11 +447,11 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>เรียงวัตถุให้เป็นเส้นตรง</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
-    <value>Mirror Objects</value>
+    <value>คัดลอกวัตถุแบบกลับด้าน หรือสะท้อน</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_OtherTools_Tooltip" xml:space="preserve">
@@ -453,7 +459,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>คืนค่าวัตถุ</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
@@ -473,20 +479,32 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>ตั้งตำแหน่ง</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>ปรับวัตถุให้ลาดเอียง</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>To Object Height</value>
+    <value>ให้เท่ากับระดับของวัตถุ</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>To Terrain Height</value>
+    <value>ให้เท่ากับระดับภูมิประเทศ</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
+  </data>
+  <data name="whatsNew" xml:space="preserve">
+    <value>New in Move It 2.9.0:
+
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
+
+Read the workshop Move It Guide for more information.
+
+Click anywhere on this box to close it.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>คุณต้องการลบไฟล์ '{0}' โดยถาวรหรือไม่?</value>
@@ -516,7 +534,7 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
     <value>คืนค่า</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>นำเข้าส่วนที่เลือกไปยังตำแหน่งเดิมที่เคยส่งออกไป</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
     <value>สิ่งที่เลือกไว้ว่างเปล่า หรือไม่ถูกต้อง</value>

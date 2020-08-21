@@ -124,7 +124,7 @@
     <value>복사 (같은 위치에 복제하려면 Alt 키와 함께 클릭하세요.)</value>
   </data>
   <data name="baseUI_FollowTerrain_Tooltip" xml:space="preserve">
-    <value>지형 따르기</value>
+    <value>지형에 맞추기</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
     <value>사각 선택</value>
@@ -136,16 +136,16 @@
     <value>단일 선택</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>격자 토글</value>
+    <value>격자 전환</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Procedural Objects 토글</value>
+    <value>Procedural Objects 키</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>스냅핑 토글</value>
+    <value>스냅핑 전환</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>지하 시점 토글</value>
+    <value>지하 시점 전환</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
     <value>도구박스</value>
@@ -179,7 +179,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>전선</value>
+    <value>송전선</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
     <value>프롭</value>
@@ -213,7 +213,7 @@
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 발견 못함, 통합 이용이 불가능합니다.</value>
+    <value>Network Skins 2 발견 못함, 혹은 NS1과 NS2를 함께 구독 중임, 통합 이용이 불가능합니다.</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager 발견 못함, 통합 이용이 불가능합니다.</value>
+    <value>Traffic Manager not found, integration disabled.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -277,32 +277,32 @@
     <value>시계방향으로 회전</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>내부로 축적 조정</value>
+    <value>축적 축소</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>외부로 축적 조정</value>
+    <value>축적 확대</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>건너띄기</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
-    <value>디버그 창 토글</value>
+    <value>디버그 창 켜기</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>격자모드 토글</value>
+    <value>격자 전환</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>PO모드 활성화/비활성화 토글</value>
+    <value>PO모드 활성화/비활성화 키</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>토글 도구</value>
+    <value>도구창 켜기</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>지하 시점 토글</value>
+    <value>지하 시점 전환</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>전체 경사</value>
+    <value>완만한 경사 (선택한 A 개체와 B 개체의 사이 높이로)</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
     <value>일렬 정렬 (간격)</value>
@@ -320,19 +320,19 @@
     <value>개체 초기화</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
-    <value>가운데 회전</value>
+    <value>중심으로 회전</value>
   </data>
   <data name="key_ToolRotateInPlace" xml:space="preserve">
-    <value>같은 위치에서 회전</value>
+    <value>제자리에서 회전</value>
   </data>
   <data name="key_ToolRotateRandomly" xml:space="preserve">
     <value>무작위로 회전</value>
   </data>
   <data name="key_ToolSetPosition" xml:space="preserve">
-    <value>위치 설정</value>
+    <value>좌표 위치 설정</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>경사 개체</value>
+    <value>개체 간 완만한 경사</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
     <value>개체 높이에 맞추기</value>
@@ -346,8 +346,15 @@
   <data name="mod_description" xml:space="preserve">
     <value>모든 사물 이동</value>
   </data>
+  <data name="options_AdvancedPillarControl" xml:space="preserve">
+    <value>Use Advanced Pillar Control</value>
+  </data>
+  <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
+    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
+  </data>
   <data name="options_AltForPillars" xml:space="preserve">
-    <value>오직 Alt 키를 꾹 누르는 것으로 철탑과 기둥을 선택하기</value>
+    <value>오직 Alt 키를 꾹 누르는 것으로만 철탑과 기둥을 선택하기</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
     <value>도구박스 메뉴 자동 종료</value>
@@ -456,11 +463,11 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
-    <value>가운데 회전</value>
+    <value>중심으로 회전</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
-    <value>같은 위치에서 회전</value>
+    <value>제자리에서 회전</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateRandomly" xml:space="preserve">
@@ -476,16 +483,28 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>경사 개체</value>
+    <value>개체 간 완만한 경사</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
-    <value>선택한 개체 높이로</value>
+    <value>선택한 개체 높이로 맞추기</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
-    <value>지면 높이로</value>
+    <value>지면 높이로 맞추기</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
+  </data>
+  <data name="whatsNew" xml:space="preserve">
+    <value>New in Move It 2.9.0:
+
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
+
+Read the workshop Move It Guide for more information.
+
+Click anywhere on this box to close it.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>영구적으로 '{0}' 개의 파일을 삭제하시겠습니까?</value>
