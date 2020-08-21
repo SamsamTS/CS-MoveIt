@@ -346,13 +346,6 @@
   <data name="mod_description" xml:space="preserve">
     <value>ย้ายสิ่งต่าง ๆ</value>
   </data>
-  <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
-  </data>
-  <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
-    <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
-  </data>
   <data name="options_AltForPillars" xml:space="preserve">
     <value>เลือกเสาไฟ และเสา โดยการกดปุ่ม Alt บนแป้นพิมพ์ค้างไว้เท่านั้น</value>
   </data>
@@ -493,9 +486,6 @@
   <data name="toolbox_ToTerrainHeight" xml:space="preserve">
     <value>ให้เท่ากับระดับภูมิประเทศ</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
-  </data>
-  <data name="whatsNew" xml:space="preserve">
-    <value>(Coming soon, do not translate yet!)</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>คุณต้องการลบไฟล์ '{0}' โดยถาวรหรือไม่?</value>
