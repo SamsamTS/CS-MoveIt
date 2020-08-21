@@ -1097,16 +1097,7 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New in Move It 2.9.0:
-        ///
-        ///- Translation into all languages the game supports, plus Japanese and Thai.
-        ///- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods&apos; settings are copied in Move It (please note, these mods may need updating).
-        ///- Optional advanced pillar control, so pillars don&apos;t get reset by the game.
-        ///- Numerous performance and stability improvements.
-        ///
-        ///Read the workshop Move It Guide for more information.
-        ///
-        ///Click anywhere on this box t [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to (Coming soon, do not translate yet!).
         /// </summary>
         internal static string whatsNew {
             get {
