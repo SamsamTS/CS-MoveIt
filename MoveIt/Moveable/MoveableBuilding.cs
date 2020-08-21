@@ -13,6 +13,7 @@ namespace MoveIt
         public Building.Flags flags;
         public int length;
         public bool isSubInstance;
+        public bool isHidden;
 
         [XmlElement("subStates")]
         public InstanceState[] subStates;
@@ -85,7 +86,8 @@ namespace MoveIt
                 angle = buildingBuffer[id.Building].m_angle,
                 flags = buildingBuffer[id.Building].m_flags,
                 length = buildingBuffer[id.Building].Length,
-                isSubInstance = isSubInstance
+                isSubInstance = isSubInstance,
+                isHidden = isHidden
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
@@ -124,6 +126,7 @@ namespace MoveIt
             AddFixedHeightFlag(building);
             RelocateBuilding(building, ref buildingBuffer[building], buildingState.position, buildingState.angle);
             isSubInstance = buildingState.isSubInstance;
+            isHidden = buildingState.isHidden;
 
             if (buildingState.subStates != null)
             {
@@ -315,6 +318,22 @@ namespace MoveIt
             SetHeight(TerrainManager.instance.SampleOriginalRawHeightSmooth(position));
         }
 
+        internal MoveableBuilding Duplicate()
+        {
+            if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
+                (BuildingInfo)Info.Prefab, position, angle,
+                buildingBuffer[id.Building].Length, SimulationManager.instance.m_currentBuildIndex))
+            {
+                buildingBuffer[clone].m_flags |= Building.Flags.FixedHeight;
+                buildingBuffer[clone].m_position = position;
+                InstanceID cloneID = default;
+                cloneID.Building = clone;
+                return new MoveableBuilding(cloneID);
+            }
+
+            throw new Exception($"Failed to duplicate {id.Building}!");
+        }
+
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             BuildingState state = instanceState as BuildingState;
@@ -353,6 +372,10 @@ namespace MoveIt
                 if ((state.flags & Building.Flags.Historical) != Building.Flags.None)
                 {
                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Historical;
+                }
+                if ((state.flags & Building.Flags.Hidden) != Building.Flags.None)
+                {
+                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Hidden;
                 }
 
                 if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)

@@ -10,12 +10,6 @@ namespace MoveIt
 {
     public class CloneAction : Action
     {
-        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
-        protected static PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
-        protected static TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
-        protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
-        protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
-
         public Vector3 moveDelta;
         public Vector3 center;
         public float angleDelta;
@@ -225,7 +219,7 @@ namespace MoveIt
             m_clones = new HashSet<Instance>();
             m_origToCloneUpdate = new Dictionary<Instance, Instance>();
             m_nodeOrigToClone = new Dictionary<ushort, ushort>();
-            var stateToClone = new Dictionary<InstanceState, Instance>();
+            var stateToClone = new Dictionary<InstanceState, Instance>(); // Depreciated, used by old Node Controller integration
             var InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
 
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -318,7 +312,7 @@ namespace MoveIt
             {
                 if (state is ProcState)
                 {
-                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
+                    _ = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
             }
 

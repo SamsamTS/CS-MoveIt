@@ -242,6 +242,7 @@ namespace MoveIt
 
         protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
         public ToolAction m_nextAction = ToolAction.None;
 
@@ -758,6 +759,8 @@ namespace MoveIt
 
         internal static void UpdatePillarMap()
         {
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
             m_pillarMap = new Dictionary<ushort, ushort>();
             for (ushort i = 0; i < nodeBuffer.Length; i++)
             {
@@ -766,10 +769,15 @@ namespace MoveIt
                 {
                     if (n.m_building > 0)
                     {
-                        m_pillarMap.Add(n.m_building, i);
+                        if ((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
+                        {
+                            m_pillarMap.Add(n.m_building, i);
+                        }
                     }
                 }
             }
+            watch.Stop();
+            Debug.Log($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
         }
 
         public void UpdateAreas()

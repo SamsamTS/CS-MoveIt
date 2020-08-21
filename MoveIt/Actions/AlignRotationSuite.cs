@@ -22,7 +22,6 @@ namespace MoveIt
         public float newAngle;
         public bool followTerrain;
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
-        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
         public AlignRotationAction()
         {

@@ -15,6 +15,12 @@ namespace MoveIt
         public abstract void Undo();
         public abstract void ReplaceInstances(Dictionary<Instance, Instance> toReplace);
 
+        protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+        protected static PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+        protected static TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
+        protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+        protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+
         internal virtual void OnHover() { }
 
         internal virtual void Overlays(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor) { }

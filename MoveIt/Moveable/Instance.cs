@@ -1,4 +1,5 @@
-﻿using MoveItIntegration;
+﻿using ColossalFramework;
+using MoveItIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -198,7 +199,7 @@ namespace MoveIt
         protected static Building[] buildingBuffer;
         protected static NetSegment[] segmentBuffer;
         protected static NetNode[] nodeBuffer;
-        protected static NetLane[] laneBuffer = NetManager.instance.m_lanes.m_buffer;
+        protected static NetLane[] laneBuffer;
 
         public List<Instance> subInstances = new List<Instance>();
         internal bool isHidden = false;
@@ -206,10 +207,11 @@ namespace MoveIt
         public Instance(InstanceID instanceID)
         {
             id = instanceID;
-            netManager = NetManager.instance;
-            buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-            segmentBuffer = NetManager.instance.m_segments.m_buffer;
-            nodeBuffer = NetManager.instance.m_nodes.m_buffer;
+            netManager = Singleton<NetManager>.instance;
+            buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
+            segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
+            nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+            laneBuffer = Singleton<NetManager>.instance.m_lanes.m_buffer;
         }
 
         public InstanceID id

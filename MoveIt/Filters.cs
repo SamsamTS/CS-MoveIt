@@ -198,6 +198,7 @@ namespace MoveIt
 
         public static bool Filter(BuildingInfo info, ref Building building, bool isHover = false)
         {
+            // Dont' select hidden buildings
             if ((building.m_flags & Building.Flags.Hidden) == Building.Flags.Hidden) return false;
             if (MoveItTool.filterPicker && info == Picker.Info) return true;
             if (isHover)

@@ -478,6 +478,11 @@ namespace MoveIt
                 nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
 
                 cloneInstance = new MoveableNode(cloneID);
+
+                if (((NetNode)data).m_building > 0)
+                {
+                    buildingBuffer[((NetNode)(cloneInstance.data)).m_building].m_flags = buildingBuffer[((NetNode)data).m_building].m_flags;
+                }
             }
 
             return cloneInstance;
