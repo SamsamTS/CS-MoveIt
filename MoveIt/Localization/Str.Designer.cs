@@ -709,24 +709,6 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use Advanced Pillar Control.
-        /// </summary>
-        internal static string options_AdvancedPillarControl {
-            get {
-                return ResourceManager.GetString("options_AdvancedPillarControl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove..
-        /// </summary>
-        internal static string options_AdvancedPillarControl_Tooltip {
-            get {
-                return ResourceManager.GetString("options_AdvancedPillarControl_Tooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Select pylons and pillars by holding Alt only.
         /// </summary>
         internal static string options_AltForPillars {
@@ -1093,15 +1075,6 @@ namespace MoveIt.Localization {
         internal static string toolbox_ToTerrainHeight {
             get {
                 return ResourceManager.GetString("toolbox_ToTerrainHeight", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (Coming soon, do not translate yet!).
-        /// </summary>
-        internal static string whatsNew {
-            get {
-                return ResourceManager.GetString("whatsNew", resourceCulture);
             }
         }
         
