@@ -376,7 +376,7 @@
     <value>Prefer fast, low-detail moving (hold Shift to temporarily switch)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
-    <value>Helps you position objects when your frame-rate is poor.</value>
+    <value>Помогает переместить объект если у вас низкий FPS.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
     <value>Процедурные объекты</value>
@@ -391,7 +391,7 @@
     <value>Сбросить расположение кнопки</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
-    <value>Right click cancels cloning</value>
+    <value>Нажатие правой кнопки отменит клонирование</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
     <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
@@ -456,7 +456,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
-    <value>Rotate At Centre</value>
+    <value>Вращать относительно центра</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateInPlace" xml:space="preserve">
