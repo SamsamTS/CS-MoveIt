@@ -182,7 +182,7 @@
     <value>Linie energetyczne</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
+    <value>Dekoracje</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
     <value>Drogi</value>
@@ -314,7 +314,7 @@
     <value>Odbicie lustrzane</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>Wyrównanie węzła do pochylenia</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
     <value>Zresetuj obiekty</value>
