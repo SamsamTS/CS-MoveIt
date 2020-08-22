@@ -213,7 +213,7 @@
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>Nie znaleziono Network Skins 2 lub znaleziono NS1 i NS2, integracja wyłączona.</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager not found, integration disabled.</value>
+    <value>Nie znaleziono Traffic Manager, integracja wyłączona.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -283,7 +283,7 @@
     <value>Skaluj na zewnątrz</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>Pomiń obiekt</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>Przełącz panel debugowania</value>
@@ -292,7 +292,7 @@
     <value>Przełącz widok siatki</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>Przełącz PO aktywne/nieaktywne</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
@@ -302,13 +302,13 @@
     <value>Przełącz widok podziemny</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>Pełne nachylenie</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>Wyrównaj w linii (stały rozstaw)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>Wyrównaj w linii (zachowaj rozstaw)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>Odbicie lustrzane</value>
@@ -332,7 +332,7 @@
     <value>Ustaw pozycję</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>Wyrównanie pochyłe</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
     <value>Wyrównaj do wysokości obiektu</value>
@@ -380,13 +380,13 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <value>Pomaga pozycjonować obiekty przy niskiej częstotliwości wyświetlania klatek.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
-    <value>Procedural Objects</value>
+    <value>Obiekty proceduralne (PO)</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
     <value>Usuń węzły widmo</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
+    <value>Użyj tego przycisku podczas gry, aby usunąć węzły widmo (węzły bez dołączonych segmentów). Uwaga: wyczyści to możliwość cofnięcia wcześniejszych akcji!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
     <value>Resetuj pozycję przycisku</value>
