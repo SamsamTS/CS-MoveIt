@@ -382,10 +382,10 @@
     <value>Procedural Objects</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>ลบโหนดที่ร่องหน</value>
+    <value>ลบโหนดที่ล่องหน</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>ใช้ปุ่มนี้เมื่ออยู่ในเกม เพื่อลบโหนดที่ร่องหน (โหนดที่ไม่มีส่วนนั้นติดมา). หมายเหตุ: สิ่งนี้จะมีการล้างบันทึกการย้อนกลับของ Move It ออกไป!</value>
+    <value>ใช้ปุ่มนี้เมื่ออยู่ในเกม เพื่อลบโหนดที่ล่องหน (โหนดที่ไม่มีส่วนนั้นติดมา). หมายเหตุ: สิ่งนี้จะมีการล้างบันทึกการย้อนกลับของ Move It ออกไป!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
     <value>รีเซ็ตตำแหน่งปุ่ม</value>
