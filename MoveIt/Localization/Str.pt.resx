@@ -378,7 +378,7 @@ PERMANENTEMENTE deletados.</value>
     <value>Preferir movimento rápido e de baixo detalhe (segure Shift para alternar temporariamente)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
-    <value>Helps you position objects when your frame-rate is poor.</value>
+    <value>Ajuda a posicionar objetos quando seu frame-rate estiver baixo.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
     <value>Objetos Procedurais</value>
@@ -387,31 +387,31 @@ PERMANENTEMENTE deletados.</value>
     <value>Remover nós fantasmas</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
+    <value>Use este botão dentro do jogo para remover nós-fantasma (nós sem segmentos anexados). Nota: isto irá limpar o histórico de desfazer do Move It!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Reset Button Position</value>
+    <value>Redefinir a posição do botão</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
-    <value>Right click cancels cloning</value>
+    <value>Botão direito cancela a clonagem</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
+    <value>Se marcado, o botão direito irá cancelar a clonagem em vez de girar 45°.</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>General Shortcuts</value>
+    <value>Atalhos gerais</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Toolbox Shortcuts</value>
+    <value>Atalhos das ferramentas</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
-    <value>Show Move It debug panel</value>
+    <value>Mostrar painel de debug do Move It</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>Use compass movements</value>
+    <value>Usar movimentos da bússola</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+    <value>Se marcado, a tecla para cima se moverá na direção do Norte, para baixo é para sul, para esquerda é para oeste, para a direita é para leste.</value>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Ângulo</value>
@@ -442,7 +442,7 @@ PERMANENTEMENTE deletados.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>Alinhar Objetos</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
@@ -490,7 +490,7 @@ PERMANENTEMENTE deletados.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
-    <value>Do you want to delete the file '{0}' permanently?</value>
+    <value>Você deseja deletar o arquivo '{0}' permanentemente?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
   </data>
   <data name="xml_DeleteConfirmTitle" xml:space="preserve">
@@ -506,8 +506,8 @@ PERMANENTEMENTE deletados.</value>
     <value>Importar</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
-    <value>The file '{0}' already exists.
-Do you want to overwrite it?</value>
+    <value>O arquivo '{0}' já existe.
+Você deseja substituí-lo?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
@@ -517,7 +517,7 @@ Do you want to overwrite it?</value>
     <value>Restaurar</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>Importar a seleção para a posição que foi exportada</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
     <value>A seleção está vazia ou inválida.</value>
