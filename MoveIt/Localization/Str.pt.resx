@@ -151,10 +151,10 @@
     <value>Toolbox</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
-    <value>Buildings</value>
+    <value>Edifícios</value>
   </data>
   <data name="filter_Decals" xml:space="preserve">
-    <value>Decals</value>
+    <value>Decalques</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
     <value>Fences</value>
