@@ -127,28 +127,28 @@
     <value>Seguir o Terreno</value>
   </data>
   <data name="baseUI_Marquee_Tooltip" xml:space="preserve">
-    <value>Marquee Selection</value>
+    <value>Seleção por Marcação</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
-    <value>Move It</value>
+    <value>Mova Isso</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
-    <value>Single Selection</value>
+    <value>Seleção Única</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Toggle Grid</value>
+    <value>Ativar/Desativar Grade</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Toggle Procedural Objects</value>
+    <value>Ativar/Desativar Objetos Procedurais</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Toggle Snapping</value>
+    <value>Ativar/Desativar Encaixe</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
-    <value>Toggle Underground View</value>
+    <value>Alternar Visualização Subterrânea</value>
   </data>
   <data name="baseUI_Toolbox_Tooltip" xml:space="preserve">
-    <value>Toolbox</value>
+    <value>Ferramentas</value>
   </data>
   <data name="filter_Buildings" xml:space="preserve">
     <value>Edifícios</value>
@@ -157,59 +157,59 @@
     <value>Decalques</value>
   </data>
   <data name="filter_Fences" xml:space="preserve">
-    <value>Fences</value>
+    <value>Cercas</value>
   </data>
   <data name="filter_Nodes" xml:space="preserve">
-    <value>Nodes</value>
+    <value>Nós</value>
   </data>
   <data name="filter_Others" xml:space="preserve">
-    <value>Others</value>
+    <value>Outros</value>
   </data>
   <data name="filter_Paths" xml:space="preserve">
-    <value>Paths</value>
+    <value>Caminhos</value>
   </data>
   <data name="filter_Picker" xml:space="preserve">
-    <value>Picker</value>
+    <value>Seletor</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Pick an object to filter for objects of the same type</value>
+    <value>Escolha um objeto para filtrar objetos do mesmo tipo</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
-    <value>Powerlines</value>
+    <value>Linhas de Eletricidade</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
     <value>Props</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Roads</value>
+    <value>Estradas</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
-    <value>Segments</value>
+    <value>Segmentos</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
-    <value>Surfaces</value>
+    <value>Superfícies</value>
   </data>
   <data name="filter_Tracks" xml:space="preserve">
-    <value>Tracks</value>
+    <value>Trilhos</value>
     <comment>Train/metro/monorail tracks, not roads.</comment>
   </data>
   <data name="filter_Trees" xml:space="preserve">
-    <value>Trees</value>
+    <value>Árvores</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller found, integration enabled!</value>
+    <value>Mod "Node Controller" encontrado, integração habilitada!</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller not found, integration disabled.</value>
+    <value>Mod "Node Controller" não encontrado, integração desabilitada.</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>Mod "Network Skins 2" encontrado, integração habilitada!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
@@ -237,10 +237,10 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
-    <value>Bulldoze</value>
+    <value>Demolir</value>
   </data>
   <data name="key_Clone" xml:space="preserve">
-    <value>Copy</value>
+    <value>Copiar</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
     <value>Convert selected objects to PO</value>
