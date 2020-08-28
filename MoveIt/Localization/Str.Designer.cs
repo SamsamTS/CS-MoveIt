@@ -709,6 +709,24 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use Advanced Pillar Control.
+        /// </summary>
+        internal static string options_AdvancedPillarControl {
+            get {
+                return ResourceManager.GetString("options_AdvancedPillarControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove..
+        /// </summary>
+        internal static string options_AdvancedPillarControl_Tooltip {
+            get {
+                return ResourceManager.GetString("options_AdvancedPillarControl_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select pylons and pillars by holding Alt only.
         /// </summary>
         internal static string options_AltForPillars {
@@ -1075,6 +1093,24 @@ namespace MoveIt.Localization {
         internal static string toolbox_ToTerrainHeight {
             get {
                 return ResourceManager.GetString("toolbox_ToTerrainHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New in Move It 2.9.0:
+        ///
+        ///- Translation into all languages the game supports, plus Japanese and Thai.
+        ///- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods&apos; settings are copied in Move It (please note, these mods may need updating).
+        ///- Optional advanced pillar control, so pillars don&apos;t get reset by the game.
+        ///- Numerous performance and stability improvements.
+        ///
+        ///Read the workshop Move It Guide for more information.
+        ///
+        ///Click anywhere on this box t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string whatsNew {
+            get {
+                return ResourceManager.GetString("whatsNew", resourceCulture);
             }
         }
         

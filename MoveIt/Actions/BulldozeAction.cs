@@ -195,6 +195,7 @@ namespace MoveIt
             {
                 m_states.Add(instance.SaveToState());
             }
+            m_states = ProcessPillars(m_states, false);
         }
 
         public override void Do()
@@ -270,6 +271,9 @@ namespace MoveIt
             Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
             Dictionary<ushort, ushort> clonedNodes = new Dictionary<ushort, ushort>();
 
+            var stateToClone = new Dictionary<InstanceState, Instance>();
+            var InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
+
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
 
             // Recreate nodes
@@ -281,6 +285,8 @@ namespace MoveIt
                     {
                         Instance clone = state.instance.Clone(state, null);
                         toReplace.Add(state.instance, clone);
+                        stateToClone.Add(state, clone);
+                        InstanceID_origToClone.Add(state.instance.id, clone.id);
                         clonedNodes.Add(state.instance.id.NetNode, clone.id.NetNode);
                         ActionQueue.instance.UpdateNodeIdInStateHistory(state.instance.id.NetNode, clone.id.NetNode);
                     }
@@ -302,6 +308,8 @@ namespace MoveIt
 
                     Instance clone = state.instance.Clone(state, clonedNodes);
                     toReplace.Add(state.instance, clone);
+                    stateToClone.Add(state, clone);
+                    InstanceID_origToClone.Add(state.instance.id, clone.id);
 
                     if (state.instance.id.Type == InstanceType.Prop)
                     {
@@ -407,12 +415,34 @@ namespace MoveIt
 
                         Instance clone = state.instance.Clone(state, clonedNodes);
                         toReplace.Add(state.instance, clone);
+                        stateToClone.Add(state, clone);
+                        InstanceID_origToClone.Add(state.instance.id, clone.id);
                         MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
                     }
                 }
                 catch (Exception e)
                 {
                     Debug.Log($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
+                }
+            }
+
+            // clone integrations.
+            foreach (var item in stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        data.Key.Paste(item.Value.id, data.Value, InstanceID_origToClone);
+                    }
+                    catch (Exception e)
+                    {
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                        DebugUtils.LogException(e);
+                    }
                 }
             }
 
@@ -429,7 +459,20 @@ namespace MoveIt
                 }
                 MoveItTool.m_debugPanel.UpdatePanel();
             }
-            MoveItTool.UpdatePillarMap();
+
+            // Does not check MoveItTool.advancedPillarControl, because even if disabled now advancedPillarControl may have been active earlier in action queue
+            foreach (KeyValuePair<BuildingState, BuildingState> pillarClone in pillarsOriginalToClone)
+            {
+                BuildingState originalState = pillarClone.Key;
+                originalState.instance.isHidden = false;
+                buildingBuffer[originalState.instance.id.Building].m_flags &= ~Building.Flags.Hidden;
+                selection.Add(originalState.instance);
+                m_states.Add(originalState);
+            }
+            if (pillarsOriginalToClone.Count > 0)
+            {
+                MoveItTool.UpdatePillarMap();
+            }
         }
 
         internal override void UpdateNodeIdInSegmentState(ushort oldId, ushort newId)

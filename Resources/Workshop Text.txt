@@ -1,3 +1,17 @@
+New in Move It 2.9.0:
+
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
+
+Read the workshop Move It Guide for more information.
+
+Click anywhere on this box to close it.
+
+
+
+
 New in 2.6.0
 ------------
 Reset Objects - Deletes and rebuilds the select object(s). This cycles the color or size variations and repairs all damage such as burnt down, flooded. Accessible by the More Tools menu (formerly called Align Tools) or by keyboard shortcut (default: Control+Shift+V)

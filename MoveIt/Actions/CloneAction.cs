@@ -219,7 +219,7 @@ namespace MoveIt
             m_clones = new HashSet<Instance>();
             m_origToCloneUpdate = new Dictionary<Instance, Instance>();
             m_nodeOrigToClone = new Dictionary<ushort, ushort>();
-            var stateToClone = new Dictionary<InstanceState, Instance>(); // Depreciated, used by old Node Controller integration
+            var stateToClone = new Dictionary<InstanceState, Instance>();
             var InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
 
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);

@@ -85,13 +85,13 @@ namespace MoveIt
                 }
             }
 
-            m_states = ProcessPillars(m_states, false);
+            m_states = ProcessPillars(m_states, true);
             center = GetCenter();
         }
 
         public override void Do()
         {
-            if (!PillarsProcessed) ProcessPillars(m_states, false);
+            if (!PillarsProcessed) ProcessPillars(m_states, true);
 
             Bounds originalBounds = GetTotalBounds(false);
 
@@ -153,10 +153,10 @@ namespace MoveIt
             }
 
             // Does not check MoveItTool.advancedPillarControl, because even if disabled now advancedPillarControl may have been active earlier in action queue
-            foreach (KeyValuePair<BuildingState, BuildingState> pillarClone in pillarsCloneToOriginal)
+            foreach (KeyValuePair<BuildingState, BuildingState> pillarClone in pillarsOriginalToClone)
             {
-                BuildingState cloneState = pillarClone.Key;
-                BuildingState originalState = pillarClone.Value;
+                BuildingState originalState = pillarClone.Key;
+                BuildingState cloneState = pillarClone.Value;
                 cloneState.instance.Delete();
                 originalState.instance.isHidden = false;
                 buildingBuffer[originalState.instance.id.Building].m_flags &= ~Building.Flags.Hidden;
@@ -165,7 +165,7 @@ namespace MoveIt
                 m_states.Remove(cloneState);
                 m_states.Add(originalState);
             }
-            if (pillarsCloneToOriginal.Count > 0)
+            if (pillarsOriginalToClone.Count > 0)
             {
                 MoveItTool.UpdatePillarMap();
             }
