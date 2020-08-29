@@ -497,16 +497,16 @@ PERMANENTEMENTE deletados.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Novo em Move-it 2.9.0:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Tradução para todos os idiomas que o jogo suporta, além de Japonês e Tailandês.
+- Integração com os Mods Intersection Marking Tool, Traffic Manager: President Edition, e Node Controller para que as configurações destes mods sejam copiadas no Move-It (Por favor, note que estes mods podem precisar de atualização).
+- Controle de pilar avançado opcional, para que os pilares não sejam redefinidos pelo jogo.
+- Muitas melhorias de estabilidade e desempenho.
 
-Read the workshop Move It Guide for more information.
+Leia o Guia do Move-It na Workshop para mais informações.
 
-Click anywhere on this box to close it.</value>
+Clique em qualquer lugar nesta janela para fechá-la.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Você deseja deletar o arquivo '{0}' permanentemente?</value>
