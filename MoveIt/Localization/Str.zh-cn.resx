@@ -347,10 +347,10 @@
     <value>移动一切物品</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>使用高级桥墩控制</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>允许更好地控制桥墩与桥塔 - 游戏将不会重置它们的位置，但是可能会造成需要用Surface Painter来移除的地形故障。</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -496,16 +496,16 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Move It 2.9.0更新了什么：
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- 支持游戏内置的所有语言，还另外附加了日语和泰语。
+- 与Intersection Marking Tool，Traffic Manager: President Edition和Node Controller集成在一起，因此这些模组的设置被复制到Move It中（请注意，这些mod可能需要更新）。
+- 可选的高级桥墩控制，因此桥墩不会被游戏重置。
+- 许多性能和稳定性方面的改进。
 
-Read the workshop Move It Guide for more information.
+阅读创意工坊的Move It指南以获得更多信息。
 
-Click anywhere on this box to close it.</value>
+点击界面任意位置关闭此界面。</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>你想要永远删除文件 '{0}' 吗？</value>
