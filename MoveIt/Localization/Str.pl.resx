@@ -347,10 +347,10 @@
     <value>Przenoś obiekty</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>Używaj zaawansowanej kontroli filarów</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>Pozwala na dokładną kontrolę filarów i pylonów - gra nie zresetuje ich pozycji, ale może powodować problemy z wyświetlaniem terenu, które wymagają usunięcia z użyciem Surface Painter.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -496,16 +496,16 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Nowości w Move It 2.9.0:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Tłumaczenia na wszystkie języki wspierane przez grę, a także japoński i tajski.
+- Integracja z Intersection Marking Tool, Traffic Manager: President Edition i Node Controller, aby ich ustawienia były kopiowane przez Move It (może wymagać aktualizacji tych narzędzi).
+- Opcjonalna zaawansowana kontrola filarów, aby ich pozycja nie była resetowana przez grę.
+- Liczne poprawki wydajności i stabilności.
 
-Read the workshop Move It Guide for more information.
+Przeczytaj instrukcję Move It w Warsztacie Steam, aby uzyskać więcej informacji.
 
-Click anywhere on this box to close it.</value>
+Kliknij gdziekolwiek w tym polu, aby je zamknąć.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Czy chcesz trwale usunąć plik '{0}'?</value>
