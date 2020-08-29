@@ -347,10 +347,10 @@
     <value>Move as coisas</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>Usar Controle de Pilar Avançado</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>Permite o controle preciso de pilares e torres - o jogo não redefinirá sua posição, mas pode causar falhas no terreno que requerem o Mod Surface Painter para remover.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
