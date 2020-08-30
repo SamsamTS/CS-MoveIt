@@ -347,10 +347,10 @@
     <value>いろいろなものを移動させます</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>高度な柱の制御を使用する</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>柱やパイロンを細かく制御できるようになり、ゲームによる位置の初期化を防ぎます。しかし、Surface Painterとの相性問題により、Surface Painterのアンインストールが必要になる場合があります。</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -496,16 +496,16 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Move It 2.9.0 アップデート
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- ゲームがサポートする全ての言語に加え、日本語とタイ語をサポート
+- Intersection Marking Tool, Traffic Manager: President Edition, Node Controllerとの統合により、これらのMODの設定はMove Itにコピーされます（MODのアップデートを必要とするかもしれません）。
+- オプションに「高度な柱の制御」が追加されました。柱がゲームによって初期化されなくなります。
+- 数多くのパフォーマンスと安定性の改善。
 
-Read the workshop Move It Guide for more information.
+詳細については、ワークショップの Move It ガイドをお読みください。
 
-Click anywhere on this box to close it.</value>
+※閉じるには、このボックスの任意の場所をクリックします。</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>ファイル '{0}' を完全に削除しますか？</value>
