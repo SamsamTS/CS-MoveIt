@@ -350,7 +350,7 @@
     <value>Usar control avanzado de pilares</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>Permite un control preciso con los pilares - el juego no restablecerá su posición, pero puede causar errores en el terreno que tendrás que corregir con Surface Painter.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -496,16 +496,16 @@ un PO con Move It, desaparecerán PERMANENTEMENTE.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Novedades en Move It 2.9.0:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Traducción a todos los idiomas que soporta el juego, además de japonés y tailandés.
+- Integración con Intersection Marking Tool, Traffic Manager: President Edition y Node Controller para que la configuración de estos mods se copie en Move It (ten en cuenta que estos mods pueden necesitar una actualización por su parte).
+- Control de pilares avanzado opcional, para que los pilares no sean reseteados por el juego.
+- Numerosas mejoras en rendimiento y estabilidad.
 
-Read the workshop Move It Guide for more information.
+Lee la Move It Guide en el Workshop para más información.
 
-Click anywhere on this box to close it.</value>
+Haz clic en cualquier lugar de este cuadro de diálogo para cerrarlo.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Quieres eliminar {0} permanentemente?</value>
