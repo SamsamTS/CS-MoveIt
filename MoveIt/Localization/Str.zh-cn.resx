@@ -414,7 +414,7 @@
     <value>显示Move It调试面板</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>使用指南针运动</value>
+    <value>使用指南针式运动</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>如果选中，上键将是向北方向移动。下键是南方向，左键是西方向，右键是东方向。</value>
