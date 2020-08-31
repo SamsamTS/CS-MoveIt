@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager not found, integration disabled.</value>
+    <value>Mod Traffic Manager introuvable, intégration désactivée.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -347,10 +347,10 @@
     <value>Déplacer les objets. Mettez l'ordre dans le chaos (et vice-versa!)</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>Utiliser le contrôle avancé des Piliers</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>Permet un contrôle précis des piliers et des pylônes - le jeu ne réinitialisera plus leur position, mais peut causer des problèmes de texture de sol qui nécessitent Surface Painter pour régler.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -496,16 +496,16 @@ des PO avec Move It, ils ne porront être récupérés que dans une Sauvegarde a
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Nouveau dans Move It 2.9.0 :
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Traduction dans toutes les langues supportées par le jeu, plus japonais et thaï.
+- Intégration avec les mods Intersection Marking Tool, Traffic Manager : PE, et Node Controller afin que les paramètres de ces mods soient copiés dans Move It (veuillez noter que ces mods peuvent nécessiter une mise à jour).
+- Le contrôle optionnel avancé des piliers, de sorte que les piliers ne sont pas réinitialisés par le jeu.
+- De nombreuses améliorations de performances et de stabilité.
 
-Read the workshop Move It Guide for more information.
+Lisez le Guide Move It via le workshop pour plus d'informations.
 
-Click anywhere on this box to close it.</value>
+Cliquez ici pour fermer cette fenêtre.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Souhaitez-vous supprimer définitivement '{0}' ?</value>

@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager not found, integration disabled.</value>
+    <value>Traffic Manager 발견 못함, 통합 이용이 불가능합니다.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -347,10 +347,10 @@
     <value>모든 사물 이동</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>향상된 기둥 조작 사용</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>기둥과 철탑을 미세하게 제어할 수 있습니다. - 게임은 그들의 위치를 재설정하지 않지만 Surface paint를 제거해야 하는 지형 글리치를 유발할 수 있습니다.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -495,16 +495,16 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Move It 2.9.0의 변경점:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- 게임이 지원하는 모든 언어의 번역이 추가되었습니다. (일본어, 태국어 포함)
+- Intersection Marking Tool, Traffic Manager 그리고 Node Controller와의 통합으로 이들 모드의 설정이 Move It에 적용되었습니다.(참고로 해당 모드들은 업데이트가 필요할 수 있습니다.)
+- 선택적인 고급 필러 컨트롤으로 기둥이 게임에서 재설정되지 않습니다.
+- 성능 및 안정성 향상
 
-Read the workshop Move It Guide for more information.
+자세한 내용은 창작마당의 Move It 가이드를 참조하십시오.
 
-Click anywhere on this box to close it.</value>
+상자를 닫으려면 이 상자의 아무 곳이나 클릭하십시오.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>영구적으로 '{0}' 개의 파일을 삭제하시겠습니까?</value>

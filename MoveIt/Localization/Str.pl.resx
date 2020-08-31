@@ -182,7 +182,7 @@
     <value>Linie energetyczne</value>
   </data>
   <data name="filter_Props" xml:space="preserve">
-    <value>Props</value>
+    <value>Dekoracje</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
     <value>Drogi</value>
@@ -201,19 +201,19 @@
     <value>Drzewa</value>
   </data>
   <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller found, integration enabled!</value>
+    <value>Znaleziono Node Controller, integracja włączona!</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
   </data>
   <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller not found, integration disabled.</value>
+    <value>Nie znaleziono Node Controller, integracja wyłączona.</value>
     <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Network Skins 2 found, integration enabled!</value>
+    <value>Znaleziono Network Skins 2, integracja włączona!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Network Skins 2 not found, or NS1 and NS2 both subscribed, integration disabled.</value>
+    <value>Nie znaleziono Network Skins 2 lub znaleziono NS1 i NS2, integracja wyłączona.</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager not found, integration disabled.</value>
+    <value>Nie znaleziono Traffic Manager, integracja wyłączona.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -283,7 +283,7 @@
     <value>Skaluj na zewnątrz</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>Pomiń obiekt</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>Przełącz panel debugowania</value>
@@ -292,7 +292,7 @@
     <value>Przełącz widok siatki</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Toggle PO Active/Inactive</value>
+    <value>Przełącz PO aktywne/nieaktywne</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
@@ -302,19 +302,19 @@
     <value>Przełącz widok podziemny</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>Pełne nachylenie</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
-    <value>Line Up (Spaced)</value>
+    <value>Wyrównaj w linii (stały rozstaw)</value>
   </data>
   <data name="key_ToolLineUpUnspaced" xml:space="preserve">
-    <value>Line Up (Unspaced)</value>
+    <value>Wyrównaj w linii (zachowaj rozstaw)</value>
   </data>
   <data name="key_ToolMirrorObjects" xml:space="preserve">
     <value>Odbicie lustrzane</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>Wyrównanie węzła do pochylenia</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
     <value>Zresetuj obiekty</value>
@@ -332,7 +332,7 @@
     <value>Ustaw pozycję</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>Wyrównanie pochyłe</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
     <value>Wyrównaj do wysokości obiektu</value>
@@ -344,13 +344,13 @@
     <value>Cofnij</value>
   </data>
   <data name="mod_description" xml:space="preserve">
-    <value>Move things</value>
+    <value>Przenoś obiekty</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>Używaj zaawansowanej kontroli filarów</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>Pozwala na dokładną kontrolę filarów i pylonów - gra nie zresetuje ich pozycji, ale może powodować problemy z wyświetlaniem terenu, które wymagają usunięcia z użyciem Surface Painter.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
@@ -387,13 +387,13 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <value>Pomaga pozycjonować obiekty przy niskiej częstotliwości wyświetlania klatek.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
-    <value>Procedural Objects</value>
+    <value>Obiekty proceduralne (PO)</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
     <value>Usuń węzły widmo</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
-    <value>Use this button when in-game to remove ghost nodes (nodes with no segments attached). Note: this will clear Move It's undo history!</value>
+    <value>Użyj tego przycisku podczas gry, aby usunąć węzły widmo (węzły bez dołączonych segmentów). Uwaga: wyczyści to możliwość cofnięcia wcześniejszych akcji!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
     <value>Resetuj pozycję przycisku</value>
@@ -448,7 +448,7 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_LineUpObjects" xml:space="preserve">
-    <value>Line Up Objects</value>
+    <value>Wyrównaj w linii</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_MirrorObjects" xml:space="preserve">
@@ -480,11 +480,11 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SetPosition" xml:space="preserve">
-    <value>Set Position</value>
+    <value>Ustaw pozycję</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>Wyrównanie pochyłe</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
@@ -496,16 +496,16 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Nowości w Move It 2.9.0:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Tłumaczenia na wszystkie języki wspierane przez grę, a także japoński i tajski.
+- Integracja z Intersection Marking Tool, Traffic Manager: President Edition i Node Controller, aby ich ustawienia były kopiowane przez Move It (może wymagać aktualizacji tych narzędzi).
+- Opcjonalna zaawansowana kontrola filarów, aby ich pozycja nie była resetowana przez grę.
+- Liczne poprawki wydajności i stabilności.
 
-Read the workshop Move It Guide for more information.
+Przeczytaj instrukcję Move It w Warsztacie Steam, aby uzyskać więcej informacji.
 
-Click anywhere on this box to close it.</value>
+Kliknij gdziekolwiek w tym polu, aby je zamknąć.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Czy chcesz trwale usunąć plik '{0}'?</value>
@@ -515,13 +515,13 @@ Click anywhere on this box to close it.</value>
     <value>Usuń plik</value>
   </data>
   <data name="xml_DeleteLabel" xml:space="preserve">
-    <value>Delete saved selection</value>
+    <value>Usuń zapisane zaznaczenie</value>
   </data>
   <data name="xml_Export" xml:space="preserve">
-    <value>Export</value>
+    <value>Eksportuj</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
-    <value>Import</value>
+    <value>Importuj</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>Plik '{0}' już istnieje.
