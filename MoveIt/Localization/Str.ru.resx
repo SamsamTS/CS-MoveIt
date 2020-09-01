@@ -233,7 +233,7 @@
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager not found, integration disabled.</value>
+    <value>Traffic manager не обнаружен, интеграция отключена.</value>
     <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -277,10 +277,10 @@
     <value>Повернуть по часовой стрелке</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>Масштабировать вовнутрь</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>Масштабировать наружу</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Step Over</value>
