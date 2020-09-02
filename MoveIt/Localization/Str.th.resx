@@ -380,7 +380,7 @@
     <comment>Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="options_PreferFastmove" xml:space="preserve">
-    <value>ต้องการความรวดเร็ว แต่มีย้ายไปอย่างช้า ๆ อย่างละเอียด (กดปุ่ม Shift บนแป้นพิมพ์ค้างไว้ เพื่อทำการสลับชั่วคราว)</value>
+    <value>ต้องการความรวดเร็ว และแสดงผลการเคลื่อนไหวขณะย้ายแบบความละเอียดต่ำ (กดปุ่ม Shift บนแป้นพิมพ์ค้างไว้ เพื่อทำการสลับชั่วคราว)</value>
   </data>
   <data name="options_PreferFastmove_Tooltip" xml:space="preserve">
     <value>ช่วยให้คุณในการระบุตำแหน่งวัตถุ เมื่อเฟรมเรตของคุณแย่</value>
