@@ -37,13 +37,22 @@ namespace MoveItIntegration
 
         public abstract object Copy(InstanceID sourceInstanceID);
 
-        /// <summary>Paste segment data</summary>
+        /// <summary>Paste object data</summary>
         /// <param name="record">data returned by <see cref="CopySegment(ushort)"/></param>
         /// <param name="map">a dictionary of source instance ID to target instance ID.
         /// this maps all the nodes, segments and lanes. 
         /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
-        ///         public abstract object Paste(InstanceID instanceID);
         public abstract void Paste(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map);
+
+        /// <summary>Paste object data, with segment ends needing reversed</summary>
+        /// <param name="record">data returned by <see cref="CopySegment(ushort)"/></param>
+        /// <param name="map">a dictionary of source instance ID to target instance ID.
+        /// this maps all the nodes, segments and lanes. 
+        /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
+        public virtual void Mirror(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map)
+        {
+            Paste(targetInstanceID, record, map);
+        }
 
         /// <summary>converts data to base 64 string.</summary>
         /// <param name="record">record returned by <see cref="Copy(ushort)"/> </param>

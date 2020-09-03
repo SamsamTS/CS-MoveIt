@@ -5,13 +5,15 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    class AlignMirrorAction : CloneAction
+    class AlignMirrorAction : CloneActionBase
     {
         private bool containsNetwork = false;
 
         public Vector3 mirrorPivot;
         public float mirrorAngle;
         private Bounds originalBounds;
+
+        public AlignMirrorAction() : base() {}
 
         public override void Do()
         {
@@ -58,9 +60,39 @@ namespace MoveIt
                 }
             }
 
+            // Mirror integrations
+            foreach (var item in m_stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        CallIntegration(data.Key, item.Value.id, data.Value, m_InstanceID_origToClone);
+                        //data.Key.Mirror(item.Value.id, data.Value, m_InstanceID_origToClone);
+                    }
+                    catch (MissingMethodException e)
+                    {
+                        Debug.Log($"Failed to find Mirror method, a mod {data.Key.Name} needs updated.\n{e}");
+                    }
+                    catch (Exception e)
+                    {
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                        DebugUtils.LogException(e);
+                    }
+                }
+            }
+
             bool fast = MoveItTool.fastMove != Event.current.shift;
             UpdateArea(originalBounds, !fast || containsNetwork);
             UpdateArea(GetTotalBounds(false), !fast);
+        }
+
+        private void CallIntegration(MoveItIntegration.MoveItIntegrationBase method, InstanceID id, object data, Dictionary<InstanceID, InstanceID> map)
+        {
+            method.Mirror(id, data, map);
         }
 
         public static float getMirrorFacingDelta(float startAngle, float mirrorAngle)

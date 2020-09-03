@@ -10,6 +10,7 @@
 
 namespace MoveIt.Localization {
     using System;
+    using UnityEngine;
     
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -856,7 +857,9 @@ namespace MoveIt.Localization {
         ///   Looks up a localized string similar to Right click cancels cloning.
         /// </summary>
         internal static string options_RightClickCancel {
-            get {
+            get
+            {
+                Debug.Log($"MIT-Locale:\nResMan:{ResourceManager} <{ResourceManager.GetType()}>\nResCult:{resourceCulture} <{resourceCulture.GetType()}>");
                 return ResourceManager.GetString("options_RightClickCancel", resourceCulture);
             }
         }
