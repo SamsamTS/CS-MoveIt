@@ -280,33 +280,6 @@ namespace MoveIt
                 }
             }
 
-            // backward compatibility.
-            // Clone NodeController after segments have been added.
-            foreach (var item in stateToClone)
-            {
-                if (item.Key is NodeState nodeState)
-                {
-                    Instance clone = item.Value;
-                    ushort nodeID = clone.id.NetNode;
-                    MoveItTool.NodeController.PasteNode(nodeID, nodeState);
-                }
-            }
-
-            // Clone TMPE rules // TODO remove when TMPE switches to integration
-            foreach (var state in m_states)
-            {
-                if (state is NodeState nodeState)
-                {
-                    MoveItTool.TMPE.Paste(nodeState.TMPE_NodeRecord, InstanceID_origToClone);
-                }
-                else if (state is SegmentState segmentState)
-                {
-                    MoveItTool.TMPE.Paste(segmentState.TMPE_SegmentRecord, InstanceID_origToClone);
-                    MoveItTool.TMPE.Paste(segmentState.TMPE_SegmentStartRecord, InstanceID_origToClone);
-                    MoveItTool.TMPE.Paste(segmentState.TMPE_SegmentEndRecord, InstanceID_origToClone);
-                }
-            }
-
             // Clone PO
             foreach (InstanceState state in m_states)
             {

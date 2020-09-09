@@ -178,22 +178,14 @@ namespace MoveIt
                 nsLabel.name = "nsLabel";
                 nsLabel.text = NS_Manager.getVersionText();
 
-                group.AddSpace(5);
-                UILabel ncLabel = panel.AddUIComponent<UILabel>();
-                ncLabel.name = "ncLabel";
-                ncLabel.text = NodeController_Manager.getVersionText();
-
-                group.AddSpace(5);
-                UILabel tmpeLabel = panel.AddUIComponent<UILabel>();
-                tmpeLabel.name = "tmpeLabel";
-                tmpeLabel.text = TMPE_Manager.getVersionText();
-
                 group = helper.AddGroup(Str.options_ProceduralObjects);
                 panel = ((UIHelper)group).self as UIPanel;
 
                 UILabel poLabel = panel.AddUIComponent<UILabel>();
                 poLabel.name = "poLabel";
                 poLabel.text = PO_Manager.getVersionText();
+
+                // TODO add users of MoveITIntegration.dll here by name/description
 
                 UILabel poWarning = panel.AddUIComponent<UILabel>();
                 poWarning.name = "poWarning";

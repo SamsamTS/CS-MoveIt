@@ -11,6 +11,7 @@
 namespace MoveIt.Localization {
     using System;
     
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -303,24 +304,6 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Node Controller found, integration enabled!.
-        /// </summary>
-        internal static string integration_NC_Found {
-            get {
-                return ResourceManager.GetString("integration_NC_Found", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Node Controller not found, integration disabled..
-        /// </summary>
-        internal static string integration_NC_Notfound {
-            get {
-                return ResourceManager.GetString("integration_NC_Notfound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Network Skins 2 found, integration enabled!.
         /// </summary>
         internal static string integration_NS2_Found {
@@ -362,24 +345,6 @@ namespace MoveIt.Localization {
         internal static string integration_PO_WrongVersion {
             get {
                 return ResourceManager.GetString("integration_PO_WrongVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Traffic Manager found, integration enabled!.
-        /// </summary>
-        internal static string integration_TMPE_Found {
-            get {
-                return ResourceManager.GetString("integration_TMPE_Found", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Traffic Manager not found, integration disabled..
-        /// </summary>
-        internal static string integration_TMPE_Notfound {
-            get {
-                return ResourceManager.GetString("integration_TMPE_Notfound", resourceCulture);
             }
         }
         
@@ -1105,7 +1070,7 @@ namespace MoveIt.Localization {
         ///
         ///Read the workshop Move It Guide for more information.
         ///
-        ///Click anywhere on this box t [rest of string was truncated]&quot;;.
+        ///Click anywhere on this box to close i [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string whatsNew {
             get {
