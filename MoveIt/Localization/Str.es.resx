@@ -200,14 +200,6 @@
   <data name="filter_Trees" xml:space="preserve">
     <value>Árboles</value>
   </data>
-  <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller encontrado, ¡integración activada!</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
-  </data>
-  <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller no encontrado, integración desactivada.</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
-  </data>
   <data name="integration_NS2_Found" xml:space="preserve">
     <value>Network Skins 2 encontrado, ¡integración activa!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
@@ -227,14 +219,6 @@
   <data name="integration_PO_WrongVersion" xml:space="preserve">
     <value>Error al integrar PO - se encontró la versión {0} (requerida: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
-  </data>
-  <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager encontrado, ¡integración activada!</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
-  </data>
-  <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager no encontrado, integración desactivada.</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
     <value>Demoler</value>
