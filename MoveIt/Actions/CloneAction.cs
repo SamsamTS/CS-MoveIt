@@ -1,14 +1,67 @@
 ﻿using ColossalFramework;
-using System.Collections;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
-using ColossalFramework.PlatformServices;
 
 namespace MoveIt
 {
-    public class CloneAction : Action
+    public class CloneAction : CloneActionBase
+    {
+        public CloneAction() : base() {}
+
+        // Constructor for imported selections
+        public CloneAction(InstanceState[] states, Vector3 centerPoint)
+        {
+            m_oldSelection = selection;
+
+            foreach (InstanceState state in states)
+            {
+                if (state.instance != null && state.Info.Prefab != null)
+                {
+                    m_states.Add(state);
+                }
+            }
+
+            center = centerPoint;
+            _isImport = true;
+        }
+
+        public override void Do()
+        {
+            base.Do();
+
+            // Clone integrations
+            foreach (var item in m_stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
+                    }
+                    catch (Exception e)
+                    {
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                        DebugUtils.LogException(e);
+                    }
+                }
+            }
+        }
+    }
+
+    public class DuplicateAction : CloneActionBase
+    {
+        public DuplicateAction() : base()
+        {
+            angleDelta = 0f;
+            moveDelta = Vector3.zero;
+        }
+    }
+
+    public class CloneActionBase : Action
     {
         public Vector3 moveDelta;
         public Vector3 center;
@@ -24,10 +77,12 @@ namespace MoveIt
         internal Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
         internal Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
         internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
+        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>();
+        protected Dictionary<InstanceID, InstanceID> m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
 
         protected Matrix4x4 matrix4x = default;
 
-        public CloneAction()
+        public CloneActionBase()
         {
             m_oldSelection = selection;
 
@@ -191,23 +246,6 @@ namespace MoveIt
             return sorted;
         }
 
-        // Constructor for imported selections
-        public CloneAction(InstanceState[] states, Vector3 centerPoint)
-        {
-            m_oldSelection = selection;
-
-            foreach (InstanceState state in states)
-            {
-                if (state.instance != null && state.Info.Prefab != null)
-                {
-                    m_states.Add(state);
-                }
-            }
-
-            center = centerPoint;
-            _isImport = true;
-        }
-
         public override void Do()
         {
             if (MoveItTool.POProcessing > 0)
@@ -219,8 +257,8 @@ namespace MoveIt
             m_clones = new HashSet<Instance>();
             m_origToCloneUpdate = new Dictionary<Instance, Instance>();
             m_nodeOrigToClone = new Dictionary<ushort, ushort>();
-            var stateToClone = new Dictionary<InstanceState, Instance>();
-            var InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
+            m_stateToClone = new Dictionary<InstanceState, Instance>();
+            m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
 
             matrix4x.SetTRS(center + moveDelta, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
@@ -234,8 +272,8 @@ namespace MoveIt
                     if (clone != null)
                     {
                         m_clones.Add(clone);
-                        stateToClone.Add(state, clone);
-                        InstanceID_origToClone.Add(state.instance.id, clone.id);
+                        m_stateToClone.Add(state, clone);
+                        m_InstanceID_origToClone.Add(state.instance.id, clone.id);
                         m_origToCloneUpdate.Add(state.instance.id, clone.id);
                         m_nodeOrigToClone.Add(state.instance.id.NetNode, clone.id.NetNode);
                     }
@@ -256,8 +294,8 @@ namespace MoveIt
                     }
 
                     m_clones.Add(clone);
-                    stateToClone.Add(state, clone);
-                    InstanceID_origToClone.Add(state.instance.id, clone.id);
+                    m_stateToClone.Add(state, clone);
+                    m_InstanceID_origToClone.Add(state.instance.id, clone.id);
                     m_origToCloneUpdate.Add(state.instance.id, clone.id);
 ;
                     if (state is SegmentState segmentState)
@@ -273,7 +311,7 @@ namespace MoveIt
                                 var lane0 = new InstanceID { NetLane = segmentState.LaneIDs[i] };
                                 var lane = new InstanceID { NetLane = clonedLaneIds[i] };
                                 // Debug.Log($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
-                                InstanceID_origToClone.Add(lane0, lane);
+                                m_InstanceID_origToClone.Add(lane0, lane);
                             }
                         }
                     }
@@ -286,26 +324,6 @@ namespace MoveIt
                 if (state is ProcState)
                 {
                     _ = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
-                }
-            }
-
-            // clone integrations.
-            foreach (var item in stateToClone)
-            {
-                foreach (var data in item.Key.IntegrationData)
-                {
-                    try
-                    {
-                        data.Key.Paste(item.Value.id, data.Value, InstanceID_origToClone);
-                    }
-                    catch (Exception e)
-                    {
-                        InstanceID sourceInstanceID = item.Key.instance.id;
-                        InstanceID targetInstanceID = item.Value.id;
-                        Debug.LogError($"integration {data.Key} Failed to paste from " +
-                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
-                        DebugUtils.LogException(e);
-                    }
                 }
             }
 
@@ -428,16 +446,6 @@ namespace MoveIt
         public int Count
         {
             get { return m_states.Count; }
-        }
-    }
-
-
-    public class DuplicateAction : CloneAction
-    {
-        public DuplicateAction() : base()
-        {
-            angleDelta = 0f;
-            moveDelta = Vector3.zero;
         }
     }
 }

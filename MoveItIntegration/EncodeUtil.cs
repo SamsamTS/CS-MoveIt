@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace MoveItIntegration
 {
+    /// <summary>
+    /// Utility class to assist with Move It integration
+    /// </summary>
     public static class EncodeUtil
     {
         internal static BinaryFormatter GetBinaryFormatter => new BinaryFormatter { AssemblyFormat = FormatterAssemblyStyle.Simple };
@@ -52,7 +55,7 @@ namespace MoveItIntegration
         /// <summary>
         /// Converts string to XML
         /// </summary>
-        /// <paramref name="data">the string to convert</param>
+        /// <param name="data">the string to convert</param>
         /// <param name="dataType">the type of the returned XML object</param>
         public static object XMLEncode(string data, Type dataType)
         {

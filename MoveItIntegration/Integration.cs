@@ -3,8 +3,15 @@ using System.Collections.Generic;
 
 namespace MoveItIntegration
 {
+    /// <summary>
+    /// Factory class to get the <see cref="MoveItIntegrationBase"/> instance
+    /// </summary>
     public interface IMoveItIntegrationFactory
     {
+        /// <summary>
+        /// Get the <see cref="MoveItIntegrationBase"/> instance
+        /// </summary>
+        /// <returns>Instance that handles integration</returns>
         MoveItIntegrationBase GetInstance();
     }
 
@@ -31,31 +38,52 @@ namespace MoveItIntegration
         public virtual string Description => null;
 
         /// <summary>
-        /// the version of data that can be read later for backward compatibility.
+        /// The version of data that can be read later for backward compatibility.
         /// </summary>
         public abstract Version DataVersion { get; }
 
+        /// <summary>Copy object data</summary>
+        /// <param name="sourceInstanceID"><see cref="InstanceID"/> of object being cloned</param>
         public abstract object Copy(InstanceID sourceInstanceID);
 
-        /// <summary>Paste segment data</summary>
-        /// <param name="record">data returned by <see cref="CopySegment(ushort)"/></param>
+        /// <summary>Paste object data</summary>
+        /// <param name="targetInstanceID"><see cref="InstanceID"/> of new object</param>
+        /// <param name="record">data returned by <see cref="Copy(InstanceID)"/></param>
         /// <param name="map">a dictionary of source instance ID to target instance ID.
         /// this maps all the nodes, segments and lanes. 
         /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
-        ///         public abstract object Paste(InstanceID instanceID);
         public abstract void Paste(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map);
 
-        /// <summary>converts data to base 64 string.</summary>
-        /// <param name="record">record returned by <see cref="Copy(ushort)"/> </param>
+        /// <summary>Paste object data, with segment ends needing reversed</summary>
+        /// <param name="targetInstanceID"><see cref="InstanceID"/> of new object</param>
+        /// <param name="record">data returned by <see cref="Copy(InstanceID)"/></param>
+        /// <param name="map">a dictionary of source instance ID to target instance ID.
+        /// this maps all the nodes, segments and lanes. 
+        /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
+        public virtual void Mirror(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map)
+        {
+            Paste(targetInstanceID, record, map);
+        }
+
+        /// <summary>Converts data to base 64 string.</summary>
+        /// <param name="record">record returned by <see cref="Copy(InstanceID)"/> </param>
         public abstract string Encode64(object record);
 
-        /// <summary>decode the record encoded by <see cref="Encode64(object)".</summary>
+        /// <summary>Decode the record encoded by <see cref="Encode64(object)"/>.</summary>
+        /// <param name="base64Data">The base 64 string that was encoded in <see cref="Encode64(object)"/></param>
         /// <param name="dataVersion"><see cref="DataVersion"/> when data was stored</param>
         public abstract object Decode64(string base64Data, Version dataVersion);
     }
 
+    /// <summary>
+    /// Used by Move It to find integrated mods
+    /// </summary>
     public static class IntegrationHelper
     {
+        /// <summary>
+        /// Search for mods with Move It integration (assemblies which contain <see cref="MoveItIntegrationBase"/> implementations
+        /// </summary>
+        /// <returns>List of <see cref="MoveItIntegrationBase"/> instances, one from each integrationed mod</returns>
         public static List<MoveItIntegrationBase> GetIntegrations()
         {
             var integrations = new List<MoveItIntegrationBase>();
