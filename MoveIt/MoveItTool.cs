@@ -102,8 +102,6 @@ namespace MoveIt
 
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
-        internal static NodeController_Manager NodeController = null;
-        internal static TMPE_Manager TMPE = null;
         private static int _POProcessing = 0;
         private static float POProcessingStart = 0;
         internal static int POProcessing
@@ -279,14 +277,6 @@ namespace MoveIt
             if (NS == null)
             {
                 NS = new NS_Manager();
-            }
-            if (NodeController == null)
-            {
-                NodeController = new NodeController_Manager();
-            }
-            if (TMPE == null)
-            {
-                TMPE = new TMPE_Manager();
             }
 
             if (UIToolOptionPanel.instance == null)

@@ -42,37 +42,6 @@ namespace MoveIt
             }
         }
 
-        #region Depreciated
-        [XmlIgnore]
-        public object TMPE_SegmentRecord;
-
-        [UsedImplicitly]
-        public string TMPE_SegmentRecordBase64
-        {
-            get => MoveItTool.TMPE.Encode64(TMPE_SegmentRecord);
-            set => TMPE_SegmentRecord = MoveItTool.TMPE.Decode64(value);
-        }
-
-        [XmlIgnore]
-        public object TMPE_SegmentStartRecord;
-
-        [UsedImplicitly]
-        public string TMPE_SegmentStartRecordBase64
-        {
-            get => MoveItTool.TMPE.Encode64(TMPE_SegmentStartRecord);
-            set => TMPE_SegmentStartRecord = MoveItTool.TMPE.Decode64(value);
-        }
-
-        [XmlIgnore]
-        public object TMPE_SegmentEndRecord;
-
-        [UsedImplicitly]
-        public string TMPE_SegmentEndRecordBase64
-        {
-            get => MoveItTool.TMPE.Encode64(TMPE_SegmentEndRecord);
-            set => TMPE_SegmentEndRecord = MoveItTool.TMPE.Decode64(value);
-        }
-
         [XmlIgnore]
         public List<uint> LaneIDs;
 
@@ -82,7 +51,6 @@ namespace MoveIt
             get => EncodeUtil.Encode64(LaneIDs);
             set => LaneIDs = EncodeUtil.Decode64(value) as List<uint>;
         }
-        #endregion
 
         public override void ReplaceInstance(Instance instance)
         {
@@ -140,11 +108,7 @@ namespace MoveIt
                 endDirection = segmentBuffer[segment].m_endDirection,
 
                 NS_Modifiers = MoveItTool.NS.GetSegmentModifiers(segment),
-
-                TMPE_SegmentRecord = MoveItTool.TMPE.CopySegment(segment),
-                TMPE_SegmentStartRecord = MoveItTool.TMPE.CopySegmentEnd(segment, startNode: true),
-                TMPE_SegmentEndRecord = MoveItTool.TMPE.CopySegmentEnd(segment, startNode: false),
-                
+               
                 LaneIDs = GetLaneIds(segment),
             };
 

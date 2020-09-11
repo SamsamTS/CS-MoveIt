@@ -55,8 +55,6 @@
     <Compile Include="GUI\UIMoreTools.cs" />
     <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
-    <Compile Include="Integration\TMPE.cs" />
-    <Compile Include="Integration\NodeController.cs" />
     <Compile Include="GUI\UIMoreToPanel.cs" />
     <Compile Include="Integration\PO_Object.cs" />
     <Compile Include="Localization\Str.Designer.cs">
@@ -99,7 +97,9 @@
     <EmbeddedResource Include="Icons\MoveIt.png" />
     <EmbeddedResource Include="Icons\MoveIt_focused.png" />
     <EmbeddedResource Include="Icons\MoveIt_hover.png" />
-    <EmbeddedResource Include="Localization\Str.de.resx" />
+    <EmbeddedResource Include="Localization\Str.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Localization\Str.es.resx" />
     <EmbeddedResource Include="Localization\Str.fr.resx" />
     <EmbeddedResource Include="Localization\Str.ja.resx" />
@@ -113,7 +113,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Localization\Str.ru.resx" />
     <EmbeddedResource Include="Localization\Str.th.resx" />
-    <EmbeddedResource Include="Localization\Str.zh-cn.resx" />
+    <EmbeddedResource Include="Localization\Str.zh-cn.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Copy.png" />
