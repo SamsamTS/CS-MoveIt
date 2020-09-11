@@ -200,14 +200,6 @@
   <data name="filter_Trees" xml:space="preserve">
     <value>ต้นไม้</value>
   </data>
-  <data name="integration_NC_Found" xml:space="preserve">
-    <value>พบ Node Controller, การทำงานร่วมกันได้ทำการเปิดใช้งาน!</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
-  </data>
-  <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>ไม่พบ Node Controller, การทำงานร่วมกันได้ปิดการใช้งาน</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
-  </data>
   <data name="integration_NS2_Found" xml:space="preserve">
     <value>พบ Network Skins 2, การทำงานร่วมกันได้เปิดการใช้งาน!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
@@ -227,14 +219,6 @@
   <data name="integration_PO_WrongVersion" xml:space="preserve">
     <value>การทำงานร่วมกันกับ PO มีความผิดพลาด - พบเวอร์ชัน {0} (จำเป็นต้องเป็น: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
-  </data>
-  <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>พบ Traffic Manager, การทำงานร่วมกันได้เปิดการใช้งาน!</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
-  </data>
-  <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>ไม่พบ Traffic Manager, การทำงานร่วมกันได้ปิดการใช้งาน</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
     <value>รื้อถอน</value>
