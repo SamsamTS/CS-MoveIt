@@ -227,7 +227,7 @@
     <value>Copiar</value>
   </data>
   <data name="key_ConvertToPO" xml:space="preserve">
-    <value>Convierte los objetos seleccionados a PO</value>
+    <value>Convertir selección a PO</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_DeselectAll" xml:space="preserve">
@@ -276,7 +276,7 @@
     <value>Mostrar/ocultar la cuadrícula</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
-    <value>Alternar entre PO Activado/Desactivado</value>
+    <value>PO Activado/desactivado</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
