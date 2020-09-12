@@ -97,9 +97,7 @@
     <EmbeddedResource Include="Icons\MoveIt.png" />
     <EmbeddedResource Include="Icons\MoveIt_focused.png" />
     <EmbeddedResource Include="Icons\MoveIt_hover.png" />
-    <EmbeddedResource Include="Localization\Str.de.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.de.resx" />
     <EmbeddedResource Include="Localization\Str.es.resx" />
     <EmbeddedResource Include="Localization\Str.fr.resx" />
     <EmbeddedResource Include="Localization\Str.ja.resx" />
@@ -113,9 +111,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Localization\Str.ru.resx" />
     <EmbeddedResource Include="Localization\Str.th.resx" />
-    <EmbeddedResource Include="Localization\Str.zh-cn.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.zh-cn.resx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Copy.png" />
