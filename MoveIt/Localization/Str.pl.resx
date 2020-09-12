@@ -255,10 +255,10 @@
     <value>Powtórz</value>
   </data>
   <data name="key_RotateCCW" xml:space="preserve">
-    <value>Obróć przeciwnie do ruchu wskazówek zegara</value>
+    <value>Obróć w lewo</value>
   </data>
   <data name="key_RotateCW" xml:space="preserve">
-    <value>Obróć zgodnie z ruchem wskazówek zegara</value>
+    <value>Obróć w prawo</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
     <value>Skaluj do wewnąrz</value>
