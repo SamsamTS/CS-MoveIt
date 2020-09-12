@@ -200,14 +200,6 @@
   <data name="filter_Trees" xml:space="preserve">
     <value>Деревья</value>
   </data>
-  <data name="integration_NC_Found" xml:space="preserve">
-    <value>Node Controller обнаружен, интеграция активна!</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
-  </data>
-  <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>Node Controller не обнаружен, интеграция не активна.</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
-  </data>
   <data name="integration_NS2_Found" xml:space="preserve">
     <value>Network Skins 2 обнаружен, интеграция активна!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
@@ -227,14 +219,6 @@
   <data name="integration_PO_WrongVersion" xml:space="preserve">
     <value>Неудачная интеграция PO - обнаружена версия {0} (требуется: 1.6)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
-  </data>
-  <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>Traffic Manager обнаружен, интеграция активна!</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
-  </data>
-  <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>Traffic Manager not found, integration disabled.</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
     <value>Бульдозер</value>
@@ -277,13 +261,13 @@
     <value>Повернуть по часовой стрелке</value>
   </data>
   <data name="key_ScaleIn" xml:space="preserve">
-    <value>Scale Inwards</value>
+    <value>Масштабировать вовнутрь</value>
   </data>
   <data name="key_ScaleOut" xml:space="preserve">
-    <value>Scale Outwards</value>
+    <value>Масштабировать наружу</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>Step Over</value>
+    <value>Пропустить выделенное</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>Включить панель отладки</value>
@@ -302,7 +286,7 @@
     <value>Включить подземный вид</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
-    <value>Full Slope</value>
+    <value>Полный уклон</value>
   </data>
   <data name="key_ToolLineUpSpaced" xml:space="preserve">
     <value>В линию (с пробелами)</value>
@@ -314,10 +298,10 @@
     <value>Отзеркалить объекты</value>
   </data>
   <data name="key_ToolQuickSlopeNode" xml:space="preserve">
-    <value>Quick Slope Node</value>
+    <value>Быстрый наклон точки</value>
   </data>
   <data name="key_ToolResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>Восстановить объекты</value>
   </data>
   <data name="key_ToolRotateAtCentre" xml:space="preserve">
     <value>Вращать относительно центра</value>
@@ -332,7 +316,7 @@
     <value>Задать позицию</value>
   </data>
   <data name="key_ToolSlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>Наклонить объекты</value>
   </data>
   <data name="key_ToolToObjectHeight" xml:space="preserve">
     <value>Выровнять по высоте объекта</value>
@@ -347,14 +331,14 @@
     <value>Инструмент для перемещение объектов</value>
   </data>
   <data name="options_AdvancedPillarControl" xml:space="preserve">
-    <value>Use Advanced Pillar Control</value>
+    <value>Использовать расширенное управление колоннами</value>
   </data>
   <data name="options_AdvancedPillarControl_Tooltip" xml:space="preserve">
-    <value>Allows fine control of pillars and pylons - the game will not reset their position, but can cause terrain glitches that requires Surface Painter to remove.</value>
+    <value>Позволяет более точно контролировать столбы и пилоны - игра не сбросит их положение, но может спровоцировать глюки поверхности, для исправления которых потребуется Surface Painter.</value>
     <comment>Use the name for Surface Painter that appears in the Content Manager in your language.</comment>
   </data>
   <data name="options_AltForPillars" xml:space="preserve">
-    <value>Select pylons and pillars by holding Alt only</value>
+    <value>Выберите пилоны и колонны, удерживая только Alt</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
     <value>Автозакрытие меню инструментов</value>
@@ -401,7 +385,7 @@
     <value>Нажатие правой кнопки отменит клонирование</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>If checked, Right click will cancel cloning instead of rotating 45°.</value>
+    <value>Если отмечено, то нажатие правой кнопки мыши вместо поворота на 45° будет отменять клонирование.</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
     <value>Горячие клавиши</value>
@@ -459,7 +443,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ResetObjects" xml:space="preserve">
-    <value>Reset Objects</value>
+    <value>Восстановить объекты</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_RotateAtCentre" xml:space="preserve">
@@ -483,7 +467,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_SlopeObjects" xml:space="preserve">
-    <value>Slope Objects</value>
+    <value>Наклонить объекты</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ToObjectHeight" xml:space="preserve">
@@ -495,16 +479,16 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Новое в Move It 2.9.0:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Перевод на все языки, поддерживаемые игрой, плюс японский и тайский.
+- Интеграция с Intersection Marking Tool, Traffic Manager: President Edition, и Node Controller, чтобы настройки этих модов были скопированы в Move It (обратите внимание, что эти моды могут потребовать обновления).
+- Расширенный контроль над колоннами, так чтобы они не обнулялись игрой.
+- Многочисленные улучшения производительности и стабильности.
 
-Read the workshop Move It Guide for more information.
+Для получения дополнительной информации прочтите руководство по работе Move It в воркшопе.
 
-Click anywhere on this box to close it.</value>
+Щелкните в любом месте на этом окне, чтобы закрыть его.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Вы хотите удалить файл '{0}' безвозвратно?</value>
@@ -534,7 +518,7 @@ Click anywhere on this box to close it.</value>
     <value>Восстановить</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>Импортировать выделенное в позицию, откуда оно было экспортировано</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
     <value>Выделение пусто или некорректно.</value>

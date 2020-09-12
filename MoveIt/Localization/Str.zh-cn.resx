@@ -200,14 +200,6 @@
   <data name="filter_Trees" xml:space="preserve">
     <value>树木</value>
   </data>
-  <data name="integration_NC_Found" xml:space="preserve">
-    <value>已找到Node Controller，已启用整合功能！</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language. </comment>
-  </data>
-  <data name="integration_NC_Notfound" xml:space="preserve">
-    <value>找不到Node Controller，整合功能已禁用。</value>
-    <comment>Use the name for Node Controller that appears in the Content Manager in your language.</comment>
-  </data>
   <data name="integration_NS2_Found" xml:space="preserve">
     <value>已找到Network Skins 2，已启用整合功能！</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
@@ -227,14 +219,6 @@
   <data name="integration_PO_WrongVersion" xml:space="preserve">
     <value>PO（魔物）整合失败 - 找到 {0} 版本（需要版本：1.6）</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
-  </data>
-  <data name="integration_TMPE_Found" xml:space="preserve">
-    <value>已找到Traffic Manager，已启用整合功能！</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
-  </data>
-  <data name="integration_TMPE_Notfound" xml:space="preserve">
-    <value>找不到Traffic manager，整合功能已禁用。</value>
-    <comment>Use the name for Traffic Manager that appears in the Content Manager in your language.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
     <value>推土机</value>
@@ -414,7 +398,7 @@
     <value>显示Move It调试面板</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
-    <value>使用指南针运动</value>
+    <value>使用指南针式运动</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>如果选中，上键将是向北方向移动。下键是南方向，左键是西方向，右键是东方向。</value>
