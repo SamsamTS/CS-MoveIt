@@ -82,8 +82,8 @@ namespace MoveIt
         public static readonly SavedInputKey moveYpos = new SavedInputKey("moveYpos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.PageUp, false, false, false), true);
         public static readonly SavedInputKey moveYneg = new SavedInputKey("moveYneg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.PageDown, false, false, false), true);
 
-        public static readonly SavedInputKey turnPos = new SavedInputKey("turnPos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, true, false, false), true);
-        public static readonly SavedInputKey turnNeg = new SavedInputKey("turnNeg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, true, false, false), true);
+        public static readonly SavedInputKey turnNeg = new SavedInputKey("turnNeg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, true, false, false), true);
+        public static readonly SavedInputKey turnPos = new SavedInputKey("turnPos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, true, false, false), true);
 
         public static readonly SavedInputKey scaleOut = new SavedInputKey("scaleOut", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Equals, false, false, false), true);
         public static readonly SavedInputKey scaleIn = new SavedInputKey("scaleIn", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, false, false, false), true);
