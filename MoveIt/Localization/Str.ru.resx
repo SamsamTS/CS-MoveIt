@@ -479,16 +479,16 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>New in Move It 2.9.0:
+    <value>Новое в Move It 2.9.0:
 
-- Translation into all languages the game supports, plus Japanese and Thai.
-- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
-- Optional advanced pillar control, so pillars don't get reset by the game.
-- Numerous performance and stability improvements.
+- Перевод на все языки, поддерживаемые игрой, плюс японский и тайский.
+- Интеграция с Intersection Marking Tool, Traffic Manager: President Edition, и Node Controller, чтобы настройки этих модов были скопированы в Move It (обратите внимание, что эти моды могут потребовать обновления).
+- Расширенный контроль над колоннами, так чтобы они не обнулялись игрой.
+- Многочисленные улучшения производительности и стабильности.
 
-Read the workshop Move It Guide for more information.
+Для получения дополнительной информации прочтите руководство по работе Move It в воркшопе.
 
-Click anywhere on this box to close it.</value>
+Щелкните в любом месте на этом окне, чтобы закрыть его.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Вы хотите удалить файл '{0}' безвозвратно?</value>
@@ -518,7 +518,7 @@ Click anywhere on this box to close it.</value>
     <value>Восстановить</value>
   </data>
   <data name="xml_Restore_Tooltip" xml:space="preserve">
-    <value>Import the selection to the position it was exported</value>
+    <value>Импортировать выделенное в позицию, откуда оно было экспортировано</value>
   </data>
   <data name="xml_SelectionInvalidMessage" xml:space="preserve">
     <value>Выделение пусто или некорректно.</value>
