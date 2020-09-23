@@ -24,6 +24,8 @@ namespace MoveIt
 
         public void DoProcess()
         {
+            Dictionary<Instance, float> instanceRotations = new Dictionary<Instance, float>();
+
             Matrix4x4 matrix4x = default;
             foreach (Instance instance in m_clones)
             {
@@ -53,6 +55,7 @@ namespace MoveIt
 
                     float faceDelta = getMirrorFacingDelta(state.angle, mirrorAngle);
                     float posDelta = getMirrorPositionDelta(state.position, mirrorPivot, mirrorAngle);
+                    instanceRotations[instance] = faceDelta;
 
                     matrix4x.SetTRS(mirrorPivot, Quaternion.AngleAxis(posDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
@@ -67,7 +70,7 @@ namespace MoveIt
                 {
                     try
                     {
-                        CallIntegration(data.Key, item.Value.id, data.Value, m_InstanceID_origToClone);
+                        CallIntegration(data.Key, item.Value.id, data.Value, m_InstanceID_origToClone, instanceRotations[item.Value], mirrorAngle);
                         //data.Key.Mirror(item.Value.id, data.Value, m_InstanceID_origToClone);
                     }
                     catch (MissingMethodException e)
@@ -90,9 +93,9 @@ namespace MoveIt
             UpdateArea(GetTotalBounds(false), !fast);
         }
 
-        private void CallIntegration(MoveItIntegration.MoveItIntegrationBase method, InstanceID id, object data, Dictionary<InstanceID, InstanceID> map)
+        private void CallIntegration(MoveItIntegration.MoveItIntegrationBase method, InstanceID id, object data, Dictionary<InstanceID, InstanceID> map, float instanceRotation, float mirrorRotation)
         {
-            method.Mirror(id, data, map);
+            method.Mirror(id, data, map, instanceRotation, mirrorRotation);
         }
 
         public static float getMirrorFacingDelta(float startAngle, float mirrorAngle)

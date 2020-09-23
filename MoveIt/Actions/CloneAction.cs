@@ -77,7 +77,7 @@ namespace MoveIt
         internal Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
         internal Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
         internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
-        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>();
+        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>(); // Map of original state to clone's instance
         protected Dictionary<InstanceID, InstanceID> m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
 
         protected Matrix4x4 matrix4x = default;

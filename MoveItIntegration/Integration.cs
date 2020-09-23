@@ -54,13 +54,15 @@ namespace MoveItIntegration
         /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
         public abstract void Paste(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map);
 
-        /// <summary>Paste object data, with segment ends needing reversed</summary>
+        /// <summary>Paste object data that has been mirrored, with segment ends needing reversed</summary>
         /// <param name="targetInstanceID"><see cref="InstanceID"/> of new object</param>
         /// <param name="record">data returned by <see cref="Copy(InstanceID)"/></param>
         /// <param name="map">a dictionary of source instance ID to target instance ID.
         /// this maps all the nodes, segments and lanes. 
         /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
-        public virtual void Mirror(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map)
+        /// <param name="instanceRotation">Relative angle in radians that instance has been rotated by</param>
+        /// <param name="mirrorRotation">Absolute angle in radians of mirror action</param>
+        public virtual void Mirror(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map, float instanceRotation, float mirrorRotation)
         {
             Paste(targetInstanceID, record, map);
         }

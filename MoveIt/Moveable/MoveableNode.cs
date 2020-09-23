@@ -448,6 +448,7 @@ namespace MoveIt
 
                 nodeBuffer[clone].m_flags = state.flags;
 
+                nodeBuffer[clone].CalculateNode(clone);
                 nodeBuffer[clone].Info.m_netAI.GetNodeBuilding(clone, ref nodeBuffer[clone], out BuildingInfo newBuilding, out float heightOffset);
                 nodeBuffer[clone].UpdateBuilding(clone, newBuilding, heightOffset);
 

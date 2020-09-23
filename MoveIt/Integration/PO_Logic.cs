@@ -89,7 +89,7 @@ namespace MoveIt
         public IEnumerator<object> RetrieveClone(MoveableProc original, Vector3 position, float angle, Action action)
         {
             const uint MaxAttempts = 100_000;
-            CloneAction ca = (CloneAction)action;
+            CloneActionBase ca = (CloneActionBase)action;
 
             if (!(original.m_procObj is PO_Object))
             {

@@ -317,6 +317,7 @@ namespace MoveIt
                 PO.ToolEnabled();
                 if (Time.time > POProcessingStart + 300)
                 { // If it's been more than 5 mins since PO last started copying, give up and reset
+                    Debug.Log($"Timing out PO Processing");
                     POProcessing = 0;
                 }
                 ActionQueue.instance.Push(new TransformAction());

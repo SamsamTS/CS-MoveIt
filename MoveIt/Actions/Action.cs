@@ -155,25 +155,46 @@ namespace MoveIt
 
         public static void UpdateArea(Bounds bounds, bool full = false)
         {
+            bool updateTerrain = false;
+            foreach (Instance instance in selection)
+            {
+                if (instance is MoveableBuilding || instance is MoveableNode || instance is MoveableSegment)
+                {
+                    updateTerrain = true;
+                    break;
+                }
+            }
+
             try
             {
-                if (full)
+                if (updateTerrain)
                 {
-                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    if (full)
+                    {
+                        TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    }
+
+                    bounds.Expand(32f);
+                    MoveItTool.instance.areasToUpdate.Add(bounds);
+                    MoveItTool.instance.areaUpdateCountdown = 60;
+
+                    if (full)
+                    {
+                        Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        bounds.Expand(64f);
+                        Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        UpdateRender(bounds);
+                    }
                 }
-
-                bounds.Expand(32f);
-                MoveItTool.instance.areasToUpdate.Add(bounds);
-                MoveItTool.instance.areaUpdateCountdown = 60;
-
-                if (full)
+                else
                 {
-                    Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    bounds.Expand(96f);
                     Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     bounds.Expand(64f);
-                    Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     UpdateRender(bounds);
                 }
             }

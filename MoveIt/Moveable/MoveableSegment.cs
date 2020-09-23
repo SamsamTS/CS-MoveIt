@@ -416,11 +416,6 @@ namespace MoveIt
                 bezier.d, endDirection,
                 smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-            //Debug.Log($"AAA1 {segment}\n" +
-            //    $"{segmentBuffer[segment].m_startDirection},{segmentBuffer[segment].m_endDirection}\n" +
-            //    $"{startDirection},{endDirection}\n" +
-            //    $"{bezier.a},{bezier.b}\n{bezier.c},{bezier.d}");
-
             RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, netInfo.m_halfWidth * 4f / 3f, 100000f, -100000f, -1f, 1280f, false, true);
 
             Segment3 segment1, segment2;
