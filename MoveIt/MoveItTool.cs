@@ -300,7 +300,7 @@ namespace MoveIt
             InfoManager.SubInfoMode subInfoMode = InfoManager.instance.CurrentSubMode;
 
             m_prevRenderZones = TerrainManager.instance.RenderZones;
-            m_prevTool = m_toolController.CurrentTool;
+            m_prevTool = m_toolController.CurrentTool == this ? ToolsModifierControl.GetTool<DefaultTool>() : m_toolController.CurrentTool;
             
             m_toolController.CurrentTool = this;
 
@@ -377,11 +377,11 @@ namespace MoveIt
                     m_moveToPanel.Visible(false);
                 }
 
-                TerrainManager.instance.RenderZones = m_prevRenderZones;
                 InfoManager.instance.SetCurrentMode(m_prevInfoMode, InfoManager.instance.CurrentSubMode);
 
                 if (m_toolController.NextTool == null && m_prevTool != null && m_prevTool != this)
                 {
+                    TerrainManager.instance.RenderZones = m_prevRenderZones;
                     m_prevTool.enabled = true;
                 }
                 m_prevTool = null;
