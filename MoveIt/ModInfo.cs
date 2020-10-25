@@ -43,7 +43,7 @@ namespace MoveIt
 
         internal static CultureInfo Culture => new CultureInfo(SingletonLite<LocaleManager>.instance.language == "zh" ? "zh-cn" : SingletonLite<LocaleManager>.instance.language);
 
-        public const string version = "2.9.0 Unstable";
+        public const string version = "2.9.0";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -95,13 +95,6 @@ namespace MoveIt
 
                 group.AddSpace(10);
 
-                checkBox = (UICheckBox)group.AddCheckbox(Str.options_AltForPillars, MoveItTool.altSelectNodeBuildings.value, (b) =>
-                {
-                    MoveItTool.altSelectNodeBuildings.value = b;
-                });
-
-                group.AddSpace(10);
-
                 checkBox = (UICheckBox)group.AddCheckbox(Str.options_UseCompass, MoveItTool.useCardinalMoves.value, (b) =>
                 {
                     MoveItTool.useCardinalMoves.value = b;
@@ -123,6 +116,13 @@ namespace MoveIt
                     MoveItTool.advancedPillarControl.value = b;
                 });
                 checkBox.tooltip = Str.options_AdvancedPillarControl_Tooltip;
+
+                group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_AltForPillars, MoveItTool.altSelectNodeBuildings.value, (b) =>
+                {
+                    MoveItTool.altSelectNodeBuildings.value = b;
+                });
 
                 group.AddSpace(10);
                 group = helper.AddGroup(Str.options_ShortcutsGeneral);

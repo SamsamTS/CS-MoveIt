@@ -315,7 +315,7 @@ namespace MoveIt
             if (PO.Active)
             {
                 PO.ToolEnabled();
-                if (Time.time > POProcessingStart + 300)
+                if (POProcessing > 0 && Time.time > POProcessingStart + 300)
                 { // If it's been more than 5 mins since PO last started copying, give up and reset
                     Debug.Log($"Timing out PO Processing");
                     POProcessing = 0;
@@ -951,7 +951,7 @@ namespace MoveIt
 
         public static bool IsExportSelectionValid()
         {
-            return CloneAction.GetCleanSelection(out Vector3 center).Count > 0;
+            return CloneActionBase.GetCleanSelection(out Vector3 center).Count > 0;
         }
 
         public bool Export(string filename)
@@ -960,14 +960,15 @@ namespace MoveIt
 
             try
             {
-                HashSet<Instance> selection = CloneAction.GetCleanSelection(out Vector3 center);
+                HashSet<Instance> selection = CloneActionBase.GetCleanSelection(out Vector3 center);
 
                 if (selection.Count == 0) return false;
 
-                Selection selectionState = new Selection();
-
-                selectionState.center = center;
-                selectionState.states = new InstanceState[selection.Count];
+                Selection selectionState = new Selection
+                {
+                    center = center,
+                    states = new InstanceState[selection.Count]
+                };
 
                 int i = 0;
                 foreach (Instance instance in selection)
