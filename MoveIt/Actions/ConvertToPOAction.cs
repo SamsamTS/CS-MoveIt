@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.UI;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -12,13 +13,13 @@ namespace MoveIt
         private HashSet<Instance> m_oldSelection;
         private bool firstRun = true; // TODO this disables Redo
 
-        public ConvertToPOAction()
+        public ConvertToPOAction() : base()
         {
             foreach (Instance instance in selection)
             {
                 if ((instance is MoveableBuilding || instance is MoveableProp) && instance.isValid)
                 {
-                    m_states.Add(instance.SaveToState());
+                    m_states.Add(instance.SaveToState(false));
                 }
             }
         }
@@ -46,13 +47,26 @@ namespace MoveIt
                         continue;
                     }
 
-                    PO_Object obj = MoveItTool.PO.ConvertToPO(instance);
-                    if (obj == null)
+                    PO_Object obj = null;
+                    try
                     {
-                        continue;
-                    }
+                        obj = MoveItTool.PO.ConvertToPO(instance);
+                        if (obj == null)
+                        {
+                            continue;
+                        }
 
-                    MoveItTool.PO.visibleObjects.Add(obj.Id, obj);
+                        MoveItTool.PO.visibleObjects.Add(obj.Id, obj);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        string s = "";
+                        foreach (var kv in MoveItTool.PO.visibleObjects)
+                        {
+                            s += $"{kv.Key}, ";
+                        }
+                        Debug.Log($"ArgumentException:\n{e}\n\n{(obj == null ? "<null>" : obj.Id.ToString())}\n\n{MoveItTool.PO.visibleObjects.Count}: {s}");
+                    }
 
                     InstanceID instanceID = default;
                     instanceID.NetLane = obj.Id;

@@ -43,14 +43,14 @@ namespace MoveIt
 
         public bool followTerrain;
 
-        public LineAction()
+        public LineAction() : base()
         {
             affectsSegments = true;
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.SaveToState());
+                    m_states.Add(instance.SaveToState(false));
                 }
             }
         }

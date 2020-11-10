@@ -7,8 +7,6 @@ namespace MoveIt
 {
     class AlignMirrorAction : CloneActionBase
     {
-        private bool containsNetwork = false;
-
         public Vector3 mirrorPivot;
         public float mirrorAngle;
         private Bounds originalBounds;
@@ -89,7 +87,7 @@ namespace MoveIt
             }
 
             bool fast = MoveItTool.fastMove != Event.current.shift;
-            UpdateArea(originalBounds, !fast || containsNetwork);
+            UpdateArea(originalBounds, !fast || ((TypeMask & TypeMasks.Network) != TypeMasks.None));
             UpdateArea(GetTotalBounds(false), !fast);
         }
 

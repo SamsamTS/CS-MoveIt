@@ -33,8 +33,6 @@ namespace MoveIt
         public bool autoCurve;
         public NetSegment segmentCurve;
 
-        protected readonly bool containsNetwork = false;
-
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
         internal bool _virtual = false;
@@ -70,18 +68,13 @@ namespace MoveIt
             }
         }
 
-        public BaseTransformAction()
+        public BaseTransformAction() : base()
         {
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.SaveToState());
-
-                    if (instance is MoveableNode || instance is MoveableSegment)
-                    {
-                        containsNetwork = true;
-                    }
+                    m_states.Add(instance.SaveToState(false));
                 }
             }
 

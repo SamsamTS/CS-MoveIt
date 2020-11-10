@@ -76,7 +76,7 @@ namespace MoveIt
             ResetSubInstances();
         }
 
-        public override InstanceState SaveToState()
+        public override InstanceState SaveToState(bool integrate = true)
         {
             BuildingState state = new BuildingState
             {
@@ -111,7 +111,7 @@ namespace MoveIt
             if (subStates.Count > 0)
                 state.subStates = subStates.ToArray();
 
-            state.SaveIntegrations();
+            state.SaveIntegrations(integrate);
 
             return state;
         }

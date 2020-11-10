@@ -90,7 +90,7 @@ namespace MoveIt
             Info = new Info_Prefab(NetManager.instance.m_segments.m_buffer[instanceID.NetSegment].Info);
         }
 
-        public override InstanceState SaveToState()
+        public override InstanceState SaveToState(bool integrate = true)
         {
             ushort segment = id.NetSegment;
 
@@ -120,7 +120,7 @@ namespace MoveIt
 
             state.invert = ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert);
 
-            state.SaveIntegrations();
+            state.SaveIntegrations(integrate);
 
             return state;
         }

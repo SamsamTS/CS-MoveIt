@@ -86,7 +86,7 @@ namespace MoveIt
             subInstances = GetSubInstances();
         }
 
-        public override InstanceState SaveToState()
+        public override InstanceState SaveToState(bool integrate = true)
         {
             ushort node = id.NetNode;
 
@@ -115,7 +115,7 @@ namespace MoveIt
                 }
             }
 
-            state.SaveIntegrations();
+            state.SaveIntegrations(integrate);
 
             return state;
         }

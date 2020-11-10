@@ -82,7 +82,7 @@ namespace MoveIt
 
         protected Matrix4x4 matrix4x = default;
 
-        public CloneActionBase()
+        public CloneActionBase() : base()
         {
             m_oldSelection = selection;
 

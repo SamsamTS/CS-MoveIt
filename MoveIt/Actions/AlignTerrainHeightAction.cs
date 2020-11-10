@@ -6,13 +6,13 @@ namespace MoveIt
     {
         private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
-        public AlignTerrainHeightAction()
+        public AlignTerrainHeightAction() : base()
         {
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.SaveToState());
+                    m_states.Add(instance.SaveToState(false));
                 }
             }
         }

@@ -3,11 +3,20 @@ using ColossalFramework;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 namespace MoveIt
 {
     public abstract class Action
     {
+        public enum TypeMasks : ushort
+        {
+            None = 0,
+            Building = 1,
+            Other = 2,
+            Network = 4
+        }
+
         public static HashSet<Instance> selection = new HashSet<Instance>();
         public static bool affectsSegments = true;
 
@@ -23,6 +32,32 @@ namespace MoveIt
 
         protected Dictionary<BuildingState, BuildingState> pillarsOriginalToClone = new Dictionary<BuildingState, BuildingState>();
         protected bool PillarsProcessed;
+
+        public static TypeMasks TypeMask = TypeMasks.None;
+        public Action()
+        {
+            TypeMask = TypeMasks.None;
+            foreach (Instance i in selection)
+            {
+                if (i.isValid)
+                {
+                    if (i is MoveableBuilding)
+                    {
+                        TypeMask |= TypeMasks.Building;
+                    }
+                    else if (i is MoveableSegment || i is MoveableNode)
+                    {
+                        TypeMask |= TypeMasks.Network;
+                    }
+                    else
+                    {
+                        TypeMask |= TypeMasks.Other;
+                    }
+                }
+            }
+
+            Assert.AreNotEqual(TypeMask, TypeMasks.None);
+        }
 
         internal virtual void OnHover() { }
 
@@ -155,19 +190,9 @@ namespace MoveIt
 
         public static void UpdateArea(Bounds bounds, bool full = false)
         {
-            bool updateTerrain = false;
-            foreach (Instance instance in selection)
-            {
-                if (instance is MoveableBuilding || instance is MoveableNode || instance is MoveableSegment)
-                {
-                    updateTerrain = true;
-                    break;
-                }
-            }
-
             try
             {
-                if (updateTerrain)
+                if ((TypeMask & TypeMasks.Building) != TypeMasks.None)
                 {
                     if (full)
                     {
@@ -191,7 +216,7 @@ namespace MoveIt
                 }
                 else
                 {
-                    bounds.Expand(96f);
+                    bounds.Expand(32f);
                     Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     bounds.Expand(64f);

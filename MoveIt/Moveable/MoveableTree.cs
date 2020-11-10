@@ -30,7 +30,7 @@ namespace MoveIt
             Info = new Info_Prefab(TreeManager.instance.m_trees.m_buffer[instanceID.Tree].Info);
         }
 
-        public override InstanceState SaveToState()
+        public override InstanceState SaveToState(bool integrate = true)
         {
             TreeState state = new TreeState
             {
@@ -45,7 +45,7 @@ namespace MoveIt
 
             state.single = TreeManager.instance.m_trees.m_buffer[tree].Single;
 
-            state.SaveIntegrations();
+            state.SaveIntegrations(integrate);
 
             return state;
         }

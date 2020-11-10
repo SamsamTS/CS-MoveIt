@@ -28,7 +28,7 @@ namespace MoveIt
             Info = m_procObj.Info;
         }
 
-        public override InstanceState SaveToState()
+        public override InstanceState SaveToState(bool integrate = true)
         {
             ProcState state = new ProcState
             {
@@ -39,7 +39,7 @@ namespace MoveIt
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
-            state.SaveIntegrations();
+            state.SaveIntegrations(integrate);
 
             return state;
         }

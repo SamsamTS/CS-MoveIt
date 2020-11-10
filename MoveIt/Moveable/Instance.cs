@@ -157,8 +157,11 @@ namespace MoveIt
             }
         }
 
-        public virtual void SaveIntegrations()
+        public virtual void SaveIntegrations(bool integrate)
         {
+            Debug.Log($"AAA1 {Info.Name} - {integrate}\n{ActionQueue.instance.current.GetType()}");
+            if (!integrate) return;
+
             foreach (var integration in MoveItTool.Integrations)
             {
                 try
@@ -354,7 +357,7 @@ namespace MoveIt
 
         public IInfo Info { get; set; }
 
-        public abstract InstanceState SaveToState();
+        public abstract InstanceState SaveToState(bool integrate = true);
         public abstract void LoadFromState(InstanceState state);
         public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);
         public abstract void Move(Vector3 location, float angle);

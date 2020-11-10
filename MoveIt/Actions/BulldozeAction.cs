@@ -30,7 +30,7 @@ namespace MoveIt
 
         public bool replaceInstances = true;
 
-        public BulldozeAction()
+        public BulldozeAction() : base()
         {
             HashSet<Instance> newSelection = new HashSet<Instance>(selection);
             HashSet<Instance> extraNodes = new HashSet<Instance>();

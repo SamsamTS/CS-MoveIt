@@ -27,7 +27,7 @@ namespace MoveIt
             Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
         }
 
-        public override InstanceState SaveToState()
+        public override InstanceState SaveToState(bool integrate = true)
         {
             PropState state = new PropState();
 
@@ -43,7 +43,7 @@ namespace MoveIt
             state.single = PropManager.instance.m_props.m_buffer[prop].Single;
             state.fixedHeight = PropManager.instance.m_props.m_buffer[prop].FixedHeight;
 
-            state.SaveIntegrations();
+            state.SaveIntegrations(integrate);
 
             return state;
         }
