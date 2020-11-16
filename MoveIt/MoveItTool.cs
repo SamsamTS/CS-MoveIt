@@ -317,7 +317,7 @@ namespace MoveIt
                 PO.ToolEnabled();
                 if (POProcessing > 0 && Time.time > POProcessingStart + 300)
                 { // If it's been more than 5 mins since PO last started copying, give up and reset
-                    Debug.Log($"Timing out PO Processing");
+                    Log.Info($"Timing out PO Processing");
                     POProcessing = 0;
                 }
                 ActionQueue.instance.Push(new TransformAction());
@@ -331,7 +331,7 @@ namespace MoveIt
             //{
             //    msg += $"\n{assembly.GetName().Name.ToLower()}";
             //}
-            //Debug.Log(msg);
+            //Log.Debug(msg);
 
             // msg = "Plugins:";
             //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
@@ -339,7 +339,7 @@ namespace MoveIt
             //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
             //        $"\n - {pi.modPath}";
             //}
-            //Debug.Log(msg);
+            //Log.Debug(msg);
         }
 
         protected override void OnDisable()
@@ -731,12 +731,12 @@ namespace MoveIt
             q.d = new Vector3(b.max.x, b.min.y, b.min.z);
             DebugOverlay d = new DebugOverlay(q, (Color32)c);
             DebugBoxes.Add(d);
-            Debug.Log($"\nBounds:{b}");
+            Log.Debug($"\nBounds:{b}");
         }
         internal static void AddDebugPoint(Vector3 v)
         {
             DebugPoints.Add(v);
-            Debug.Log($"\nPoint:{v}");
+            Log.Debug($"\nPoint:{v}");
         }
         internal void ClearDebugOverlays()
         {
@@ -771,7 +771,7 @@ namespace MoveIt
                 }
             }
             watch.Stop();
-            Debug.Log($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
+            Log.Info($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
         }
 
         public void UpdateAreas()
@@ -800,7 +800,7 @@ namespace MoveIt
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Debug.Log($"Failed to update bounds {bounds}");
+                    Log.Error($"Failed to update bounds {bounds}");
                 }
             }
 
@@ -1203,7 +1203,7 @@ namespace MoveIt
 
                 if (c > 1000)
                 {
-                    Debug.Log($"Looped bounds-merge a thousand times");
+                    Log.Error($"Looped bounds-merge a thousand times");
                     break;
                 }
 
@@ -1216,7 +1216,7 @@ namespace MoveIt
             //    b.Expand(4f);
             //    AddDebugBox(b, new Color32(255, 0, 0, 200));
             //}
-            //Debug.Log($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
+            //Log.Debug($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
             return innerList;
         }
 

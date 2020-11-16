@@ -21,13 +21,13 @@ namespace MoveIt
             }
             else if (m_duplicates > 0)
             {
-                Debug.Log(modPrefix + m_lastLog + "(x" + (m_duplicates + 1) + ")");
-                Debug.Log(modPrefix + message);
+                MoveIt.Log.Debug(modPrefix + m_lastLog + "(x" + (m_duplicates + 1) + ")");
+                MoveIt.Log.Debug(modPrefix + message);
                 m_duplicates = 0;
             }
             else
             {
-                Debug.Log(modPrefix + message);
+                MoveIt.Log.Debug(modPrefix + message);
             }
             m_lastLog = message;
         }
@@ -36,14 +36,14 @@ namespace MoveIt
         {
             if (message != m_lastWarning)
             {
-                Debug.LogWarning(modPrefix + "Warning: " + message);
+                MoveIt.Log.Error(modPrefix + "Warning: " + message);
             }
             m_lastWarning = message;
         }
 
         public static void LogException(Exception e)
         {
-            Debug.LogError(modPrefix + "Intercepted exception (not game breaking):");
+            MoveIt.Log.Error(modPrefix + "Intercepted exception (not game breaking):");
             Debug.LogException(e);
         }
 
@@ -55,7 +55,7 @@ namespace MoveIt
 #if DEBUG
                 throw new AssertionException($"expected {lhs} == {rhs}", m);
 #else
-                Debug.LogError($"Error - Assertion failed: expected {lhs} == {rhs}\n" + m);
+                MoveIt.Log.Error($"Error - Assertion failed: expected {lhs} == {rhs}\n" + m);
 #endif
             }
 
@@ -68,7 +68,7 @@ namespace MoveIt
 #if DEBUG
                 throw new AssertionException($"expected {lhs} != {rhs}", m);
 #else
-                Debug.LogError($"Error - Assertion failed: expected {lhs} != {rhs}\n" + m);
+                MoveIt.Log.Error($"Error - Assertion failed: expected {lhs} != {rhs}\n" + m);
 #endif
             }
         }

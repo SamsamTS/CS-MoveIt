@@ -33,7 +33,7 @@ namespace MoveIt
             }
             else
             {
-                Debug.Log($"InstallMod with existing instance!");
+                Log.Error($"InstallMod with existing instance!");
             }
 
             MoveItTool.stepOver = new StepOver();
@@ -85,6 +85,7 @@ namespace MoveIt
             if (MoveItTool.instance != null)
             {
                 MoveItTool.instance.enabled = false;
+                MoveItTool.instance = null;
             }
 
             IsGameLoaded = false;
@@ -94,7 +95,7 @@ namespace MoveIt
 
         internal static void LocaleChanged()
         {
-            Debug.Log($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name}");
+            Log.Debug($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name}");
             Str.Culture = ModInfo.Culture;
         }
     }

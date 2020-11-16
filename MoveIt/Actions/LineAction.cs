@@ -92,7 +92,7 @@ namespace MoveIt
 
             //    msg += $"\n{inst}:{d}";
             //}
-            //Debug.Log(msg);
+            //Log.Debug(msg);
 
             Vector3 cumulative = Vector3.zero;
             foreach (KeyValuePair<InstanceState, float> pair in sorted)

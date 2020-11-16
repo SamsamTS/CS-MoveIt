@@ -824,7 +824,6 @@ namespace MoveIt.Localization {
         internal static string options_RightClickCancel {
             get
             {
-                Debug.Log($"MIT-Locale:\nResMan:{ResourceManager} <{ResourceManager.GetType()}>\nResCult:{resourceCulture} <{resourceCulture.GetType()}>");
                 return ResourceManager.GetString("options_RightClickCancel", resourceCulture);
             }
         }

@@ -759,7 +759,7 @@ namespace MoveIt
             //BuildingInfo info = data.Info;
             //if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
             //{
-            //    Debug.Log($"PARKING (RB)\n#{building}:{info.name}");
+            //    Log.Debug($"PARKING (RB)\n#{building}:{info.name}");
             //    BuildingManager.instance.UpdateParkingSpaces(building, ref data);
             //}
 

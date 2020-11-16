@@ -43,7 +43,7 @@ namespace MoveIt
                     {
                         InstanceID sourceInstanceID = item.Key.instance.id;
                         InstanceID targetInstanceID = item.Value.id;
-                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                        Log.Error($"integration {data.Key} Failed to paste from " +
                             $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
                         DebugUtils.LogException(e);
                     }
@@ -289,7 +289,7 @@ namespace MoveIt
 
                     if (clone == null)
                     {
-                        Debug.Log($"Failed to clone {state}");
+                        Log.Debug($"Failed to clone {state}");
                         continue;
                     }
 
@@ -310,7 +310,7 @@ namespace MoveIt
                             {
                                 var lane0 = new InstanceID { NetLane = segmentState.LaneIDs[i] };
                                 var lane = new InstanceID { NetLane = clonedLaneIds[i] };
-                                // Debug.Log($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
+                                // Log.Debug($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
                                 m_InstanceID_origToClone.Add(lane0, lane);
                             }
                         }

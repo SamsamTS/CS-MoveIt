@@ -59,7 +59,7 @@ namespace MoveIt
 
                     if (activeIds.Contains(o.ProcId))
                     {
-                        Debug.Log($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate.");
+                        Log.Info($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate.");
                     }
                     else
                     {
@@ -73,7 +73,7 @@ namespace MoveIt
                 //{
                 //    msg += $"{a},";
                 //}
-                //Debug.Log(msg);
+                //Log.Debug(msg);
 
                 return objects;
             }
@@ -93,7 +93,7 @@ namespace MoveIt
 
             if (!(original.m_procObj is PO_Object))
             {
-                Debug.Log($"PO Cloning failed: object not found");
+                Log.Info($"PO Cloning failed: object not found");
                 MoveItTool.POProcessing--;
                 yield break;
             }
@@ -103,7 +103,7 @@ namespace MoveIt
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null);
             if (retrieve == null)
             {
-                Debug.Log($"PO Cloning failed: retrieve not found");
+                Log.Info($"PO Cloning failed: retrieve not found");
                 MoveItTool.POProcessing--;
                 yield break;
             }
@@ -151,11 +151,11 @@ namespace MoveIt
 
                 MoveItTool.SetToolState();
                 MoveItTool.instance.ProcessSensitivityMode(false);
-                Debug.Log($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
+                Log.Info($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
             }
             catch (Exception e)
             {
-                Debug.Log($"Exception when cloning PO:\n{e}");
+                Log.Error($"Exception when cloning PO:\n{e}");
             }
 
             yield return new WaitForSeconds(0.25f);
@@ -303,7 +303,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Debug.Log($"PO INTERATION FAILED\n" + e);
+                Log.Error($"PO INTERATION FAILED\n" + e);
             }
 
             return "(Failed [PO-F2])";

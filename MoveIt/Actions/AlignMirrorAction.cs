@@ -73,13 +73,13 @@ namespace MoveIt
                     }
                     catch (MissingMethodException e)
                     {
-                        Debug.Log($"Failed to find Mirror method, a mod {data.Key.Name} needs updated.\n{e}");
+                        Log.Debug($"Failed to find Mirror method, a mod {data.Key.Name} needs updated.\n{e}");
                     }
                     catch (Exception e)
                     {
                         InstanceID sourceInstanceID = item.Key.instance.id;
                         InstanceID targetInstanceID = item.Value.id;
-                        Debug.LogError($"integration {data.Key} Failed to paste from " +
+                        Log.Error($"integration {data.Key} Failed to paste from " +
                             $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
                         DebugUtils.LogException(e);
                     }

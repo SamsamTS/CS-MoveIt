@@ -118,7 +118,7 @@ namespace MoveIt
             }
             catch (ArgumentException e)
             {
-                Debug.Log($"PO Integration failed:\n{e}");
+                Log.Error($"PO Integration failed:\n{e}");
                 if (MoveItTool.PO.Active)
                 {
                     MoveItTool.PO.Active = false;
@@ -164,7 +164,7 @@ namespace MoveIt
             }
             MoveItTool.m_debugPanel.UpdatePanel();
 
-            //Debug.Log($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
+            //Log.Debug($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
             visibleObjects = newVisible;
             visibleIds = newIds;

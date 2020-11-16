@@ -129,7 +129,7 @@ namespace MoveIt
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Failed to export integration: " + item.Key);
+                        Log.Error("Failed to export integration: " + item.Key);
                         DebugUtils.LogException(e);
                     }
                 }
@@ -149,7 +149,7 @@ namespace MoveIt
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Failed to import integration: " + entry.ID);
+                        Log.Error("Failed to import integration: " + entry.ID);
                         DebugUtils.LogException(e);
                     }
 
@@ -159,7 +159,7 @@ namespace MoveIt
 
         public virtual void SaveIntegrations(bool integrate)
         {
-            Debug.Log($"AAA1 {Info.Name} - {integrate}\n{ActionQueue.instance.current.GetType()}");
+            //Log.Debug($"AAA1 {Info.Name} - {integrate}\n{ActionQueue.instance.current.GetType()}");
             if (!integrate) return;
 
             foreach (var integration in MoveItTool.Integrations)
@@ -170,7 +170,7 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"integration {integration} Failed to copy {instance?.id}" + integration);
+                    Log.Error($"integration {integration} Failed to copy {instance?.id}" + integration);
                     DebugUtils.LogException(e);
                 }
             }

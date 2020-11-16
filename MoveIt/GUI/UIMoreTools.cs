@@ -342,7 +342,7 @@ namespace MoveIt
                     break;
 
                 default:
-                    Debug.Log($"Invalid Tool clicked ({name})");
+                    Log.Debug($"Invalid Tool clicked ({name})");
                     break;
             }
         }

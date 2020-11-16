@@ -225,7 +225,7 @@ namespace MoveIt
             }
             catch (IndexOutOfRangeException e)
             {
-                Debug.Log($"EXCEPTION\n{bounds}\n{e}");
+                Log.Error($"EXCEPTION\n{bounds}\n{e}");
             }
         }
 
@@ -320,7 +320,7 @@ namespace MoveIt
                     ((buildingBuffer[((NetNode)(ns.instance.data)).m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden))
                 {
                     nodesWithAttachments.Add(ns.instance.id.NetNode);
-                    //Debug.Log($"Node {ns.instance.id.NetNode} found");
+                    //Log.Debug($"Node {ns.instance.id.NetNode} found");
                 }
             }
             HashSet<InstanceState> newStates = new HashSet<InstanceState>(states);
@@ -332,7 +332,7 @@ namespace MoveIt
                     ushort nodeId = MoveItTool.m_pillarMap[buildingId];
                     if (nodesWithAttachments.Contains(nodeId)) // The node is also selected
                     {
-                        //Debug.Log($"Pillar {buildingId} for selected node {nodeId}");
+                        //Log.Debug($"Pillar {buildingId} for selected node {nodeId}");
                         continue;
                     }
                     MoveableBuilding original = (MoveableBuilding)instanceState.instance;
@@ -346,11 +346,11 @@ namespace MoveIt
                         selection.Add(clone);
                         cloneState = (BuildingState)clone.SaveToState();
                         newStates.Add(cloneState);
-                        Debug.Log($"Pillar {buildingId} for node {nodeId} duplicated to {clone.id.Building}");
+                        Log.Debug($"Pillar {buildingId} for node {nodeId} duplicated to {clone.id.Building}");
                     }
                     else
                     {
-                        Debug.Log($"Pillar {buildingId} for node {nodeId} hidden");
+                        Log.Debug($"Pillar {buildingId} for node {nodeId} hidden");
                     }
                     pillarsOriginalToClone.Add(originalState, cloneState);
                     original.isHidden = true;
@@ -362,7 +362,7 @@ namespace MoveIt
             }
             states = newStates;
             watch.Stop();
-            Debug.Log($"Pillars handled in {watch.ElapsedMilliseconds} ms\nSelected nodes:{nodesWithAttachments.Count}, total selection:{states.Count}, dups mapped:{pillarsOriginalToClone.Count}");
+            Log.Debug($"Pillars handled in {watch.ElapsedMilliseconds} ms\nSelected nodes:{nodesWithAttachments.Count}, total selection:{states.Count}, dups mapped:{pillarsOriginalToClone.Count}");
             PillarsProcessed = true;
 
             return states;

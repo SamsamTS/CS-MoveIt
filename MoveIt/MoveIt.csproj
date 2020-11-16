@@ -62,6 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Str.resx</DependentUpon>
     </Compile>
+    <Compile Include="Log.cs" />
     <Compile Include="MIT_Events.cs" />
     <Compile Include="MIT_Filtering.cs" />
     <Compile Include="MIT_Keyboard.cs" />

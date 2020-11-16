@@ -56,7 +56,7 @@ namespace MoveIt
                 debugInitialised = true;
             }
 
-            Debug.Log(line);
+            Log.Debug(line);
             File.AppendAllText(debugPath, line);
             if (newLine)
             {

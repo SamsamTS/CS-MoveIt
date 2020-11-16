@@ -65,7 +65,7 @@ namespace MoveIt
                         {
                             s += $"{kv.Key}, ";
                         }
-                        Debug.Log($"ArgumentException:\n{e}\n\n{(obj == null ? "<null>" : obj.Id.ToString())}\n\n{MoveItTool.PO.visibleObjects.Count}: {s}");
+                        Log.Debug($"ArgumentException:\n{e}\n\n{(obj == null ? "<null>" : obj.Id.ToString())}\n\n{MoveItTool.PO.visibleObjects.Count}: {s}");
                     }
 
                     InstanceID instanceID = default;

@@ -112,28 +112,28 @@ namespace MoveIt
                 #region Debug Ouput
                 //Instance instance = m_hoverInstance;
                 //InstanceID instanceID = instance.id;
-                //Debug.Log($"instance:{(instance == null ? "null" : instance.GetType().ToString())}");
+                //Log.Debug($"instance:{(instance == null ? "null" : instance.GetType().ToString())}");
 
                 //if (instanceID.Building > 0)
                 //{
                 //    MoveableBuilding mb = (MoveableBuilding)instance;
                 //    string msg = $"{mb.id.Building}:{mb.Info.Name}\n";
-                //    //Debug.Log(msg);
+                //    //Log.Debug(msg);
                 //    foreach (Instance subInstance in mb.subInstances)
                 //    {
                 //        msg += $" - {subInstance.id.Building}/{subInstance.id.NetNode}: {subInstance.Info.Name}\n";
-                //        //Debug.Log(msg);
+                //        //Log.Debug(msg);
                 //        if (subInstance.id.Building > 0)
                 //        {
                 //            foreach (Instance subSubInstance in ((MoveableBuilding)subInstance).subInstances)
                 //            {
                 //                msg += $"    - {subSubInstance.id.Building}/{subSubInstance.id.NetNode}: {subSubInstance.Info.Name}\n";
-                //                //Debug.Log(msg);
+                //                //Log.Debug(msg);
                 //            }
                 //        }
                 //    }
                 //    msg += "End";
-                //    Debug.Log(msg);
+                //    Log.Debug(msg);
                 //}
                 #endregion
 
@@ -523,7 +523,7 @@ namespace MoveIt
 
         private void OnMiddleMouseDown()
         {
-            //Debug.Log("OnMiddleMouseDown: " + ToolState);
+            //Log.Debug("OnMiddleMouseDown: " + ToolState);
 
             Vector3 mousePos = RaycastMouseLocation();
 
@@ -547,17 +547,17 @@ namespace MoveIt
 
         private void OnMiddleMouseUp()
         {
-            //Debug.Log("OnMiddleMouseUp: " + ToolState);
+            //Log.Debug("OnMiddleMouseUp: " + ToolState);
         }
 
         private void OnMiddleClick()
         {
-            //Debug.Log("OnMiddleClick: " + ToolState);
+            //Log.Debug("OnMiddleClick: " + ToolState);
         }
 
         private void OnMiddleDrag()
         {
-            //Debug.Log($"OnMiddleDrag: {ToolState}\nm_dragStartRelative:{m_dragStartRelative}\nm_sensitivityTogglePosAbs:{m_sensitivityTogglePosAbs}\nm_clickPositionAbs:{m_clickPositionAbs}");
+            //Log.Debug($"OnMiddleDrag: {ToolState}\nm_dragStartRelative:{m_dragStartRelative}\nm_sensitivityTogglePosAbs:{m_sensitivityTogglePosAbs}\nm_clickPositionAbs:{m_clickPositionAbs}");
 
             if (ToolState == ToolStates.Default)
             {
@@ -577,7 +577,7 @@ namespace MoveIt
 
         private void OnMiddleDragStop()
         {
-            //Debug.Log("OnMiddleDragStop: " + ToolState);
+            //Log.Debug("OnMiddleDragStop: " + ToolState);
 
             if (ToolState == ToolStates.MouseDragging && m_rightClickTime == 0)
             {
