@@ -731,7 +731,7 @@ namespace MoveIt
             q.d = new Vector3(b.max.x, b.min.y, b.min.z);
             DebugOverlay d = new DebugOverlay(q, (Color32)c);
             DebugBoxes.Add(d);
-            Log.Debug($"\nBounds:{b}");
+            //Log.Debug($"\nBounds:{b}");
         }
         internal static void AddDebugPoint(Vector3 v)
         {
@@ -794,6 +794,7 @@ namespace MoveIt
                     bounds.Expand(64f);
                     Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    UpdateRender(bounds);
                     bounds.Expand(512f);
                     Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                     Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
@@ -1153,7 +1154,6 @@ namespace MoveIt
         {
             HashSet<Bounds> innerList = new HashSet<Bounds>();
             HashSet<Bounds> newList = new HashSet<Bounds>();
-            HashSet<Bounds> originalList = outerList;
 
             int c = 0;
 
@@ -1219,6 +1219,47 @@ namespace MoveIt
             //Log.Debug($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
             return innerList;
         }
+
+        private static void UpdateRender(Bounds bounds)
+        {
+            int num1 = Mathf.Clamp((int)(bounds.min.x / 64f + 135f), 0, 269);
+            int num2 = Mathf.Clamp((int)(bounds.min.z / 64f + 135f), 0, 269);
+            int x0 = num1 * 45 / 270 - 1;
+            int z0 = num2 * 45 / 270 - 1;
+
+            num1 = Mathf.Clamp((int)(bounds.max.x / 64f + 135f), 0, 269);
+            num2 = Mathf.Clamp((int)(bounds.max.z / 64f + 135f), 0, 269);
+            int x1 = num1 * 45 / 270 + 1;
+            int z1 = num2 * 45 / 270 + 1;
+
+            RenderManager renderManager = Singleton<RenderManager>.instance;
+            RenderGroup[] renderGroups = renderManager.m_groups;
+
+            for (int i = z0; i < z1; i++)
+            {
+                for (int j = x0; j < x1; j++)
+                {
+                    int n = Mathf.Clamp(i * 45 + j, 0, renderGroups.Length - 1);
+
+                    if (n < 0)
+                    {
+                        continue;
+                    }
+                    else if (n >= renderGroups.Length)
+                    {
+                        break;
+                    }
+
+                    if (renderGroups[n] != null)
+                    {
+                        renderGroups[n].SetAllLayersDirty();
+                        renderManager.m_updatedGroups1[n >> 6] |= 1uL << n;
+                        renderManager.m_groupsUpdated1 = true;
+                    }
+                }
+            }
+        }
+
 
         internal static void CleanGhostNodes()
         {

@@ -34,7 +34,8 @@ namespace MoveIt
         {
             TreeState state = new TreeState
             {
-                instance = this
+                instance = this,
+                isCustomContent = Info.Prefab.m_isCustomContent
             };
 
             uint tree = id.Tree;

@@ -87,7 +87,8 @@ namespace MoveIt
                 flags = buildingBuffer[id.Building].m_flags,
                 length = buildingBuffer[id.Building].Length,
                 isSubInstance = isSubInstance,
-                isHidden = isHidden
+                isHidden = isHidden,
+                isCustomContent = Info.Prefab.m_isCustomContent
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 

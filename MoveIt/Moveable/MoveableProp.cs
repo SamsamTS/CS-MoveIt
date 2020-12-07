@@ -29,9 +29,11 @@ namespace MoveIt
 
         public override InstanceState SaveToState(bool integrate = true)
         {
-            PropState state = new PropState();
-
-            state.instance = this;
+            PropState state = new PropState
+            {
+                instance = this,
+                isCustomContent = Info.Prefab.m_isCustomContent
+            };
 
             ushort prop = id.Prop;
             state.Info = Info;

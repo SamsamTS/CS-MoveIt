@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
-using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -118,8 +119,9 @@ namespace MoveIt
             {
                 full = selection.Count > MoveItTool.Fastmove_Max;
             }
-            UpdateArea(originalBounds, full);
+
             Bounds fullbounds = GetTotalBounds(false);
+            UpdateArea(originalBounds, full);
             UpdateArea(fullbounds, full);
         }
 

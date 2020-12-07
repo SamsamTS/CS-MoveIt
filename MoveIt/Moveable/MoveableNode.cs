@@ -95,7 +95,8 @@ namespace MoveIt
                 instance = this,
                 Info = Info,
                 position = nodeBuffer[node].m_position,
-                flags = nodeBuffer[node].m_flags
+                flags = nodeBuffer[node].m_flags,
+                isCustomContent = Info.Prefab.m_isCustomContent
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 

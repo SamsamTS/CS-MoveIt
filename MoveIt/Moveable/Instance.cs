@@ -27,6 +27,7 @@ namespace MoveIt
         public Vector3 position;
         public float angle;
         public float terrainHeight;
+        public bool isCustomContent;
 
         private string m_loadedName;
 

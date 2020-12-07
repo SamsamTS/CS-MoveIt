@@ -110,6 +110,8 @@ namespace MoveIt
                 NS_Modifiers = MoveItTool.NS.GetSegmentModifiers(segment),
                
                 LaneIDs = GetLaneIds(segment),
+
+                isCustomContent = Info.Prefab.m_isCustomContent
             };
 
             state.startPosition = nodeBuffer[state.startNodeId].m_position;
@@ -549,7 +551,15 @@ namespace MoveIt
                 bezier.d, endDirection,
                 smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-            RenderSegment.Invoke(null, new object[] { Info.Prefab as NetInfo, NetSegment.Flags.All, bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
+            // Flip the segment geometry unless the segment is one of inverted
+            if ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert)
+            {
+                RenderSegment.Invoke(null, new object[] { Info.Prefab as NetInfo, NetSegment.Flags.All, bezier.a, bezier.d, startDirection, -endDirection, smoothStart, smoothEnd });
+            }
+            else
+            {
+                RenderSegment.Invoke(null, new object[] { Info.Prefab as NetInfo, NetSegment.Flags.All, bezier.d, bezier.a, endDirection, -startDirection, smoothStart, smoothEnd });
+            }
         }
 
         private Vector3 GetControlPoint()
