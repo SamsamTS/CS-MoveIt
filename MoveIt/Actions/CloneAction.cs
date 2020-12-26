@@ -7,12 +7,13 @@ namespace MoveIt
 {
     public class CloneAction : CloneActionBase
     {
-        public CloneAction() : base() {}
+        public CloneAction() : base(true) {}
 
         // Constructor for imported selections
-        public CloneAction(InstanceState[] states, Vector3 centerPoint)
+        public CloneAction(InstanceState[] states, Vector3 centerPoint) : base(false)
         {
             m_oldSelection = selection;
+            m_states.Clear();
 
             foreach (InstanceState state in states)
             {
@@ -54,7 +55,7 @@ namespace MoveIt
 
     public class DuplicateAction : CloneActionBase
     {
-        public DuplicateAction() : base()
+        public DuplicateAction() : base(true)
         {
             angleDelta = 0f;
             moveDelta = Vector3.zero;
@@ -82,8 +83,10 @@ namespace MoveIt
 
         protected Matrix4x4 matrix4x = default;
 
-        public CloneActionBase() : base()
+        public CloneActionBase(bool defaultConstructor) : base()
         {
+            if (!defaultConstructor) return; // Ugly hack to control when this constructor is called by derived classes
+
             m_oldSelection = selection;
 
             HashSet<Instance> newSelection = GetCleanSelection(out center);

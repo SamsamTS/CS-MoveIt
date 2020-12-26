@@ -11,7 +11,7 @@ namespace MoveIt
         public float mirrorAngle;
         private Bounds originalBounds;
 
-        public AlignMirrorAction() : base() {}
+        public AlignMirrorAction() : base(true) {}
 
         public override void Do()
         {
