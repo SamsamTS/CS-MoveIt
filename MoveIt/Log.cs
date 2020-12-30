@@ -104,7 +104,7 @@ namespace MoveIt
 
                 long secs = ticks / Stopwatch.Frequency;
                 long fraction = ticks % Stopwatch.Frequency;
-                msg += string.Format($"{secs.ToString("n0")}.{fraction.ToString("D7")} | ");
+                msg += string.Format($"{secs:n0}.{fraction:D7} | ");
 
                 msg += message + nl;
 

@@ -237,7 +237,7 @@ namespace MoveIt
         private long m_middleClickTime;
         private long m_leftClickTime;
 
-        internal static Dictionary<ushort, ushort> m_pillarMap;
+        internal static Dictionary<ushort, ushort> m_pillarMap; // Building -> First Node
 
         protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
@@ -765,7 +765,23 @@ namespace MoveIt
                     {
                         if ((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
                         {
-                            m_pillarMap.Add(n.m_building, i);
+                            if (!m_pillarMap.ContainsKey(n.m_building))
+                            {
+                                try
+                                {
+                                    m_pillarMap.Add(n.m_building, i);
+                                }
+                                catch (Exception e)
+                                {
+                                    string msg = $"BuildingID: #{n.m_building} {buildingBuffer[n.m_building].Info?.name}, Count:{m_pillarMap.Count}" + Environment.NewLine;
+                                    foreach (var kvp in m_pillarMap)
+                                    {
+                                        msg += $"{kvp.Key}->{kvp.Value}, ";
+                                    }
+                                    Log.Error(msg, false);
+                                    DebugUtils.LogException(e);
+                                }
+                            }
                         }
                     }
                 }
@@ -1259,7 +1275,6 @@ namespace MoveIt
                 }
             }
         }
-
 
         internal static void CleanGhostNodes()
         {

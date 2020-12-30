@@ -350,7 +350,15 @@ namespace MoveIt
             MoveItTool.m_debugPanel.UpdatePanel();
 
             UpdateArea(GetTotalBounds(false));
-            MoveItTool.UpdatePillarMap();
+            try
+            { 
+                MoveItTool.UpdatePillarMap();
+            }
+            catch (Exception e)
+            {
+                DebugUtils.Log("CloneActionBase.Do failed");
+                DebugUtils.LogException(e);
+            }
         }
 
         public override void Undo()
