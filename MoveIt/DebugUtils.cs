@@ -43,7 +43,7 @@ namespace MoveIt
 
         public static void LogException(Exception e)
         {
-            MoveIt.Log.Error(modPrefix + "Intercepted exception (not game breaking):");
+            MoveIt.Log.Error(modPrefix + "Intercepted exception (not game breaking):" + Environment.NewLine + $"{e.Message}");
             Debug.LogException(e);
         }
 

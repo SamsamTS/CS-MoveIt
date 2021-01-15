@@ -753,9 +753,12 @@ namespace MoveIt
         {
             if (!advancedPillarControl) return;
 
+            //Log.Debug("UPM Start");
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             m_pillarMap = new Dictionary<ushort, ushort>();
+            //string msg = "UPM Nodes: ";
+            int c = 0;
             for (ushort i = 0; i < nodeBuffer.Length; i++)
             {
                 NetNode n = nodeBuffer[i];
@@ -763,6 +766,14 @@ namespace MoveIt
                 {
                     if (n.m_building > 0)
                     {
+                        //msg += $"{i} ({(((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden) ? "Visible" : "Hidden")}), ";
+                        //c++;
+                        //if (c % 20 == 0)
+                        //{
+                        //    Log.Debug(msg);
+                        //    msg = "";
+                        //}
+                        
                         if ((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
                         {
                             if (!m_pillarMap.ContainsKey(n.m_building))
@@ -773,13 +784,13 @@ namespace MoveIt
                                 }
                                 catch (Exception e)
                                 {
-                                    string msg = $"BuildingID: #{n.m_building} {buildingBuffer[n.m_building].Info?.name}, Count:{m_pillarMap.Count}" + Environment.NewLine;
+                                    string msg2 = $"BuildingID: #{n.m_building} {buildingBuffer[n.m_building].Info?.name}, Count:{m_pillarMap.Count}" + Environment.NewLine;
                                     foreach (var kvp in m_pillarMap)
                                     {
-                                        msg += $"{kvp.Key}->{kvp.Value}, ";
+                                        msg2 += $"{kvp.Key}->{kvp.Value}, ";
                                     }
-                                    Log.Error(msg, false);
-                                    DebugUtils.LogException(e);
+                                    Log.Error(msg2 + e, true);
+                                    //DebugUtils.LogException(e);
                                 }
                             }
                         }
