@@ -758,7 +758,7 @@ namespace MoveIt
             watch.Start();
             m_pillarMap = new Dictionary<ushort, ushort>();
             //string msg = "UPM Nodes: ";
-            int c = 0;
+            //int c = 0;
             for (ushort i = 0; i < nodeBuffer.Length; i++)
             {
                 NetNode n = nodeBuffer[i];

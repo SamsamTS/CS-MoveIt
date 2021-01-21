@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
 using ColossalFramework.UI;
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,13 +36,13 @@ namespace MoveIt
                 bool isInsideUI = this.m_toolController.IsInsideUI;
 
                 if (m_leftClickTime == 0 && Input.GetMouseButton(0))
-                {
-                    if (!isInsideUI)
                     {
-                        m_leftClickTime = Stopwatch.GetTimestamp();
-                        OnLeftMouseDown();
+                        if (!isInsideUI)
+                        {
+                            m_leftClickTime = Stopwatch.GetTimestamp();
+                            OnLeftMouseDown();
+                        }
                     }
-                }
 
                 if (m_leftClickTime != 0)
                 {
@@ -51,31 +52,45 @@ namespace MoveIt
                     {
                         m_leftClickTime = 0;
 
-                        if (elapsed < 200)
+                        if (elapsed < 250)
                         {
-                            OnLeftClick();
+                            try
+                            {
+                                OnLeftClick();
+                            }
+                            catch (MissingMethodException e)
+                            {
+                                Log.Debug("Prop Painter [OnLeftClick] error: " + e.ToString());
+                            }
                         }
                         else
                         {
                             OnLeftDragStop();
                         }
 
-                        OnLeftMouseUp();
+                        try
+                        {
+                            OnLeftMouseUp();
+                        }
+                        catch (MissingMethodException e)
+                        {
+                            Log.Debug("Prop Painter [OnLeftMouseUp] error: " + e.ToString());
+                        }
                     }
-                    else if (elapsed >= 200)
+                    else if (elapsed >= 250)
                     {
                         OnLeftDrag();
                     }
                 }
 
                 if (m_rightClickTime == 0 && Input.GetMouseButton(1))
-                {
-                    if (!isInsideUI)
                     {
-                        m_rightClickTime = Stopwatch.GetTimestamp();
-                        OnRightMouseDown();
+                        if (!isInsideUI)
+                        {
+                            m_rightClickTime = Stopwatch.GetTimestamp();
+                            OnRightMouseDown();
+                        }
                     }
-                }
 
                 if (m_rightClickTime != 0)
                 {
@@ -96,7 +111,7 @@ namespace MoveIt
 
                         OnRightMouseUp();
                     }
-                    else if (elapsed >= 200)
+                    else if (elapsed >= 250)
                     {
                         OnRightDrag();
                     }
@@ -119,7 +134,7 @@ namespace MoveIt
                     {
                         m_middleClickTime = 0;
 
-                        if (elapsed < 200)
+                        if (elapsed < 250)
                         {
                             OnMiddleClick();
                         }
@@ -130,7 +145,7 @@ namespace MoveIt
 
                         OnMiddleMouseUp();
                     }
-                    else if (elapsed >= 200)
+                    else if (elapsed >= 250)
                     {
                         OnMiddleDrag();
                     }
@@ -177,7 +192,7 @@ namespace MoveIt
                                         action.Virtual = fastMove;
                                     }
                                 }
-                            
+
                                 if (m_leftClickTime > 0 != m_middleClickTime > 0)
                                 {
                                     UpdateSensitivityMode();
@@ -217,7 +232,7 @@ namespace MoveIt
                                     if (Event.current.alt)
                                     {
                                         float quarterPI = Mathf.PI / 4;
-                                        newAngle = quarterPI * Mathf.Round(newAngle  / quarterPI);
+                                        newAngle = quarterPI * Mathf.Round(newAngle / quarterPI);
                                     }
                                     newAngle += m_startAngle;
                                     action.autoCurve = false;

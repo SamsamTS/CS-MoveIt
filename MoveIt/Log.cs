@@ -87,6 +87,18 @@ namespace MoveIt
         }
 
         /// <summary>
+        /// Logs error message and also outputs a stack trace.
+        /// </summary>
+        /// 
+        /// <param name="exception">Exception to be logged.</param>
+        /// <param name="copyToGameLog">If <c>true</c> will copy to the main game log file.</param>
+        public static void Error(Exception exception, bool copyToGameLog = true)
+        {
+            LogImpl(exception.ToString(), LogLevel.Error, copyToGameLog);
+
+        }
+
+        /// <summary>
         /// Write a message to log file.
         /// </summary>
         /// 
