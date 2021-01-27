@@ -420,10 +420,10 @@ namespace MoveIt
             }
         }
 
-        public bool IsBuilding { get => (Info is BuildingInfo); }
-        public bool IsProp { get => (Info is PropInfo); }
-        public bool IsTree { get => (Info is TreeInfo); }
-        public bool IsSegment { get => (Info is NetInfo); }
-        public bool IsNode { get => (Info is NetInfo); }
+        public bool IsBuilding { get => Info is BuildingInfo; }
+        public bool IsProp { get => Info is PropInfo; }
+        public bool IsTree { get => Info is TreeInfo; }
+        public bool IsSegment { get => Info is NetInfo; }
+        public bool IsNode { get => Info is NetInfo; }
     }
 }
