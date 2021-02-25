@@ -1107,7 +1107,8 @@ namespace MoveIt
 
                         if (restore)
                         {
-                            ActionQueue.instance.Do(); // For restore to position
+                            SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
+                            //ActionQueue.instance.Do(); // For restore to position
                         }
                         else
                         {
