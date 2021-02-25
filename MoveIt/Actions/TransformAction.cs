@@ -101,6 +101,10 @@ namespace MoveIt
                     if (autoCurve && state.instance is MoveableNode node)
                     {
                         node.AutoCurve(segmentCurve);
+                    } 
+                    else if (state.instance is MoveableBuilding building)
+                    {
+                        BuildingManager.instance.RoadCheckNeeded(building.id.Building);
                     }
                 }
             }
