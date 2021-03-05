@@ -11,6 +11,7 @@ namespace MoveIt
         protected Type _tPOLogic = null;
         internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null;
         internal object POLogic = null;
+        private bool POHasFilters = true;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -38,7 +39,13 @@ namespace MoveIt
             tPUtils = POAssembly.GetType("ProceduralObjects.Classes.ProceduralUtils");
             tVertex = POAssembly.GetType("ProceduralObjects.Classes.Vertex");
             tPOMoveIt = POAssembly.GetType("ProceduralObjects.Classes.PO_MoveIt");
+            if (POAssembly.GetType("ProceduralObjects.SelectionMode.SelectionFilters") == null)
+            {
+                POHasFilters = false;
+            }
             POLogic = FindObjectOfType(tPOLogic);
+
+            //Log.Debug($"POHasFilters:{POHasFilters}");
         }
 
         public List<PO_Object> Objects
@@ -63,8 +70,20 @@ namespace MoveIt
                     }
                     else
                     {
-                        objects.Add(o);
-                        activeIds.Add(o.ProcId);
+                        if (POHasFilters)
+                        {
+                            var filters = tPOLogic.GetField("filters", flags).GetValue(POLogic);
+                            if ((bool)filters.GetType().GetMethod("FiltersAllow", new Type[] { tPO }).Invoke(filters, new object[] { o.procObj }))
+                            {
+                                objects.Add(o);
+                                activeIds.Add(o.ProcId);
+                            }
+                        }
+                        else
+                        {
+                            objects.Add(o);
+                            activeIds.Add(o.ProcId);
+                        }
                     }
                 }
 
