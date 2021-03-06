@@ -155,12 +155,12 @@ namespace MoveIt
             {
                 if (i is MoveableProc)
                 {
-                    toRemove.Add(i);
+                    toRemove.AddObject(i);
                 }
             }
             foreach (Instance i in toRemove)
             {
-                selection.Remove(i);
+                selection.RemoveObject(i);
             }
 
             MoveItTool.m_debugPanel.UpdatePanel();

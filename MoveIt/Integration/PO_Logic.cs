@@ -9,9 +9,10 @@ namespace MoveIt
     {
         internal static Assembly POAssembly = null;
         protected Type _tPOLogic = null;
-        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null;
+        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null, tPOGroup = null;
         internal object POLogic = null;
-        private bool POHasFilters = true;
+        internal bool POHasFilters = true;
+        internal bool POHasGroups = true;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -43,9 +44,38 @@ namespace MoveIt
             {
                 POHasFilters = false;
             }
+            if (POAssembly.GetType("ProceduralObjects.Classes.POGroup") == null)
+            {
+                POHasGroups = false;
+            }
             POLogic = FindObjectOfType(tPOLogic);
 
             //Log.Debug($"POHasFilters:{POHasFilters}");
+        }
+
+        public List<PO_Group> Groups
+        {
+            get
+            {
+                if (!POHasGroups)
+                {
+                    Log.Debug($"PO Groups feature not found!");
+                    return new List<PO_Group>();
+                }
+
+                List<PO_Group> groups = new List<PO_Group>();
+
+                var groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
+                int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
+                    groups.Add(new PO_Group(v));
+                }
+
+                return groups;
+            }
         }
 
         public List<PO_Object> Objects

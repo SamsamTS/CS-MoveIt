@@ -588,6 +588,12 @@ namespace MoveIt
                     {
                         if (instance.isValid)
                         {
+                            if (instance is MoveableProc mpo)
+                            {
+                                if (mpo.m_procObj.Group != null && mpo.m_procObj.Group.root != mpo.m_procObj)
+                                    continue;
+                            }
+
                             bool contains = Action.selection.Contains(instance);
                             if ((adding && !contains) || (removing && contains) || (!adding && !removing))
                             {

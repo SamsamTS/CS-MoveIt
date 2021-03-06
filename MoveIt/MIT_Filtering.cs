@@ -356,7 +356,7 @@ namespace MoveIt
                         if (!obj.isHidden() && PointInRectangle(m_selection, obj.Position))
                         {
                             id.NetLane = obj.Id;
-                            list.Add(id);
+                            list.AddObject(id);
                         }
                     }
                 }

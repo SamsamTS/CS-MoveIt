@@ -146,7 +146,7 @@ namespace MoveIt
                     ActionQueue.instance.Invalidate();
                 }
 
-                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) //if (e.shift) - apparently fails in Linux
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) //"if (e.shift)" apparently fails in Linux
                 {
                     if (e.alt && m_hoverInstance is MoveableSegment ms && FindOwnerBuilding(ms.id.NetSegment, 363f) == 0)
                     {
@@ -170,11 +170,11 @@ namespace MoveIt
                     {
                         if (Action.selection.Contains(m_hoverInstance))
                         {
-                            Action.selection.Remove(m_hoverInstance);
+                            Action.selection.RemoveObject(m_hoverInstance);
                         }
                         else
                         {
-                            Action.selection.Add(m_hoverInstance);
+                            Action.selection.AddObject(m_hoverInstance);
                         }
                     }
                 }
@@ -199,7 +199,7 @@ namespace MoveIt
                     else
                     {
                         Action.selection.Clear();
-                        Action.selection.Add(m_hoverInstance);
+                        Action.selection.AddObject(m_hoverInstance);
                     }
                 }
 
@@ -370,7 +370,7 @@ namespace MoveIt
                 else
                 {
                     ActionQueue.instance.Push(new SelectAction());
-                    Action.selection.Add(m_lastInstance);
+                    Action.selection.AddObject(m_lastInstance);
 
                     action = new TransformAction();
                     ActionQueue.instance.Push(action);

@@ -10,7 +10,7 @@ namespace MoveIt
     internal class PO_Manager
     {
         private PO_Logic Logic;
-        private static GameObject gameObject;
+        public static GameObject gameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();
         internal Dictionary<uint, PO_Object> visibleObjects = new Dictionary<uint, PO_Object>();
@@ -18,7 +18,7 @@ namespace MoveIt
         internal List<PO_Object> Objects => new List<PO_Object>(visibleObjects.Values);
         internal PO_Object GetProcObj(uint id) => visibleObjects[id];
 
-        internal static readonly string[] VersionNames = { "1.6" };
+        internal static readonly string[] VersionNames = { "1.7" };
 
         internal bool Enabled = false;
         private bool _active = false;
@@ -160,14 +160,17 @@ namespace MoveIt
             }
             foreach (Instance instance in toRemove)
             {
-                Action.selection.Remove(instance);
+                Action.selection.RemoveObject(instance);
             }
+
             MoveItTool.m_debugPanel.UpdatePanel();
 
             //Log.Debug($"Visible from:{visibleObjects.Count} to:{newVisible.Count}\nSelected from:{selectedIds.Count} to:{newSelectedIds.Count}");
 
             visibleObjects = newVisible;
             visibleIds = newIds;
+
+            Log.Debug($"PO Groups: {Logic.Groups.Count} found");
 
             if (added.Count > 0 || removed.Count > 0)
                 return true;

@@ -71,6 +71,10 @@ namespace MoveIt
             MoveItTool.m_debugPanel = null;
             Object.Destroy(DebugGameObject);
             Object.Destroy(MoveToToolObject);
+            if (PO_Manager.gameObject != null)
+            {
+                Object.Destroy(PO_Manager.gameObject);
+            }
             UIToolOptionPanel.instance = null;
             UIMoreTools.MoreToolsPanel = null;
             UIMoreTools.MoreToolsBtn = null;
