@@ -170,7 +170,15 @@ namespace MoveIt
             visibleObjects = newVisible;
             visibleIds = newIds;
 
-            Log.Debug($"PO Groups: {Logic.Groups.Count} found");
+            //try
+            //{
+            //    Logic.InitGroups();
+            //    Log.Debug($"PO Groups: {Logic.Groups.Count} found");
+            //}
+            //catch (Exception e)
+            //{
+            //    Log.Error(e);
+            //}
 
             if (added.Count > 0 || removed.Count > 0)
                 return true;

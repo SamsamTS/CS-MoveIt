@@ -13,6 +13,7 @@ namespace MoveIt
         internal object POLogic = null;
         internal bool POHasFilters = true;
         internal bool POHasGroups = true;
+        //internal List<PO_Group> Groups;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -51,31 +52,6 @@ namespace MoveIt
             POLogic = FindObjectOfType(tPOLogic);
 
             //Log.Debug($"POHasFilters:{POHasFilters}");
-        }
-
-        public List<PO_Group> Groups
-        {
-            get
-            {
-                if (!POHasGroups)
-                {
-                    Log.Debug($"PO Groups feature not found!");
-                    return new List<PO_Group>();
-                }
-
-                List<PO_Group> groups = new List<PO_Group>();
-
-                var groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
-                int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
-
-                for (int i = 0; i < count; i++)
-                {
-                    var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
-                    groups.Add(new PO_Group(v));
-                }
-
-                return groups;
-            }
         }
 
         public List<PO_Object> Objects
@@ -237,6 +213,38 @@ namespace MoveIt
             return null;
         }
 
+        //public void InitGroups()
+        //{
+        //    Groups = new List<PO_Group>();
+
+        //    if (!POHasGroups)
+        //    {
+        //        Log.Debug($"PO Groups feature not found!");
+        //        return;
+        //    }
+
+        //    Log.Debug($"AAA1");
+        //    object groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
+        //    if (groupList == null)
+        //    {
+        //        Log.Debug($"PO Groups is null!");
+        //        return;
+        //    }
+        //    Log.Debug($"AAA2");
+        //    int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
+        //    Log.Debug($"AAA3");
+
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        Log.Debug($"AAA4.1");
+        //        var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
+        //        Log.Debug($"AAA4.2");
+        //        Groups.Add(new PO_Group(v));
+        //        Log.Debug($"AAA4.3");
+        //    }
+        //    Log.Debug($"AAA5");
+        //}
+
         private object AvailableProcInfos
         {
             get => tPOLogic.GetField("availableProceduralInfos").GetValue(POLogic);
@@ -273,7 +281,7 @@ namespace MoveIt
 
                     if (procInfo == null) throw new NullReferenceException("procInfo is null when converting to PO");
 
-                    if ((bool)procInfo.GetType().GetField("isBasicShape").GetValue(procInfo) && 
+                    if ((bool)procInfo.GetType().GetField("isBasicShape").GetValue(procInfo) &&
                         (int)tPOLogic.GetField("basicTextures").GetValue(POLogic).GetType().GetProperty("Count").GetValue(tPOLogic.GetField("basicTextures").GetValue(POLogic), null) > 0)
                     {
                         tPOLogic.GetField("currentlyEditingObject").SetValue(POLogic, null);
