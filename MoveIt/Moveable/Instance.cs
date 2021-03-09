@@ -15,7 +15,7 @@ namespace MoveIt
         public string Data; 
     }
 
-    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
+    [XmlInclude(typeof(BuildingState)), XmlInclude(typeof(NodeState)), XmlInclude(typeof(PropState)), XmlInclude(typeof(ProcState)), XmlInclude(typeof(SegmentState)), XmlInclude(typeof(TreeState))]
     public class InstanceState
     {
         [XmlIgnore]
@@ -88,6 +88,15 @@ namespace MoveIt
                             Info.Prefab = PrefabCollection<NetInfo>.FindLoaded(value);
                             break;
                         }
+                    case InstanceType.NetLane:
+                        {
+                            Info.Prefab = PrefabCollection<BuildingInfo>.FindLoaded(value);
+                            if (Info.Prefab == null)
+                            {
+                                Info.Prefab = PrefabCollection<PropInfo>.FindLoaded(value);
+                            }
+                            break;
+                        }
                 }
             }
         }
@@ -121,12 +130,17 @@ namespace MoveIt
                     try
                     {
                         MoveItIntegrationBase integration = item.Key;
-                        ret.Add(new IntegrationEntry
+                        string data = integration.Encode64(item.Value);
+                        //Log.Debug($"{integration.ID}:\n{ObjectDumper.Dump(data)}");
+                        if (data != null && data.Length > 0)
                         {
-                            ID = integration.ID,
-                            Version = integration.DataVersion.ToString(),
-                            Data = integration.Encode64(item.Value),
-                        });
+                            ret.Add(new IntegrationEntry
+                            {
+                                ID = integration.ID,
+                                Version = integration.DataVersion.ToString(),
+                                Data = data,
+                            });
+                        }
                     }
                     catch (Exception e)
                     {

@@ -84,10 +84,12 @@ namespace MoveIt
         {
             get
             {
-                string name = (string)tPO.GetField("basePrefabName").GetValue(procObj);
-                if (name.Length < 35)
-                    return "[PO]" + name;
-                return "[PO]" + name.Substring(0, 35);
+                //string name = (string)tPO.GetField("basePrefabName").GetValue(procObj);
+                //if (name.Length < 35)
+                //    return "[PO]" + name;
+                //return "[PO]" + name.Substring(0, 35);
+
+                return (string)tPO.GetField("basePrefabName").GetValue(procObj);
             }
             set { }
         }

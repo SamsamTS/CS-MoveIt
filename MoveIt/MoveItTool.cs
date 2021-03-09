@@ -1012,9 +1012,11 @@ namespace MoveIt
 
                 Directory.CreateDirectory(saveFolder);
 
+                //Log.Debug($"selectionState:{selectionState.states.Length}\n" + ObjectDumper.Dump(selectionState));
+
                 using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
                 {
-                    stream.SetLength(0); // Emptying the file !!!
+                    stream.SetLength(0); // Emptying the file
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                     XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                     ns.Add("", "");

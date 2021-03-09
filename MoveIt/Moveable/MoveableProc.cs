@@ -35,7 +35,8 @@ namespace MoveIt
                 instance = this,
                 Info = Info,
                 position = m_procObj.Position,
-                angle = m_procObj.Angle
+                angle = m_procObj.Angle,
+                isCustomContent = Info.Prefab.m_isCustomContent
             };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 

@@ -130,7 +130,7 @@ namespace MoveIt
             else if (id.NetLane > 0)
             {
                 IInfo info = MoveItTool.PO.GetProcObj(id.NetLane).Info;
-                HoverLarge.text = $"{id.NetLane}: {info.Name}";
+                HoverLarge.text = $"PO:{id.NetLane}  {info.Name}";
                 HoverLarge.tooltip = info.Name;
                 HoverSmall.text = $"\n";
             }
