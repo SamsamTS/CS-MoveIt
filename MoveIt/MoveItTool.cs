@@ -1000,6 +1000,7 @@ namespace MoveIt
 
                 Selection selectionState = new Selection
                 {
+                    version = ModInfo.version,
                     center = center,
                     states = new InstanceState[selection.Count]
                 };
