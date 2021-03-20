@@ -74,6 +74,7 @@ namespace MoveItIntegration
         /// <summary>Decode the record encoded by <see cref="Encode64(object)"/>.</summary>
         /// <param name="base64Data">The base 64 string that was encoded in <see cref="Encode64(object)"/></param>
         /// <param name="dataVersion"><see cref="DataVersion"/> when data was stored</param>
+        /// <returns>The data the integrated mod encoded</returns>
         public abstract object Decode64(string base64Data, Version dataVersion);
     }
 

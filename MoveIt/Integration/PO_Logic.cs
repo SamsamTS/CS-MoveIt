@@ -104,6 +104,30 @@ namespace MoveIt
             }
         }
 
+        public void Paste(InstanceID original, InstanceID target, int id)
+        {
+            InstanceID cloneID = target;
+            cloneID.NetLane = (uint)id + 1;
+            MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, GetPOById((uint)id + 1));
+
+            MoveableProc cloneInstance = new MoveableProc(cloneID){};
+
+            Action.selection.Add(cloneInstance);
+            if (ActionQueue.instance.current is CloneActionBase ca)
+            {
+                ca.m_clones.Add(cloneInstance);
+                ca.m_origToClone.Add(new MoveableProc(original), cloneInstance);
+            }
+            else
+            {
+                Log.Debug($"Current action is {ActionQueue.instance.current.GetType()}, not CloneActionBase");
+            }
+
+            MoveItTool.SetToolState();
+            MoveItTool.instance.ProcessSensitivityMode(false);
+            Log.Info($"Cloned PO {original.NetLane} to #{cloneInstance.id.NetLane} (new method)");
+        }
+
         public void Clone(MoveableProc original, Vector3 position, float angle, Action action)
         {
             MoveItTool.POProcessing++;

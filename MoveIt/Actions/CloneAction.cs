@@ -38,6 +38,7 @@ namespace MoveIt
                 {
                     try
                     {
+                        Debug.Log($"AAA\n- {item.Value.id}, {MoveItTool.InstanceIDDebug(item.Value.id)}\n- {data.Value}");
                         data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
                     }
                     catch (Exception e)

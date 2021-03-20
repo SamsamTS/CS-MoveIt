@@ -183,9 +183,18 @@ namespace MoveIt
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position)
         {
             float size = 4f;
+            if (tPO.GetField("halfOverlayDiam") != null)
+            {
+                size = (float)tPO.GetField("halfOverlayDiam").GetValue(procObj);
+            }
             Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
         }
+
+        //public static void RenderCloneGeometry(ProcState state, Quaternion rot)
+        //{
+        //    tPO.GetMethod("RenderGeometry", flags, null, new Type[] { typeof(Vector3), typeof(Quaternion) }, null).Invoke(state.original.GetProceduralObject(), new object[] { Position, new Quaternion() });
+        //}
 
         internal bool isGroupRoot()
         {
