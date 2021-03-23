@@ -998,10 +998,21 @@ namespace MoveIt
 
                 if (selection.Count == 0) return false;
 
+                bool includesPO = false;
+                foreach (Instance ins in selection)
+                {
+                    if (ins is MoveableProc)
+                    {
+                        includesPO = true;
+                        break;
+                    }
+                }
+
                 Selection selectionState = new Selection
                 {
                     version = ModInfo.version,
                     center = center,
+                    includesPO = includesPO,
                     states = new InstanceState[selection.Count]
                 };
 
@@ -1053,6 +1064,13 @@ namespace MoveIt
                 StopCloning();
                 StopTool();
 
+                bool activatePO = true;
+                if (!PO.Active)
+                {
+                    activatePO = false;
+                    PO.InitialiseTool(true);
+                }
+
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                 Selection selectionState;
 
@@ -1074,6 +1092,11 @@ namespace MoveIt
 
                     UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Import failed", "Couldn't load '" + path + "'\n\n" + e.Message, true);
                     return;
+                }
+
+                if (!activatePO && !selectionState.includesPO)
+                {
+                    PO.InitialiseTool(false);
                 }
 
                 if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)

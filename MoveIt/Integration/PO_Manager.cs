@@ -16,7 +16,6 @@ namespace MoveIt
         internal Dictionary<uint, PO_Object> visibleObjects = new Dictionary<uint, PO_Object>();
 
         internal List<PO_Object> Objects => new List<PO_Object>(visibleObjects.Values);
-        internal PO_Object GetProcObj(uint id) => visibleObjects[id];
 
         internal static readonly string[] VersionNames = { "1.7" };
 
@@ -49,6 +48,8 @@ namespace MoveIt
                 Enabled = false;
             }
         }
+
+        internal PO_Object GetProcObj(uint id) => visibleObjects[id];
 
         private void InitialiseLogic()
         {

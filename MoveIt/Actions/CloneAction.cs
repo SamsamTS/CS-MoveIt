@@ -12,6 +12,8 @@ namespace MoveIt
         // Constructor for imported selections
         public CloneAction(InstanceState[] states, Vector3 centerPoint) : base(false)
         {
+            bool includesPO = false;
+
             m_oldSelection = selection;
             m_states.Clear();
 
@@ -20,7 +22,17 @@ namespace MoveIt
                 if (state.instance != null && state.Info.Prefab != null)
                 {
                     m_states.Add(state);
+
+                    if (state is ProcState)
+                    {
+                        includesPO = true;
+                    }
                 }
+            }
+
+            if (includesPO && !MoveItTool.PO.Active)
+            {
+                MoveItTool.PO.InitialiseTool(true);
             }
 
             center = centerPoint;

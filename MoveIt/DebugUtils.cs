@@ -47,13 +47,12 @@ namespace MoveIt
 
         public static void LogException(Exception e)
         {
-            MoveIt.Log.Error(modPrefix + "Intercepted exception (not game breaking):" + Environment.NewLine + $"{e.Message}");
+            MoveIt.Log.Error(modPrefix + "Intercepted exception (not game breaking):" + Environment.NewLine + $"{e.GetType()} - {e.Message}");
             Debug.LogException(e);
         }
 
         public static void AssertEq(object lhs, object rhs, string m)
         {
-
             if (!lhs.Equals(rhs))
             {
 #if DEBUG
