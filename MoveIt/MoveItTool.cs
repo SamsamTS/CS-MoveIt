@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -605,7 +606,7 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
-                CloneAction action = ActionQueue.instance.current as CloneAction;
+                CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
 
                 Matrix4x4 matrix4x = default;
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -627,7 +628,7 @@ namespace MoveIt
         {
             if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
-                CloneAction action = ActionQueue.instance.current as CloneAction;
+                CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
 
                 Matrix4x4 matrix4x = default;
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -643,7 +644,7 @@ namespace MoveIt
 
                 foreach (InstanceState state in action.m_states)
                 {
-                    state.instance.RenderGeometry(cameraInfo, m_hoverColor);
+                    state.instance?.RenderGeometry(cameraInfo, m_hoverColor);
                 }
             }
         }
@@ -1131,7 +1132,7 @@ namespace MoveIt
                         }
                     }
 
-                    CloneAction action = new CloneAction(selectionState.states, selectionState.center);
+                    CloneActionBase action = new CloneActionImport(selectionState.states, selectionState.center);
 
                     if (action.Count > 0)
                     {
@@ -1197,11 +1198,6 @@ namespace MoveIt
                 ZoneManager.instance.ReleaseBlock(segmentBlock);
                 segmentBlock = 0;
             }
-        }
-
-        public static string InstanceIDDebug(InstanceID id)
-        {
-            return $"(B:{id.Building},P:{id.Prop},T:{id.Tree},N:{id.NetNode},S:{id.NetSegment},L:{id.NetLane})";
         }
 
         public static string InstanceIDDebug(Instance instance)

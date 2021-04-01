@@ -1,16 +1,15 @@
 ﻿using ColossalFramework;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace MoveIt
 {
-    public class CloneAction : CloneActionBase
+    public class CloneActionImport : CloneActionBase
     {
-        public CloneAction() : base(true) {}
-
         // Constructor for imported selections
-        public CloneAction(InstanceState[] states, Vector3 centerPoint) : base(false)
+        public CloneActionImport(InstanceState[] states, Vector3 centerPoint)
         {
             bool includesPO = false;
 
@@ -36,70 +35,52 @@ namespace MoveIt
             }
 
             center = centerPoint;
-            _isImport = true;
-        }
-
-        public override void Do()
-        {
-            base.Do();
-
-            // Clone integrations
-            foreach (var item in m_stateToClone)
-            {
-                foreach (var data in item.Key.IntegrationData)
-                {
-                    try
-                    {
-                        Debug.Log($"AAA\n- {item.Value.id}, {MoveItTool.InstanceIDDebug(item.Value.id)}\n- {data.Value}");
-                        data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
-                    }
-                    catch (Exception e)
-                    {
-                        InstanceID sourceInstanceID = item.Key.instance.id;
-                        InstanceID targetInstanceID = item.Value.id;
-                        Log.Error($"integration {data.Key} Failed to paste from " +
-                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
-                        DebugUtils.LogException(e);
-                    }
-                }
-            }
         }
     }
 
-    public class DuplicateAction : CloneActionBase
+    public class CloneAction : CloneActionMain
     {
-        public DuplicateAction() : base(true)
+        public CloneAction() : base() {}
+
+        //public override void Do()
+        //{
+        //    base.Do();
+
+        //    // Clone integrations
+        //    foreach (var item in m_stateToClone)
+        //    {
+        //        foreach (var data in item.Key.IntegrationData)
+        //        {
+        //            try
+        //            {
+        //                data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                InstanceID sourceInstanceID = item.Key.instance.id;
+        //                InstanceID targetInstanceID = item.Value.id;
+        //                Log.Error($"integration {data.Key} Failed to paste from " +
+        //                    $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+        //                DebugUtils.LogException(e);
+        //            }
+        //        }
+        //    }
+        //}
+    }
+
+    public class DuplicateAction : CloneActionMain
+    {
+        public DuplicateAction() : base()
         {
             angleDelta = 0f;
             moveDelta = Vector3.zero;
         }
     }
 
-    public class CloneActionBase : Action
+    public class CloneActionMain : CloneActionBase
     {
-        public Vector3 moveDelta;
-        public Vector3 center;
-        public float angleDelta;
-        public bool followTerrain;
-
-        public HashSet<InstanceState> m_states = new HashSet<InstanceState>(); // the InstanceStates to be cloned
-        internal HashSet<Instance> m_clones; // the resulting Instances
-        internal HashSet<Instance> m_oldSelection; // The selection before cloning
-
-        protected bool _isImport = false;
-
-        internal Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
-        internal Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
-        internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
-        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>(); // Map of original state to clone's instance
-        protected Dictionary<InstanceID, InstanceID> m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
-
-        protected Matrix4x4 matrix4x = default;
-
-        public CloneActionBase(bool defaultConstructor) : base()
+        public CloneActionMain() : base()
         {
-            if (!defaultConstructor) return; // Ugly hack to control when this constructor is called by derived classes
-
             m_oldSelection = selection;
 
             HashSet<Instance> newSelection = GetCleanSelection(out center);
@@ -114,6 +95,26 @@ namespace MoveIt
                 }
             }
         }
+    }
+
+    public class CloneActionBase : Action
+    {
+        public Vector3 moveDelta;
+        public Vector3 center;
+        public float angleDelta;
+        public bool followTerrain;
+
+        public HashSet<InstanceState> m_states = new HashSet<InstanceState>(); // the InstanceStates to be cloned
+        internal HashSet<Instance> m_clones; // the resulting Instances
+        internal HashSet<Instance> m_oldSelection; // The selection before cloning
+
+        internal Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
+        internal Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
+        internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
+        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>(); // Map of original state to clone's instance
+        protected Dictionary<InstanceID, InstanceID> m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
+
+        protected Matrix4x4 matrix4x = default;
 
         public static HashSet<Instance> GetCleanSelection(out Vector3 center)
         {
@@ -290,7 +291,7 @@ namespace MoveIt
                         m_clones.Add(clone);
                         m_stateToClone.Add(state, clone);
                         m_InstanceID_origToClone.Add(state.instance.id, clone.id);
-                        m_origToCloneUpdate.Add(state.instance.id, clone.id);
+                        m_origToCloneUpdate.Add(state.instance, clone);
                         m_nodeOrigToClone.Add(state.instance.id.NetNode, clone.id.NetNode);
                     }
                 }
@@ -299,7 +300,7 @@ namespace MoveIt
             // Clone everything else except PO
             foreach (InstanceState state in m_states)
             {
-                if (!(state is NodeState || state is ProcState))
+                if (!(state is NodeState))
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
 
@@ -312,8 +313,8 @@ namespace MoveIt
                     m_clones.Add(clone);
                     m_stateToClone.Add(state, clone);
                     m_InstanceID_origToClone.Add(state.instance.id, clone.id);
-                    m_origToCloneUpdate.Add(state.instance.id, clone.id);
-;
+                    m_origToCloneUpdate.Add(state.instance, clone);
+
                     if (state is SegmentState segmentState)
                     {
                         MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
@@ -331,15 +332,6 @@ namespace MoveIt
                             }
                         }
                     }
-                }
-            }
-
-            // Clone PO
-            foreach (InstanceState state in m_states)
-            {
-                if (state is ProcState)
-                {
-                    _ = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
             }
 
@@ -372,8 +364,29 @@ namespace MoveIt
                 DebugUtils.Log("CloneActionBase.Do failed");
                 DebugUtils.LogException(e);
             }
-        }
 
+            // Clone integrations
+            foreach (var item in m_stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        Debug.Log($"AAA00 Integrated-Paste\n- {item.Value.id} {item.Value.id.Debug()}\n- {data.Value}");
+                        data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
+                    }
+                    catch (Exception e)
+                    {
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Log.Error($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                        DebugUtils.LogException(e);
+                    }
+                }
+            }
+        }
+        
         public override void Undo()
         {
             if (m_clones == null) return;

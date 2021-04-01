@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 
 namespace MoveIt
 {
@@ -9,8 +10,9 @@ namespace MoveIt
     {
         internal static Assembly POAssembly = null;
         protected Type _tPOLogic = null;
-        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null, tPOGroup = null;
-        internal object POLogic = null;
+        internal static Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null, tPOGroup = null;
+        internal static object POLogic = null;
+        internal static PO_Object PObuffer = null;
         internal bool POHasFilters = true;
         internal bool POHasGroups = true;
         //internal List<PO_Group> Groups;
@@ -51,10 +53,15 @@ namespace MoveIt
             }
             POLogic = FindObjectOfType(tPOLogic);
 
+            if (POLogic is null)
+            {
+                throw new Exception("PO Logic not found!");
+            }
+
             //Log.Debug($"POHasFilters:{POHasFilters}");
         }
 
-        public List<PO_Object> Objects
+        public List<PO_Object> AllObjects
         {
             get
             {
@@ -72,33 +79,47 @@ namespace MoveIt
 
                     if (activeIds.Contains(o.ProcId))
                     {
-                        Log.Info($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate.");
+                        Log.Info($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate with index {i}.");
                     }
                     else
                     {
-                        if (POHasFilters)
-                        {
-                            var filters = tPOLogic.GetField("filters", flags).GetValue(POLogic);
-                            if ((bool)filters.GetType().GetMethod("FiltersAllow", new Type[] { tPO }).Invoke(filters, new object[] { o.procObj }))
-                            {
-                                objects.Add(o);
-                                activeIds.Add(o.ProcId);
-                            }
-                        }
-                        else
-                        {
-                            objects.Add(o);
-                            activeIds.Add(o.ProcId);
-                        }
+                        objects.Add(o);
+                        activeIds.Add(o.ProcId);
                     }
                 }
 
-                //string msg = $"activeIds ({activeIds.Count}):\n";
+                //string msg = $"total:{count}, activeIds ({activeIds.Count}):\n";
                 //foreach (int a in activeIds)
                 //{
                 //    msg += $"{a},";
                 //}
                 //Log.Debug(msg);
+
+                return objects;
+            }
+        }
+
+        public List<PO_Object> Objects
+        {
+            get
+            {
+                List<PO_Object> objects = new List<PO_Object>();
+
+                foreach (PO_Object obj in AllObjects)
+                {
+                    if (POHasFilters)
+                    {
+                        var filters = tPOLogic.GetField("filters", flags).GetValue(POLogic);
+                        if ((bool)filters.GetType().GetMethod("FiltersAllow", new Type[] { tPO }).Invoke(filters, new object[] { obj.procObj }))
+                        {
+                            objects.Add(obj);
+                        }
+                    }
+                    else
+                    {
+                        objects.Add(obj);
+                    }
+                }
 
                 return objects;
             }
@@ -128,88 +149,106 @@ namespace MoveIt
             Log.Info($"Cloned PO {original.NetLane} to #{cloneInstance.id.NetLane} (new method)");
         }
 
-        public void Clone(MoveableProc original, Vector3 position, float angle, Action action)
+        public uint Clone(ProcState original, Vector3 position, float angle)
         {
-            MoveItTool.POProcessing++;
-            tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { original.m_procObj.GetProceduralObject() });
-            StartCoroutine(RetrieveClone(original, position, angle, action));
+            // Create an empty PO object that integration will manipulate
+
+            PrefabInfo prefab = PrefabCollection<BuildingInfo>.FindLoaded(original.prefabName);
+            if (prefab is null)
+            {
+                prefab = PrefabCollection<PropInfo>.FindLoaded(original.prefabName);
+            }
+
+            object raw = tPOLogic.Assembly.CreateInstance("ProceduralObjects.Classes.ProceduralObject");
+            int id = (int)tPUtils.GetMethod("GetNextUnusedId").Invoke(null, new[] { tPOLogic.GetField("proceduralObjects").GetValue(POLogic) });
+            tPO.GetField("id").SetValue(raw, id);
+            object POlist = tPOLogic.GetField("proceduralObjects").GetValue(POLogic);
+            POlist.GetType().GetMethod("Add", new Type[] { tPO }).Invoke(POlist, new[] { raw });
+            return (uint)id + 1;
         }
 
-        public IEnumerator<object> RetrieveClone(MoveableProc original, Vector3 position, float angle, Action action)
-        {
-            const uint MaxAttempts = 100_000;
-            CloneActionBase ca = (CloneActionBase)action;
+        //public void Clone(MoveableProc original, Vector3 position, float angle, Action action)
+        //{
+        //    MoveItTool.POProcessing++;
+        //    tPOMoveIt.GetMethod("CallPOCloning", new Type[] { tPO }).Invoke(null, new[] { original.m_procObj.GetProceduralObject() });
+        //    StartCoroutine(RetrieveClone(original, position, angle, action));
+        //}
 
-            if (!(original.m_procObj is PO_Object))
-            {
-                Log.Info($"PO Cloning failed: object not found");
-                MoveItTool.POProcessing--;
-                yield break;
-            }
+        //public IEnumerator<object> RetrieveClone(MoveableProc original, Vector3 position, float angle, Action action)
+        //{
+        //    const uint MaxAttempts = 100_000;
+        //    CloneActionBase ca = (CloneActionBase)action;
 
-            Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
-            object[] paramList = new[] { original.m_procObj.GetProceduralObject(), null, null };
-            MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null);
-            if (retrieve == null)
-            {
-                Log.Info($"PO Cloning failed: retrieve not found");
-                MoveItTool.POProcessing--;
-                yield break;
-            }
+        //    if (!(original.m_procObj is PO_Object))
+        //    {
+        //        Log.Info($"PO Cloning failed: object not found");
+        //        MoveItTool.POProcessing--;
+        //        yield break;
+        //    }
 
-            uint c = 0;
-            while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
-            {
-                //if (c % 100 == 0)
-                //{
-                //    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
-                //    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
-                //    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
-                //    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
-                //    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
-                //}
-                c++;
-                yield return new WaitForSeconds(0.05f);
-            }
+        //    Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
+        //    object[] paramList = new[] { original.m_procObj.GetProceduralObject(), null, null };
+        //    MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null);
+        //    if (retrieve == null)
+        //    {
+        //        Log.Info($"PO Cloning failed: retrieve not found");
+        //        MoveItTool.POProcessing--;
+        //        yield break;
+        //    }
 
-            if (c == MaxAttempts)
-            {
-                throw new Exception($"Failed to clone object #{original.m_procObj.Id}! [PO-F4]");
-            }
+        //    uint c = 0;
+        //    while (c < MaxAttempts && !(bool)retrieve.Invoke(null, paramList))
+        //    {
+        //        //if (c % 100 == 0)
+        //        //{
+        //        //    BindingFlags f = BindingFlags.Static | BindingFlags.Public;
+        //        //    object queueObj = tPOMoveIt.GetField("queuedCloning", f).GetValue(null);
+        //        //    int queueCount = (int)queueObj.GetType().GetProperty("Count").GetValue(queueObj, null);
+        //        //    object doneObj = tPOMoveIt.GetField("doneCloning", f).GetValue(null);
+        //        //    int doneCount = (int)doneObj.GetType().GetProperty("Count").GetValue(doneObj, null);
+        //        //}
+        //        c++;
+        //        yield return new WaitForSeconds(0.05f);
+        //    }
 
-            try
-            {
-                PO_Object clone = new PO_Object(paramList[1])
-                {
-                    POColor = original.m_procObj.POColor
-                };
+        //    if (c == MaxAttempts)
+        //    {
+        //        throw new Exception($"Failed to clone object #{original.m_procObj.Id}! [PO-F4]");
+        //    }
 
-                InstanceID cloneID = default;
-                cloneID.NetLane = clone.Id;
-                MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
+        //    try
+        //    {
+        //        PO_Object clone = new PO_Object(paramList[1])
+        //        {
+        //            POColor = original.m_procObj.POColor
+        //        };
 
-                MoveableProc cloneInstance = new MoveableProc(cloneID)
-                {
-                    position = position,
-                    angle = angle
-                };
+        //        InstanceID cloneID = default;
+        //        cloneID.NetLane = clone.Id;
+        //        MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
 
-                Action.selection.Add(cloneInstance);
-                ca.m_clones.Add(cloneInstance);
-                ca.m_origToClone.Add(original, cloneInstance);
+        //        MoveableProc cloneInstance = new MoveableProc(cloneID)
+        //        {
+        //            position = position,
+        //            angle = angle
+        //        };
 
-                MoveItTool.SetToolState();
-                MoveItTool.instance.ProcessSensitivityMode(false);
-                Log.Info($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
-            }
-            catch (Exception e)
-            {
-                Log.Error($"Exception when cloning PO:\n{e}");
-            }
+        //        Action.selection.Add(cloneInstance);
+        //        ca.m_clones.Add(cloneInstance);
+        //        ca.m_origToClone.Add(original, cloneInstance);
 
-            yield return new WaitForSeconds(0.25f);
-            MoveItTool.POProcessing--;
-        }
+        //        MoveItTool.SetToolState();
+        //        MoveItTool.instance.ProcessSensitivityMode(false);
+        //        Log.Info($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Error($"Exception when cloning PO:\n{e}");
+        //    }
+
+        //    yield return new WaitForSeconds(0.25f);
+        //    MoveItTool.POProcessing--;
+        //}
 
         public void Delete(PO_Object obj)
         {
@@ -231,9 +270,23 @@ namespace MoveIt
             foreach (PO_Object po in Objects)
             {
                 if (po.Id == id)
+                {
                     return po;
+                }
             }
+            return null;
+        }
 
+        /// <param name="id">The NetLane id</param>
+        internal PO_Object GetPOByIdUnfiltered(uint id)
+        {
+            foreach (PO_Object po in AllObjects)
+            {
+                if (po.Id == id)
+                {
+                    return po;
+                }
+            }
             return null;
         }
 
@@ -247,26 +300,26 @@ namespace MoveIt
         //        return;
         //    }
 
-        //    Log.Debug($"AAA1");
+        //    Log.Debug($"AAG01");
         //    object groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
         //    if (groupList == null)
         //    {
         //        Log.Debug($"PO Groups is null!");
         //        return;
         //    }
-        //    Log.Debug($"AAA2");
+        //    Log.Debug($"AAG02");
         //    int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
-        //    Log.Debug($"AAA3");
+        //    Log.Debug($"AAG03");
 
         //    for (int i = 0; i < count; i++)
         //    {
-        //        Log.Debug($"AAA4.1");
+        //        Log.Debug($"AAG04.1");
         //        var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
-        //        Log.Debug($"AAA4.2");
+        //        Log.Debug($"AAG04.2");
         //        Groups.Add(new PO_Group(v));
-        //        Log.Debug($"AAA4.3");
+        //        Log.Debug($"AAG04.3");
         //    }
-        //    Log.Debug($"AAA5");
+        //    Log.Debug($"AAG05");
         //}
 
         private object AvailableProcInfos
@@ -274,79 +327,69 @@ namespace MoveIt
             get => tPOLogic.GetField("availableProceduralInfos").GetValue(POLogic);
         }
 
-        public PO_Object ConvertToPO(Instance instance)
+        private object GetPInfo(PrefabInfo prefab)
         {
             // Most code adapted from PO ProceduralObjectsLogic.ConvertToProcedural, by Simon Ryr
+
+            object procInfo = null;
+            int count, i;
 
             if (AvailableProcInfos == null)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
             if ((int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null) == 0)
                 tPOLogic.GetField("availableProceduralInfos").SetValue(POLogic, tPUtils.GetMethod("CreateProceduralInfosList").Invoke(null, null));
 
+            string field = "buildingPrefab";
+            if (prefab is PropInfo)
+                field = "propPrefab";
+
             try
             {
-                object procInfo = null;
-                int count, i;
-
-                if (instance is MoveableProp mp)
+                count = (int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null);
+                for (i = 0; i < count; i++)
                 {
-                    count = (int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null);
-                    for (i = 0; i < count; i++)
-                    {
-                        var info = AvailableProcInfos.GetType().GetMethod("get_Item").Invoke(AvailableProcInfos, new object[] { i });
-                        if (info == null) continue;
+                    var info = AvailableProcInfos.GetType().GetMethod("get_Item").Invoke(AvailableProcInfos, new object[] { i });
+                    if (info == null) continue;
 
-                        if ((PropInfo)info.GetType().GetField("propPrefab").GetValue(info) == (PropInfo)instance.Info.Prefab)
-                        {
-                            procInfo = info;
-                            break;
-                        }
-                    }
-
-                    if (procInfo == null) throw new NullReferenceException("procInfo is null when converting to PO");
-
-                    if ((bool)procInfo.GetType().GetField("isBasicShape").GetValue(procInfo) &&
-                        (int)tPOLogic.GetField("basicTextures").GetValue(POLogic).GetType().GetProperty("Count").GetValue(tPOLogic.GetField("basicTextures").GetValue(POLogic), null) > 0)
+                    if ((PrefabInfo)info.GetType().GetField(field).GetValue(info) == prefab)
                     {
-                        tPOLogic.GetField("currentlyEditingObject").SetValue(POLogic, null);
-                        tPOLogic.GetField("chosenProceduralInfo").SetValue(POLogic, procInfo);
-                    }
-                    else
-                    {
-                        tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
-                        var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
-                        tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
+                        procInfo = info;
+                        break;
                     }
                 }
-                else if (instance is MoveableBuilding mb)
+                
+                if (procInfo is null)
                 {
-                    count = (int)AvailableProcInfos.GetType().GetProperty("Count").GetValue(AvailableProcInfos, null);
-                    for (i = 0; i < count; i++)
-                    {
-                        var info = AvailableProcInfos.GetType().GetMethod("get_Item").Invoke(AvailableProcInfos, new object[] { i });
-                        if (info == null) continue;
+                    throw new NullReferenceException($"procInfo for {prefab.name} is null!");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
 
-                        if ((BuildingInfo)info.GetType().GetField("buildingPrefab").GetValue(info) == (BuildingInfo)instance.Info.Prefab)
-                        {
-                            procInfo = info;
-                            break;
-                        }
-                    }
+            return procInfo;
+        }
 
-                    if (procInfo == null) throw new NullReferenceException("procInfo is null when converting to PO");
+        public PO_Object ConvertToPO(Instance instance)
+        {
+            // Most code adapted from PO ProceduralObjectsLogic.ConvertToProcedural, by Simon Ryr
 
-                    if ((bool)procInfo.GetType().GetField("isBasicShape").GetValue(procInfo) &&
-                        (int)tPOLogic.GetField("basicTextures").GetValue(POLogic).GetType().GetProperty("Count").GetValue(tPOLogic.GetField("basicTextures").GetValue(POLogic), null) > 0)
-                    {
-                        tPOLogic.GetField("currentlyEditingObject").SetValue(POLogic, null);
-                        tPOLogic.GetField("chosenProceduralInfo").SetValue(POLogic, procInfo);
-                    }
-                    else
-                    {
-                        tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
-                        var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
-                        tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
-                    }
+            try
+            {
+                object procInfo = GetPInfo(instance.Info.Prefab);
+
+                if ((bool)procInfo.GetType().GetField("isBasicShape").GetValue(procInfo) &&
+                    (int)tPOLogic.GetField("basicTextures").GetValue(POLogic).GetType().GetProperty("Count").GetValue(tPOLogic.GetField("basicTextures").GetValue(POLogic), null) > 0)
+                {
+                    tPOLogic.GetField("currentlyEditingObject").SetValue(POLogic, null);
+                    tPOLogic.GetField("chosenProceduralInfo").SetValue(POLogic, procInfo);
+                }
+                else
+                {
+                    tPOLogic.GetMethod("SpawnObject", new Type[] { tPInfo, typeof(Texture2D) }).Invoke(POLogic, new[] { procInfo, null });
+                    var v = tVertex.GetMethod("CreateVertexList", new Type[] { tPO }).Invoke(null, new[] { tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic) });
+                    tPOLogic.GetField("tempVerticesBuffer").SetValue(POLogic, v);
                 }
 
                 object poObj = tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic);
@@ -394,31 +437,19 @@ namespace MoveIt
 
     public class Info_POEnabled : IInfo
     {
-        private PO_Object _obj = null;
         private PrefabInfo _Prefab = null;
 
-        public Info_POEnabled(object i)
+        public Info_POEnabled(PrefabInfo info)
         {
-            _obj = (PO_Object)i;
+            _Prefab = info;
         }
 
-        public string Name => _obj.Name;
+        public string Name => _Prefab is null ? "NULL" : _Prefab.name;
 
         public PrefabInfo Prefab
         {
-            get
-            {
-                _Prefab = (PrefabInfo)_obj.tPO.GetField("_baseBuilding").GetValue(_obj.procObj);
-                if (_Prefab == null)
-                {
-                    _Prefab = (PrefabInfo)_obj.tPO.GetField("_baseProp").GetValue(_obj.procObj);
-                }
-                return _Prefab;
-            }
-            set
-            {
-                _Prefab = value;
-            }
+            get => _Prefab;
+            set => _Prefab = value;
         }
     }
 }

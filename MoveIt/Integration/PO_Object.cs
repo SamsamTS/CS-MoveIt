@@ -34,12 +34,12 @@ namespace MoveIt
                 }
             }
 
-            string msg = $"AAA - Count:{count}\n";
-            foreach (PO_Object o in objects)
-            {
-                msg += $"{o.Id}, ";
-            }
-            Log.Debug(msg);
+            //string msg = $"AAG07 - Count:{count}\n";
+            //foreach (PO_Object o in objects)
+            //{
+            //    msg += $"{o.Id}, ";
+            //}
+            //Log.Debug(msg);
         }
     }
 
@@ -58,26 +58,46 @@ namespace MoveIt
         internal readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
         internal PO_Group Group = null;
 
+        internal bool m_dummy = false;
+
         internal Vector3 Position
         {
-            get => (Vector3)tPO.GetField("m_position").GetValue(procObj);
+            get
+            {
+                if (m_dummy) return Vector3.zero;
+                return (Vector3)tPO.GetField("m_position").GetValue(procObj);
+            }
             set
             {
+                if (m_dummy) return;
                 tPO.GetField("m_position").SetValue(procObj, value);
             }
         }
         internal Color POColor
         {
-            get => (Color)tPO.GetField("m_color").GetValue(procObj);
+            get
+            {
+                if (m_dummy) return new Color();
+                return (Color)tPO.GetField("m_color").GetValue(procObj);
+            }
             set
             {
+                if (m_dummy) return;
                 tPO.GetField("m_color").SetValue(procObj, value);
             }
         }
         private Quaternion Rotation
         {
-            get => (Quaternion)tPO.GetField("m_rotation").GetValue(procObj);
-            set => tPO.GetField("m_rotation").SetValue(procObj, value);
+            get
+            {
+                if (m_dummy) return new Quaternion();
+                return (Quaternion)tPO.GetField("m_rotation").GetValue(procObj);
+            }
+            set
+            {
+                if (m_dummy) return;
+                tPO.GetField("m_rotation").SetValue(procObj, value);
+            }
         }
 
         public string Name
@@ -89,6 +109,12 @@ namespace MoveIt
                 //    return "[PO]" + name;
                 //return "[PO]" + name.Substring(0, 35);
 
+                Log.Debug($"AAA02 - {Info.Name}");
+
+                if (m_dummy)
+                {
+                    return "DUMMY PO";
+                }
                 return (string)tPO.GetField("basePrefabName").GetValue(procObj);
             }
             set { }
@@ -98,6 +124,8 @@ namespace MoveIt
         {
             get
             {
+                if (m_dummy) return 0;
+
                 float a = -Rotation.eulerAngles.y % 360f;
                 if (a < 0) a += 360f;
                 return a * Mathf.Deg2Rad;
@@ -105,6 +133,8 @@ namespace MoveIt
 
             set
             {
+                if (m_dummy) return;
+
                 float a = -(value * Mathf.Rad2Deg) % 360f;
                 if (a < 0) a += 360f;
                 
@@ -114,18 +144,7 @@ namespace MoveIt
             }
         }
 
-        private Info_POEnabled _info = null;
-        public IInfo Info
-        {
-            get
-            {
-                if (_info == null)
-                    _info = new Info_POEnabled(this);
-
-                return _info;
-            }
-            set => _info = (Info_POEnabled)value;
-        }
+        public IInfo Info = null;
 
         public PO_Object(object obj)
         {
@@ -137,6 +156,16 @@ namespace MoveIt
 
             procObj = obj;
             ProcId = (int)tPO.GetField("id").GetValue(procObj);
+
+            Info = new Info_POEnabled(GetPrefab());
+        }
+
+        public PO_Object()
+        {
+            m_dummy = true;
+            procObj = null;
+
+            Info = new Info_POEnabled(null);
         }
 
         public object GetProceduralObject()
@@ -146,6 +175,8 @@ namespace MoveIt
 
         public bool isHidden()
         {
+            if (m_dummy) return false;
+
             object layer = tPO.GetField("layer").GetValue(procObj);
             if (Group is PO_Group)
             {
@@ -183,9 +214,9 @@ namespace MoveIt
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position)
         {
             float size = 4f;
-            if (tPO.GetField("halfOverlayDiam") != null)
+            if (!m_dummy && tPO.GetField("halfOverlayDiam") != null)
             {
-                size = (float)tPO.GetField("halfOverlayDiam").GetValue(procObj);
+                size = Math.Max((float)tPO.GetField("halfOverlayDiam").GetValue(procObj), 2f);
             }
             Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
@@ -198,11 +229,28 @@ namespace MoveIt
 
         internal bool isGroupRoot()
         {
+            if (m_dummy) return false;
             if (tPO.GetField("isRootOfGroup") == null) // User's PO version doesn't have group feature
             {
                 return false;
             }
             return (bool)tPO.GetField("isRootOfGroup").GetValue(procObj);
+        }
+
+        private PrefabInfo GetPrefab()
+        {
+            if (m_dummy)
+            {
+                Log.Debug($"AAA01 DUMMY PREFAB");
+                return null;
+            }
+
+            PrefabInfo prefab = (PrefabInfo)tPO.GetField("_baseBuilding").GetValue(procObj);
+            if (prefab == null)
+            {
+                prefab = (PrefabInfo)tPO.GetField("_baseProp").GetValue(procObj);
+            }
+            return prefab;
         }
     }
 }

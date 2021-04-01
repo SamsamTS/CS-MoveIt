@@ -122,7 +122,7 @@ namespace MoveIt
                 }
                 else if (element is Instance ins)
                 {
-                    Write($"Instance {MoveItTool.InstanceIDDebug(ins.id)}:{ins.Info.Prefab}");
+                    Write($"Instance {ins.id.Debug()}:{ins.Info.Prefab}");
                 }
                 else if (element is IInfo info)
                 {

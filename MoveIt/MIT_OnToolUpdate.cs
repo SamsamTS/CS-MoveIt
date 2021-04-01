@@ -269,7 +269,7 @@ namespace MoveIt
 
                                 UpdateSensitivityMode();
 
-                                CloneAction action = ActionQueue.instance.current as CloneAction;
+                                CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
 
                                 Vector3 newMove;
                                 float y = action.moveDelta.y;
@@ -302,7 +302,7 @@ namespace MoveIt
                             {
                                 UpdateSensitivityMode();
 
-                                CloneAction action = ActionQueue.instance.current as CloneAction;
+                                CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
 
                                 float newAngle;
 

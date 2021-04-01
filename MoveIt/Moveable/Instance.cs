@@ -131,7 +131,6 @@ namespace MoveIt
                     {
                         MoveItIntegrationBase integration = item.Key;
                         string data = integration.Encode64(item.Value);
-                        //Log.Debug($"{integration.ID}:\n{ObjectDumper.Dump(data)}");
                         if (data != null && data.Length > 0)
                         {
                             ret.Add(new IntegrationEntry
@@ -174,7 +173,6 @@ namespace MoveIt
 
         public virtual void SaveIntegrations(bool integrate)
         {
-            //Log.Debug($"AAA1 {Info.Name} - {integrate}\n{ActionQueue.instance.current.GetType()}");
             if (!integrate) return;
 
             foreach (var integration in MoveItTool.Integrations)
@@ -454,6 +452,14 @@ namespace MoveIt
         }
 
         public override string ToString()
+        {
+            return id.Debug();
+        }
+    }
+
+    public static class InstanceIDExtension
+    {
+        public static string Debug(this InstanceID id)
         {
             string msg = "";
 

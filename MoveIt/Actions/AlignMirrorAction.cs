@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    class AlignMirrorAction : CloneActionBase
+    class AlignMirrorAction : CloneActionMain
     {
         public Vector3 mirrorPivot;
         public float mirrorAngle;
         private Bounds originalBounds;
 
-        public AlignMirrorAction() : base(true) {}
+        public AlignMirrorAction() : base() {}
 
         public override void Do()
         {

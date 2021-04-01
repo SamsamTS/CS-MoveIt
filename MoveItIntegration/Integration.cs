@@ -46,7 +46,7 @@ namespace MoveItIntegration
         /// <param name="sourceInstanceID"><see cref="InstanceID"/> of object being cloned</param>
         public abstract object Copy(InstanceID sourceInstanceID);
 
-        /// <summary>Paste object data</summary>
+        /// <summary>Paste object data into object</summary>
         /// <param name="targetInstanceID"><see cref="InstanceID"/> of new object</param>
         /// <param name="record">data returned by <see cref="Copy(InstanceID)"/></param>
         /// <param name="map">a dictionary of source instance ID to target instance ID.

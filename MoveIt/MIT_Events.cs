@@ -38,7 +38,7 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Cloning)
             {
-                CloneAction action = ActionQueue.instance.current as CloneAction;
+                CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
                 action.followTerrain = followTerrain;
 
                 if (POProcessing == 0)
@@ -418,7 +418,7 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Cloning)
             {
-                CloneAction action = ActionQueue.instance.current as CloneAction;
+                CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
                 m_startAngle = action.angleDelta;
 
                 m_sensitivityTogglePosX = m_mouseStartX = Input.mousePosition.x;
@@ -456,7 +456,7 @@ namespace MoveIt
                 else
                 {
                     // Rotate 45° clockwise
-                    CloneAction action = ActionQueue.instance.current as CloneAction;
+                    CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
                     action.angleDelta -= Mathf.PI / 4;
                 }
             }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using ColossalFramework.Math;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MoveIt
 {
@@ -26,6 +28,7 @@ namespace MoveIt
         {
             m_procObj = MoveItTool.PO.GetProcObj(instanceID.NetLane);
             Info = m_procObj.Info;
+            Log.Debug($"AAB01 {instanceID.Debug()} {m_procObj}\n{ObjectDumper.Dump(m_procObj)}");
         }
 
         public override InstanceState SaveToState(bool integrate = true)
@@ -129,8 +132,8 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            MoveItTool.PO.Clone((MoveableProc)state.instance, newPosition, state.angle + deltaAngle, action);
-            return null;
+            MoveableProc mp = new MoveableProc(MoveItTool.PO.Clone(state, newPosition, state.angle + deltaAngle, action));
+            return mp;
         }
 
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
@@ -177,7 +180,11 @@ namespace MoveIt
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (m_procObj.Info is null || m_procObj.Info.Prefab is null)
+                return;
+
             PrefabInfo pi = m_procObj.Info.Prefab;
+
 
             if (pi is BuildingInfo)
             {

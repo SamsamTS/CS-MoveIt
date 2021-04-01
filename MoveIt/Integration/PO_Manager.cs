@@ -49,7 +49,16 @@ namespace MoveIt
             }
         }
 
-        internal PO_Object GetProcObj(uint id) => visibleObjects[id];
+        internal PO_Object GetProcObj(uint id)
+        {
+            if (visibleObjects.ContainsKey(id))
+            {
+                return visibleObjects[id];
+            }
+
+            return new PO_Object();
+            throw new KeyNotFoundException($"Key {id} not found in visibleObjects");
+        }
 
         private void InitialiseLogic()
         {
@@ -67,11 +76,22 @@ namespace MoveIt
             }
         }
 
-        internal void Clone(MoveableProc original, Vector3 position, float angle, Action action)
+        internal InstanceID Clone(ProcState original, Vector3 position, float angle, Action action)
         {
-            if (!Enabled) return;
+            if (!Enabled) return new InstanceID();
 
-            Logic.Clone(original, position, angle, action);
+            uint id = Logic.Clone(original, position, angle);
+            InstanceID instanceID = default;
+            instanceID.NetLane = id;
+
+            PO_Object obj = Logic.GetPOByIdUnfiltered(id);
+            obj.Info.Prefab = original.Info.Prefab;
+            obj.Angle = angle;
+            obj.Position = position;
+
+            visibleIds.Add(id);
+            visibleObjects.Add(id, obj);
+            return instanceID;
         }
 
         internal void StartConvertAction()
