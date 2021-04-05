@@ -153,11 +153,11 @@ namespace MoveIt
         {
             // Create an empty PO object that integration will manipulate
 
-            PrefabInfo prefab = PrefabCollection<BuildingInfo>.FindLoaded(original.prefabName);
-            if (prefab is null)
-            {
-                prefab = PrefabCollection<PropInfo>.FindLoaded(original.prefabName);
-            }
+            //PrefabInfo prefab = PrefabCollection<BuildingInfo>.FindLoaded(original.prefabName);
+            //if (prefab is null)
+            //{
+            //    prefab = PrefabCollection<PropInfo>.FindLoaded(original.prefabName);
+            //}
 
             object raw = tPOLogic.Assembly.CreateInstance("ProceduralObjects.Classes.ProceduralObject");
             int id = (int)tPUtils.GetMethod("GetNextUnusedId").Invoke(null, new[] { tPOLogic.GetField("proceduralObjects").GetValue(POLogic) });

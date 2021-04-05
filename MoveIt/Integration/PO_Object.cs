@@ -109,8 +109,6 @@ namespace MoveIt
                 //    return "[PO]" + name;
                 //return "[PO]" + name.Substring(0, 35);
 
-                Log.Debug($"AAA02 - {Info.Name}");
-
                 if (m_dummy)
                 {
                     return "DUMMY PO";

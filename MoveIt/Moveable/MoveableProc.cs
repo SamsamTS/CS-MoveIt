@@ -28,7 +28,7 @@ namespace MoveIt
         {
             m_procObj = MoveItTool.PO.GetProcObj(instanceID.NetLane);
             Info = m_procObj.Info;
-            Log.Debug($"AAB01 {instanceID.Debug()} {m_procObj}\n{ObjectDumper.Dump(m_procObj)}");
+            //Log.Debug($"AAB01 {instanceID.Debug()} {m_procObj}\n{ObjectDumper.Dump(m_procObj)}");
         }
 
         public override InstanceState SaveToState(bool integrate = true)
