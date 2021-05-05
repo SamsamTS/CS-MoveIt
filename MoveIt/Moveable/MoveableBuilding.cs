@@ -584,7 +584,7 @@ namespace MoveIt
             ushort building = id.Building;
             BuildingInfo buildingInfo = buildingBuffer[building].Info;
 
-            if (WillBuildingDespawn(building))
+            if (toolColor != MoveItTool.m_alignColor && WillBuildingDespawn(building))
             {
                 toolColor = despawnColor;
             }

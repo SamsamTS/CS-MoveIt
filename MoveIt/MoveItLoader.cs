@@ -61,6 +61,12 @@ namespace MoveIt
             MoveItTool.filterNetworks = false;
 
             IsGameLoaded = true;
+
+            // Touch each prop to ensure lights are functional
+            for (ushort i = 0; i < ushort.MaxValue; i++)
+            {
+                PropManager.instance.UpdateProp(i);
+            }
         }
 
         public static void UninstallMod()
