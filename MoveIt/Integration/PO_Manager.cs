@@ -76,22 +76,11 @@ namespace MoveIt
             }
         }
 
-        internal InstanceID Clone(ProcState original, Vector3 position, float angle, Action action)
+        internal void Clone(ProcState original, Vector3 position, float angle, Action action)
         {
-            if (!Enabled) return new InstanceID();
+            if (!Enabled) return;
 
-            uint id = Logic.Clone(original, position, angle);
-            InstanceID instanceID = default;
-            instanceID.NetLane = id;
-
-            PO_Object obj = Logic.GetPOByIdUnfiltered(id);
-            obj.Info.Prefab = original.Info.Prefab;
-            obj.Angle = angle;
-            obj.Position = position;
-
-            visibleIds.Add(id);
-            visibleObjects.Add(id, obj);
-            return instanceID;
+            Logic.Clone((MoveableProc)original.instance, position, angle, action);
         }
 
         internal void StartConvertAction()

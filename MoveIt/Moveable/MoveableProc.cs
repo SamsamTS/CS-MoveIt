@@ -132,8 +132,9 @@ namespace MoveIt
                 newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
             }
 
-            MoveableProc mp = new MoveableProc(MoveItTool.PO.Clone(state, newPosition, state.angle + deltaAngle, action));
-            return mp;
+            MoveItTool.PO.Clone(state, newPosition, state.angle + deltaAngle, action);
+
+            return null;
         }
 
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)

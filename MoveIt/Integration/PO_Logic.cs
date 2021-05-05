@@ -178,6 +178,7 @@ namespace MoveIt
         {
             const uint MaxAttempts = 100_000;
             CloneActionBase ca = (CloneActionBase)action;
+            Single halfWidth = 4f;
 
             if (!(original.m_procObj is PO_Object))
             {
@@ -187,7 +188,12 @@ namespace MoveIt
             }
 
             Type[] types = new Type[] { tPO, tPO.MakeByRefType(), typeof(uint).MakeByRefType() };
-            object[] paramList = new[] { original.m_procObj.GetProceduralObject(), null, null };
+            object originalObject = original.m_procObj.GetProceduralObject();
+            object[] paramList = new[] { originalObject, null, null };
+            if (tPO.GetField("halfOverlayDiam") != null) // Get the halfWidth, if it exists
+            {
+                halfWidth = Math.Max((float)tPO.GetField("halfOverlayDiam").GetValue(originalObject), 2f);
+            }
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null);
             if (retrieve == null)
             {
@@ -222,6 +228,11 @@ namespace MoveIt
                 {
                     POColor = original.m_procObj.POColor
                 };
+
+                if (tPO.GetField("halfOverlayDiam") != null) // Set the halfWidth, if it exists
+                {
+                    tPO.GetField("halfOverlayDiam").SetValue(clone.GetProceduralObject(), halfWidth);
+                }
 
                 InstanceID cloneID = default;
                 cloneID.NetLane = clone.Id;
@@ -394,6 +405,11 @@ namespace MoveIt
 
                 object poObj = tPOLogic.GetField("currentlyEditingObject").GetValue(POLogic);
                 tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic).GetType().GetMethod("Add", new Type[] { tPO }).Invoke(tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic), new[] { poObj });
+                if (tPO.GetField("halfOverlayDiam") != null) // Set the overlay half-width, if available
+                {
+                    Mesh mesh = (Mesh)tPO.GetField("m_mesh").GetValue(poObj);
+                    tPO.GetField("halfOverlayDiam").SetValue(poObj, Math.Max(Mathf.Max(mesh.bounds.extents.x, mesh.bounds.extents.z), 2f));
+                }
                 return new PO_Object(poObj);
             }
             catch (NullReferenceException)
