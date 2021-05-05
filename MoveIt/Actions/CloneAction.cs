@@ -300,7 +300,7 @@ namespace MoveIt
             // Clone everything else except PO
             foreach (InstanceState state in m_states)
             {
-                if (!(state is NodeState))
+                if (!(state is NodeState || state is ProcState))
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
 
@@ -332,6 +332,15 @@ namespace MoveIt
                             }
                         }
                     }
+                }
+            }
+
+            // Clone PO
+            foreach (InstanceState state in m_states)
+            {
+                if (state is ProcState)
+                {
+                    _ = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
             }
 
