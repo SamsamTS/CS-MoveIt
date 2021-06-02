@@ -79,8 +79,9 @@ namespace MoveIt
                     {
                         if (!obj.isHidden() && stepOver.isValidPO(obj.Id))
                         {
-                            bool inXBounds = obj.Position.x > (location.x - 4f) && obj.Position.x < (location.x + 4f);
-                            bool inZBounds = obj.Position.z > (location.z - 4f) && obj.Position.z < (location.z + 4f);
+                            float radius = obj.Size / 2;
+                            bool inXBounds = obj.Position.x > (location.x - radius) && obj.Position.x < (location.x + radius);
+                            bool inZBounds = obj.Position.z > (location.z - radius) && obj.Position.z < (location.z + radius);
                             if (inXBounds && inZBounds)
                             {
                                 float t = obj.GetDistance(location);

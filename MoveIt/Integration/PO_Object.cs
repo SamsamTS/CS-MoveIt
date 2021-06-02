@@ -144,6 +144,20 @@ namespace MoveIt
 
         public IInfo Info = null;
 
+        public float Size
+        {
+            get
+            {
+                float size = 4f;
+                if (!m_dummy)
+                {
+                    Mesh mesh = (Mesh)tPO.GetField("m_mesh").GetValue(procObj);
+                    size = Math.Min(Math.Max(Mathf.Max(mesh.bounds.extents.x, mesh.bounds.extents.z), 2f), 256f);
+                }
+                return size;
+            }
+        }
+
         public PO_Object(object obj)
         {
             tPOLogic = PO_Logic.POAssembly.GetType("ProceduralObjects.3Logic");
@@ -211,13 +225,8 @@ namespace MoveIt
 
         public void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color color, Vector3 position)
         {
-            float size = 4f;
-            if (!m_dummy && tPO.GetField("halfOverlayDiam") != null)
-            {
-                size = Math.Max((float)tPO.GetField("halfOverlayDiam").GetValue(procObj), 2f);
-            }
             Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls++;
-            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
+            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, Size, Position.y - 100f, Position.y + 100f, renderLimits: false, alphaBlend: true);
         }
 
         //public static void RenderCloneGeometry(ProcState state, Quaternion rot)
