@@ -217,7 +217,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>Integrazione PO fallita - trovata la versione {0} (richiesta: 1.6)</value>
+    <value>Integrazione PO fallita - trovata la versione {0} (richiesta: 1.7)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
@@ -386,7 +386,7 @@ oggetti PO con MoveIt, saranno immediatamente cancellati, PERMANENTEMENTE.</valu
     <value>Il click sul tasto destro del mouse annullerà la clonazione.</value>
   </data>
   <data name="options_RightClickCancel_Tooltip" xml:space="preserve">
-    <value>Se selezionato, il click sul tasto destro del mouse annullerà la clonazione invece di ruotare di 45°.</value>
+    <value>Se selezionato, il tasto destro del mouse annullerà la clonazione invece di ruotare di 45°.</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
     <value>Scorciatoie Generali</value>
