@@ -217,7 +217,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>Integracja PO nie powiodła się - znaleziona wersja {0} (wymagana: 1.6)</value>
+    <value>Integracja PO nie powiodła się - znaleziona wersja {0} (wymagana: 1.7)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
