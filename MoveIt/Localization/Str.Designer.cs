@@ -10,7 +10,6 @@
 
 namespace MoveIt.Localization {
     using System;
-    using UnityEngine;
     
     
     /// <summary>
@@ -341,7 +340,7 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PO integration failed - found version {0} (required: 1.6).
+        ///   Looks up a localized string similar to PO integration failed - found version {0} (required: 1.7).
         /// </summary>
         internal static string integration_PO_WrongVersion {
             get {
@@ -822,8 +821,7 @@ namespace MoveIt.Localization {
         ///   Looks up a localized string similar to Right click cancels cloning.
         /// </summary>
         internal static string options_RightClickCancel {
-            get
-            {
+            get {
                 return ResourceManager.GetString("options_RightClickCancel", resourceCulture);
             }
         }
@@ -1072,7 +1070,7 @@ namespace MoveIt.Localization {
         ///
         ///Read the workshop Move It Guide for more information.
         ///
-        ///Click anywhere on this box to close i [rest of string was truncated]&quot;;.
+        ///Click anywhere on this box t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string whatsNew {
             get {
