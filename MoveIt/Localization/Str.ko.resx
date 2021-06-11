@@ -217,7 +217,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>PO 기능 통합 실패 - 현재 발견한 버전 {0} (1.6버전이 필요합니다.)</value>
+    <value>PO 기능 통합 실패 - 현재 발견한 버전 {0} (1.7버전이 필요합니다.)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
