@@ -217,7 +217,7 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
-    <value>การทำงานร่วมกันกับ PO มีความผิดพลาด - พบเวอร์ชัน {0} (จำเป็นต้องเป็น: 1.6)</value>
+    <value>การทำงานร่วมกันกับ PO มีความผิดพลาด - พบเวอร์ชัน {0} (จำเป็นต้องเป็น: 1.7)</value>
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="key_Bulldoze" xml:space="preserve">
