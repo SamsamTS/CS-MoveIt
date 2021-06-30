@@ -101,6 +101,7 @@
     <EmbeddedResource Include="Localization\Str.de.resx" />
     <EmbeddedResource Include="Localization\Str.es.resx" />
     <EmbeddedResource Include="Localization\Str.fr.resx" />
+    <EmbeddedResource Include="Localization\Str.it.resx" />
     <EmbeddedResource Include="Localization\Str.ja.resx" />
     <EmbeddedResource Include="Localization\Str.ko.resx" />
     <EmbeddedResource Include="Localization\Str.pl.resx" />
