@@ -51,7 +51,8 @@ namespace MoveItIntegration
         /// <param name="record">data returned by <see cref="Copy(InstanceID)"/></param>
         /// <param name="map">a dictionary of source instance ID to target instance ID.
         /// this maps all the nodes, segments and lanes. 
-        /// please contact mod owner if you need buildings, props, etc to be mapped as well</param>
+        /// please contact mod owner if you need buildings, props, etc to be mapped as well.
+        /// If this is null the record given will be restored</param>
         public abstract void Paste(InstanceID targetInstanceID, object record, Dictionary<InstanceID, InstanceID> map);
 
         /// <summary>Paste object data that has been mirrored, with segment ends needing reversed</summary>
