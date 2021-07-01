@@ -8,6 +8,7 @@ namespace MoveIt
     public class TreeState : InstanceState
     {
         public bool single;
+        public bool fixedHeight;
     }
 
     public class MoveableTree : Instance
@@ -37,13 +38,15 @@ namespace MoveIt
                 isCustomContent = Info.Prefab.m_isCustomContent
             };
 
+            TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;
             uint tree = id.Tree;
             state.Info = Info;
 
-            state.position = TreeManager.instance.m_trees.m_buffer[tree].Position;
+            state.position = trees[tree].Position;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
 
-            state.single = TreeManager.instance.m_trees.m_buffer[tree].Single;
+            state.single = trees[tree].Single;
+            state.fixedHeight = trees[tree].FixedHeight;
 
             state.SaveIntegrations(integrate);
 
@@ -52,11 +55,13 @@ namespace MoveIt
 
         public override void LoadFromState(InstanceState state)
         {
-            if (!(state is InstanceState treeState)) return;
+            if (!(state is TreeState treeState)) return;
 
+            TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;
             uint tree = id.Tree;
             TreeManager.instance.MoveTree(tree, treeState.position);
             TreeManager.instance.UpdateTreeRenderer(tree, true);
+            trees[tree].FixedHeight = treeState.fixedHeight;
         }
 
         public override Vector3 position
@@ -92,36 +97,50 @@ namespace MoveIt
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
-            
-            float rawTerrainHeight = Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(newPosition);
-            float terrainHeight = newPosition.y - state.terrainHeight + rawTerrainHeight;
+
+            float oldTerrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(position);
+            float newTerrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
             TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;
             uint treeID = id.Tree;
-            if (position.y <= state.terrainHeight + 0.5f)
-            {
-                newPosition.y = terrainHeight;
+
+            if (!MoveItTool.treeSnapping)
+            { // If Tree Snapping is disabled (in UTR), reset it to unfixed/ground
                 trees[treeID].FixedHeight = false;
+                newPosition.y = newTerrainHeight;
+            }
+            else if (trees[treeID].FixedHeight)
+            { // If it's already fixed height, handle followTerrain and ensure it is above ground
+                if (followTerrain)
+                {
+                    newPosition.y += newTerrainHeight - state.terrainHeight;
+                }
+                if (newPosition.y < newTerrainHeight + 0.075f)
+                {
+                    newPosition.y = newTerrainHeight;
+                }
             }
             else
-            {
-                trees[treeID].FixedHeight = true;
-            }
-            if (followTerrain || !MoveItTool.treeSnapping)
-            {
-                if (trees[treeID].FixedHeight)
+            { // Snapping is on and it is not fixed height yet
+                if (deltaHeight > 0)
                 {
-                    newPosition.y = state.position.y;
+                    trees[treeID].FixedHeight = true;
                 }
-                else
+
+                if (followTerrain)
                 {
-                    newPosition.y = terrainHeight;
+                    newPosition.y += newTerrainHeight - state.terrainHeight;
+                }
+                if (newPosition.y < newTerrainHeight + 0.075f)
+                {
+                    newPosition.y = newTerrainHeight;
                 }
             }
 
-            Log.Debug($"AAA ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}\n" +
-                $"OLD - state.terrainHeight:{state.terrainHeight}, oldPosY:{position.y}\n" +
-                $"terrainHeight:{terrainHeight}, newPosY:{newPosition.y}, state.th:{state.terrainHeight}, rawTerrainHeight:{rawTerrainHeight}\n" +
-                $"{terrainHeight} = {newPosition.y} - {state.terrainHeight} + {rawTerrainHeight}");
+            Log.Debug($"AAA state:{state.terrainHeight}\n" +
+                $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}, dh:{deltaHeight}\n" +
+                $"OLD - oldPosY:{position.y}, oldTerrainHeight:{oldTerrainHeight}, diff:{position.y - oldTerrainHeight}\n" +
+                $"NEW - newPosY:{newPosition.y}, newTerrainHeight:{newTerrainHeight}, diff:{newPosition.y - newTerrainHeight}\n" +
+                $"newTH-state:{newTerrainHeight - state.terrainHeight}, newTH-oldTH:{newTerrainHeight - oldTerrainHeight}, newPos-oldPos:{newPosition.y - position.y}");
 
             Move(newPosition, 0f);
         }
@@ -158,7 +177,6 @@ namespace MoveIt
             }
 
             Instance cloneInstance = null;
-
             TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
 
             if (TreeManager.instance.CreateTree(out uint clone, ref SimulationManager.instance.m_randomizer,
@@ -167,6 +185,7 @@ namespace MoveIt
                 InstanceID cloneID = default;
                 cloneID.Tree = clone;
                 cloneInstance = new MoveableTree(cloneID);
+                buffer[clone].FixedHeight = state.fixedHeight;
             }
 
             return cloneInstance;
@@ -177,6 +196,7 @@ namespace MoveIt
             TreeState state = instanceState as TreeState;
 
             Instance cloneInstance = null;
+            TreeInstance[] buffer = TreeManager.instance.m_trees.m_buffer;
 
             if (TreeManager.instance.CreateTree(out uint clone, ref SimulationManager.instance.m_randomizer,
                 state.Info.Prefab as TreeInfo, state.position, state.single))
@@ -184,6 +204,7 @@ namespace MoveIt
                 InstanceID cloneID = default;
                 cloneID.Tree = clone;
                 cloneInstance = new MoveableTree(cloneID);
+                buffer[clone].FixedHeight = state.fixedHeight;
             }
 
             return cloneInstance;
