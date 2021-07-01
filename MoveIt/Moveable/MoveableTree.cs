@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
+﻿using ColossalFramework;
 using ColossalFramework.Math;
-
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -93,13 +92,38 @@ namespace MoveIt
         {
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
-
-            if (followTerrain)
+            
+            float rawTerrainHeight = Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(newPosition);
+            float terrainHeight = newPosition.y - state.terrainHeight + rawTerrainHeight;
+            TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;
+            uint treeID = id.Tree;
+            if (position.y <= state.terrainHeight + 0.5f)
             {
-                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+                newPosition.y = terrainHeight;
+                trees[treeID].FixedHeight = false;
+            }
+            else
+            {
+                trees[treeID].FixedHeight = true;
+            }
+            if (followTerrain || !MoveItTool.treeSnapping)
+            {
+                if (trees[treeID].FixedHeight)
+                {
+                    newPosition.y = state.position.y;
+                }
+                else
+                {
+                    newPosition.y = terrainHeight;
+                }
             }
 
-            Move(newPosition, 0);
+            Log.Debug($"AAA ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}\n" +
+                $"OLD - state.terrainHeight:{state.terrainHeight}, oldPosY:{position.y}\n" +
+                $"terrainHeight:{terrainHeight}, newPosY:{newPosition.y}, state.th:{state.terrainHeight}, rawTerrainHeight:{rawTerrainHeight}\n" +
+                $"{terrainHeight} = {newPosition.y} - {state.terrainHeight} + {rawTerrainHeight}");
+
+            Move(newPosition, 0f);
         }
 
         public override void Move(Vector3 location, float angle)

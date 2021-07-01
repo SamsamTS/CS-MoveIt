@@ -381,7 +381,7 @@ namespace MoveIt
                 {
                     try
                     {
-                        Debug.Log($"AAA00 Integrated-Paste\n- {item.Value.id} {item.Value.id.Debug()}\n- {data.Value}");
+                        //Debug.Log($"Integrated-Paste\n- {item.Value.id} {item.Value.id.Debug()}\n- {data.Value}");
                         data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
                     }
                     catch (Exception e)

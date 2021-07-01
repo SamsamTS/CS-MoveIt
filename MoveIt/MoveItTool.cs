@@ -81,6 +81,7 @@ namespace MoveIt
         public static bool followTerrain = true;
         public static bool marqueeSelection = false;
         internal static bool dragging = false;
+        public static bool treeSnapping = false;
 
         public static StepOver stepOver;
         internal static DebugPanel m_debugPanel;
