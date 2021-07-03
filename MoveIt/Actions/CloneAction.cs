@@ -468,11 +468,13 @@ namespace MoveIt
             {
                 if (state.instance.isValid)
                 {
-                    InstanceState newState = new InstanceState();
-                    newState.instance = state.instance;
-                    newState.Info = state.Info;
+                    InstanceState newState = new InstanceState
+                    {
+                        instance = state.instance,
+                        Info = state.Info,
 
-                    newState.position = matrix4x.MultiplyPoint(state.position - center);
+                        position = matrix4x.MultiplyPoint(state.position - center)
+                    };
                     newState.position.y = state.position.y + deltaPosition.y;
 
                     if (followTerrain)

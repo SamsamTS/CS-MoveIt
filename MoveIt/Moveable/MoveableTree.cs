@@ -98,51 +98,68 @@ namespace MoveIt
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
-            float oldTerrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(position);
-            float newTerrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
             TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;
             uint treeID = id.Tree;
 
             if (!MoveItTool.treeSnapping)
             { // If Tree Snapping is disabled (in UTR), reset it to unfixed/ground
                 trees[treeID].FixedHeight = false;
-                newPosition.y = newTerrainHeight;
             }
-            else if (trees[treeID].FixedHeight)
+            else if (!trees[treeID].FixedHeight && deltaHeight != 0)
+            { // If it's already fixed height, handle followTerrain and ensure it is above ground
+                trees[treeID].FixedHeight = true;
+            }
+
+            newPosition.y = GetTreeYPos(state, deltaHeight, newPosition, followTerrain);
+
+            Move(newPosition, 0f);
+        }
+
+        internal float GetTreeYPos(InstanceState state, float deltaHeight, Vector3 newPosition, bool followTerrain)
+        {
+            TreeInstance tree = Singleton<TreeManager>.instance.m_trees.m_buffer[state.instance.id.Tree];
+            float y = newPosition.y;
+
+            float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
+
+            if (!MoveItTool.treeSnapping)
+            {
+                y = terrainHeight;
+            }
+            else if (tree.FixedHeight)
             { // If it's already fixed height, handle followTerrain and ensure it is above ground
                 if (followTerrain)
                 {
-                    newPosition.y += newTerrainHeight - state.terrainHeight;
+                    y += terrainHeight - state.terrainHeight;
                 }
-                if (newPosition.y < newTerrainHeight + 0.075f)
+                if (y < terrainHeight + 0.075f)
                 {
-                    newPosition.y = newTerrainHeight;
+                    y = terrainHeight;
                 }
             }
             else
             { // Snapping is on and it is not fixed height yet
                 if (deltaHeight > 0)
                 {
-                    trees[treeID].FixedHeight = true;
+                    tree.FixedHeight = true;
                 }
 
                 if (followTerrain)
                 {
-                    newPosition.y += newTerrainHeight - state.terrainHeight;
+                    y += terrainHeight - state.terrainHeight;
                 }
-                if (newPosition.y < newTerrainHeight + 0.075f)
+                if (y < terrainHeight + 0.075f)
                 {
-                    newPosition.y = newTerrainHeight;
+                    y = terrainHeight;
                 }
             }
 
-            Log.Debug($"AAA state:{state.terrainHeight}\n" +
-                $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}, dh:{deltaHeight}\n" +
-                $"OLD - oldPosY:{position.y}, oldTerrainHeight:{oldTerrainHeight}, diff:{position.y - oldTerrainHeight}\n" +
-                $"NEW - newPosY:{newPosition.y}, newTerrainHeight:{newTerrainHeight}, diff:{newPosition.y - newTerrainHeight}\n" +
-                $"newTH-state:{newTerrainHeight - state.terrainHeight}, newTH-oldTH:{newTerrainHeight - oldTerrainHeight}, newPos-oldPos:{newPosition.y - position.y}");
+            //Log.Debug($"AAA state:{state.terrainHeight}\n" +
+            //    $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{tree.FixedHeight}, dh:{deltaHeight}\n" +
+            //    $"NEW - newPosY:{newPosition.y}, newTerrainHeight:{terrainHeight}, diff:{newPosition.y - terrainHeight}\n" +
+            //    $"newTH-state:{terrainHeight - state.terrainHeight}, newPos-oldPos:{newPosition.y - position.y}");
 
-            Move(newPosition, 0f);
+            return y;
         }
 
         public override void Move(Vector3 location, float angle)
@@ -279,12 +296,7 @@ namespace MoveIt
             float brightness = info.m_minBrightness + (float)randomizer.Int32(10000u) * (info.m_maxBrightness - info.m_minBrightness) * 0.0001f;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
-            newPosition.y = state.position.y + deltaPosition.y;
-
-            if (followTerrain)
-            {
-                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
-            }
+            newPosition.y = ((MoveableTree)state.instance).GetTreeYPos(state, deltaPosition.y, newPosition, followTerrain);
 
             TreeInstance.RenderInstance(cameraInfo, info, newPosition, scale, brightness, RenderManager.DefaultColorLocation);
         }
