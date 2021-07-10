@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
+using MoveIt.Localization;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -10,24 +10,31 @@ namespace MoveIt
         public static readonly SavedInt savedX = new SavedInt("savedX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt savedY = new SavedInt("savedY", MoveItTool.settingsFileName, -1000, true);
 
-        private UITipsWindow m_tipsWindow;
+        private UIChangesWindow m_changesWindow;
+
+        private UIComponent BulldoserButton
+        {
+            get
+            {
+                UIComponent bulldoserButton = GetUIView().FindUIComponent<UIComponent>("MarqueeBulldozer");
+
+                if (bulldoserButton == null)
+                {
+                    bulldoserButton = GetUIView().FindUIComponent<UIComponent>("BulldozerButton");
+                }
+                return bulldoserButton;
+            }
+        }
 
         public override void Start()
         {
             LoadResources();
 
-            m_tipsWindow = GetUIView().AddUIComponent(typeof(UITipsWindow)) as UITipsWindow;
-            m_tipsWindow.isVisible = false;
-
-            UIComponent bulldoserButton = GetUIView().FindUIComponent<UIComponent>("MarqueeBulldozer");
-
-            if (bulldoserButton == null)
-            {
-                bulldoserButton = GetUIView().FindUIComponent<UIComponent>("BulldozerButton");
-            }
+            m_changesWindow = GetUIView().AddUIComponent(typeof(UIChangesWindow)) as UIChangesWindow;
+            m_changesWindow.isVisible = false;
 
             name = "MoveIt";
-            tooltip = "Move It! " + ModInfo.version;
+            tooltip = Str.baseUI_MoveItButton_Tooltip + " " + ModInfo.version;
 
             normalFgSprite = "MoveIt";
             hoveredFgSprite = "MoveIt_hover";
@@ -38,12 +45,17 @@ namespace MoveIt
 
             if (savedX.value == -1000)
             {
-                absolutePosition = new Vector2(bulldoserButton.absolutePosition.x - width - 5, bulldoserButton.parent.absolutePosition.y);
+                absolutePosition = new Vector2(BulldoserButton.absolutePosition.x - width - 5, BulldoserButton.parent.absolutePosition.y);
             }
             else
             {
                 absolutePosition = new Vector2(savedX.value, savedY.value);
             }
+        }
+
+        public void ResetPosition()
+        {
+            absolutePosition = new Vector2(BulldoserButton.absolutePosition.x - width - 5, BulldoserButton.parent.absolutePosition.y);
         }
 
         protected override void OnClick(UIMouseEventParameter p)
@@ -66,7 +78,6 @@ namespace MoveIt
                 BringToFront();
             }
         }
-
 
         protected override void OnMouseMove(UIMouseEventParameter p)
         {
@@ -110,7 +121,12 @@ namespace MoveIt
 				"MoveIt_hover"
 			};
 
-            atlas = ResourceLoader.CreateTextureAtlas("MoveIt", spriteNames, "MoveIt.Icons.");
+            atlas = GetAtlas(spriteNames);
+        }
+
+        internal static UITextureAtlas GetAtlas(string[] spriteNames)
+        {
+            return ResourceLoader.CreateTextureAtlas("MoveIt", spriteNames, "MoveIt.Icons.");
         }
     }
 }

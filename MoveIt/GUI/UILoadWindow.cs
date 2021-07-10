@@ -1,12 +1,9 @@
-﻿using System;
-using System.IO;
-
-using UnityEngine;
-
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
-
+using MoveIt.Localization;
+using System.IO;
 using UIUtils = SamsamTS.UIUtils;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -27,7 +24,7 @@ namespace MoveIt
             name = "MoveIt_SaveWindow";
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
-            size = new Vector2(465, 180);
+            size = new Vector2(545, 272);
             canFocus = true;
 
             UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
@@ -54,7 +51,7 @@ namespace MoveIt
 
             UILabel label = AddUIComponent<UILabel>();
             label.textScale = 0.9f;
-            label.text = "Export";
+            label.text = Str.xml_Import;
             label.relativePosition = new Vector2(8, 8);
             label.SendToBack();
 
@@ -62,7 +59,7 @@ namespace MoveIt
             fastList = AddUIComponent<UIFastList>();
             fastList.backgroundSprite = "UnlockingPanel";
             fastList.width = width - 16;
-            fastList.height = 46 * 5;
+            fastList.height = 46 * 7;
             fastList.canSelect = true;
             fastList.relativePosition = new Vector3(8, 28);
 

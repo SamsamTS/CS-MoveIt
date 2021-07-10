@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
+using MoveIt.Localization;
+using System;
 
 using UIUtils = SamsamTS.UIUtils;
 
@@ -9,6 +11,7 @@ namespace MoveIt
     {
         public UILabel fileNameLabel;
 
+        public UIButton loadToPosition;
         public UIButton saveLoadButton;
         public UIButton deleteButton;
 
@@ -47,17 +50,40 @@ namespace MoveIt
             deleteButton.name = "MoveIt_DeleteFileButton";
             deleteButton.text = "X";
             deleteButton.size = new Vector2(40f, 30f);
-            deleteButton.relativePosition = new Vector3(430 - deleteButton.width - 8, 8);
-            deleteButton.tooltip = "Delete saved path";
+            deleteButton.relativePosition = new Vector3((UISaveWindow.instance != null ? 430 : 510) - deleteButton.width - 8, 8);
+            deleteButton.tooltip = Str.xml_DeleteLabel;
 
             saveLoadButton = UIUtils.CreateButton(this);
             saveLoadButton.name = "MoveIt_SaveLoadFileButton";
-            saveLoadButton.text = UISaveWindow.instance != null ? "Export" : "Import";
+            saveLoadButton.text = UISaveWindow.instance != null ? Str.xml_Export : Str.xml_Import;
             saveLoadButton.size = new Vector2(80f, 30f);
             saveLoadButton.relativePosition = new Vector3(deleteButton.relativePosition.x - saveLoadButton.width - 8, 8);
 
+            if (UISaveWindow.instance == null) // Importing
+            {
+                loadToPosition = UIUtils.CreateButton(this);
+                loadToPosition.name = "MoveIt_loadToPosition";
+                loadToPosition.text = Str.xml_Restore;
+                loadToPosition.tooltip = Str.xml_Restore_Tooltip;
+                loadToPosition.size = new Vector2(80f, 30f);
+                loadToPosition.relativePosition = new Vector3(saveLoadButton.relativePosition.x - loadToPosition.width - 8, 8);
+
+                loadToPosition.eventClicked += (c, p) =>
+                {
+                    UIView.Find("DefaultTooltip")?.Hide();
+                    UILoadWindow.Close();
+                    Destroy(loadToPosition);
+                    MoveItTool.instance.Restore(fileNameLabel.text);
+                };
+            }
+            else
+            {
+                loadToPosition = null;
+            }
+
             saveLoadButton.eventClicked += (c, p) =>
             {
+                UIView.Find("DefaultTooltip")?.Hide();
                 if (UISaveWindow.instance != null)
                 {
                     UISaveWindow.Export(fileNameLabel.text);
@@ -71,7 +97,7 @@ namespace MoveIt
 
             deleteButton.eventClicked += (c, p) =>
             {
-                ConfirmPanel.ShowModal("Delete file", "Do you want to delete the file '" + fileNameLabel.text + "' permanently?", (comp, ret) =>
+                ConfirmPanel.ShowModal(Str.xml_DeleteConfirmTitle, String.Format(Str.xml_DeleteConfirmMessage, fileNameLabel.text), (comp, ret) =>
                 {
                     if (ret == 1)
                     {
@@ -89,7 +115,14 @@ namespace MoveIt
                 });
             };
 
-            fileNameLabel.width = saveLoadButton.relativePosition.x - 16f;
+            if (UISaveWindow.instance == null) // Importing
+            {
+                fileNameLabel.width = loadToPosition.relativePosition.x - 16f;
+            }
+            else
+            {
+                fileNameLabel.width = saveLoadButton.relativePosition.x - 16f;
+            }
         }
 
         public void Display(string data, int i)

@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
-
-using UnityEngine;
-
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
+using MoveIt.Localization;
+using System;
+using System.IO;
+using UnityEngine;
 
 using UIUtils = SamsamTS.UIUtils;
 
@@ -32,7 +31,7 @@ namespace MoveIt
             name = "MoveIt_SaveWindow";
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
-            size = new Vector2(465, 180);
+            size = new Vector2(465, 272); // 180
             canFocus = true;
 
             UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
@@ -59,7 +58,7 @@ namespace MoveIt
 
             UILabel label = AddUIComponent<UILabel>();
             label.textScale = 0.9f;
-            label.text = "Export";
+            label.text = Str.xml_Export;
             label.relativePosition = new Vector2(8, 8);
             label.SendToBack();
 
@@ -88,7 +87,7 @@ namespace MoveIt
             // Save
             saveButton = UIUtils.CreateButton(savePanel);
             saveButton.name = "MoveIt_SaveButton";
-            saveButton.text = "Export";
+            saveButton.text = Str.xml_Export;
             saveButton.size = new Vector2(100f, 30f);
             saveButton.relativePosition = new Vector3(savePanel.width - saveButton.width - 8, 8);
 
@@ -98,7 +97,7 @@ namespace MoveIt
             fastList = AddUIComponent<UIFastList>();
             fastList.backgroundSprite = "UnlockingPanel";
             fastList.width = width - 16;
-            fastList.height = 46 * 5;
+            fastList.height = 46 * 7;
             fastList.canSelect = true;
             fastList.relativePosition = new Vector3(8, savePanel.relativePosition.y + savePanel.height + 8);
 
@@ -142,7 +141,7 @@ namespace MoveIt
 
             if (File.Exists(file))
             {
-                ConfirmPanel.ShowModal("Overwrite file", "The file '" + filename + "' already exists.\n Do you want to overwrite it?", (comp, ret) =>
+                ConfirmPanel.ShowModal(Str.xml_OverwriteTitle, String.Format(Str.xml_OverwriteMessage, filename), (comp, ret) =>
                 {
                     if (ret == 1)
                     {

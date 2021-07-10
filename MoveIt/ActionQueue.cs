@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -10,6 +11,33 @@ namespace MoveIt
         private int m_tail = 0;
 
         public static ActionQueue instance;
+
+        public void UpdateNodeIdInStateHistory(ushort oldId, ushort newId)
+        {
+            foreach (Action action in _getPreviousAction())
+            {
+                if (action == null) continue;
+                action.UpdateNodeIdInSegmentState(oldId, newId);
+            }
+        }
+
+        private IEnumerable<Action> _getPreviousAction()
+        {
+            int tail = (m_tail > m_head) ? m_tail - m_actions.Length : m_tail;
+            int curr = (m_current > m_head) ? m_current - m_actions.Length : m_current;
+
+            for (int i = curr - 1; i >= tail; i--)
+            {
+                if (i < 0)
+                {
+                    yield return m_actions[i + m_actions.Length];
+                }
+                else
+                {
+                    yield return m_actions[i];
+                }
+            }
+        }
 
         public void Push(Action action)
         {
@@ -86,6 +114,13 @@ namespace MoveIt
             m_head = m_current;
         }
 
+        public void Clear()
+        {
+            m_current = 0;
+            m_head = 0;
+            m_tail = 0;
+        }
+
         public void ReplaceInstancesForward(Dictionary<Instance, Instance> toReplace)
         {
             int action = m_current;
@@ -136,6 +171,12 @@ namespace MoveIt
 
                 return m_actions[m_current];
             }
+        }
+
+        public string DebugQueue()
+        {
+            string t = (current == null ? "null" : current.GetType().ToString());
+            return $"{m_current} ({m_tail}/{m_head}) - <{t}>";
         }
     }
 }
