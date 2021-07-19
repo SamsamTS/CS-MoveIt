@@ -5,6 +5,7 @@ using ColossalFramework.UI;
 using ICities;
 using MoveIt.Localization;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace MoveIt
 {
     public class ModInfo : IUserMod
     {
+        public static string URLPatreon { get; } = "https://www.patreon.com/Quboid";
+        public static string URLPaypal { get; } = "https://www.paypal.me/QuboidCSL1";
+
         public ModInfo()
         {
             try
@@ -64,6 +68,11 @@ namespace MoveIt
             }
         }
 
+        public static void OpenUrl(string url)
+        {
+            Process.Start(url);
+        }
+
         public void OnSettingsUI(UIHelperBase helper)
         {
             try
@@ -74,6 +83,27 @@ namespace MoveIt
 
                 UIHelperBase group = helper.AddGroup(Name);
                 UIPanel panel = ((UIHelper)group).self as UIPanel;
+
+                UILabel sellout = panel.AddUIComponent<UILabel>();
+                sellout.name = "sellout";
+                sellout.textScale = 1.2f;
+                sellout.text = Str.options_Beg;
+
+                UIButton button = (UIButton)group.AddButton(Str.options_Patreon, () => OpenUrl(URLPatreon));
+                button.autoSize = false;
+                button.textHorizontalAlignment = UIHorizontalAlignment.Center;
+                button.size = new Vector2(200, 40);
+                button.tooltip = Str.options_PatreonTooltip;
+
+                button = (UIButton)group.AddButton(Str.options_Paypal, () => OpenUrl(URLPaypal));
+                button.autoSize = false;
+                button.textHorizontalAlignment = UIHorizontalAlignment.Center;
+                button.size = new Vector2(200, 40);
+                button.tooltip = Str.options_PaypalTooltip;
+
+                group.AddSpace(10);
+
+                group = helper.AddGroup(Str.options_Options);
 
                 UICheckBox checkBox = (UICheckBox)group.AddCheckbox(Str.options_AutoCloseToolbox, MoveItTool.autoCloseAlignTools.value, (b) =>
                 {
@@ -143,7 +173,7 @@ namespace MoveIt
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
-                UIButton button = (UIButton)group.AddButton(Str.options_RemoveGhostNodes, MoveItTool.CleanGhostNodes);
+                button = (UIButton)group.AddButton(Str.options_RemoveGhostNodes, MoveItTool.CleanGhostNodes);
                 button.tooltip = Str.options_RemoveGhostNodes_Tooltip;
 
                 group.AddSpace(10);

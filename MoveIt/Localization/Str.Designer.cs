@@ -718,6 +718,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please support the development of Move It and my other mods..
+        /// </summary>
+        internal static string options_Beg {
+            get {
+                return ResourceManager.GetString("options_Beg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable debug messages logging.
         /// </summary>
         internal static string options_DisableDebugLogging {
@@ -750,6 +759,51 @@ namespace MoveIt.Localization {
         internal static string options_HidePODeletionWarning {
             get {
                 return ResourceManager.GetString("options_HidePODeletionWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        internal static string options_Options {
+            get {
+                return ResourceManager.GetString("options_Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patreon.
+        /// </summary>
+        internal static string options_Patreon {
+            get {
+                return ResourceManager.GetString("options_Patreon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Support me on Patreon.
+        /// </summary>
+        internal static string options_PatreonTooltip {
+            get {
+                return ResourceManager.GetString("options_PatreonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paypal.
+        /// </summary>
+        internal static string options_Paypal {
+            get {
+                return ResourceManager.GetString("options_Paypal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Support me on Paypal.
+        /// </summary>
+        internal static string options_PaypalTooltip {
+            get {
+                return ResourceManager.GetString("options_PaypalTooltip", resourceCulture);
             }
         }
         
