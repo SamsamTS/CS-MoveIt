@@ -347,7 +347,7 @@
     <value>Marca esto para cerrar el menú de herramientas tras seleccionar una.</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
-    <value>Please support the development of Move It and my other mods.</value>
+    <value>Por favor, apoya el desarrollo de Move It y mis otros mods.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Desactivar el registro de mensajes de depuración</value>
@@ -363,19 +363,19 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_Options" xml:space="preserve">
-    <value>Options</value>
+    <value>Opciones</value>
   </data>
   <data name="options_Patreon" xml:space="preserve">
     <value>Patreon</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Support me on Patreon</value>
+    <value>Apóyame en Patreon</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Support me on Paypal</value>
+    <value>Apóyame en Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Por favor, ten en cuenta: no puedes usar "deshacer" al borrar PO. Esto significa que si eliminas
