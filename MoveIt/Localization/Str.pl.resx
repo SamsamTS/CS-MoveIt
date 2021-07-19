@@ -347,7 +347,7 @@
     <value>Zaznacz, aby zamknąć menu Narzędzia po wybraniu narzędzia.</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
-    <value>Please support the development of Move It and my other mods.</value>
+    <value>Wesprzyj proszę rozwój Move It i moich innych modów.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Wyłącz logowanie wiadomości debugowania</value>
@@ -363,19 +363,19 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_Options" xml:space="preserve">
-    <value>Options</value>
+    <value>Ustawienia</value>
   </data>
   <data name="options_Patreon" xml:space="preserve">
     <value>Patreon</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Support me on Patreon</value>
+    <value>Wesprzyj mnie na Patreon</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Support me on Paypal</value>
+    <value>Wesprzyj mnie przez PayPal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Uwaga: nie można cofnąć usuniętych PO. Oznacza to, że jeśli usuniesz
