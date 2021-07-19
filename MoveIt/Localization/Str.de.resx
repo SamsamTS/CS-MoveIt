@@ -346,6 +346,9 @@
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
     <value>Aktiviere diese Option, um das Werkzeugfenster nach Auswahl eines Werkzeugs zu schließen.</value>
   </data>
+  <data name="options_Beg" xml:space="preserve">
+    <value>Please support the development of Move It and my other mods.</value>
+  </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Protokollieren von Debugmeldungen deaktivieren</value>
   </data>
@@ -358,6 +361,21 @@
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>PO-Löschwarnung ausblenden</value>
     <comment>Do not translate 'PO'.</comment>
+  </data>
+  <data name="options_Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="options_Patreon" xml:space="preserve">
+    <value>Patreon</value>
+  </data>
+  <data name="options_PatreonTooltip" xml:space="preserve">
+    <value>Support me on Patreon</value>
+  </data>
+  <data name="options_Paypal" xml:space="preserve">
+    <value>Paypal</value>
+  </data>
+  <data name="options_PaypalTooltip" xml:space="preserve">
+    <value>Support me on Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Bitte beachten: Das Löschen von PO Objekten kann nicht rückgängig gemacht werden. Das bedeutet, wenn man
