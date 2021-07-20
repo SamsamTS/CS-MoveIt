@@ -346,6 +346,9 @@
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
     <value>Fermer le menu Outils après avoir choisi un outil.</value>
   </data>
+  <data name="options_Beg" xml:space="preserve">
+    <value>Merci de soutenir le développement de Move It et de mes autres mods.</value>
+  </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Désactiver le journal des messages de débogage</value>
   </data>
@@ -358,6 +361,21 @@
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>Masquer l'avertissement de suppression de PO</value>
     <comment>Do not translate 'PO'.</comment>
+  </data>
+  <data name="options_Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="options_Patreon" xml:space="preserve">
+    <value>Patreon</value>
+  </data>
+  <data name="options_PatreonTooltip" xml:space="preserve">
+    <value>Soutenez-moi sur Patreon</value>
+  </data>
+  <data name="options_Paypal" xml:space="preserve">
+    <value>Paypal</value>
+  </data>
+  <data name="options_PaypalTooltip" xml:space="preserve">
+    <value>Faites un don avec Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Veuillez noter : vous ne pouvez pas annuler la suppression d'un PO. Cela signifie que si vous supprimez

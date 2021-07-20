@@ -346,6 +346,9 @@
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
     <value>도구를 선택한 후 도구 상자 메뉴를 닫으려면 이 항목을 선택하십시오.</value>
   </data>
+  <data name="options_Beg" xml:space="preserve">
+    <value>Please support the development of Move It and my other mods.</value>
+  </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>디버그 메시지 로깅 사용 안함</value>
   </data>
@@ -358,6 +361,21 @@
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>PO 삭제 경고 숨기기</value>
     <comment>Do not translate 'PO'.</comment>
+  </data>
+  <data name="options_Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="options_Patreon" xml:space="preserve">
+    <value>Patreon</value>
+  </data>
+  <data name="options_PatreonTooltip" xml:space="preserve">
+    <value>Support me on Patreon</value>
+  </data>
+  <data name="options_Paypal" xml:space="preserve">
+    <value>Paypal</value>
+  </data>
+  <data name="options_PaypalTooltip" xml:space="preserve">
+    <value>Support me on Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>참고: 삭제된 PO는 되돌릴 수 없습니다. 이는 무브 잇의 PO 개체를 삭제할 경우, 즉시 영구적으로 제거됨을 의미합니다.</value>
