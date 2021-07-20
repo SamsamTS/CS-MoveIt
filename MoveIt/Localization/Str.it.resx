@@ -347,7 +347,7 @@
     <value>Seleziona questa opzione per chiudere il menu Strumenti dopo aver scelto uno strumento.</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
-    <value>Please support the development of Move It and my other mods.</value>
+    <value>Supporta lo sviluppo di Move It e delle mie altre mods.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Disabilita la registrazione dei messaggi di debug</value>
@@ -363,19 +363,19 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_Options" xml:space="preserve">
-    <value>Options</value>
+    <value>Opzioni</value>
   </data>
   <data name="options_Patreon" xml:space="preserve">
     <value>Patreon</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Support me on Patreon</value>
+    <value>Supportami su Patreon</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Support me on Paypal</value>
+    <value>Supportami su Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Nota bene: non puoi annullare l'eliminazione di oggetti PO. Ciò significa che se elimini
