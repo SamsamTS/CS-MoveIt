@@ -347,7 +347,7 @@
     <value>Выберите это для закрытия меню после выбора инструмента.</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
-    <value>Please support the development of Move It and my other mods.</value>
+    <value>Пожалуйста поддержите разработку Move It и других моих модов.</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>Выключить сообщения отладки</value>
@@ -363,19 +363,19 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_Options" xml:space="preserve">
-    <value>Options</value>
+    <value>Настройки</value>
   </data>
   <data name="options_Patreon" xml:space="preserve">
     <value>Patreon</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Support me on Patreon</value>
+    <value>Поддержите меня на Patreon</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Support me on Paypal</value>
+    <value>Поддержите меня через PayPal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Вы не можете отменить удаление PO. Если вы удалите PO объект с помощью Move It, он пропадёт безвозвратно.</value>
