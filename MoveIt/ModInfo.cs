@@ -17,6 +17,7 @@ namespace MoveIt
     {
         public static string URLPatreon { get; } = "https://www.patreon.com/Quboid";
         public static string URLPaypal { get; } = "https://www.paypal.me/QuboidCSL1";
+        public static string URLCoffee { get; } = "https://www.buymeacoffee.com/Quboid";
 
         public ModInfo()
         {
@@ -89,16 +90,22 @@ namespace MoveIt
                 sellout.textScale = 1.2f;
                 sellout.text = Str.options_Beg;
 
-                UIButton button = (UIButton)group.AddButton(Str.options_Patreon, () => OpenUrl(URLPatreon));
+                UIButton button = (UIButton)group.AddButton("Buy Me A Coffee", () => OpenUrl(URLCoffee));
                 button.autoSize = false;
                 button.textHorizontalAlignment = UIHorizontalAlignment.Center;
-                button.size = new Vector2(200, 40);
+                button.size = new Vector2(250, 40);
+                button.tooltip = "Buy Me A Coffee";
+
+                button = (UIButton)group.AddButton(Str.options_Patreon, () => OpenUrl(URLPatreon));
+                button.autoSize = false;
+                button.textHorizontalAlignment = UIHorizontalAlignment.Center;
+                button.size = new Vector2(250, 40);
                 button.tooltip = Str.options_PatreonTooltip;
 
                 button = (UIButton)group.AddButton(Str.options_Paypal, () => OpenUrl(URLPaypal));
                 button.autoSize = false;
                 button.textHorizontalAlignment = UIHorizontalAlignment.Center;
-                button.size = new Vector2(200, 40);
+                button.size = new Vector2(250, 40);
                 button.tooltip = Str.options_PaypalTooltip;
 
                 group.AddSpace(10);
