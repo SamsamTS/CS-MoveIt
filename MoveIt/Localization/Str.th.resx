@@ -347,7 +347,7 @@
     <value>เลือกตัวเลือกนี้ เพื่อปิดเมนูกล่องเครื่องมือหลังจากเลือกเครื่องมือแล้ว</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
-    <value>Please support the development of Move It and my other mods.</value>
+    <value>โปรดสนับสนุนการพัฒนาม็อด Move It และม็อดอื่นๆ ของเรา</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>ปิดใช้งานบันทึกข้อความข้อบกพร่อง</value>
