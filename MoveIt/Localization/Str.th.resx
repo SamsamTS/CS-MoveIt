@@ -363,19 +363,19 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_Options" xml:space="preserve">
-    <value>Options</value>
+    <value>ตัวเลือก</value>
   </data>
   <data name="options_Patreon" xml:space="preserve">
     <value>Patreon</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Support me on Patreon</value>
+    <value>สนับสนุนเรา บน Patreon</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Support me on Paypal</value>
+    <value>สนับสนุนเรา บน Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>โปรดทราบ: คุณไม่สามารถย้อนการกระทำของการรื้อถอนใด ๆ ที่เป็นวัตถุแบบ PO นั่นหมายความว่า ถ้าคุณลบวัตถุที่เป็น PO โดยการใช้ Move It จะทำให้หายไปทันทีและเป็นอย่างถาวร</value>
