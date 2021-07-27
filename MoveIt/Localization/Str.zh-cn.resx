@@ -347,7 +347,7 @@
     <value>选择工具后，选中此项以关闭工具箱菜单。</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
-    <value>Please support the development of Move It and my other mods.</value>
+    <value>请支持Move It以及我的其他模组的的开发。</value>
   </data>
   <data name="options_DisableDebugLogging" xml:space="preserve">
     <value>禁用调试消息记录</value>
@@ -363,19 +363,19 @@
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="options_Options" xml:space="preserve">
-    <value>Options</value>
+    <value>选项</value>
   </data>
   <data name="options_Patreon" xml:space="preserve">
-    <value>Patreon</value>
+    <value>Patreon捐赠</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Support me on Patreon</value>
+    <value>在Patreon上支持我</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Support me on Paypal</value>
+    <value>在Paypal上支持我</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>请注意：您不能撤回已经删除的魔物对象。这意味着如果您用Move It删除
