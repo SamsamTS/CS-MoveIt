@@ -267,7 +267,7 @@
     <value>축적 확대</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>건너띄기</value>
+    <value>건너뛰기</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>디버그 창 켜기</value>
