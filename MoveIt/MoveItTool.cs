@@ -1001,14 +1001,14 @@ namespace MoveIt
                 if (selection.Count == 0) return false;
 
                 bool includesPO = false;
-                foreach (Instance ins in selection)
-                {
-                    if (ins is MoveableProc)
-                    {
-                        includesPO = true;
-                        break;
-                    }
-                }
+                //foreach (Instance ins in selection)
+                //{
+                //    if (ins is MoveableProc)
+                //    {
+                //        includesPO = true;
+                //        break;
+                //    }
+                //}
 
                 Selection selectionState = new Selection
                 {
@@ -1066,12 +1066,12 @@ namespace MoveIt
                 StopCloning();
                 StopTool();
 
-                bool activatePO = true;
-                if (!PO.Active)
-                {
-                    activatePO = false;
-                    PO.InitialiseTool(true);
-                }
+                //bool activatePO = true;
+                //if (!PO.Active)
+                //{
+                //    activatePO = false;
+                //    PO.InitialiseTool(true);
+                //}
 
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
                 Selection selectionState;
@@ -1096,10 +1096,10 @@ namespace MoveIt
                     return;
                 }
 
-                if (!activatePO && !selectionState.includesPO)
-                {
-                    PO.InitialiseTool(false);
-                }
+                //if (!activatePO && !selectionState.includesPO)
+                //{
+                //    PO.InitialiseTool(false);
+                //}
 
                 if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)
                 {

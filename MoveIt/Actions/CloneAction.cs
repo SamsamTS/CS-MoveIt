@@ -20,12 +20,17 @@ namespace MoveIt
             {
                 if (state.instance != null && state.Info.Prefab != null)
                 {
-                    m_states.Add(state);
-
                     if (state is ProcState)
                     {
-                        includesPO = true;
+                        continue;
                     }
+
+                    m_states.Add(state);
+
+                    //if (state is ProcState)
+                    //{
+                    //    includesPO = true;
+                    //}
                 }
             }
 
