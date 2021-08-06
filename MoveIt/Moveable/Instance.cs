@@ -375,6 +375,7 @@ namespace MoveIt
         public abstract void Transform(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain);
         public abstract void Move(Vector3 location, float angle);
         public abstract void SetHeight(float height);
+        public abstract void SetHeight();
         public abstract Instance Clone(InstanceState state, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action);
         public abstract Instance Clone(InstanceState state, Dictionary<ushort, ushort> clonedNodes); // For Deletion Undo (bulldoze, convertToPO)
         public abstract void Delete();
@@ -383,12 +384,6 @@ namespace MoveIt
         public abstract void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public abstract void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor);
         public virtual void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor) { }
-
-        public virtual void SetHeight()
-        {
-            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
-            //SetHeight(TerrainManager.instance.SampleRawHeightSmooth(position));
-        }
 
         internal static bool isVirtual()
         {

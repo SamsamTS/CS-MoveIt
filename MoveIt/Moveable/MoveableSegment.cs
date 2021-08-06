@@ -293,6 +293,7 @@ namespace MoveIt
         }
 
         public override void SetHeight(float height) { }
+        public override void SetHeight() { }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {

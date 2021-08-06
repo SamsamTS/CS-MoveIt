@@ -115,36 +115,29 @@ namespace MoveIt
 
             float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
 
-            string path = "";
             if (!MoveItTool.treeSnapping)
             {
-                path += "A";
                 y = terrainHeight;
             }
             else if (trees[treeID].FixedHeight)
             { // If it's already fixed height, handle followTerrain
-                path += "B";
                 // If the state is being cloned, don't use the terrain-height offset
                 y = newPosition.y + (isClone ? 0 : yTerrainOffset);
                 if (followTerrain)
                 {
-                    path += "1";
                     y += terrainHeight - state.terrainHeight;
                 }
             }
             else
             { // Snapping is on and it is not fixed height yet
-                path += "C";
                 if (deltaHeight != 0)
                 {
-                    path += "1";
                     trees[treeID].FixedHeight = true;
                     y = terrainHeight + deltaHeight;
                     yTerrainOffset = terrainHeight - state.terrainHeight;
                 }
                 else
                 {
-                    path += "2";
                     y = terrainHeight;
                 }
             }
@@ -176,6 +169,14 @@ namespace MoveIt
             uint tree = id.Tree;
             TreeManager.instance.MoveTree(tree, newPosition);
             TreeManager.instance.UpdateTreeRenderer(tree, true);
+        }
+
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+
+            TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;
+            trees[id.Tree].FixedHeight = false;
         }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)

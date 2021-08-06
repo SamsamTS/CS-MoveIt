@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using ColossalFramework;
+using ColossalFramework.Math;
 using System;
 using System.Collections.Generic;
-using ColossalFramework.Math;
+using UnityEngine;
 
 
 namespace MoveIt
@@ -134,6 +135,14 @@ namespace MoveIt
             ushort prop = id.Prop;
             PropManager.instance.MoveProp(prop, newPosition);
             PropManager.instance.UpdatePropRenderer(prop, true);
+        }
+
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+            
+            PropInstance[] props = Singleton<PropManager>.instance.m_props.m_buffer;
+            props[id.Prop].FixedHeight = false;
         }
 
         public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)

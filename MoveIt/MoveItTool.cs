@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
 using ColossalFramework.IO;
+using ColossalFramework.Plugins;
 using ColossalFramework.UI;
 using MoveItIntegration;
 using System;
@@ -268,6 +269,7 @@ namespace MoveIt
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
 
             followTerrain = followTerrainModeEnabled;
+            treeSnapping = isTreeSnappingInstalled();
         }
 
         protected override void OnEnable()
@@ -1315,6 +1317,20 @@ namespace MoveIt
                     }
                 }
             }
+        }
+
+        internal static bool isTreeSnappingInstalled()
+        {
+            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
+                    mod.publishedFileID.AsUInt64 == 869134690uL ||
+                    mod.name.StartsWith("TreeSnapping") ||
+                    mod.name.Contains("869134690")
+            ) && mod.isEnabled))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         internal static void CleanGhostNodes()
