@@ -56,7 +56,7 @@ namespace MoveIt
         public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
-        public static SavedBool hideChangesWindow = new SavedBool("hideChanges290", settingsFileName, false, true); 
+        public static SavedBool hideChangesWindow = new SavedBool("hideChanges290", settingsFileName, false, true);
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
@@ -131,7 +131,7 @@ namespace MoveIt
         public static ToolStates ToolState { get; set; } = ToolStates.Default;
         private static MT_Tools m_toolsMode = MT_Tools.Off;
         public static MT_Tools MT_Tool
-        { 
+        {
             get => m_toolsMode;
             set
             {
@@ -221,7 +221,7 @@ namespace MoveIt
         private Vector3 m_dragStartRelative; // Where the current drag started, relative to selection center
         private Vector3 m_clickPositionAbs; // Where the current drag started, absolute
         private Vector3 m_sensitivityTogglePosAbs; // Where sensitivity was last toggled, absolute
-        
+
         private float m_mouseStartX;
         private float m_startAngle;
         private float m_sensitivityTogglePosX; // Where sensitivity was last toggled, X-axis absolute
@@ -258,7 +258,7 @@ namespace MoveIt
                 return _rand;
             }
         }
-        
+
         protected override void Awake()
         {
             ActionQueue.instance = new ActionQueue();
@@ -269,7 +269,10 @@ namespace MoveIt
             m_button = UIView.GetAView().AddUIComponent(typeof(UIMoveItButton)) as UIMoveItButton;
 
             followTerrain = followTerrainModeEnabled;
-            treeSnapping = isTreeSnappingInstalled();
+            if (!isTreeAnarchyEnabled())
+            {
+                treeSnapping = isTreeSnappingEnabled();
+            }
         }
 
         protected override void OnEnable()
@@ -305,7 +308,7 @@ namespace MoveIt
 
             m_prevRenderZones = TerrainManager.instance.RenderZones;
             m_prevTool = m_toolController.CurrentTool == this ? ToolsModifierControl.GetTool<DefaultTool>() : m_toolController.CurrentTool;
-            
+
             m_toolController.CurrentTool = this;
 
             InfoManager.instance.SetCurrentMode(m_prevInfoMode, subInfoMode);
@@ -393,36 +396,6 @@ namespace MoveIt
                 UIMoreTools.UpdateMoreTools();
                 UIToolOptionPanel.RefreshCloneButton();
             }
-        }
-
-        public static void SetToolState(ToolStates state = ToolStates.Default, MT_Tools tool = MT_Tools.Off, ushort toolPhase = 0)
-        {
-            ToolStates previousState = ToolState;
-            if (ToolState != state)
-            {
-                if (state != ToolStates.ToolActive && state != ToolStates.Aligning)
-                {
-                    UIMoreTools.m_activeToolMenu = null;
-                }
-
-                if (ToolState == ToolStates.ToolActive)
-                {
-                    if (MT_Tool == MT_Tools.MoveTo)
-                    {
-                        m_moveToPanel.Visible(false);
-                    }
-                }
-            }
-
-            ToolState = state;
-            m_toolsMode = tool;
-            m_alignToolPhase = toolPhase;
-
-            if (state == ToolStates.ToolActive || state == ToolStates.Aligning || previousState == ToolStates.ToolActive || previousState == ToolStates.Aligning)
-            {
-                UIMoreTools.UpdateMoreTools();
-            }
-            m_debugPanel?.UpdatePanel();
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
@@ -714,103 +687,6 @@ namespace MoveIt
             }
         }
 
-        #region Debug Overlays
-        internal struct DebugOverlay
-        {
-            internal Quad3 quad;
-            internal Color32 color;
-
-            public DebugOverlay(Quad3 q, Color32 c)
-            {
-                quad = q;
-                color = c;
-            }
-        }
-        private static List<DebugOverlay> DebugBoxes = new List<DebugOverlay>();
-        private static List<Vector3> DebugPoints = new List<Vector3>();
-        internal static void AddDebugBox(Bounds b, Color32? c = null)
-        {
-            if (c == null)
-            {
-                c = new Color32(255, 255, 255, 63);
-            }
-            Quad3 q = default;
-            q.a = new Vector3(b.min.x, b.min.y, b.min.z);
-            q.b = new Vector3(b.min.x, b.min.y, b.max.z);
-            q.c = new Vector3(b.max.x, b.min.y, b.max.z);
-            q.d = new Vector3(b.max.x, b.min.y, b.min.z);
-            DebugOverlay d = new DebugOverlay(q, (Color32)c);
-            DebugBoxes.Add(d);
-            //Log.Debug($"\nBounds:{b}");
-        }
-        internal static void AddDebugPoint(Vector3 v)
-        {
-            DebugPoints.Add(v);
-            Log.Debug($"\nPoint:{v}");
-        }
-        internal void ClearDebugOverlays()
-        {
-            DebugBoxes.Clear();
-            DebugPoints.Clear();
-        }
-        internal static Color32 GetRandomDebugColor()
-        {
-            return new Color32(RandomByte(100, 255), RandomByte(100, 255), RandomByte(100, 255), 63);
-        }
-        #endregion
-
-        internal static void UpdatePillarMap()
-        {
-            if (!advancedPillarControl) return;
-
-            //Log.Debug("UPM Start");
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-            m_pillarMap = new Dictionary<ushort, ushort>();
-            //string msg = "UPM Nodes: ";
-            //int c = 0;
-            for (ushort i = 0; i < nodeBuffer.Length; i++)
-            {
-                NetNode n = nodeBuffer[i];
-                if ((n.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)
-                {
-                    if (n.m_building > 0)
-                    {
-                        //msg += $"{i} ({(((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden) ? "Visible" : "Hidden")}), ";
-                        //c++;
-                        //if (c % 20 == 0)
-                        //{
-                        //    Log.Debug(msg);
-                        //    msg = "";
-                        //}
-                        
-                        if ((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
-                        {
-                            if (!m_pillarMap.ContainsKey(n.m_building))
-                            {
-                                try
-                                {
-                                    m_pillarMap.Add(n.m_building, i);
-                                }
-                                catch (Exception e)
-                                {
-                                    string msg2 = $"BuildingID: #{n.m_building} {buildingBuffer[n.m_building].Info?.name}, Count:{m_pillarMap.Count}" + Environment.NewLine;
-                                    foreach (var kvp in m_pillarMap)
-                                    {
-                                        msg2 += $"{kvp.Key}->{kvp.Value}, ";
-                                    }
-                                    Log.Error(msg2 + e, true);
-                                    //DebugUtils.LogException(e);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            watch.Stop();
-            Log.Info($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
-        }
-
         public void UpdateAreas()
         {
             //foreach (Bounds b in areasToUpdate)
@@ -868,316 +744,6 @@ namespace MoveIt
             return ToolErrors.None;
         }
 
-        public void ProcessAligning(MT_Tools mode)
-        {
-            if (ToolState == ToolStates.Aligning && MT_Tool == mode)
-            {
-                StopTool();
-            }
-            else
-            {
-                StartTool(ToolStates.Aligning, mode);
-            }
-        }
-
-        public bool StartTool(ToolStates newToolState, MT_Tools mode)
-        {
-            if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-            {
-                StopCloning();
-            }
-
-            if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
-
-            if (Action.selection.Count == 0) return false;
-
-            SetToolState(newToolState, mode, 1);
-            UIMoreTools.CheckCloseMenu();
-            return true;
-        }
-
-        // Called when a tool might not be active
-        public void StopTool()
-        {
-            if (ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return;
-
-            DeactivateTool();
-        }
-
-        public bool DeactivateTool()
-        {
-            if (MT_Tool == MT_Tools.MoveTo)
-            {
-                m_moveToPanel.Visible(false);
-            }
-
-            SetToolState();
-            Action.UpdateArea(Action.GetTotalBounds(false));
-            return false;
-        }
-
-        public void StartCloning()
-        {
-            lock (ActionQueue.instance)
-            {
-                if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning) return;
-
-                if (Action.selection.Count > 0)
-                {
-                    CloneAction action = new CloneAction();
-
-                    if (action.Count > 0)
-                    {
-                        UpdateSensitivityMode();
-
-                        m_sensitivityTogglePosAbs = m_clickPositionAbs = action.center;
-
-                        ActionQueue.instance.Push(action);
-
-                        SetToolState(ToolStates.Cloning);
-                        UIToolOptionPanel.RefreshCloneButton();
-                        UIToolOptionPanel.RefreshAlignHeightButton();
-                    }
-                }
-            }
-        }
-
-        public void StopCloning()
-        {
-            lock (ActionQueue.instance)
-            {
-                if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
-                {
-                    ProcessSensitivityMode(false);
-
-                    ActionQueue.instance.Undo();
-                    ActionQueue.instance.Invalidate();
-                    SetToolState();
-
-                    UIToolOptionPanel.RefreshCloneButton();
-                }
-            }
-        }
-
-        public void StartBulldoze()
-        {
-            if (ToolState != ToolStates.Default) return;
-
-            if (Action.selection.Count > 0)
-            {
-                lock (ActionQueue.instance)
-                {
-                    ActionQueue.instance.Push(new BulldozeAction());
-                }
-                m_nextAction = ToolAction.Do;
-            }
-        }
-
-        public void StartReset()
-        {
-            if (ToolState != ToolStates.Default) return;
-
-            if (Action.selection.Count > 0)
-            {
-                lock (ActionQueue.instance)
-                {
-                    ActionQueue.instance.Push(new ResetAction());
-                }
-                m_nextAction = ToolAction.Do;
-            }
-        }
-
-        public static bool IsExportSelectionValid()
-        {
-            return CloneActionBase.GetCleanSelection(out Vector3 center).Count > 0;
-        }
-
-        public bool Export(string filename)
-        {
-            string path = Path.Combine(saveFolder, filename + ".xml");
-
-            try
-            {
-                HashSet<Instance> selection = CloneActionBase.GetCleanSelection(out Vector3 center);
-
-                if (selection.Count == 0) return false;
-
-                bool includesPO = false;
-                //foreach (Instance ins in selection)
-                //{
-                //    if (ins is MoveableProc)
-                //    {
-                //        includesPO = true;
-                //        break;
-                //    }
-                //}
-
-                Selection selectionState = new Selection
-                {
-                    version = ModInfo.version,
-                    center = center,
-                    includesPO = includesPO,
-                    states = new InstanceState[selection.Count]
-                };
-
-                int i = 0;
-                foreach (Instance instance in selection)
-                {
-                    selectionState.states[i++] = instance.SaveToState();
-                }
-
-                Directory.CreateDirectory(saveFolder);
-
-                //Log.Debug($"selectionState:{selectionState.states.Length}\n" + ObjectDumper.Dump(selectionState));
-
-                using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
-                {
-                    stream.SetLength(0); // Emptying the file
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
-                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                    ns.Add("", "");
-                    xmlSerializer.Serialize(stream, selectionState, ns);
-                }
-            }
-            catch(Exception e)
-            {
-                DebugUtils.Log("Couldn't export selection");
-                DebugUtils.LogException(e);
-
-                UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Export failed", "The selection couldn't be exported to '" + path + "'\n\n" + e.Message, true);
-                return false;
-            }
-
-            return true;
-        }
-
-        public void Import(string filename)
-        {
-            ImportImpl(filename, false);
-        }
-
-        public void Restore(string filename)
-        {
-            ImportImpl(filename, true);
-        }
-
-        private void ImportImpl(string filename, bool restore)
-        {
-            lock (ActionQueue.instance)
-            {
-                StopCloning();
-                StopTool();
-
-                //bool activatePO = true;
-                //if (!PO.Active)
-                //{
-                //    activatePO = false;
-                //    PO.InitialiseTool(true);
-                //}
-
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Selection));
-                Selection selectionState;
-
-                string path = Path.Combine(saveFolder, filename + ".xml");
-
-                try
-                {
-                    // Trying to Deserialize the file
-                    using (FileStream stream = new FileStream(path, FileMode.Open))
-                    {
-                        selectionState = xmlSerializer.Deserialize(stream) as Selection;
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Couldn't Deserialize (XML malformed?)
-                    DebugUtils.Log("Couldn't load file");
-                    DebugUtils.LogException(e);
-
-                    UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Import failed", "Couldn't load '" + path + "'\n\n" + e.Message, true);
-                    return;
-                }
-
-                //if (!activatePO && !selectionState.includesPO)
-                //{
-                //    PO.InitialiseTool(false);
-                //}
-
-                if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)
-                {
-                    HashSet<string> missingPrefabs = new HashSet<string>();
-
-                    foreach (InstanceState state in selectionState.states)
-                    {
-                        if (state.Info.Prefab == null)
-                        {
-                            missingPrefabs.Add(state.prefabName);
-                        }
-                    }
-
-                    if (missingPrefabs.Count > 0)
-                    {
-                        DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
-
-                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n" + string.Join("\n", missingPrefabs.ToArray()), false);
-                    }
-
-                    // Set props to fixed-height if in asset editor
-                    if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
-                    {
-                        foreach (InstanceState state in selectionState.states)
-                        {
-                            if (state is PropState ps)
-                            {
-                                ps.fixedHeight = true;
-                                ps.position.y = ps.position.y - ps.terrainHeight + 60f; // 60 is editor's terrain height
-                            }
-                        }
-                    }
-
-                    CloneActionBase action = new CloneActionImport(selectionState.states, selectionState.center);
-
-                    if (action.Count > 0)
-                    {
-                        ActionQueue.instance.Push(action);
-
-                        if (restore)
-                        {
-                            SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
-                            //ActionQueue.instance.Do(); // For restore to position
-                        }
-                        else
-                        {
-                            SetToolState(ToolStates.Cloning); // For clone
-                        }
-
-                        UIToolOptionPanel.RefreshCloneButton();
-                        UIToolOptionPanel.RefreshAlignHeightButton();
-                    }
-                }
-            }
-        }
-
-        public void Delete(string filename)
-        {
-            try
-            {
-                string path = Path.Combine(saveFolder, filename + ".xml");
-
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-            }
-            catch (Exception ex)
-            {
-                DebugUtils.Log("Couldn't delete file");
-                DebugUtils.LogException(ex);
-
-                return;
-            }
-        }
-
         internal static Vector3 RaycastMouseLocation()
         {
             return RaycastMouseLocation(Camera.main.ScreenPointToRay(Input.mousePosition));
@@ -1192,91 +758,6 @@ namespace MoveIt
             RayCast(input, out RaycastOutput output);
 
             return output.m_hitPos;
-        }
-
-        protected static void ReleaseSegmentBlock(ushort segment, ref ushort segmentBlock)
-        {
-            if (segmentBlock != 0)
-            {
-                ZoneManager.instance.ReleaseBlock(segmentBlock);
-                segmentBlock = 0;
-            }
-        }
-
-        public static string InstanceIDDebug(Instance instance)
-        {
-            if (instance == null) return "(null instance)";
-            return $"(B:{instance.id.Building},P:{instance.id.Prop},T:{instance.id.Tree},N:{instance.id.NetNode},S:{instance.id.NetSegment},L:{instance.id.NetLane})";
-        }
-
-        internal static HashSet<Bounds> MergeBounds(HashSet<Bounds> outerList)
-        {
-            HashSet<Bounds> innerList = new HashSet<Bounds>();
-            HashSet<Bounds> newList = new HashSet<Bounds>();
-
-            int c = 0;
-
-            do
-            {
-                foreach (Bounds outer in outerList)
-                {
-                    //Color32 color = GetRandomDebugColor();
-                    //AddDebugBox(outer, color);
-
-                    bool merged = false;
-
-                    float outerVolume = outer.size.x * outer.size.y * outer.size.z;
-                    foreach (Bounds inner in innerList)
-                    {
-                        float separateVolume = (inner.size.x * inner.size.y * inner.size.z) + outerVolume;
-
-                        Bounds encapsulated = inner;
-                        encapsulated.Encapsulate(outer);
-                        float encapsulateVolume = encapsulated.size.x * encapsulated.size.y * encapsulated.size.z;
-
-                        if (!merged && encapsulateVolume < separateVolume)
-                        {
-                            newList.Add(encapsulated);
-                            merged = true;
-                        }
-                        else
-                        {
-                            newList.Add(inner);
-                        }
-                    }
-                    if (!merged)
-                    {
-                        newList.Add(outer);
-                    }
-
-                    innerList = new HashSet<Bounds>(newList);
-                    newList.Clear();
-                }
-
-                if (outerList.Count <= innerList.Count)
-                {
-                    break;
-                }
-                outerList = new HashSet<Bounds>(innerList);
-                innerList.Clear();
-
-                if (c > 1000)
-                {
-                    Log.Error($"Looped bounds-merge a thousand times");
-                    break;
-                }
-
-                c++;
-            }
-            while (true);
-
-            //foreach (Bounds b in innerList)
-            //{
-            //    b.Expand(4f);
-            //    AddDebugBox(b, new Color32(255, 0, 0, 200));
-            //}
-            //Log.Debug($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
-            return innerList;
         }
 
         private static void UpdateRender(Bounds bounds)
@@ -1317,96 +798,6 @@ namespace MoveIt
                     }
                 }
             }
-        }
-
-        internal static bool isTreeSnappingInstalled()
-        {
-            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
-                    mod.publishedFileID.AsUInt64 == 869134690uL ||
-                    mod.name.StartsWith("TreeSnapping") ||
-                    mod.name.Contains("869134690")
-            ) && mod.isEnabled))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        internal static void CleanGhostNodes()
-        {
-            if (!MoveItLoader.IsGameLoaded)
-            {
-                ExceptionPanel notLoaded = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                notLoaded.SetMessage("Not In-Game", "Use this button when in-game to remove ghost nodes (nodes with no segments attached, which were previously created by Move It)", false);
-                return;
-            }
-
-            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-            string message;
-            int count = 0;
-
-            for (ushort nodeId = 0; nodeId < Singleton<NetManager>.instance.m_nodes.m_buffer.Length; nodeId++)
-            {
-                NetNode node = Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
-                if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.None) continue;
-                if ((node.m_flags & NetNode.Flags.Untouchable) != NetNode.Flags.None) continue;
-                bool hasSegments = false;
-
-                for (int i = 0; i < 8; i++)
-                {
-                    if (node.GetSegment(i) > 0)
-                    {
-                        hasSegments = true;
-                        break;
-                    }
-                }
-
-                if (!hasSegments)
-                {
-                    count++;
-                    Singleton<NetManager>.instance.ReleaseNode(nodeId);
-                }
-            }
-            if (count > 0)
-            {
-                ActionQueue.instance.Clear();
-                message = $"Removed {count} ghost node{(count == 1 ? "" : "s")}!";
-            }
-            else
-            {
-                message = "No ghost nodes found, nothing has been changed.";
-            }
-            panel.SetMessage("Removing Ghost Nodes", message, false);
-        }
-
-        internal static byte RandomByte(byte min, byte max)
-        {
-            return (byte)Rand.Next(min, max);
-        }
-
-        internal void ProcessMirror(AlignMirrorAction action)
-        {
-            StartCoroutine(ProcessMirrorIterate(action));
-        }
-
-        internal IEnumerator<object> ProcessMirrorIterate(AlignMirrorAction action)
-        {
-            const uint MaxAttempts = 1000_000;
-
-            uint c = 0;
-            while (c < MaxAttempts && POProcessing > 0)
-            {
-                c++;
-                yield return new WaitForSeconds(0.05f);
-            }
-
-            if (c == MaxAttempts)
-            {
-                throw new Exception($"Failed to mirror PO");
-            }
-
-            action.DoProcess();
         }
     }
 }

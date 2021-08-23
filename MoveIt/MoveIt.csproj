@@ -67,6 +67,8 @@
     <Compile Include="MIT_Filtering.cs" />
     <Compile Include="MIT_Keyboard.cs" />
     <Compile Include="MIT_OnToolUpdate.cs" />
+    <Compile Include="MIT_ToolManagement.cs" />
+    <Compile Include="MIT_Utilities.cs" />
     <Compile Include="Moveable\MoveableProc.cs" />
     <Compile Include="Integration\PO_Logic.cs" />
     <Compile Include="Integration\PO_Manager.cs" />

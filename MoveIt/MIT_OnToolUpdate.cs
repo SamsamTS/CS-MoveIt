@@ -514,7 +514,7 @@ namespace MoveIt
                 newStates = transformAction.CalculateStates(moveDelta, angleDelta, center, followTerrain);
             }
 
-            if (ActionQueue.instance.current is CloneAction cloneAction)
+            if (ActionQueue.instance.current is CloneActionBase cloneAction)
             {
                 newStates = cloneAction.CalculateStates(moveDelta, angleDelta, center, followTerrain);
             }
