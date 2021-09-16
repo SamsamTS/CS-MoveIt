@@ -336,6 +336,53 @@ namespace MoveIt
             return true;
         }
 
+        internal static void FixTreeFixedHeightFlag()
+        {
+            if (!MoveItLoader.IsGameLoaded)
+            {
+                ExceptionPanel notLoaded = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                notLoaded.SetMessage("Not In-Game", "If Tree Snapping is causing tree heights to be off, click this straight after loading your city to fix the issue.", false);
+                return;
+            }
+
+            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+            string message;
+            int count = 0, total = 0;
+
+            for (uint treeId = 0; treeId < Singleton<TreeManager>.instance.m_trees.m_buffer.Length; treeId++)
+            {
+                TreeInstance tree = Singleton<TreeManager>.instance.m_trees.m_buffer[treeId];
+                if ((tree.m_flags & (ushort)TreeInstance.Flags.Created) == (ushort)TreeInstance.Flags.None) continue;
+                total++;
+
+                if (tree.FixedHeight) continue;
+
+                // check if it should have FixedHeight flag
+                float terrainHeight = TerrainManager.instance.SampleDetailHeight(tree.Position);
+                if (tree.Position.y < terrainHeight - 0.075f || tree.Position.y > terrainHeight + 0.075f)
+                {
+                    Singleton<TreeManager>.instance.m_trees.m_buffer[treeId].FixedHeight = true;
+                    count++;
+                }
+
+                if (treeId > 100_000_000)
+                {
+                    throw new Exception("Scanning too many trees, aborting");
+                }
+            }
+            if (count > 0)
+            {
+                ActionQueue.instance.Clear();
+                message = $"Adjusted {count} tree{(count == 1 ? "" : "s")} out of {total}!";
+            }
+            else
+            {
+                message = $"No unflagged floating trees out of {total}, nothing has been changed.";
+            }
+            panel.SetMessage("Flagging Trees", message, false);
+
+        }
+
         internal static void CleanGhostNodes()
         {
             if (!MoveItLoader.IsGameLoaded)

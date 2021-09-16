@@ -183,6 +183,9 @@ namespace MoveIt
                 button = (UIButton)group.AddButton(Str.options_RemoveGhostNodes, MoveItTool.CleanGhostNodes);
                 button.tooltip = Str.options_RemoveGhostNodes_Tooltip;
 
+                button = (UIButton)group.AddButton(Str.options_fixTreeSnapping, MoveItTool.FixTreeFixedHeightFlag);
+                button.tooltip = Str.options_fixTreeSnappingTooltip;
+
                 group.AddSpace(10);
 
                 button = (UIButton)group.AddButton(Str.options_ResetButtonPosition, () =>

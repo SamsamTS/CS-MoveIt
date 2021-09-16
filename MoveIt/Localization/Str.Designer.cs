@@ -754,6 +754,24 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix Tree Snapping.
+        /// </summary>
+        internal static string options_fixTreeSnapping {
+            get {
+                return ResourceManager.GetString("options_fixTreeSnapping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If Tree Snapping is causing tree heights to be off, click this straight after loading your city..
+        /// </summary>
+        internal static string options_fixTreeSnappingTooltip {
+            get {
+                return ResourceManager.GetString("options_fixTreeSnappingTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide the PO deletion warning.
         /// </summary>
         internal static string options_HidePODeletionWarning {

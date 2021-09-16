@@ -358,6 +358,14 @@
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>Extra Options</value>
   </data>
+  <data name="options_fixTreeSnapping" xml:space="preserve">
+    <value>Fix Tree Snapping</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
+  <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
+    <value>If Tree Snapping is causing tree heights to be off, click this straight after loading your city.</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>Hide the PO deletion warning</value>
     <comment>Do not translate 'PO'.</comment>
