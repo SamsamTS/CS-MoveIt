@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ColossalFramework.Plugins;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace MoveItIntegration
 {
@@ -77,39 +79,5 @@ namespace MoveItIntegration
         /// <param name="dataVersion"><see cref="DataVersion"/> when data was stored</param>
         /// <returns>The data the integrated mod encoded</returns>
         public abstract object Decode64(string base64Data, Version dataVersion);
-    }
-
-    /// <summary>
-    /// Used by Move It to find integrated mods
-    /// </summary>
-    public static class IntegrationHelper
-    {
-        /// <summary>
-        /// Search for mods with Move It integration (assemblies which contain <see cref="MoveItIntegrationBase"/> implementations
-        /// </summary>
-        /// <returns>List of <see cref="MoveItIntegrationBase"/> instances, one from each integrationed mod</returns>
-        public static List<MoveItIntegrationBase> GetIntegrations()
-        {
-            var integrations = new List<MoveItIntegrationBase>();
-
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                try
-                {
-                    foreach (Type type in assembly.GetExportedTypes())
-                    {
-                        if (type.IsClass && typeof(IMoveItIntegrationFactory).IsAssignableFrom(type))
-                        {
-                            var factory = (IMoveItIntegrationFactory)Activator.CreateInstance(type);
-                            var instance = factory.GetInstance();
-                            integrations.Add(instance);
-                        }
-                    }
-                }
-                catch { }
-            }
-
-            return integrations;
-        }
     }
 }

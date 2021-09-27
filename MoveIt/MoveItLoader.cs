@@ -1,6 +1,9 @@
 ﻿using ColossalFramework.Globalization;
+using ColossalFramework.Plugins;
 using ICities;
 using MoveIt.Localization;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MoveIt
@@ -27,7 +30,7 @@ namespace MoveIt
             if (MoveItTool.instance == null)
             {
                 // Creating the instance
-                ToolController toolController = Object.FindObjectOfType<ToolController>();
+                ToolController toolController = UnityEngine.Object.FindObjectOfType<ToolController>();
 
                 MoveItTool.instance = toolController.gameObject.AddComponent<MoveItTool>();
             }
@@ -75,11 +78,11 @@ namespace MoveIt
                 ToolsModifierControl.SetTool<DefaultTool>();
 
             MoveItTool.m_debugPanel = null;
-            Object.Destroy(DebugGameObject);
-            Object.Destroy(MoveToToolObject);
+            UnityEngine.Object.Destroy(DebugGameObject);
+            UnityEngine.Object.Destroy(MoveToToolObject);
             if (PO_Manager.gameObject != null)
             {
-                Object.Destroy(PO_Manager.gameObject);
+                UnityEngine.Object.Destroy(PO_Manager.gameObject);
             }
             UIToolOptionPanel.instance = null;
             UIMoreTools.MoreToolsPanel = null;
@@ -87,7 +90,7 @@ namespace MoveIt
             Action.selection.Clear();
             Filters.Picker = null;
             MoveItTool.PO = null;
-            Object.Destroy(MoveItTool.instance.m_button);
+            UnityEngine.Object.Destroy(MoveItTool.instance.m_button);
 
             UILoadWindow.Close();
             UISaveWindow.Close();
@@ -107,6 +110,69 @@ namespace MoveIt
         {
             Log.Debug($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name}");
             Str.Culture = ModInfo.Culture;
+        }
+    }
+
+    /// <summary>
+    /// Used by Move It to find integrated mods
+    /// </summary>
+    public static class IntegrationHelper
+    {
+        /// <summary>
+        /// Search for mods with Move It integration (assemblies which contain <see cref="MoveItIntegrationBase"/> implementations
+        /// </summary>
+        /// <returns>List of <see cref="MoveItIntegrationBase"/> instances, one from each integrationed mod</returns>
+        public static List<MoveItIntegration.MoveItIntegrationBase> GetIntegrations()
+        {
+            var integrations = new List<MoveItIntegration.MoveItIntegrationBase>();
+
+            foreach (var mod in PluginManager.instance.GetPluginsInfo())
+            {
+                if (!mod.isEnabled) continue;
+
+                foreach (var assembly in mod.GetAssemblies())
+                {
+                    try
+                    {
+                        foreach (Type type in assembly.GetExportedTypes())
+                        {
+                            if (type.IsClass && typeof(MoveItIntegration.IMoveItIntegrationFactory).IsAssignableFrom(type))
+                            {
+                                var factory = (MoveItIntegration.IMoveItIntegrationFactory)Activator.CreateInstance(type);
+                                var instance = factory.GetInstance();
+                                integrations.Add(instance);
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            //string msg = $"CCC2 ({integrations.Count}): ";
+            //foreach (var x in integrations)
+            //{
+            //    msg += $"{x.Name} ({x.ID}), ";
+            //}
+            //Debug.Log(msg);
+
+            //foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            //{
+            //    try
+            //    {
+            //        foreach (Type type in assembly.GetExportedTypes())
+            //        {
+            //            if (type.IsClass && typeof(IMoveItIntegrationFactory).IsAssignableFrom(type))
+            //            {
+            //                var factory = (IMoveItIntegrationFactory)Activator.CreateInstance(type);
+            //                var instance = factory.GetInstance();
+            //                integrations.Add(instance);
+            //            }
+            //        }
+            //    }
+            //    catch { }
+            //}
+
+            return integrations;
         }
     }
 }
