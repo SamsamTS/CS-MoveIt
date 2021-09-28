@@ -359,11 +359,11 @@
     <value>附加选项</value>
   </data>
   <data name="options_fixTreeSnapping" xml:space="preserve">
-    <value>修复树木捕捉</value>
+    <value>修复树木捕捉（Tree Snapping）</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
-    <value>If Tree Snapping is causing tree heights to be off, click this straight after loading your city.</value>
+    <value>如果Tree Snapping导致树木高度被关闭，可以在载入城市后直接点击这个按钮。</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
