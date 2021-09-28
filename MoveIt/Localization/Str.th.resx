@@ -363,7 +363,7 @@
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
-    <value>If Tree Snapping is causing tree heights to be off, click this straight after loading your city.</value>
+    <value>ถ้า Tree Snapping ทำให้ระดับความสูงของต้นไม้นั้นถูกปิดใช้งาน คลิกตรงนี้หลังจากโหลดเมืองของคุณแล้ว</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
