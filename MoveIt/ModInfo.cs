@@ -48,7 +48,7 @@ namespace MoveIt
 
         internal static CultureInfo Culture => new CultureInfo(SingletonLite<LocaleManager>.instance.language == "zh" ? "zh-cn" : SingletonLite<LocaleManager>.instance.language);
 
-        public const string version = "2.9.4";
+        public const string version = "2.9.5 Beta";
 
         private static bool debugInitialised = false;
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
@@ -214,6 +214,10 @@ namespace MoveIt
                 checkBox.name = "MoveIt_DebugPanel";
 
                 group.AddSpace(5);
+                UILabel emlLabel = panel.AddUIComponent<UILabel>();
+                emlLabel.name = "emlLabel";
+                emlLabel.text = PropLayer.getVersionText();
+
                 UILabel nsLabel = panel.AddUIComponent<UILabel>();
                 nsLabel.name = "nsLabel";
                 nsLabel.text = NS_Manager.getVersionText();

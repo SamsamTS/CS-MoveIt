@@ -25,8 +25,6 @@ namespace MoveIt
         public abstract void ReplaceInstances(Dictionary<Instance, Instance> toReplace);
 
         protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
-        protected static PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
-        protected static TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
         protected static NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
 
@@ -206,7 +204,7 @@ namespace MoveIt
                     if (full)
                     {
                         Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                        Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        PropLayer.Manager.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                         Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                         bounds.Expand(64f);
                         Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
@@ -218,8 +216,6 @@ namespace MoveIt
                     bounds.Expand(32f);
                     MoveItTool.instance.areasToUpdate.Add(bounds);
                     MoveItTool.instance.areaUpdateCountdown = 60;
-                    //Singleton<PropManager>.instance.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    //Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                 }
             }
             catch (IndexOutOfRangeException e)

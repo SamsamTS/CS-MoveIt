@@ -149,7 +149,7 @@ namespace MoveIt
                 }
             }
 
-            //Log.Debug($"AAA {path}\nstate:{state.terrainHeight} tH-state:{terrainHeight - state.terrainHeight}, yTO:{yTerrainOffset}\n" +
+            //Log.Debug($"{path}\nstate:{state.terrainHeight} tH-state:{terrainHeight - state.terrainHeight}, yTO:{yTerrainOffset}\n" +
             //    $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}, dh:{deltaHeight}\n" +
             //    $"FRAME  - newY:{newPosition.y}, oldY:{position.y}, diff:{newPosition.y - position.y}\n" +
             //    $"ADJUST - adjY:{y}, newY:{newPosition.y}, diff:{y - newPosition.y}\n" +

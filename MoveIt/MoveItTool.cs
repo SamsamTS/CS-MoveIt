@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -273,6 +274,7 @@ namespace MoveIt
             {
                 treeSnapping = isTreeSnappingEnabled();
             }
+            PropLayer.Initialise();
         }
 
         protected override void OnEnable()
@@ -340,7 +342,7 @@ namespace MoveIt
             //}
             //Log.Debug(msg);
 
-            // msg = "Plugins:";
+            //msg = "Plugins:";
             //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
             //{
             //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +

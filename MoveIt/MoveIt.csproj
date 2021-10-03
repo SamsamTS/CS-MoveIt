@@ -73,6 +73,8 @@
     <Compile Include="Integration\PO_Logic.cs" />
     <Compile Include="Integration\PO_Manager.cs" />
     <Compile Include="Integration\NetworkSkins.cs" />
+    <Compile Include="PropInstance.cs" />
+    <Compile Include="PropLayer.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="GUI\UIFastList.cs" />
     <Compile Include="GUI\UISaveLoadFileRow.cs" />
@@ -196,6 +198,9 @@
     <Reference Include="ColossalManaged">
       <HintPath>$(MangedDLLPath)\ColossalManaged.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="EManagersLib.API">
+      <HintPath>C:\Users\Rob\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\EML\EManagersLib.API.dll</HintPath>
     </Reference>
     <Reference Include="ICities">
       <HintPath>$(MangedDLLPath)\ICities.dll</HintPath>

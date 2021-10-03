@@ -348,7 +348,7 @@ namespace MoveIt
                         }
                     case InstanceType.Prop:
                         {
-                            return PropManager.instance.m_props.m_buffer[id.Prop];
+                            return PropLayer.Manager.Buffer(id);
                         }
                     case InstanceType.Tree:
                         {

@@ -68,7 +68,7 @@ namespace MoveIt
             // Touch each prop to ensure lights are functional
             for (ushort i = 0; i < ushort.MaxValue; i++)
             {
-                PropManager.instance.UpdateProp(i);
+                PropLayer.Manager.UpdateProp(i);
             }
         }
 

@@ -18,7 +18,6 @@ namespace MoveIt
             Segment3 ray = new Segment3(origin, vector);
 
             Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
-            PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
             NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
             NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
             TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
@@ -131,26 +130,7 @@ namespace MoveIt
 
                         if (selectProps || selectDecals || selectSurfaces || (selectPicker && Filters.Picker.IsProp))
                         {
-                            ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
-                            int count = 0;
-                            while (prop != 0u)
-                            {
-                                if (stepOver.isValidP(prop) && Filters.Filter(propBuffer[prop].Info))
-                                {
-                                    if (propBuffer[prop].RayCast(prop, ray, out float t, out float targetSqr) && t < smallestDist)
-                                    {
-                                        id.Prop = prop;
-                                        smallestDist = t;
-                                    }
-                                }
-
-                                prop = propBuffer[prop].m_nextGridProp;
-
-                                if (++count > 65536)
-                                {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Props: Invalid list detected!\n" + Environment.StackTrace);
-                                }
-                            }
+                            PropLayer.Manager.RaycastHoverInstance(ref i, ref j, ref stepOver, ref ray, ref smallestDist, ref id);
                         }
 
                         if (selectNodes || selectBuilding || (selectPicker && Filters.Picker.IsNode))
@@ -306,7 +286,6 @@ namespace MoveIt
             HashSet<Instance> list = new HashSet<Instance>();
 
             Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
-            PropInstance[] propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
             NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
             NetSegment[] segmentBuffer = Singleton<NetManager>.instance.m_segments.m_buffer;
             TreeInstance[] treeBuffer = Singleton<TreeManager>.instance.m_trees.m_buffer;
@@ -393,26 +372,7 @@ namespace MoveIt
 
                         if (filterProps || filterDecals || filterSurfaces || (filterPicker && Filters.Picker.IsProp))
                         {
-                            ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
-                            int count = 0;
-                            while (prop != 0u)
-                            {
-                                if (Filters.Filter(propBuffer[prop].Info))
-                                {
-                                    if (PointInRectangle(m_selection, propBuffer[prop].Position))
-                                    {
-                                        id.Prop = prop;
-                                        list.Add(id);
-                                    }
-                                }
-
-                                prop = propBuffer[prop].m_nextGridProp;
-
-                                if (++count > 65536)
-                                {
-                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Prop: Invalid list detected!\n" + Environment.StackTrace);
-                                }
-                            }
+                            PropLayer.Manager.GetMarqueeList(ref i, ref j, ref id, ref m_selection, ref list);
                         }
 
                         if (filterNodes || filterBuildings || (filterPicker && Filters.Picker.IsNode))
@@ -582,7 +542,7 @@ namespace MoveIt
             return ((P1.x - P0.x) * (P2.z - P0.z) - (P2.x - P0.x) * (P1.z - P0.z)) > 0;
         }
 
-        private bool PointInRectangle(Quad3 rectangle, Vector3 p)
+        internal bool PointInRectangle(Quad3 rectangle, Vector3 p)
         {
             return isLeft(rectangle.a, rectangle.b, p) && isLeft(rectangle.b, rectangle.c, p) && isLeft(rectangle.c, rectangle.d, p) && isLeft(rectangle.d, rectangle.a, p);
         }

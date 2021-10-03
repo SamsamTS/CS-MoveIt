@@ -28,13 +28,14 @@ namespace MoveIt
             return _isValid(instance);
         }
 
-        public bool isValidP(ushort id)
+        public bool isValidP(uint id)
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            InstanceID instance = default;
-            instance.Prop = id;
-            return _isValid(instance);
+            return _isValid(PropLayer.Manager.StepOver(id));
+            //InstanceID instance = default;
+            //instance.Prop = id;
+            //return _isValid(instance);
         }
 
         public bool isValidPO(uint id)

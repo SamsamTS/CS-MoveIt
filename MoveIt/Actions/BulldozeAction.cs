@@ -313,7 +313,7 @@ namespace MoveIt
 
                     if (state.instance.id.Type == InstanceType.Prop)
                     {
-                        PropManager.instance.m_props.m_buffer[clone.id.Prop].FixedHeight = ((PropState)state).fixedHeight;
+                        PropLayer.Manager.Buffer(clone.id).FixedHeight = ((PropState)state).fixedHeight;
                     }
                     else if (state.instance.id.Type == InstanceType.Building)
                     {

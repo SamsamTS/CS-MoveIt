@@ -25,7 +25,7 @@ namespace MoveIt
 
         public MoveableProp(InstanceID instanceID) : base(instanceID)
         {
-            Info = new Info_Prefab(PropManager.instance.m_props.m_buffer[instanceID.Prop].Info);
+            Info = PropLayer.Manager.GetInfo(instanceID);
         }
 
         public override InstanceState SaveToState(bool integrate = true)
@@ -36,15 +36,14 @@ namespace MoveIt
                 isCustomContent = Info.Prefab.m_isCustomContent
             };
 
-            ushort prop = id.Prop;
+            IProp prop = PropLayer.Manager.Buffer(id);
+
             state.Info = Info;
-
-            state.position = PropManager.instance.m_props.m_buffer[prop].Position;
-            state.angle = PropManager.instance.m_props.m_buffer[prop].Angle;
+            state.position = prop.Position;
+            state.angle = prop.Angle;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
-
-            state.single = PropManager.instance.m_props.m_buffer[prop].Single;
-            state.fixedHeight = PropManager.instance.m_props.m_buffer[prop].FixedHeight;
+            state.single = prop.Single;
+            state.fixedHeight = prop.FixedHeight;
 
             state.SaveIntegrations(integrate);
 
@@ -55,11 +54,19 @@ namespace MoveIt
         {
             if (!(state is PropState propState)) return;
 
-            ushort prop = id.Prop;
-            PropManager.instance.m_props.m_buffer[prop].Angle = propState.angle;
-            PropManager.instance.m_props.m_buffer[prop].FixedHeight = propState.fixedHeight;
-            PropManager.instance.MoveProp(prop, propState.position);
-            PropManager.instance.UpdatePropRenderer(prop, true);
+            IProp prop = PropLayer.Manager.Buffer(id);
+            prop.Angle = propState.angle;
+            prop.FixedHeight = propState.fixedHeight;
+
+            prop.MoveProp(propState.position);
+            prop.UpdatePropRenderer(true);
+
+            //ushort prop = id.Prop;
+            //PropManager.instance.m_props.m_buffer[prop].Angle = propState.angle;
+            //PropManager.instance.m_props.m_buffer[prop].FixedHeight = propState.fixedHeight;
+
+            //PropManager.instance.MoveProp(prop, propState.position);
+            //PropManager.instance.UpdatePropRenderer(prop, true);
         }
 
         public override Vector3 position
@@ -67,12 +74,13 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return Vector3.zero;
-                return PropManager.instance.m_props.m_buffer[id.Prop].Position;
+                return PropLayer.Manager.Buffer(id).Position;
+                //return PropManager.instance.m_props.m_buffer[id.Prop].Position;
             }
             set
             {
-                if (id.IsEmpty) PropManager.instance.m_props.m_buffer[id.Prop].Position = Vector3.zero;
-                else PropManager.instance.m_props.m_buffer[id.Prop].Position = value;
+                if (id.IsEmpty) PropLayer.Manager.Buffer(id).Position = Vector3.zero;
+                else PropLayer.Manager.Buffer(id).Position = value;
             }
         }
 
@@ -81,12 +89,12 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return 0f;
-                return PropManager.instance.m_props.m_buffer[id.Prop].Angle;
+                return PropLayer.Manager.Buffer(id).Angle;
             }
             set
             {
                 if (id.IsEmpty) return;
-                PropManager.instance.m_props.m_buffer[id.Prop].Angle = (value + Mathf.PI * 2) % (Mathf.PI * 2);
+                PropLayer.Manager.Buffer(id).Angle = (value + Mathf.PI * 2) % (Mathf.PI * 2);
             }
         }
 
@@ -95,7 +103,7 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return false;
-                return PropManager.instance.m_props.m_buffer[id.Prop].m_flags != 0;
+                return PropLayer.Manager.Buffer(id).m_flags != 0;
             }
         }
 
@@ -104,9 +112,9 @@ namespace MoveIt
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
-            if (!PropManager.instance.m_props.m_buffer[id.Prop].FixedHeight && deltaHeight != 0 && (MoveItLoader.loadMode == ICities.LoadMode.LoadAsset || MoveItLoader.loadMode == ICities.LoadMode.NewAsset))
+            if (!PropLayer.Manager.Buffer(id).FixedHeight && deltaHeight != 0 && (MoveItLoader.loadMode == ICities.LoadMode.LoadAsset || MoveItLoader.loadMode == ICities.LoadMode.NewAsset))
             {
-                PropManager.instance.m_props.m_buffer[id.Prop].FixedHeight = true;
+                PropLayer.Manager.Buffer(id).FixedHeight = true;
             }
 
             if (followTerrain)
@@ -121,10 +129,15 @@ namespace MoveIt
         {
             if (!isValid) return;
 
-            ushort prop = id.Prop;
-            PropManager.instance.m_props.m_buffer[prop].Angle = angle;
-            PropManager.instance.MoveProp(prop, location);
-            PropManager.instance.UpdatePropRenderer(prop, true);
+            IProp prop = PropLayer.Manager.Buffer(id);
+            prop.Angle = angle;
+            prop.MoveProp(location);
+            prop.UpdatePropRenderer(true);
+
+            //ushort prop = id.Prop;
+            //PropManager.instance.m_props.m_buffer[prop].Angle = angle;
+            //PropManager.instance.MoveProp(prop, location);
+            //PropManager.instance.UpdatePropRenderer(prop, true);
         }
 
         public override void SetHeight(float height)
@@ -132,9 +145,13 @@ namespace MoveIt
             Vector3 newPosition = position;
             newPosition.y = height;
 
-            ushort prop = id.Prop;
-            PropManager.instance.MoveProp(prop, newPosition);
-            PropManager.instance.UpdatePropRenderer(prop, true);
+            IProp prop = PropLayer.Manager.Buffer(id);
+            prop.MoveProp(newPosition);
+            prop.UpdatePropRenderer(true);
+
+            //ushort prop = id.Prop;
+            //PropManager.instance.MoveProp(prop, newPosition);
+            //PropManager.instance.UpdatePropRenderer(prop, true);
         }
 
         public override void SetHeight()
@@ -156,14 +173,11 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
-
-            if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
-                state.Info.Prefab as PropInfo, newPosition, state.angle + deltaAngle, state.single))
+            if (PropLayer.Manager.CreateProp(out uint clone, state.Info.Prefab as PropInfo, newPosition, state.angle + deltaAngle, state.single))
             {
                 InstanceID cloneID = default;
-                cloneID.Prop = clone;
-                buffer[clone].FixedHeight = state.fixedHeight;
+                cloneID = PropLayer.Manager.SetProp(cloneID, clone);
+                PropLayer.Manager.Buffer(cloneID).FixedHeight = state.fixedHeight;
                 cloneInstance = new MoveableProp(cloneID);
             }
 
@@ -176,11 +190,10 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
-                state.Info.Prefab as PropInfo, state.position, state.angle, state.single))
+            if (PropLayer.Manager.CreateProp(out uint clone, state.Info.Prefab as PropInfo, state.position, state.angle, state.single))
             {
                 InstanceID cloneID = default;
-                cloneID.Prop = clone;
+                cloneID = PropLayer.Manager.SetProp(cloneID, clone);
                 cloneInstance = new MoveableProp(cloneID);
             }
 
@@ -189,19 +202,18 @@ namespace MoveIt
 
         public override void Delete()
         {
-            if (isValid) PropManager.instance.ReleaseProp(id.Prop);
+            if (isValid) PropLayer.Manager.Buffer(id).ReleaseProp();
         }
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
-            ushort prop = id.Prop;
-            PropInfo info = PropManager.instance.m_props.m_buffer[prop].Info;
+            IProp prop = PropLayer.Manager.Buffer(id);
 
-            Randomizer randomizer = new Randomizer(prop);
-            float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
-            float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
+            Randomizer randomizer = new Randomizer(prop.Index);
+            float scale = prop.Info.m_minScale + (float)randomizer.Int32(10000u) * (prop.Info.m_maxScale - prop.Info.m_minScale) * 0.0001f;
+            float radius = Mathf.Max(prop.Info.m_generatedInfo.m_size.x, prop.Info.m_generatedInfo.m_size.z) * scale;
 
-            return new Bounds(PropManager.instance.m_props.m_buffer[prop].Position, new Vector3(radius, 0, radius));
+            return new Bounds(prop.Position, new Vector3(radius, 0, radius));
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
@@ -209,12 +221,12 @@ namespace MoveIt
             if (!isValid) return;
             if (MoveItTool.m_isLowSensitivity) return;
 
-            ushort prop = id.Prop;
-            PropManager propManager = PropManager.instance;
-            PropInfo propInfo = propManager.m_props.m_buffer[prop].Info;
-            Vector3 position = propManager.m_props.m_buffer[prop].Position;
-            float angle = propManager.m_props.m_buffer[prop].Angle;
-            Randomizer randomizer = new Randomizer((int)prop);
+            //ushort prop = id.Prop;
+            IProp prop = PropLayer.Manager.Buffer(id);
+            PropInfo propInfo = prop.Info;
+            Vector3 position = prop.Position;
+            float angle = prop.Angle;
+            Randomizer randomizer = new Randomizer(prop.Index);
             float scale = propInfo.m_minScale + (float)randomizer.Int32(10000u) * (propInfo.m_maxScale - propInfo.m_minScale) * 0.0001f;
             float alpha = 1f;
             PropTool.CheckOverlayAlpha(propInfo, scale, ref alpha);

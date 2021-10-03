@@ -256,7 +256,8 @@ namespace MoveIt
                     }
                     else if (m_hoverInstance is MoveableProp mp)
                     {
-                        angle = Singleton<PropManager>.instance.m_props.m_buffer[mp.id.Prop].Angle;
+                        angle = PropLayer.Manager.Buffer(mp.id).Angle;
+                        //angle = Singleton<PropManager>.instance.m_props.m_buffer[mp.id.Prop].Angle;
                     }
                     else if (m_hoverInstance is MoveableProc mpo)
                     {
