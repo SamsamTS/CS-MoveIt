@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -38,12 +39,18 @@ namespace MoveIt
 
         internal static bool isEMLInstalled()
         {
-            if (!PluginManager.instance.GetPluginsInfo().Any(mod => mod.name.StartsWith("EML") && mod.isEnabled))
+            foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
             {
-                return false;
+                foreach (Assembly assembly in pluginInfo.GetAssemblies())
+                {
+                    if (assembly.GetName().Name.ToLower().Equals("emanagerslib"))
+                    {
+                        return pluginInfo.isEnabled;
+                    }
+                }
             }
 
-            return true;
+            return false;
         }
 
         internal static string getVersionText()
@@ -77,7 +84,6 @@ namespace MoveIt
 
         public PropsManager()
         {
-            Log.Debug($"AB1");
             propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
         }
 
@@ -176,13 +182,13 @@ namespace MoveIt
         }
     }
 
+    // Extended Managers Library support
     class EPropsManager : IPropsWrapper
     {
         private readonly EPropInstance[] propBuffer;
 
         public EPropsManager()
         {
-            Log.Debug($"AB2");
             propBuffer = PropAPI.GetPropBuffer();
         }
 

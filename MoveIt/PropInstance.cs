@@ -94,6 +94,7 @@ namespace MoveIt
         }
     }
 
+    // Extended Managers Library support
     class EPropWrapper : IProp
     {
         private readonly uint index;
