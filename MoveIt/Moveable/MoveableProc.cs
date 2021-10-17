@@ -163,7 +163,20 @@ namespace MoveIt
             if (!isValid) return;
             if (MoveItTool.m_isLowSensitivity) return;
 
-            m_procObj.RenderOverlay(cameraInfo, toolColor); 
+            if (m_procObj.Group is null)
+            {
+                m_procObj.RenderOverlay(cameraInfo, toolColor);
+            }
+            else
+            {
+                if (m_procObj.Group.root == m_procObj)
+                {
+                    foreach (PO_Object po in m_procObj.Group.objects)
+                    {
+                        po.RenderOverlay(cameraInfo, toolColor);
+                    }
+                }
+            }
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)

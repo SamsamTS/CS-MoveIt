@@ -69,6 +69,7 @@ namespace MoveIt
         IInfo GetInfo(InstanceID id);
         IProp Buffer(uint id);
         IProp Buffer(InstanceID id);
+        uint GetId(InstanceID id);
         InstanceID SetProp(InstanceID id, uint i);
         void UpdateProps(float minX, float minZ, float maxX, float maxZ);
         void UpdateProp(ushort id);
@@ -100,6 +101,11 @@ namespace MoveIt
         public IProp Buffer(InstanceID id)
         {
             return new PropWrapper(id.Prop);
+        }
+
+        public uint GetId(InstanceID id)
+        {
+            return id.Prop;
         }
 
         public InstanceID SetProp(InstanceID id, uint i)
@@ -205,6 +211,11 @@ namespace MoveIt
         public IProp Buffer(InstanceID id)
         {
             return new EPropWrapper(id.GetProp32());
+        }
+
+        public uint GetId(InstanceID id)
+        {
+            return id.GetProp32();
         }
 
         public InstanceID SetProp(InstanceID id, uint i)

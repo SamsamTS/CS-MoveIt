@@ -123,7 +123,7 @@ namespace MoveIt
                 string type = "P";
                 PropInfo info = PropLayer.Manager.Buffer(id).Info;// PropManager.instance.m_props.m_buffer[id.Prop].Info;
                 if (info.m_isDecal) type = "D";
-                HoverLarge.text = $"{type}:{id.Prop}  {info.name}";
+                HoverLarge.text = $"{type}:{PropLayer.Manager.GetId(id)}  {info.name}";
                 HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
             }

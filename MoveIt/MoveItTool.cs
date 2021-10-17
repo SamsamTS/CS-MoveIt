@@ -467,6 +467,12 @@ namespace MoveIt
                     Color color = m_hoverColor;
                     if (m_hoverInstance is MoveableProc mpo)
                     {
+                        if (!mpo.m_procObj.isGroupRoot() && mpo.m_procObj.Group != null)
+                        {
+                            InstanceID rootInstance = default;
+                            rootInstance.NetLane = mpo.m_procObj.Group.root.Id;
+                            m_hoverInstance = new MoveableProc(rootInstance);
+                        }
                         color = m_POhoverColor;
                         mpo.m_procObj.Selected = true;
                     }

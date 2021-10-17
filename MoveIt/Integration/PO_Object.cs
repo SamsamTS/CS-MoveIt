@@ -190,17 +190,17 @@ namespace MoveIt
             if (m_dummy) return false;
 
             object layer = tPO.GetField("layer").GetValue(procObj);
-            if (Group is PO_Group)
-            {
-                if (Group.root == null)
-                {
-                    throw new NullReferenceException($"Group root is null (PO id: {Id})");
-                }
-                if (Id != Group.root.Id)
-                {
-                    return true;
-                }
-            }
+            //if (Group is PO_Group)
+            //{
+            //    if (Group.root == null)
+            //    {
+            //        throw new NullReferenceException($"Group root is null (PO id: {Id})");
+            //    }
+            //    if (Id != Group.root.Id)
+            //    {
+            //        return true;
+            //    }
+            //}
             if (layer == null)
             {
                 return false;

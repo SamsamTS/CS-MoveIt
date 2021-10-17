@@ -15,7 +15,7 @@ namespace MoveIt
         internal static PO_Object PObuffer = null;
         internal bool POHasFilters = true;
         internal bool POHasGroups = true;
-        //internal List<PO_Group> Groups;
+        internal List<PO_Group> Groups;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -291,37 +291,30 @@ namespace MoveIt
             return null;
         }
 
-        //public void InitGroups()
-        //{
-        //    Groups = new List<PO_Group>();
+        public void InitGroups()
+        {
+            Groups = new List<PO_Group>();
 
-        //    if (!POHasGroups)
-        //    {
-        //        Log.Debug($"PO Groups feature not found!");
-        //        return;
-        //    }
+            if (!POHasGroups)
+            {
+                Log.Debug($"PO Groups feature not found!");
+                return;
+            }
 
-        //    Log.Debug($"AAG01");
-        //    object groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
-        //    if (groupList == null)
-        //    {
-        //        Log.Debug($"PO Groups is null!");
-        //        return;
-        //    }
-        //    Log.Debug($"AAG02");
-        //    int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
-        //    Log.Debug($"AAG03");
+            object groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
+            if (groupList == null)
+            {
+                Log.Debug($"PO Groups is null!");
+                return;
+            }
+            int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
 
-        //    for (int i = 0; i < count; i++)
-        //    {
-        //        Log.Debug($"AAG04.1");
-        //        var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
-        //        Log.Debug($"AAG04.2");
-        //        Groups.Add(new PO_Group(v));
-        //        Log.Debug($"AAG04.3");
-        //    }
-        //    Log.Debug($"AAG05");
-        //}
+            for (int i = 0; i < count; i++)
+            {
+                var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
+                Groups.Add(new PO_Group(v));
+            }
+        }
 
         private object AvailableProcInfos
         {
