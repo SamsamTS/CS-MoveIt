@@ -163,6 +163,8 @@ namespace MoveIt
             if (!isValid) return;
             if (MoveItTool.m_isLowSensitivity) return;
 
+            //Log.Debug($"AAA4 {toolColor}, {(m_procObj.Group == null ? "<null>" : m_procObj.Group.root.Info.Name)} ");
+
             if (m_procObj.Group is null)
             {
                 m_procObj.RenderOverlay(cameraInfo, toolColor);
@@ -173,6 +175,8 @@ namespace MoveIt
                 {
                     foreach (PO_Object po in m_procObj.Group.objects)
                     {
+                        if (toolColor == MoveItTool.m_POselectedColor) toolColor = MoveItTool.m_POselectedGroup;
+                        if (toolColor == MoveItTool.m_POhoverColor) toolColor = MoveItTool.m_POhoverGroup;
                         po.RenderOverlay(cameraInfo, toolColor);
                     }
                 }

@@ -194,7 +194,7 @@ namespace MoveIt
                 {
                     if (full)
                     {
-                        TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                        SimulationManager.instance.AddAction(() => { TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false); });
                     }
 
                     bounds.Expand(32f);
@@ -203,12 +203,12 @@ namespace MoveIt
 
                     if (full)
                     {
-                        Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        SimulationManager.instance.AddAction(() => { Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
                         PropLayer.Manager.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                        Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        SimulationManager.instance.AddAction(() => { Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
                         bounds.Expand(64f);
-                        Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                        Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        SimulationManager.instance.AddAction(() => { Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
+                        SimulationManager.instance.AddAction(() => { Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
                     }
                 }
                 else

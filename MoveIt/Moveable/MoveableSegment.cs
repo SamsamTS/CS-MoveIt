@@ -2,6 +2,7 @@
 using ColossalFramework.Math;
 using JetBrains.Annotations;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;

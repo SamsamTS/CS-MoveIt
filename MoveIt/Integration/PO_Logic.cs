@@ -15,7 +15,7 @@ namespace MoveIt
         internal static PO_Object PObuffer = null;
         internal bool POHasFilters = true;
         internal bool POHasGroups = true;
-        internal List<PO_Group> Groups;
+        internal List<PO_Group> Groups = new List<PO_Group>();
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -293,13 +293,21 @@ namespace MoveIt
 
         public void InitGroups()
         {
-            Groups = new List<PO_Group>();
-
             if (!POHasGroups)
             {
                 Log.Debug($"PO Groups feature not found!");
                 return;
             }
+
+            foreach (PO_Group g in Groups)
+            {
+                foreach (PO_Object o in g.objects)
+                {
+                    o.Group = null;
+                }
+            }
+
+            Groups = new List<PO_Group>();
 
             object groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
             if (groupList == null)
@@ -313,6 +321,15 @@ namespace MoveIt
             {
                 var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
                 Groups.Add(new PO_Group(v));
+            }
+
+            // Update selection instances
+            foreach (Instance instance in Action.selection)
+            {
+                if (instance is MoveableProc mpo)
+                {
+                    mpo.m_procObj = GetPOById(mpo.m_procObj.Id);
+                }
             }
         }
 

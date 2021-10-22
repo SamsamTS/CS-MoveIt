@@ -103,6 +103,8 @@ namespace MoveIt
         internal static Color m_alignColor = new Color32(255, 255, 255, 244);
         internal static Color m_POhoverColor = new Color32(240, 140, 255, 230);
         internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
+        internal static Color m_POhoverGroup = new Color32(255, 45, 45, 230);
+        internal static Color m_POselectedGroup = new Color32(240, 30, 30, 150);
 
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
@@ -441,6 +443,7 @@ namespace MoveIt
                             {
                                 if (m_hoverInstance == null || (m_hoverInstance.isValid && (mpo.id != m_hoverInstance.id)))
                                 {
+                                    //Log.Debug($"AAA3 {mpo.id.NetLane}, {mpo.m_procObj.Group}");
                                     mpo.RenderOverlay(cameraInfo, m_POselectedColor, m_despawnColor);
                                     mpo.m_procObj.Selected = true;
                                 }
@@ -713,8 +716,9 @@ namespace MoveIt
                 try
                 {
                     bounds.Expand(64f);
-                    Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false);
+                    SimulationManager.instance.AddAction(() => { Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
+                    SimulationManager.instance.AddAction(() => { TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false); });
+
                     UpdateRender(bounds);
                     bounds.Expand(512f);
                     Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);

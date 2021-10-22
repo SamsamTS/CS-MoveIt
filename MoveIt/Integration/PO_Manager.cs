@@ -9,7 +9,7 @@ namespace MoveIt
 {
     internal class PO_Manager
     {
-        private PO_Logic Logic;
+        internal PO_Logic Logic;
         public static GameObject gameObject;
 
         private HashSet<uint> visibleIds = new HashSet<uint>();

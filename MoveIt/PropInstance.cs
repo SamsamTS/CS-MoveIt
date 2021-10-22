@@ -37,17 +37,17 @@ namespace MoveIt
 
         public void MoveProp(Vector3 position)
         {
-            PropManager.instance.MoveProp(index, position);
+            Singleton<SimulationManager>.instance.AddAction(() => PropManager.instance.MoveProp(index, position));
         }
 
         public void UpdatePropRenderer(bool updateGroup)
         {
-            PropManager.instance.UpdatePropRenderer(index, updateGroup);
+            Singleton<SimulationManager>.instance.AddAction(() => PropManager.instance.UpdatePropRenderer(index, updateGroup));
         }
 
         public void ReleaseProp()
         {
-            PropManager.instance.ReleaseProp(index);
+            Singleton<SimulationManager>.instance.AddAction(() => PropManager.instance.ReleaseProp(index));
         }
 
         public uint Index => index;

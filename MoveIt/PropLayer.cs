@@ -116,12 +116,12 @@ namespace MoveIt
 
         public void UpdateProps(float minX, float minZ, float maxX, float maxZ)
         {
-            Singleton<PropManager>.instance.UpdateProps(minX, minZ, maxX, maxZ);
+            SimulationManager.instance.AddAction(() => { Singleton<PropManager>.instance.UpdateProps(minX, minZ, maxX, maxZ); });
         }
 
         public void UpdateProp(ushort id)
         {
-            PropManager.instance.UpdateProp(id);
+            SimulationManager.instance.AddAction(() => { Singleton<PropManager>.instance.UpdateProp(id); });
         }
 
         public bool CreateProp(out uint clone, PropInfo info, Vector3 position, float angle, bool single)

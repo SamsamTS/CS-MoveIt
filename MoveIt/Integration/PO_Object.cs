@@ -1,48 +1,10 @@
 ﻿using ColossalFramework;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
 namespace MoveIt
 {
-    internal class PO_Group
-    {
-        internal List<PO_Object> objects = new List<PO_Object>();
-        internal PO_Object root = null;
-        internal int count;
-        internal Type tPO = null, tPOGroup = null;
-
-        public PO_Group(object group)
-        {
-            tPO = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
-            tPOGroup = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.POGroup");
-
-            var objList = tPOGroup.GetField("objects").GetValue(group);
-            count = (int)objList.GetType().GetProperty("Count").GetValue(objList, null);
-
-            for (int i = 0; i < count; i++)
-            {
-                var v = objList.GetType().GetMethod("get_Item").Invoke(objList, new object[] { i });
-                PO_Object obj = MoveItTool.PO.GetProcObj(Convert.ToUInt32(tPO.GetField("id").GetValue(v)) + 1);
-                obj.Group = this;
-                objects.Add(obj);
-
-                if (obj.isGroupRoot())
-                {
-                    root = obj;
-                }
-            }
-
-            //string msg = $"AAG07 - Count:{count}\n";
-            //foreach (PO_Object o in objects)
-            //{
-            //    msg += $"{o.Id}, ";
-            //}
-            //Log.Debug(msg);
-        }
-    }
-
     internal class PO_Object
     {
         internal object procObj;
@@ -248,7 +210,6 @@ namespace MoveIt
         {
             if (m_dummy)
             {
-                Log.Debug($"AAA01 DUMMY PREFAB");
                 return null;
             }
 
