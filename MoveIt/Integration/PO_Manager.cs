@@ -3,6 +3,7 @@ using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace MoveIt
@@ -16,8 +17,10 @@ namespace MoveIt
         internal Dictionary<uint, PO_Object> visibleObjects = new Dictionary<uint, PO_Object>();
 
         internal List<PO_Object> Objects => new List<PO_Object>(visibleObjects.Values);
+        internal List<PO_Group> Groups = new List<PO_Group>();
 
         internal static readonly string[] VersionNames = { "1.7" };
+        private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
         internal bool Enabled = false;
         private bool _active = false;
@@ -73,6 +76,48 @@ namespace MoveIt
             else
             {
                 Enabled = false;
+            }
+        }
+
+        public void InitGroups()
+        {
+            if (!PO_Logic.POHasGroups)
+            {
+                Log.Debug($"PO Groups feature not found!");
+                return;
+            }
+
+            foreach (PO_Group g in Groups)
+            {
+                foreach (PO_Object o in g.objects)
+                {
+                    o.Group = null;
+                }
+            }
+
+            Groups = new List<PO_Group>();
+
+            object groupList = PO_Logic.tPOLogic.GetField("groups", flags).GetValue(PO_Logic.POLogic);
+            if (groupList == null)
+            {
+                Log.Debug($"PO Groups is null!");
+                return;
+            }
+            int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
+
+            for (int i = 0; i < count; i++)
+            {
+                var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
+                Groups.Add(new PO_Group(v));
+            }
+
+            // Update selection instances
+            foreach (Instance instance in Action.selection)
+            {
+                if (instance is MoveableProc mpo)
+                {
+                    mpo.m_procObj = MoveItTool.PO.visibleObjects[mpo.m_procObj.Id];
+                }
             }
         }
 
@@ -182,8 +227,13 @@ namespace MoveIt
 
             try
             {
-                Logic.InitGroups();
-                Log.Debug($"PO Groups: {Logic.Groups.Count} found");
+                InitGroups();
+                string msg = $"PO Groups: {Groups.Count} found\n";
+                foreach (PO_Group g in MoveItTool.PO.Groups)
+                {
+                    msg += $"{g.objects.Count} ({g.root.Id}), ";
+                }
+                Log.Debug(msg);
             }
             catch (Exception e)
             {

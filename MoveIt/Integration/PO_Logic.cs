@@ -13,9 +13,8 @@ namespace MoveIt
         internal static Type tPOLogic = null, tPOMod = null, tPO = null, tPInfo = null, tPUtils = null, tVertex = null, tPOMoveIt = null, tPOGroup = null;
         internal static object POLogic = null;
         internal static PO_Object PObuffer = null;
-        internal bool POHasFilters = true;
-        internal bool POHasGroups = true;
-        internal List<PO_Group> Groups = new List<PO_Group>();
+        internal static bool POHasFilters = true;
+        internal static bool POHasGroups = true;
 
         private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -43,6 +42,7 @@ namespace MoveIt
             tPUtils = POAssembly.GetType("ProceduralObjects.Classes.ProceduralUtils");
             tVertex = POAssembly.GetType("ProceduralObjects.Classes.Vertex");
             tPOMoveIt = POAssembly.GetType("ProceduralObjects.Classes.PO_MoveIt");
+            tPOGroup = POAssembly.GetType("ProceduralObjects.Classes.POGroup");
             if (POAssembly.GetType("ProceduralObjects.SelectionMode.SelectionFilters") == null)
             {
                 POHasFilters = false;
@@ -224,6 +224,23 @@ namespace MoveIt
                     POColor = original.m_procObj.POColor
                 };
 
+                if (original.m_procObj.Group != null && action is CloneActionBase cloneAction)
+                {
+                    if (!cloneAction.m_POGroupMap.ContainsKey(original.m_procObj.Group))
+                    {
+                        Log.Debug($"Clone Error: {original.m_procObj.Id}'s group isn't in group map");
+                    }
+                    else
+                    {
+                        clone.Group = cloneAction.m_POGroupMap[original.m_procObj.Group];
+                        clone.Group.AddObject(clone);
+                        if (original.m_procObj.isGroupRoot())
+                        {
+                            clone.Group.SetNewRoot(clone);
+                        }
+                    }
+                }
+
                 InstanceID cloneID = default;
                 cloneID.NetLane = clone.Id;
                 MoveItTool.PO.visibleObjects.Add(cloneID.NetLane, clone);
@@ -256,6 +273,11 @@ namespace MoveIt
             var poList = tPOLogic.GetField("proceduralObjects", flags).GetValue(POLogic);
             var poSelList = tPOLogic.GetField("pObjSelection", flags).GetValue(POLogic);
 
+            if (obj.isGroupRoot())
+            {
+                DeleteGroup(obj.Group);
+            }
+
             poList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poList, new object[] { obj.GetProceduralObject() });
             poSelList.GetType().GetMethod("Remove", flags, null, new Type[] { tPO }, null).Invoke(poSelList, new object[] { obj.GetProceduralObject() });
             if (tPOLogic.GetField("activeIds", flags) != null)
@@ -263,6 +285,15 @@ namespace MoveIt
                 var activeIds = tPOLogic.GetField("activeIds", flags).GetValue(POLogic);
                 activeIds.GetType().GetMethod("Remove", flags, null, new Type[] { typeof(int) }, null).Invoke(activeIds, new object[] { obj.ProcId });
             }
+        }
+
+        internal void DeleteGroup(PO_Group group)
+        {
+            object groupList = tPOLogic.GetField("groups").GetValue(POLogic);
+
+            groupList.GetType().GetMethod("Remove").Invoke(groupList, new[] { group.POGroup });
+
+            MoveItTool.PO.Groups.Remove(group);
         }
 
         /// <param name="id">The NetLane id</param>
@@ -291,44 +322,21 @@ namespace MoveIt
             return null;
         }
 
-        public void InitGroups()
+        internal void MapGroupClones(HashSet<InstanceState> m_states, CloneActionBase action)
         {
-            if (!POHasGroups)
-            {
-                Log.Debug($"PO Groups feature not found!");
-                return;
-            }
+            action.m_POGroupMap = new Dictionary<PO_Group, PO_Group>();
 
-            foreach (PO_Group g in Groups)
+            foreach (InstanceState state in m_states)
             {
-                foreach (PO_Object o in g.objects)
+                if (state is ProcState poState)
                 {
-                    o.Group = null;
-                }
-            }
+                    MoveableProc mpo = (MoveableProc)poState.instance;
+                    if (mpo.m_procObj.Group is null) continue;
 
-            Groups = new List<PO_Group>();
-
-            object groupList = tPOLogic.GetField("groups", flags).GetValue(POLogic);
-            if (groupList == null)
-            {
-                Log.Debug($"PO Groups is null!");
-                return;
-            }
-            int count = (int)groupList.GetType().GetProperty("Count").GetValue(groupList, null);
-
-            for (int i = 0; i < count; i++)
-            {
-                var v = groupList.GetType().GetMethod("get_Item").Invoke(groupList, new object[] { i });
-                Groups.Add(new PO_Group(v));
-            }
-
-            // Update selection instances
-            foreach (Instance instance in Action.selection)
-            {
-                if (instance is MoveableProc mpo)
-                {
-                    mpo.m_procObj = GetPOById(mpo.m_procObj.Id);
+                    if (!action.m_POGroupMap.ContainsKey(mpo.m_procObj.Group))
+                    {
+                        action.m_POGroupMap.Add(mpo.m_procObj.Group, new PO_Group());
+                    }
                 }
             }
         }

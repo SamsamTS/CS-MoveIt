@@ -118,6 +118,7 @@ namespace MoveIt
         internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
         protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>(); // Map of original state to clone's instance
         protected Dictionary<InstanceID, InstanceID> m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
+        internal Dictionary<PO_Group, PO_Group> m_POGroupMap = new Dictionary<PO_Group, PO_Group>();
 
         protected Matrix4x4 matrix4x = default;
 
@@ -341,6 +342,7 @@ namespace MoveIt
             }
 
             // Clone PO
+            MoveItTool.PO.Logic.MapGroupClones(m_states, this);
             foreach (InstanceState state in m_states)
             {
                 if (state is ProcState)

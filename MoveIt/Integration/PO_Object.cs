@@ -16,8 +16,8 @@ namespace MoveIt
         public bool Selected { get; set; }
         public int ProcId { get => (int)Id - 1; set => Id = (uint)value + 1; }
 
-        internal Type tPOLogic = null, tPOMod = null, tPO = null, tPOLayer = null, tPOGroup = null;
-        internal readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+        internal static Type tPOLogic = null, tPOMod = null, tPO = null, tPOLayer = null, tPOGroup = null;
+        internal static readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
         internal PO_Group Group = null;
 
         internal bool m_dummy = false;
@@ -122,7 +122,7 @@ namespace MoveIt
 
         public PO_Object(object obj)
         {
-            tPOLogic = PO_Logic.POAssembly.GetType("ProceduralObjects.3Logic");
+            tPOLogic = PO_Logic.POAssembly.GetType("ProceduralObjects.ProceduralObjectsLogic");
             tPOMod = PO_Logic.POAssembly.GetType("ProceduralObjects.ProceduralObjectsMod");
             tPO = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.ProceduralObject");
             tPOLayer = PO_Logic.POAssembly.GetType("ProceduralObjects.Classes.Layer");
@@ -204,6 +204,16 @@ namespace MoveIt
                 return false;
             }
             return (bool)tPO.GetField("isRootOfGroup").GetValue(procObj);
+        }
+
+        internal void SetGroupRoot(bool flag)
+        {
+            if (m_dummy) return;
+            if (tPO.GetField("isRootOfGroup") == null) // User's PO version doesn't have group feature
+            {
+                return;
+            }
+            tPO.GetField("isRootOfGroup").SetValue(procObj, flag);
         }
 
         private PrefabInfo GetPrefab()
