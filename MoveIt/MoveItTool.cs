@@ -281,13 +281,39 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
-            if (PO == null)
+            //string msg = $"Mods:";
+            //foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
+            //{
+            //    msg += $"\n{pluginInfo.name} ({pluginInfo.isEnabled}, {pluginInfo.userModInstance.GetType().Name}):\n  ";
+            //    foreach (Assembly assembly in pluginInfo.GetAssemblies())
+            //    {
+            //        msg += $"{assembly.GetName().Name.ToLower()}, ";
+            //    }
+            //}
+            //Log.Debug(msg);
+
+            try
             {
-                PO = new PO_Manager();
+                if (PO == null)
+                {
+                    PO = new PO_Manager();
+                }
             }
-            if (NS == null)
+            catch (Exception e)
             {
-                NS = new NS_Manager();
+                Log.Error($"PO Failed:\n{e}");
+            }
+
+            try
+            {
+                if (NS == null)
+                {
+                    NS = new NS_Manager();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"NetworkSkins Failed:\n{e}");
             }
 
             if (UIToolOptionPanel.instance == null)
@@ -337,20 +363,20 @@ namespace MoveIt
             UIMoreTools.UpdateMoreTools();
             UpdatePillarMap();
 
-            //string msg = $"Assemblies:";
+            //string msg2 = $"Assemblies:";
             //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             //{
-            //    msg += $"\n{assembly.GetName().Name.ToLower()}";
+            //    msg2 += $"\n{assembly.GetName().Name.ToLower()}";
             //}
-            //Log.Debug(msg);
+            //Log.Debug(msg2);
 
-            //msg = "Plugins:";
+            //string msg3 = "Plugins:";
             //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
             //{
-            //    msg += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
+            //    msg3 += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
             //        $"\n - {pi.modPath}";
             //}
-            //Log.Debug(msg);
+            //Log.Debug(msg3);
         }
 
         protected override void OnDisable()

@@ -1,4 +1,5 @@
-﻿using ColossalFramework.Plugins;
+﻿using ColossalFramework;
+using ColossalFramework.Plugins;
 using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
@@ -19,22 +20,11 @@ namespace MoveIt
 
         internal NS_Manager()
         {
-            if (isModInstalled())
+            Enabled = false;
+
+            Assembly = GetNSAssembly();
+            if (Assembly != null)
             {
-                Enabled = true;
-
-                Assembly = null;
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    if (assembly.FullName.Length >= 12 && assembly.FullName.Substring(0, 12) == "NetworkSkins")
-                    {
-                        Assembly = assembly;
-                        break;
-                    }
-                }
-
-                if (Assembly == null) throw new Exception("Assembly not found (Failed [NS-F1])");
-
                 tNS = Assembly.GetType("NetworkSkins.Skins.NetworkSkin");
                 if (tNS == null) throw new Exception("Type NetworkSkins not found (Failed [NS-F2])");
                 tNSM = Assembly.GetType("NetworkSkins.Skins.NetworkSkinManager");
@@ -48,10 +38,8 @@ namespace MoveIt
 
                 NSM = tNSM.GetProperty("instance", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
                 if (NSM == null) throw new Exception("Object NetworkSkinManager not found (Failed [NS-F5])");
-            }
-            else
-            {
-                Enabled = false;
+
+                Enabled = true;
             }
         }
 
@@ -94,32 +82,34 @@ namespace MoveIt
             return SegmentSkinsArray[id];
         }
 
-        internal static bool isModInstalled()
+        internal static Assembly GetNSAssembly()
         {
-            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
-                    mod.publishedFileID.AsUInt64 == 1758376843uL ||
-                    mod.name.Contains("NetworkSkins2") ||
-                    mod.name.Contains("1758376843")
-            ) && mod.isEnabled))
+            foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
             {
-                return false;
+                if (pluginInfo.userModInstance.GetType().Name.ToLower() == "networkskinsmod" && pluginInfo.isEnabled)
+                {
+                    // Network Skins 1 - unsupported - uses CimTools
+                    if (pluginInfo.GetAssemblies().Any(mod => mod.GetName().Name.ToLower() == "cimtools"))
+                    {
+                        break;
+                    }
+
+                    foreach (Assembly assembly in pluginInfo.GetAssemblies())
+                    {
+                        if (assembly.GetName().Name.ToLower() == "networkskins")
+                        {
+                            return assembly;
+                        }
+                    }
+                }
             }
 
-            if (PluginManager.instance.GetPluginsInfo().Any(mod => 
-                    mod.publishedFileID.AsUInt64 == 543722850uL ||
-                    (mod.name.Contains("NetworkSkins") && !mod.name.Contains("NetworkSkins2")) ||
-                    mod.name.Contains("543722850")
-            ))
-            {
-                return false;
-            }
-
-            return true;
+            return null;
         }
 
         internal static string getVersionText()
         {
-            if (isModInstalled())
+            if (GetNSAssembly() != null)
             {
                 return Str.integration_NS2_Found;
             }
