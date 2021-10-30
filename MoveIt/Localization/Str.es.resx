@@ -359,7 +359,7 @@
     <value>Opciones extra</value>
   </data>
   <data name="options_fixTreeSnapping" xml:space="preserve">
-    <value>Arreglar "Tree Snapping"</value>
+    <value>Arreglar Tree Snapping</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
