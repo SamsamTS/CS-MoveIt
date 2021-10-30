@@ -67,11 +67,11 @@ namespace MoveIt
         {
             if (isModEnabled())
             {
-                Enabled = true;
-
                 gameObject = new GameObject("MIT_POLogic");
                 gameObject.AddComponent<PO_Logic>();
                 Logic = gameObject.GetComponent<PO_Logic>();
+
+                Enabled = true;
             }
             else
             {
@@ -126,6 +126,13 @@ namespace MoveIt
             if (!Enabled) return;
 
             Logic.Clone((MoveableProc)original.instance, position, angle, action);
+        }
+
+        internal void MapGroupClones(HashSet<InstanceState> m_states, CloneActionBase action)
+        {
+            if (!Enabled) return;
+
+            Logic.MapGroupClones(m_states, action);
         }
 
         internal void StartConvertAction()

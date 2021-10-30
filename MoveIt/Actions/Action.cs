@@ -220,7 +220,7 @@ namespace MoveIt
             }
             catch (IndexOutOfRangeException e)
             {
-                Log.Error($"EXCEPTION\n{bounds}\n{e}");
+                Log.Error($"EXCEPTION\n{bounds}\n{e}" + Environment.NewLine + e.StackTrace);
             }
         }
 

@@ -83,7 +83,6 @@ namespace MoveIt
         public static void Error(string message, bool copyToGameLog = true)
         {
             LogImpl(message, LogLevel.Error, copyToGameLog);
-
         }
 
         /// <summary>
@@ -95,7 +94,6 @@ namespace MoveIt
         public static void Error(Exception exception, bool copyToGameLog = true)
         {
             LogImpl(exception.ToString(), LogLevel.Error, copyToGameLog);
-
         }
 
         /// <summary>
@@ -120,10 +118,10 @@ namespace MoveIt
 
                 msg += message + nl;
 
-                if (level == LogLevel.Error)
-                {
-                    msg += new StackTrace(true).ToString() + nl + nl;
-                }
+                //if (level == LogLevel.Error)
+                //{
+                //    msg += new StackTrace(true).ToString() + nl + nl;
+                //}
 
                 using (StreamWriter w = File.AppendText(LogFile))
                 {

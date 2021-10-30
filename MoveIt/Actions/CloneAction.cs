@@ -342,7 +342,7 @@ namespace MoveIt
             }
 
             // Clone PO
-            MoveItTool.PO.Logic.MapGroupClones(m_states, this);
+            MoveItTool.PO.MapGroupClones(m_states, this);
             foreach (InstanceState state in m_states)
             {
                 if (state is ProcState)
