@@ -358,6 +358,14 @@
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>追加のオプション</value>
   </data>
+  <data name="options_fixTreeSnapping" xml:space="preserve">
+    <value>Tree Snappingを修正</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
+  <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
+    <value>Tree Snappingが樹木の高さの変更を無効にしてしまう場合は、都市のロード直後にこのボタンを押してください。</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>PO削除時の警告を非表示にする</value>
     <comment>Do not translate 'PO'.</comment>

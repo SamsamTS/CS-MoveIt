@@ -267,7 +267,7 @@
     <value>축적 확대</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
-    <value>건너띄기</value>
+    <value>건너뛰기</value>
   </data>
   <data name="key_ToggleDebugPanel" xml:space="preserve">
     <value>디버그 창 켜기</value>
@@ -357,6 +357,14 @@
   </data>
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>추가 옵션</value>
+  </data>
+  <data name="options_fixTreeSnapping" xml:space="preserve">
+    <value>Tree Snapping 픽스</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
+  <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
+    <value>만약 Tree Snapping이 나무 높이 내림을 유발한다면, 도시를 불러온 직후 이것을 클릭하세요.</value>
+    <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>PO 삭제 경고 숨기기</value>

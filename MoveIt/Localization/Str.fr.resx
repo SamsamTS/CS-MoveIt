@@ -358,6 +358,14 @@
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>Options supplémentaires</value>
   </data>
+  <data name="options_fixTreeSnapping" xml:space="preserve">
+    <value>Réparer Tree Snapping</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
+  <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
+    <value>Si Tree Snapping empêche le mouvement vertical des arbres, cliquez sur ceci immédiatement après avoir chargé votre ville.</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>Masquer l'avertissement de suppression de PO</value>
     <comment>Do not translate 'PO'.</comment>

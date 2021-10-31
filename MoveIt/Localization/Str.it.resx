@@ -358,6 +358,14 @@
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>Altre opzioni</value>
   </data>
+  <data name="options_fixTreeSnapping" xml:space="preserve">
+    <value>Correggi aggangio degli alberi</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
+  <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
+    <value>Se l'aggancio degl'alberi sta causando l'altezza dell'albero non funzionante, clicca subito dopo aver caricato la tua città.</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>Nascondi l'avviso di eliminazione PO</value>
     <comment>Do not translate 'PO'.</comment>

@@ -358,6 +358,14 @@
   <data name="options_ExtraOptions" xml:space="preserve">
     <value>附加选项</value>
   </data>
+  <data name="options_fixTreeSnapping" xml:space="preserve">
+    <value>修复树木吸附（Tree Snapping）模组</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
+  <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
+    <value>如果Tree Snapping模组导致树木高度被关闭，可以在载入城市后直接点击这个按钮。</value>
+    <comment>Don't translate "Tree Snapping"</comment>
+  </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
     <value>隐藏魔物删除警告</value>
     <comment>Do not translate 'PO'.</comment>
