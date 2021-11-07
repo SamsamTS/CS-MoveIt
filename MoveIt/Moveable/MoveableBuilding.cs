@@ -769,7 +769,7 @@ namespace MoveIt
 
             AddToGrid(building, ref data);
             data.CalculateBuilding(building);
-            BuildingManager.instance.UpdateBuildingRenderer(building, true);
+            Singleton<SimulationManager>.instance.AddAction(() => BuildingManager.instance.UpdateBuildingRenderer(building, true));
         }
 
         private static void AddToGrid(ushort building, ref Building data)

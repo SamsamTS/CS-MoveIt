@@ -187,8 +187,11 @@ namespace MoveIt
             }
 
             uint tree = id.Tree;
-            TreeManager.instance.MoveTree(tree, newPosition);
-            TreeManager.instance.UpdateTreeRenderer(tree, true);
+            Singleton<SimulationManager>.instance.AddAction(() =>
+            {
+                TreeManager.instance.MoveTree(tree, newPosition);
+                TreeManager.instance.UpdateTreeRenderer(tree, true);
+            });
         }
 
         public override void SetHeight()
