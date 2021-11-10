@@ -195,7 +195,7 @@ namespace MoveIt
 
         public EPropsManager()
         {
-            propBuffer = PropAPI.GetPropBuffer();
+            propBuffer = EPropManager.m_props.m_buffer;
         }
 
         public IInfo GetInfo(InstanceID id)
