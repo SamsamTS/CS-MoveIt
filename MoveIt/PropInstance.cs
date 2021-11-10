@@ -98,7 +98,7 @@ namespace MoveIt
     class EPropWrapper : IProp
     {
         private readonly uint index;
-        private readonly EPropInstance[] Buffer = PropAPI.GetPropBuffer();
+        private readonly EPropInstance[] Buffer = EPropManager.m_props.m_buffer;
 
         public void MoveProp(Vector3 position)
         {
