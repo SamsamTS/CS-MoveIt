@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -313,7 +314,8 @@ namespace MoveIt
 
                     if (state.instance.id.Type == InstanceType.Prop)
                     {
-                        PropLayer.Manager.Buffer(clone.id).FixedHeight = ((PropState)state).fixedHeight;
+                        PropAPI.Wrapper.SetFixedHeight(clone.id, ((PropState)state).fixedHeight); /* Change to use EML API */
+                        //PropLayer.Manager.Buffer(clone.id).FixedHeight = ((PropState)state).fixedHeight;
                     }
                     else if (state.instance.id.Type == InstanceType.Building)
                     {

@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
+using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -204,7 +205,8 @@ namespace MoveIt
                     if (full)
                     {
                         SimulationManager.instance.AddAction(() => { Singleton<BuildingManager>.instance.ZonesUpdated(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
-                        PropLayer.Manager.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        PropAPI.Wrapper.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); /* Replacement to use EML API */
+                        //PropLayer.Manager.UpdateProps(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                         SimulationManager.instance.AddAction(() => { Singleton<TreeManager>.instance.UpdateTrees(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
                         bounds.Expand(64f);
                         SimulationManager.instance.AddAction(() => { Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
