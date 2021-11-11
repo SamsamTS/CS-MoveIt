@@ -3,6 +3,7 @@ using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -54,7 +55,8 @@ namespace MoveIt
                 }
                 else if (instance is MoveableProp)
                 {
-                    PropInfo info = PropLayer.Manager.Buffer(instance.id).Info;
+                    PropInfo info = PropAPI.Wrapper.GetInfo(instance.id); /* Change to use EML API */
+                    //PropInfo info = PropLayer.Manager.Buffer(instance.id).Info;
                     if (info.m_isDecal)
                     {
                         types[2]++;
@@ -121,9 +123,11 @@ namespace MoveIt
             else if (id.Prop > 0)
             {
                 string type = "P";
-                PropInfo info = PropLayer.Manager.Buffer(id).Info;// PropManager.instance.m_props.m_buffer[id.Prop].Info;
+                PropInfo info = PropAPI.Wrapper.GetInfo(id); /* Change to use EML API */
+                //PropInfo info = PropLayer.Manager.Buffer(id).Info;// PropManager.instance.m_props.m_buffer[id.Prop].Info;
                 if (info.m_isDecal) type = "D";
-                HoverLarge.text = $"{type}:{PropLayer.Manager.GetId(id)}  {info.name}";
+                HoverLarge.text = $"{type}:{PropAPI.GetPropID(id)}"; /* Change to use EML API */
+                //HoverLarge.text = $"{type}:{PropLayer.Manager.GetId(id)}  {info.name}";
                 HoverLarge.tooltip = info.name;
                 HoverSmall.text = $"{info.GetType()}\n{info.m_class.name}";
             }
