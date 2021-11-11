@@ -3,6 +3,7 @@ using ColossalFramework.Math;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -130,7 +131,16 @@ namespace MoveIt
 
                         if (selectProps || selectDecals || selectSurfaces || (selectPicker && Filters.Picker.IsProp))
                         {
-                            PropLayer.Manager.RaycastHoverInstance(ref i, ref j, ref stepOver, ref ray, ref smallestDist, ref id);
+                            // PropLayer.Manager.RaycastHoverInstance(ref i, ref j, ref stepOver, ref ray, ref smallestDist, ref id);
+                            // Since I removed PropLayer, I moved RaycastHoverInstance codes here
+                            foreach(uint propID in PropAPI.Wrapper.GetPropGridEnumerable(i, j)) {
+                                if (stepOver.isValidP(propID) && Filters.Filter(PropAPI.Wrapper.GetInfo(propID))) {
+                                    if (PropAPI.Wrapper.RayCast(propID, ray, out float t, out float targetSqr) && t < smallestDist) {
+                                        id.SetProp32(propID);
+                                        smallestDist = t;
+                                    }
+                                }
+                            }
                         }
 
                         if (selectNodes || selectBuilding || (selectPicker && Filters.Picker.IsNode))
@@ -372,7 +382,16 @@ namespace MoveIt
 
                         if (filterProps || filterDecals || filterSurfaces || (filterPicker && Filters.Picker.IsProp))
                         {
-                            PropLayer.Manager.GetMarqueeList(ref i, ref j, ref id, ref m_selection, ref list);
+                            // PropLayer.Manager.GetMarqueeList(ref i, ref j, ref id, ref m_selection, ref list);
+                            // Adapted to use new EML API
+                            foreach(uint propID in PropAPI.Wrapper.GetPropGridEnumerable(i, j)) {
+                                if (Filters.Filter(PropAPI.Wrapper.GetInfo(propID))) {
+                                    if (MoveItTool.instance.PointInRectangle(m_selection, PropAPI.Wrapper.GetPosition(propID))) {
+                                        id.SetProp32(propID);
+                                        list.Add(id);
+                                    }
+                                }
+                            }
                         }
 
                         if (filterNodes || filterBuildings || (filterPicker && Filters.Picker.IsNode))

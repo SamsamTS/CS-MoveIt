@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -32,10 +33,10 @@ namespace MoveIt
         {
             if (id == 0) return true;
             if (buffer.Count == 0) return true;
-            return _isValid(PropLayer.Manager.StepOver(id));
-            //InstanceID instance = default;
-            //instance.Prop = id;
-            //return _isValid(instance);
+            //return _isValid(PropLayer.Manager.StepOver(id));
+            InstanceID instance = default;
+            instance.SetProp32(id); // instance.Prop = id; SetProp32() will work with either non EML or EML environment. ushort will never fill up 24bit space
+            return _isValid(instance);
         }
 
         public bool isValidPO(uint id)

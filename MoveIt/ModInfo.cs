@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -216,7 +217,7 @@ namespace MoveIt
                 group.AddSpace(5);
                 UILabel emlLabel = panel.AddUIComponent<UILabel>();
                 emlLabel.name = "emlLabel";
-                emlLabel.text = PropLayer.getVersionText();
+                emlLabel.text = PropAPI.m_isEMLInstalled ? "Extended Managers Library: Found" : "Extended Managers Library: Not Found"; // PropLayer.getVersionText(); Changed to adopt new EML API
 
                 UILabel nsLabel = panel.AddUIComponent<UILabel>();
                 nsLabel.name = "nsLabel";
