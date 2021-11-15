@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
-using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -277,8 +276,8 @@ namespace MoveIt
             {
                 treeSnapping = isTreeSnappingEnabled();
             }
-            // Use new EML API
-            PropAPI.Initialize(); // PropLayer.Initialise();
+
+            PropLayer.Initialise();
         }
 
         protected override void OnEnable()

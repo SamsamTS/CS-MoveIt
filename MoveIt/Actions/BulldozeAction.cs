@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -21,7 +20,6 @@ namespace MoveIt
             ;
         }
     }
-
 
     public class BulldozeAction : Action
     {
@@ -314,8 +312,7 @@ namespace MoveIt
 
                     if (state.instance.id.Type == InstanceType.Prop)
                     {
-                        PropAPI.Wrapper.SetFixedHeight(clone.id, ((PropState)state).fixedHeight); /* Change to use EML API */
-                        //PropLayer.Manager.Buffer(clone.id).FixedHeight = ((PropState)state).fixedHeight;
+                        PropLayer.Manager.SetFixedHeight(clone.id, ((PropState)state).fixedHeight);
                     }
                     else if (state.instance.id.Type == InstanceType.Building)
                     {

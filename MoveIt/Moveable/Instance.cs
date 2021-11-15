@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
-using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -349,7 +348,7 @@ namespace MoveIt
                         }
                     case InstanceType.Prop:
                         {
-                            return PropAPI.Wrapper.GetBuffer(id); // PropLayer.Manager.Buffer(id);
+                            return PropLayer.Manager.Buffer(id);
                         }
                     case InstanceType.Tree:
                         {

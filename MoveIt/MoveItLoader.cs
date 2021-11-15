@@ -5,7 +5,6 @@ using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using EManagersLib.API;
 
 namespace MoveIt
 {
@@ -67,18 +66,7 @@ namespace MoveIt
             IsGameLoaded = true;
 
             // Touch each prop to ensure lights are functional
-            // Adjusted to accomodate new buffer size and validity of prop
-            int bufferLen = PropAPI.PropBufferLen;
-            for(uint i = 0; i < bufferLen; i++) {
-                if(PropAPI.Wrapper.IsValid(i)) {
-                    PropAPI.Wrapper.UpdateProp(i);
-                }
-            }
-            //for (ushort i = 0; i < ushort.MaxValue; i++)
-            //{
-            //    PropAPI.Wrapper.UpdateProp(i);
-            //    //PropLayer.Manager.UpdateProp(i);
-            //}
+            PropLayer.TouchProps();
         }
 
         public static void UninstallMod()
