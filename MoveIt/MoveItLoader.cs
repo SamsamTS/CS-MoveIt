@@ -66,7 +66,7 @@ namespace MoveIt
             IsGameLoaded = true;
 
             // Touch each prop to ensure lights are functional
-            PropLayer.TouchProps();
+            PropLayer.Manager.TouchProps();
         }
 
         public static void UninstallMod()

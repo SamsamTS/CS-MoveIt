@@ -18,7 +18,7 @@ namespace MoveIt
         public static void Initialise()
         {
             EML = isEMLInstalled();
-            Log.Debug($"EML: {EML}");
+            Log.Debug($"Move It EML: {EML}");
 
             if (EML)
             {
@@ -46,20 +46,6 @@ namespace MoveIt
             return false;
         }
 
-        internal static void TouchProps()
-        {
-            // Adjusted to accomodate new buffer size and validity of prop
-            int bufferLen = PropAPI.PropBufferLen;
-
-            for (uint i = 0; i < bufferLen; i++)
-            {
-                if (PropAPI.Wrapper.IsValid(i))
-                {
-                    PropAPI.Wrapper.UpdateProp(i);
-                }
-            }
-        }
-
         internal static string getVersionText()
         {
             if (isEMLInstalled())
@@ -80,7 +66,7 @@ namespace MoveIt
         float GetScale(InstanceID id, IProp prop);
         InstanceID SetProp(InstanceID id, uint i);
         void UpdateProps(float minX, float minZ, float maxX, float maxZ);
-        void UpdateProp(ushort id);
+        void TouchProps();
         bool CreateProp(out uint clone, PropInfo info, Vector3 position, float angle, bool single);
         void SetFixedHeight(InstanceID id, bool fixedHeight);
         InstanceID StepOver(uint id);
@@ -134,15 +120,9 @@ namespace MoveIt
             SimulationManager.instance.AddAction(() => { Singleton<PropManager>.instance.UpdateProps(minX, minZ, maxX, maxZ); });
         }
 
-        public void UpdateProp(ushort id)
-        {
-            SimulationManager.instance.AddAction(() => { Singleton<PropManager>.instance.UpdateProp(id); });
-        }
-
         public bool CreateProp(out uint clone, PropInfo info, Vector3 position, float angle, bool single)
         {
-            ushort tempId;
-            bool result = PropManager.instance.CreateProp(out tempId, ref SimulationManager.instance.m_randomizer, info, position, angle, single);
+            bool result = PropManager.instance.CreateProp(out ushort tempId, ref SimulationManager.instance.m_randomizer, info, position, angle, single);
             clone = tempId;
             return result;
         }
@@ -157,6 +137,21 @@ namespace MoveIt
             InstanceID instance = default;
             instance.Prop = (ushort)id;
             return instance;
+        }
+
+        public void TouchProps()
+        {
+            int bufferLen = Math.Min(ushort.MaxValue, Singleton<PropManager>.instance.m_props.m_buffer.Length);
+
+            for (ushort i = 0; i < bufferLen; i++)
+            {
+                ref PropInstance prop = ref Singleton<PropManager>.instance.m_props.m_buffer[i];
+
+                if (((PropInstance.Flags)prop.m_flags & PropInstance.Flags.Created) == PropInstance.Flags.Created)
+                {
+                    SimulationManager.instance.AddAction(() => { Singleton<PropManager>.instance.UpdateProp(i); });
+                }
+            }
         }
 
         public void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id)
@@ -211,12 +206,9 @@ namespace MoveIt
     // Extended Managers Library support
     class EPropsManager : IPropsWrapper
     {
-        //private readonly EPropInstance[] propBuffer;
-
         public EPropsManager()
         {
             PropAPI.Initialize();
-            //propBuffer = EPropManager.m_props.m_buffer;
         }
 
         public IInfo GetInfo(InstanceID id)
@@ -255,9 +247,6 @@ namespace MoveIt
             PropAPI.Wrapper.UpdateProps(minX, minZ, maxX, maxZ);
         }
 
-        public void UpdateProp(ushort id)
-        { }
-
         public bool CreateProp(out uint clone, PropInfo info, Vector3 position, float angle, bool single)
         {
             return PropAPI.Wrapper.CreateProp(out clone, info, position, angle, single);
@@ -273,6 +262,20 @@ namespace MoveIt
             InstanceID instance = default;
             instance.SetProp32(id);
             return instance;
+        }
+
+        public void TouchProps()
+        {
+            // Adjusted to accomodate new buffer size and validity of prop
+            int bufferLen = PropAPI.PropBufferLen;
+
+            for (uint i = 0; i < bufferLen; i++)
+            {
+                if (PropAPI.Wrapper.IsValid(i))
+                {
+                    PropAPI.Wrapper.UpdateProp(i);
+                }
+            }
         }
 
         public void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id)
