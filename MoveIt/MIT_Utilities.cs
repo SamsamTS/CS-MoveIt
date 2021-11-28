@@ -308,6 +308,7 @@ namespace MoveIt
         {
             if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
                     mod.publishedFileID.AsUInt64 == 2527486462uL ||
+                    mod.publishedFileID.AsUInt64 == 2584051448uL ||
                     mod.name.StartsWith("TreeAnarchy")
             ) && mod.isEnabled))
             {
