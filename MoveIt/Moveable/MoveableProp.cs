@@ -125,29 +125,32 @@ namespace MoveIt
 
             float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
 
-            //string path = "";
-            if (!manager.GetSnappingState()) {
-                //path += "A";
-                y = terrainHeight;
-            } else if (manager.GetFixedHeight(id)) { // If it's already fixed height, handle followTerrain
-                // If the state is being cloned, don't use the terrain-height offset
-                //path += "B";
-                y = newPosition.y + (isClone ? 0 : yTerrainOffset);
-                if (followTerrain) {
-                    //path += "1";
-                    y += terrainHeight - state.terrainHeight;
-                }
-            } else { // Snapping is on and it is not fixed height yet
-                //path += "C";
-                if (deltaHeight != 0) {
-                    //path += "1";
-                    manager.SetFixedHeight(id, true);
-                    y = terrainHeight + deltaHeight;
-                    yTerrainOffset = terrainHeight - state.terrainHeight;
-                } else {
-                    //path += "2";
+            if(PropLayer.isEMLInstalled()) {
+                if (!manager.GetSnappingState()) {
+                    //path += "A";
                     y = terrainHeight;
+                } else if (manager.GetFixedHeight(id)) { // If it's already fixed height, handle followTerrain
+                                                         // If the state is being cloned, don't use the terrain-height offset
+                                                         //path += "B";
+                    y = newPosition.y + (isClone ? 0 : yTerrainOffset);
+                    if (followTerrain) {
+                        //path += "1";
+                        y += terrainHeight - state.terrainHeight;
+                    }
+                } else { // Snapping is on and it is not fixed height yet
+                         //path += "C";
+                    if (deltaHeight != 0) {
+                        //path += "1";
+                        manager.SetFixedHeight(id, true);
+                        y = terrainHeight + deltaHeight;
+                        yTerrainOffset = terrainHeight - state.terrainHeight;
+                    } else {
+                        //path += "2";
+                        y = terrainHeight;
+                    }
                 }
+            } else {
+                y = newPosition.y;
             }
 
             //Log.Debug($"{path}\nstate:{state.terrainHeight} tH-state:{terrainHeight - state.terrainHeight}, yTO:{yTerrainOffset}\n" +
