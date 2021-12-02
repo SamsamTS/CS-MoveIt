@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -307,34 +308,48 @@ namespace MoveIt
         internal static bool isTreeAnarchyEnabled()
         {
             if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
-                    mod.publishedFileID.AsUInt64 == 2527486462uL ||
                     mod.publishedFileID.AsUInt64 == 2584051448uL ||
                     mod.name.StartsWith("TreeAnarchy")
             ) && mod.isEnabled))
+            if (GetAssembly("tamod", "treeanarchy") == null)
             {
-                Debug.Log($"TreeAnarchy not found");
+                Log.Debug($"TreeAnarchy not found");
                 return false;
             }
 
-            Debug.Log($"TreeAnarchy found");
+            Log.Debug($"TreeAnarchy found");
             return true;
         }
 
         internal static bool isTreeSnappingEnabled()
         {
-
-            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
-                    mod.publishedFileID.AsUInt64 == 869134690uL ||
-                    mod.name.StartsWith("TreeSnapping") ||
-                    mod.name.Contains("869134690")
-            ) && mod.isEnabled))
+            if (GetAssembly("mod", "treesnapping") == null)
             {
-                Debug.Log($"TreeSnapping not found");
+                Log.Debug($"TreeSnapping not found");
                 return false;
             }
 
-            Debug.Log($"TreeSnapping found");
+            Log.Debug($"TreeSnapping found");
             return true;
+        }
+
+        internal static Assembly GetAssembly(string modName, string assName)
+        {
+            foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
+            {
+                if (pluginInfo.userModInstance.GetType().Name.ToLower() == modName && pluginInfo.isEnabled)
+                {
+                    foreach (Assembly assembly in pluginInfo.GetAssemblies())
+                    {
+                        if (assembly.GetName().Name.ToLower() == assName)
+                        {
+                            return assembly;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         internal static void FixTreeFixedHeightFlag()
