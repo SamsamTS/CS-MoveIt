@@ -149,9 +149,9 @@ namespace MoveIt
                         y = terrainHeight;
                     }
                 }
-            } else {
-                y = newPosition.y;
+                return y;
             }
+            return newPosition.y;
 
             //Log.Debug($"{path}\nstate:{state.terrainHeight} tH-state:{terrainHeight - state.terrainHeight}, yTO:{yTerrainOffset}\n" +
             //    $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}, dh:{deltaHeight}\n" +
@@ -159,8 +159,6 @@ namespace MoveIt
             //    $"ADJUST - adjY:{y}, newY:{newPosition.y}, diff:{y - newPosition.y}\n" +
             //    $"TOTAL  - adjY:{y}, oldY:{position.y}, diff:{y - position.y}\n" +
             //    $"HEIGHT - adjY:{y}, terrainHeight:{terrainHeight}, diff:{y - terrainHeight}");
-
-            return y;
         }
 
         public override void Move(Vector3 location, float angle)
