@@ -14,6 +14,11 @@ namespace MoveIt
 
     public class MoveableProp : Instance
     {
+        /// <summary>
+        /// As a prop without FixedHeight is moved, track the vertical offset to maintain height if FixedHeight is then enabled
+        /// </summary>
+        private float yTerrainOffset = 0;
+
         public override HashSet<ushort> segmentList
         {
             get
@@ -109,12 +114,50 @@ namespace MoveIt
                 PropLayer.Manager.Buffer(id).FixedHeight = true;
             }
 
-            if (followTerrain)
-            {
-                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
-            }
+            newPosition.y = GetPropYPos(state, deltaHeight, newPosition, followTerrain);
 
             Move(newPosition, state.angle + deltaAngle);
+        }
+
+        internal float GetPropYPos(InstanceState state, float deltaHeight, Vector3 newPosition, bool followTerrain, bool isClone = false) {
+            IPropsWrapper manager = PropLayer.Manager;
+            float y;
+
+            float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
+
+            //string path = "";
+            if (!manager.GetSnappingState()) {
+                //path += "A";
+                y = terrainHeight;
+            } else if (manager.GetFixedHeight(id)) { // If it's already fixed height, handle followTerrain
+                // If the state is being cloned, don't use the terrain-height offset
+                //path += "B";
+                y = newPosition.y + (isClone ? 0 : yTerrainOffset);
+                if (followTerrain) {
+                    //path += "1";
+                    y += terrainHeight - state.terrainHeight;
+                }
+            } else { // Snapping is on and it is not fixed height yet
+                //path += "C";
+                if (deltaHeight != 0) {
+                    //path += "1";
+                    manager.SetFixedHeight(id, true);
+                    y = terrainHeight + deltaHeight;
+                    yTerrainOffset = terrainHeight - state.terrainHeight;
+                } else {
+                    //path += "2";
+                    y = terrainHeight;
+                }
+            }
+
+            //Log.Debug($"{path}\nstate:{state.terrainHeight} tH-state:{terrainHeight - state.terrainHeight}, yTO:{yTerrainOffset}\n" +
+            //    $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}, dh:{deltaHeight}\n" +
+            //    $"FRAME  - newY:{newPosition.y}, oldY:{position.y}, diff:{newPosition.y - position.y}\n" +
+            //    $"ADJUST - adjY:{y}, newY:{newPosition.y}, diff:{y - newPosition.y}\n" +
+            //    $"TOTAL  - adjY:{y}, oldY:{position.y}, diff:{y - position.y}\n" +
+            //    $"HEIGHT - adjY:{y}, terrainHeight:{terrainHeight}, diff:{y - terrainHeight}");
+
+            return y;
         }
 
         public override void Move(Vector3 location, float angle)
@@ -131,6 +174,15 @@ namespace MoveIt
         {
             Vector3 newPosition = position;
             newPosition.y = height;
+
+            if (PropLayer.Manager.GetSnappingState()) {
+                float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
+                if (height > terrainHeight + 0.075f || height < terrainHeight - 0.075f) {
+                    PropLayer.Manager.SetFixedHeight(id, true);
+                } else {
+                    PropLayer.Manager.SetFixedHeight(id, false);
+                }
+            }
 
             IProp prop = PropLayer.Manager.Buffer(id);
             prop.MoveProp(newPosition);
