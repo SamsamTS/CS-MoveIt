@@ -307,6 +307,10 @@ namespace MoveIt
 
         internal static bool isTreeAnarchyEnabled()
         {
+            if (!PluginManager.instance.GetPluginsInfo().Any(mod => (
+                    mod.publishedFileID.AsUInt64 == 2584051448uL ||
+                    mod.name.StartsWith("TreeAnarchy")
+            ) && mod.isEnabled))
             if (GetAssembly("tamod", "treeanarchy") == null)
             {
                 Log.Debug($"TreeAnarchy not found");

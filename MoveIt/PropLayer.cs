@@ -68,10 +68,12 @@ namespace MoveIt
         void UpdateProps(float minX, float minZ, float maxX, float maxZ);
         void TouchProps();
         bool CreateProp(out uint clone, PropInfo info, Vector3 position, float angle, bool single);
+        bool GetFixedHeight(InstanceID id);
         void SetFixedHeight(InstanceID id, bool fixedHeight);
         InstanceID StepOver(uint id);
         void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id);
         void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list);
+        bool GetSnappingState();
     }
 
     class PropsManager : IPropsWrapper
@@ -126,6 +128,8 @@ namespace MoveIt
             clone = tempId;
             return result;
         }
+
+        public bool GetFixedHeight(InstanceID id) => propBuffer[id.Prop].FixedHeight;
 
         public void SetFixedHeight(InstanceID id, bool fixedHeight)
         {
@@ -201,6 +205,7 @@ namespace MoveIt
                 }
             }
         }
+        public bool GetSnappingState() => false;
     }
 
     // Extended Managers Library support
@@ -251,6 +256,8 @@ namespace MoveIt
         {
             return PropAPI.Wrapper.CreateProp(out clone, info, position, angle, single);
         }
+
+        public bool GetFixedHeight(InstanceID id) => PropAPI.Wrapper.GetFixedHeight(id);
 
         public void SetFixedHeight(InstanceID id, bool fixedHeight)
         {
@@ -307,5 +314,7 @@ namespace MoveIt
                 }
             }
         }
+
+        public bool GetSnappingState() => PropAPI.Wrapper.IsSnappingEnabled;
     }
 }
