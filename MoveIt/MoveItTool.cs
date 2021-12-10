@@ -470,7 +470,6 @@ namespace MoveIt
                             {
                                 if (m_hoverInstance == null || (m_hoverInstance.isValid && (mpo.id != m_hoverInstance.id)))
                                 {
-                                    //Log.Debug($"AAA3 {mpo.id.NetLane}, {mpo.m_procObj.Group}");
                                     mpo.RenderOverlay(cameraInfo, m_POselectedColor, m_despawnColor);
                                     mpo.m_procObj.Selected = true;
                                 }
