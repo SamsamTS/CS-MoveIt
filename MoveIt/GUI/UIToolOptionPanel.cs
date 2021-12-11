@@ -7,6 +7,8 @@ namespace MoveIt
 {
     public class UIToolOptionPanel : UIPanel
     {
+        public delegate void AddMoreButtonAPI(UIToolOptionPanel optionPanel, UIButton moreTools, UIPanel mtpBackGround, UIPanel mtpContainer);
+        public static event AddMoreButtonAPI AddMoreButtonCallback;
         public static UIToolOptionPanel instance;
 
         private UIMultiStateButton m_followTerrain;
@@ -483,6 +485,8 @@ namespace MoveIt
             UIMoreTools.MoreButtons.Clear();
             UIMoreTools.MoreSubButtons.Clear();
             #endregion
+
+            AddMoreButtonCallback?.Invoke(this, m_moreTools, mtpBackground, mtpContainer);
 
             #region More Tools / Toolbox buttons
             UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", Str.toolbox_OtherTools_Tooltip, "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));
