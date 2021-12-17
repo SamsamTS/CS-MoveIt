@@ -13,7 +13,7 @@ namespace MoveIt
     {
         public static IPropsWrapper Manager;
 
-        private static bool EML = false;
+        internal static bool EML = false;
 
         public static void Initialise()
         {

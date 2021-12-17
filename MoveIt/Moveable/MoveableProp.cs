@@ -126,7 +126,7 @@ namespace MoveIt
 
             float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
 
-            if (PropLayer.isEMLInstalled())
+            if (PropLayer.EML)
             {
                 if (!manager.GetSnappingState())
                 {
@@ -188,11 +188,15 @@ namespace MoveIt
             Vector3 newPosition = position;
             newPosition.y = height;
 
-            if (PropLayer.Manager.GetSnappingState()) {
+            if (PropLayer.Manager.GetSnappingState())
+            {
                 float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
-                if (height > terrainHeight + 0.075f || height < terrainHeight - 0.075f) {
+                if (height > terrainHeight + 0.075f || height < terrainHeight - 0.075f)
+                {
                     PropLayer.Manager.SetFixedHeight(id, true);
-                } else {
+                }
+                else
+                {
                     PropLayer.Manager.SetFixedHeight(id, false);
                 }
             }

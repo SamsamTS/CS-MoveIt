@@ -329,20 +329,34 @@ namespace MoveIt
             return true;
         }
 
-        internal static Assembly GetAssembly(string modName, string assName)
+        internal static Assembly GetAssembly(string modName, string assName, string assNameExcept = "")
         {
             foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
             {
-                if (pluginInfo.userModInstance.GetType().Name.ToLower() == modName && pluginInfo.isEnabled)
+                try
                 {
-                    foreach (Assembly assembly in pluginInfo.GetAssemblies())
+                    if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && pluginInfo.isEnabled)
                     {
-                        if (assembly.GetName().Name.ToLower() == assName)
+                        if (assNameExcept.Length > 0)
                         {
-                            return assembly;
+                            if (pluginInfo.GetAssemblies().Any(mod => mod.GetName().Name.ToLower() == assNameExcept))
+                            {
+                                break;
+                            }
+                        }
+                        foreach (Assembly assembly in pluginInfo.GetAssemblies())
+                        {
+                            if (assembly.GetName().Name.ToLower() == assName)
+                            {
+                                return assembly;
+                            }
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                } // If the plugin fails to process, move on to next plugin
             }
 
             return null;
