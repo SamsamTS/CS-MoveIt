@@ -741,8 +741,8 @@ namespace MoveIt
             {
                 try
                 {
-                    bounds.Expand(64f);
                     SimulationManager.instance.AddAction(() => { Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
+                    bounds.Expand(64f);
                     SimulationManager.instance.AddAction(() => { TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false); });
 
                     UpdateRender(bounds);
