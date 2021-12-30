@@ -214,7 +214,7 @@ namespace MoveIt
                 else
                 {
                     bounds.Expand(32f);
-                    MoveItTool.instance.areasToUpdate.Add(bounds);
+                    MoveItTool.instance.areasToQuickUpdate.Add(bounds);
                     MoveItTool.instance.areaUpdateCountdown = 60;
                 }
             }

@@ -94,6 +94,7 @@ namespace MoveIt
 
         public int areaUpdateCountdown = -1;
         public HashSet<Bounds> areasToUpdate = new HashSet<Bounds>();
+        public HashSet<Bounds> areasToQuickUpdate = new HashSet<Bounds>();
 
         internal static Color m_hoverColor = new Color32(0, 181, 255, 255);
         internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
@@ -730,7 +731,11 @@ namespace MoveIt
             //{
             //    AddDebugBox(b, new Color32(255, 31, 31, 31));
             //}
-            HashSet<Bounds> merged = MergeBounds(areasToUpdate);
+            //Log.Debug($"AAA UpdateAreas:\nFull:{areasToUpdate.Count}\nFast:{areasToQuickUpdate.Count}");
+            HashSet<Bounds> merged = areasToUpdate;
+            merged.UnionWith(areasToQuickUpdate);
+            merged = MergeBounds(merged);
+            bool full = areasToUpdate.Count() != 0;
             //foreach (Bounds b in merged)
             //{
             //    b.Expand(4f);
@@ -741,14 +746,22 @@ namespace MoveIt
             {
                 try
                 {
-                    SimulationManager.instance.AddAction(() => { Singleton<VehicleManager>.instance.UpdateParkedVehicles(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z); });
+                    if (full)
+                    {
+                        Bounds small = bounds;
+                        small.Expand(-16f);
+                        SimulationManager.instance.AddAction(() => { Singleton<VehicleManager>.instance.UpdateParkedVehicles(small.min.x, small.min.z, small.max.x, small.max.z); });
+                    }
                     bounds.Expand(64f);
                     SimulationManager.instance.AddAction(() => { TerrainModify.UpdateArea(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z, true, true, false); });
-
                     UpdateRender(bounds);
-                    bounds.Expand(512f);
-                    Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                    Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+
+                    if (full)
+                    {
+                        bounds.Expand(512f);
+                        Singleton<ElectricityManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                        Singleton<WaterManager>.instance.UpdateGrid(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                    }
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -757,6 +770,7 @@ namespace MoveIt
             }
 
             areasToUpdate.Clear();
+            areasToQuickUpdate.Clear();
         }
 
         public void UpdateSegments()
