@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using ColossalFramework.UI;
+﻿using ColossalFramework.UI;
 using MoveIt.Localization;
+using System;
 using UIUtils = SamsamTS.UIUtils;
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -486,7 +487,14 @@ namespace MoveIt
             UIMoreTools.MoreSubButtons.Clear();
             #endregion
 
-            AddMoreButtonCallback?.Invoke(this, m_moreTools, mtpBackground, mtpContainer);
+            try
+            {
+                AddMoreButtonCallback?.Invoke(this, m_moreTools, mtpBackground, mtpContainer);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
 
             #region More Tools / Toolbox buttons
             UIMoreToolsBtn othersBtn = new UIMoreToolsBtn(this, "MoveIt_OthersBtn", Str.toolbox_OtherTools_Tooltip, "MenuOthers", mtpContainer, "m_mtOthersList", (MoveItTool.PO.Enabled ? 7.25f : 6.25f));

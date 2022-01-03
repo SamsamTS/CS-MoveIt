@@ -16,7 +16,7 @@ namespace MoveIt
         internal static bool POHasFilters = true;
         internal static bool POHasGroups = true;
 
-        private readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+        private static readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
         private void Start()
         {
@@ -61,6 +61,9 @@ namespace MoveIt
             //Log.Debug($"POHasFilters:{POHasFilters}");
         }
 
+        /// <summary>
+        /// Get all PO objects, regardless of layer visiblility, group, etc
+        /// </summary>
         public List<PO_Object> AllObjects
         {
             get
@@ -104,6 +107,7 @@ namespace MoveIt
             get
             {
                 List<PO_Object> objects = new List<PO_Object>();
+                bool groupsEnabled = IsGroupFilterEnabled();
 
                 foreach (PO_Object obj in AllObjects)
                 {
@@ -112,6 +116,13 @@ namespace MoveIt
                         var filters = tPOLogic.GetField("filters", flags).GetValue(POLogic);
                         if ((bool)filters.GetType().GetMethod("FiltersAllow", new Type[] { tPO }).Invoke(filters, new object[] { obj.procObj }))
                         {
+                            if (!groupsEnabled)
+                            {
+                                if (tPO.GetField("group").GetValue(obj.procObj) != null)
+                                {
+                                    continue;
+                                }
+                            }
                             objects.Add(obj);
                         }
                     }
@@ -419,6 +430,13 @@ namespace MoveIt
             {
                 return null;
             }
+        }
+
+        internal static bool IsGroupFilterEnabled()
+        {
+            var filters = tPOLogic.GetField("filters", flags).GetValue(POLogic);
+
+            return (bool)filters.GetType().GetField("c_groups").GetValue(filters);
         }
 
         public static string getVersion()

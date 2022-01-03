@@ -52,6 +52,11 @@ namespace MoveIt
             }
         }
 
+        /// <summary>
+        /// Get a PO object that is visible (not filtered out)
+        /// </summary>
+        /// <param name="id">The NetLane id</param>
+        /// <returns>PO Object wrapper</returns>
         internal PO_Object GetProcObj(uint id)
         {
             if (visibleObjects.ContainsKey(id))
@@ -234,13 +239,20 @@ namespace MoveIt
 
             try
             {
-                InitGroups();
-                string msg = $"PO Groups: {Groups.Count} found\n";
-                foreach (PO_Group g in MoveItTool.PO.Groups)
+                if (PO_Logic.IsGroupFilterEnabled())
                 {
-                    msg += $"{g.objects.Count} ({g.root.Id}), ";
+                    InitGroups();
+                    string msg = $"PO Groups: {Groups.Count} found\n";
+                    foreach (PO_Group g in MoveItTool.PO.Groups)
+                    {
+                        msg += $"{g.objects.Count} ({g.root.Id}), ";
+                    }
+                    Log.Debug(msg);
                 }
-                Log.Debug(msg);
+                else
+                {
+                    Log.Debug($"PO Groups disabled");
+                }
             }
             catch (Exception e)
             {
