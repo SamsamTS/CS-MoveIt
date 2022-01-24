@@ -27,6 +27,22 @@ namespace MoveIt
 
         public bool invert;
 
+        public string treeInfoName
+        {
+            get
+            {
+                if (treeInfo is null)
+                {
+                    return "";
+                }
+                return treeInfo.name;
+            }
+            set => treeInfo = PrefabCollection<TreeInfo>.FindLoaded(value);
+        }
+
+        [XmlIgnore]
+        public TreeInfo treeInfo;
+
         [XmlIgnore]
         public object NS_Modifiers;
 
@@ -123,6 +139,8 @@ namespace MoveIt
 
             state.invert = ((segmentBuffer[segment].m_flags & NetSegment.Flags.Invert) == NetSegment.Flags.Invert);
 
+            state.treeInfo = treeInfo;
+
             state.SaveIntegrations(integrate);
 
             return state;
@@ -160,6 +178,8 @@ namespace MoveIt
 
             netManager.UpdateNode(segmentBuffer[segment].m_startNode);
             netManager.UpdateNode(segmentBuffer[segment].m_endNode);
+
+            treeInfo = segmentState.treeInfo;
 
             MoveItTool.NS.SetSegmentModifiers(segment, segmentState);
         }
@@ -211,6 +231,16 @@ namespace MoveIt
                 }
 
                 return _endNode;
+            }
+        }
+
+        public TreeInfo treeInfo
+        {
+            get => ((NetSegment)data).TreeInfo;
+            set
+            {
+                NetSegment seg = (NetSegment)data;
+                seg.TreeInfo = value;
             }
         }
 
@@ -327,7 +357,7 @@ namespace MoveIt
             startDirection.Normalize();
             endDirection.Normalize();
 
-            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo,
+            if (netManager.CreateSegment(out ushort clone, ref SimulationManager.instance.m_randomizer, state.Info.Prefab as NetInfo, treeInfo,
                 startNodeId, endNodeId, startDirection, endDirection,
                 SimulationManager.instance.m_currentBuildIndex, SimulationManager.instance.m_currentBuildIndex,
                 state.invert))
