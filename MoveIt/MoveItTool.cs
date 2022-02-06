@@ -649,7 +649,14 @@ namespace MoveIt
 
                 foreach (InstanceState state in action.m_states)
                 {
-                    state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
+                    try
+                    {
+                        state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, m_hoverColor);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Debug(e.Message);
+                    }
                 }
             }
             else if (ToolState == ToolStates.MouseDragging)

@@ -43,34 +43,72 @@ namespace MoveIt
         }
     }
 
+    public class CloneActionFindIt : CloneActionBase
+    {
+        // Constructor for FindIt object
+        public CloneActionFindIt(PrefabInfo prefab)
+        {
+            m_oldSelection = selection;
+            m_states.Clear();
+
+            Vector3 position = MoveItTool.RaycastMouseLocation();
+            InstanceState state = new InstanceState();
+
+            if (prefab is BuildingInfo)
+            {
+                state = new BuildingState
+                {
+                    isSubInstance = false,
+                    isHidden = false,
+                };
+                state.Info.Prefab = prefab;
+                InstanceID id = new InstanceID
+                {
+                    Building = 1,
+                    Type = InstanceType.Building
+                };
+                state.instance = new MoveableBuilding(id);
+            }
+            else if (prefab is PropInfo)
+            {
+                state = new PropState
+                {
+                    fixedHeight = false,
+                    single = false,
+                };
+                state.Info.Prefab = prefab;
+                InstanceID id = new InstanceID
+                {
+                    Prop = 1,
+                    Type = InstanceType.Prop
+                };
+                state.instance = new MoveableProp(id);
+            }
+            else if (prefab is TreeInfo)
+            {
+                state = new TreeState
+                {
+                    fixedHeight = false,
+                    single = false,
+                };
+                state.Info.Prefab = prefab;
+                InstanceID id = new InstanceID
+                {
+                    Tree = 1,
+                    Type = InstanceType.Tree
+                };
+                state.instance = new MoveableTree(id);
+            }
+
+            state.position = position;
+            m_states.Add(state);
+            center = position;
+        }
+    }
+
     public class CloneAction : CloneActionMain
     {
         public CloneAction() : base() {}
-
-        //public override void Do()
-        //{
-        //    base.Do();
-
-        //    // Clone integrations
-        //    foreach (var item in m_stateToClone)
-        //    {
-        //        foreach (var data in item.Key.IntegrationData)
-        //        {
-        //            try
-        //            {
-        //                data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
-        //            }
-        //            catch (Exception e)
-        //            {
-        //                InstanceID sourceInstanceID = item.Key.instance.id;
-        //                InstanceID targetInstanceID = item.Value.id;
-        //                Log.Error($"integration {data.Key} Failed to paste from " +
-        //                    $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
-        //                DebugUtils.LogException(e);
-        //            }
-        //        }
-        //    }
-        //}
     }
 
     public class DuplicateAction : CloneActionMain

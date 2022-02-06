@@ -115,36 +115,29 @@ namespace MoveIt
 
             float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
 
-            //string path = "";
             if (!MoveItTool.treeSnapping)
             {
-                //path += "A";
                 y = terrainHeight;
             }
             else if (trees[treeID].FixedHeight)
             { // If it's already fixed height, handle followTerrain
                 // If the state is being cloned, don't use the terrain-height offset
-                //path += "B";
                 y = newPosition.y + (isClone ? 0 : yTerrainOffset);
                 if (followTerrain)
                 {
-                    //path += "1";
                     y += terrainHeight - state.terrainHeight;
                 }
             }
             else
             { // Snapping is on and it is not fixed height yet
-                //path += "C";
                 if (deltaHeight != 0)
                 {
-                    //path += "1";
                     trees[treeID].FixedHeight = true;
                     y = terrainHeight + deltaHeight;
                     yTerrainOffset = terrainHeight - state.terrainHeight;
                 }
                 else
                 {
-                    //path += "2";
                     y = terrainHeight;
                 }
             }

@@ -230,57 +230,62 @@ namespace MoveIt
                 //    PO.InitialiseTool(false);
                 //}
 
-                if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)
-                {
-                    HashSet<string> missingPrefabs = new HashSet<string>();
+                ImportFromArray(selectionState, restore);
+            }
+        }
 
+        internal void ImportFromArray(Selection selectionState, bool restore = false)
+        {
+            if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)
+            {
+                HashSet<string> missingPrefabs = new HashSet<string>();
+
+                foreach (InstanceState state in selectionState.states)
+                {
+                    if (state.Info.Prefab == null)
+                    {
+                        missingPrefabs.Add(state.prefabName);
+                    }
+                }
+
+                if (missingPrefabs.Count > 0)
+                {
+                    DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
+
+                    UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n" + string.Join("\n", missingPrefabs.ToArray()), false);
+                }
+
+                // Set props to fixed-height if in asset editor
+                if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
+                {
                     foreach (InstanceState state in selectionState.states)
                     {
-                        if (state.Info.Prefab == null)
+                        if (state is PropState ps)
                         {
-                            missingPrefabs.Add(state.prefabName);
+                            ps.fixedHeight = true;
+                            ps.position.y = ps.position.y - ps.terrainHeight + 60f; // 60 is editor's terrain height
                         }
                     }
+                }
 
-                    if (missingPrefabs.Count > 0)
+                CloneActionBase action = new CloneActionImport(selectionState.states, selectionState.center);
+
+                if (action.Count > 0)
+                {
+                    ActionQueue.instance.Push(action);
+
+                    if (restore)
                     {
-                        DebugUtils.Warning("Missing prefabs: " + string.Join(", ", missingPrefabs.ToArray()));
-
-                        UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n" + string.Join("\n", missingPrefabs.ToArray()), false);
+                        SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
+                        //ActionQueue.instance.Do(); // For restore to position
                     }
-
-                    // Set props to fixed-height if in asset editor
-                    if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
+                    else
                     {
-                        foreach (InstanceState state in selectionState.states)
-                        {
-                            if (state is PropState ps)
-                            {
-                                ps.fixedHeight = true;
-                                ps.position.y = ps.position.y - ps.terrainHeight + 60f; // 60 is editor's terrain height
-                            }
-                        }
+                        SetToolState(ToolStates.Cloning); // For clone
                     }
 
-                    CloneActionBase action = new CloneActionImport(selectionState.states, selectionState.center);
-
-                    if (action.Count > 0)
-                    {
-                        ActionQueue.instance.Push(action);
-
-                        if (restore)
-                        {
-                            SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
-                            //ActionQueue.instance.Do(); // For restore to position
-                        }
-                        else
-                        {
-                            SetToolState(ToolStates.Cloning); // For clone
-                        }
-
-                        UIToolOptionPanel.RefreshCloneButton();
-                        UIToolOptionPanel.RefreshAlignHeightButton();
-                    }
+                    UIToolOptionPanel.RefreshCloneButton();
+                    UIToolOptionPanel.RefreshAlignHeightButton();
                 }
             }
         }

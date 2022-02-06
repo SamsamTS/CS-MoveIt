@@ -214,7 +214,7 @@ namespace MoveIt
                     AlignHeightAction action = new AlignHeightAction();
                     if (m_hoverInstance != null)
                     {
-                        action.height = m_hoverInstance.position.y;
+                        action.height = m_hoverInstance.GetYPosition();
                         ActionQueue.instance.Push(action);
 
                         m_nextAction = ToolAction.Do;

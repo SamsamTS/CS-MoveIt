@@ -281,6 +281,27 @@ namespace MoveIt
             TransformAngle = angle;
         }
 
+        internal float GetYPosition()
+        {
+            // Airports DLC runways belong to a building with height of -100, so sample the runway
+            try
+            {
+                if (Info.Prefab.name == "Runway Owner")
+                {
+                    foreach (Instance i in subInstances)
+                    {
+                        if (i.Info.Name == "Airport Area Runway")
+                        {
+                            return i.position.y;
+                        }
+                    }
+                }
+            }
+            catch (Exception) { };
+
+            return position.y;
+        }
+
         internal virtual void SetHidden(bool hide) { }
 
         internal Building.Flags ToggleBuildingHiddenFlag(ushort id, bool hide)

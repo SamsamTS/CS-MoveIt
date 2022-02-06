@@ -165,5 +165,33 @@ namespace MoveIt
             }
         }
 
+        /// <summary>
+        /// Lets other mods paste an object via Move It, e.g. Find It placing selected
+        /// object with Move It rather than default tool.
+        /// </summary>
+        /// <param name="prefab">The prefab to paste</param>
+        /// <returns></returns>
+        public static bool PasteFromExternal(PrefabInfo prefab)
+        {
+            if (prefab is NetInfo)
+            {
+                return false;
+            }
+
+            CloneActionFindIt action = new CloneActionFindIt(prefab);
+
+            if (action.Count > 0)
+            {
+                ActionQueue.instance.Push(action);
+
+                SetToolState(ToolStates.Cloning);
+
+                UIToolOptionPanel.RefreshCloneButton();
+                UIToolOptionPanel.RefreshAlignHeightButton();
+                return true;
+            }
+
+            return false;
+        }
     }
 }
