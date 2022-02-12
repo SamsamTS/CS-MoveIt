@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>Redimensionar para fora</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>Show/Hide Selectors</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Passar por Cima</value>
   </data>
@@ -429,6 +432,10 @@ PERMANENTEMENTE deletados.</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>Se marcado, a tecla para cima se moverá na direção do Norte, para baixo é para sul, para esquerda é para oeste, para a direita é para leste.</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>Use UnifiedUI</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Ângulo</value>
