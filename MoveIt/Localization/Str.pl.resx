@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>Skaluj na zewnątrz</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>Show/Hide Selectors</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Pomiń obiekt</value>
   </data>
@@ -428,6 +431,10 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>Jeśli zaznaczone, strzałka do góry przesunie na północ, strzałka do dołu przesunie na południe, strzałka w lewo przesunie na zachód, strzałka w prawo przesunie na wschód.</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>Use UnifiedUI</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Kąt</value>
