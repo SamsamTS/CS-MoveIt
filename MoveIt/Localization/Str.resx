@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>Scale Outwards</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>Show/Hide Selectors</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Step Over</value>
   </data>
@@ -428,6 +431,10 @@ PO objects with Move It, they are immediately PERMANENTLY gone.</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>If checked, the Up key will move in the North direction, Down is South, Left is West, Right is East.</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>Use UnifiedUI</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Angle</value>

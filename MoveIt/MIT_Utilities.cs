@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
+using UnifiedUI.Helpers;
 using UnityEngine;
 
 namespace MoveIt
@@ -61,6 +62,51 @@ namespace MoveIt
             return new Color32(RandomByte(100, 255), RandomByte(100, 255), RandomByte(100, 255), 63);
         }
         #endregion
+
+        internal void EnableUUI()
+        {
+            if (!useUUI)
+            {
+                return;
+            }
+
+            try
+            {
+                var hotkeys = new UUIHotKeys { ActivationKey = OptionsKeymapping.toggleTool };
+                Texture2D texture = ResourceLoader.loadTextureFromAssembly("MoveIt.Icons.MoveIt.png");
+                
+                UUIButton = UUIHelpers.RegisterToolButton(
+                    name: "MoveItTool",
+                    groupName: null,
+                    tooltip: "Move It",
+                    tool: this,
+                    icon: texture,
+                    hotkeys: hotkeys
+                    );
+                m_button.Hide();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                UIView.ForwardException(e);
+            }
+        }
+
+        internal void DisableUUI()
+        {
+            m_button?.Show();
+            UUIButton?.Destroy();
+            UUIButton = null;
+        }
+
+        internal static Color GetSelectorColor(Color c)
+        {
+            if (!m_showSelectors)
+            {
+                c.a = 0f;
+            }
+            return c;
+        }
 
         internal static void UpdatePillarMap()
         {

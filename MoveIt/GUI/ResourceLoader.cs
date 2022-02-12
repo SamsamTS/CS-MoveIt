@@ -102,7 +102,7 @@ namespace MoveIt
             return UIView.GetAView().defaultAtlas;
         }
 
-        private static Texture2D loadTextureFromAssembly(string path)
+        internal static Texture2D loadTextureFromAssembly(string path)
         {
             Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
 

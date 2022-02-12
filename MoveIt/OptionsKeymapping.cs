@@ -31,6 +31,7 @@ namespace MoveIt
             AddKeymapping(Str.key_ToggleUndergroundView, viewUnderground);
             AddKeymapping(Str.key_ToggleDebugPanel, viewDebug);
             AddKeymapping(Str.key_StepOver, stepOverKey);
+            AddKeymapping(Str.key_ShowSelectors, viewSelectors);
         }
     }
 
@@ -97,6 +98,7 @@ namespace MoveIt
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey viewSelectors = new SavedInputKey("viewSelectors", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
 
         public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);

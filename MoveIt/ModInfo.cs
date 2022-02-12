@@ -162,6 +162,15 @@ namespace MoveIt
                 });
 
                 group.AddSpace(10);
+
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_UseUUI, MoveItTool.useUUI.value, (b) =>
+                {
+                    MoveItTool.useUUI.value = b;
+                    MoveItTool.instance?.DisableUUI();
+                    MoveItTool.instance?.EnableUUI();
+                });
+
+                group.AddSpace(10);
                 group = helper.AddGroup(Str.options_ShortcutsGeneral);
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);

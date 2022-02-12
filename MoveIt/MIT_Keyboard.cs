@@ -77,6 +77,10 @@ namespace MoveIt
                         m_debugPanel.Visible(showDebugPanel);
                     }
                 }
+                else if (OptionsKeymapping.viewSelectors.IsPressed(e))
+                {
+                    m_showSelectors = !m_showSelectors;
+                }
                 else if (OptionsKeymapping.activatePO.IsPressed(e))
                 {
                     PO.InitialiseTool();

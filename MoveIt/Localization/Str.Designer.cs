@@ -484,6 +484,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show/Hide Selectors.
+        /// </summary>
+        internal static string key_ShowSelectors {
+            get {
+                return ResourceManager.GetString("key_ShowSelectors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step Over.
         /// </summary>
         internal static string key_StepOver {
@@ -949,6 +958,15 @@ namespace MoveIt.Localization {
         internal static string options_UseCompass_Tooltip {
             get {
                 return ResourceManager.GetString("options_UseCompass_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use UnifiedUI.
+        /// </summary>
+        internal static string options_UseUUI {
+            get {
+                return ResourceManager.GetString("options_UseUUI", resourceCulture);
             }
         }
         

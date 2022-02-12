@@ -1,9 +1,12 @@
-﻿using ColossalFramework.Globalization;
+﻿using ColossalFramework;
+using ColossalFramework.UI;
+using ColossalFramework.Globalization;
 using ColossalFramework.Plugins;
 using ICities;
 using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
+using UnifiedUI.Helpers;
 using UnityEngine;
 
 namespace MoveIt
@@ -98,6 +101,9 @@ namespace MoveIt
 
             UILoadWindow.Close();
             UISaveWindow.Close();
+
+            // Unified UI
+            MoveItTool.instance.DisableUUI();
 
             if (MoveItTool.instance != null)
             {

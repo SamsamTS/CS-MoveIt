@@ -173,9 +173,9 @@ namespace MoveIt
                 {
                     foreach (PO_Object po in m_procObj.Group.objects)
                     {
-                        if (toolColor == MoveItTool.m_POselectedColor) toolColor = MoveItTool.m_POselectedGroup;
-                        if (toolColor == MoveItTool.m_POhoverColor) toolColor = MoveItTool.m_POhoverGroup;
-                        po.RenderOverlay(cameraInfo, toolColor);
+                        if (toolColor == MoveItTool.GetSelectorColor(MoveItTool.m_POselectedColor)) toolColor = MoveItTool.m_POselectedGroup;
+                        if (toolColor == MoveItTool.GetSelectorColor(MoveItTool.m_POhoverColor)) toolColor = MoveItTool.m_POhoverGroup;
+                        po.RenderOverlay(cameraInfo, MoveItTool.GetSelectorColor(toolColor));
                     }
                 }
             }
