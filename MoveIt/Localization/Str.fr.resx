@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>Augmenter l'Échelle</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>Show/Hide Selectors</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Passer outre la séléction</value>
   </data>
@@ -428,6 +431,10 @@ des PO avec Move It, ils ne porront être récupérés que dans une Sauvegarde a
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>Si cochée, la touche Haut déplacera le ou les objets sélectionnés dans la direction Nord, Bas = Sud, etc.</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>Use UnifiedUI</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Angle</value>
