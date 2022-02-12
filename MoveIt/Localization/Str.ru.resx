@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>Масштабировать наружу</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>Show/Hide Selectors</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Пропустить выделенное</value>
   </data>
@@ -427,6 +430,10 @@
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>Если выбрано, то кнопка вверх будет перемещать на север, вниз - на юг, влево - на восток, вправо - на запад.</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>Use UnifiedUI</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>Угол</value>
