@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>ขยายออกด้านนอก</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>Show/Hide Selectors</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>ก้าวข้ามวัตถุที่ตำแหน่งเมาส์ปัจจุบัน</value>
   </data>
@@ -427,6 +430,10 @@
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>หากมีการเลือกตัวเลือกนี้ ปุ่ม Up จะเคลื่อนย้ายไปทางทิศเหนือ, ปุ่ม Down ไปทางทิศใต้, ปุ่ม Left ไปทางทิศตะวันตก และปุ่ม Right ไปทางทิศตะวันออก</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>Use UnifiedUI</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>มุม</value>
