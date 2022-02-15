@@ -432,7 +432,7 @@
     <value>Если выбрано, то кнопка вверх будет перемещать на север, вниз - на юг, влево - на восток, вправо - на запад.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>Использовать UnifiedUI</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
