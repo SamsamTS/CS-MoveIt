@@ -267,7 +267,7 @@
     <value>축적 확대</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>선택기 보이기/숨기기</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>건너뛰기</value>
