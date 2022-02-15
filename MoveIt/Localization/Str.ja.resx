@@ -433,7 +433,7 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <value>チェックされている場合、Upキーで北に、Downキーで南に、左キーで西に、右キーで東に移動します。</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>UnifiedUI を使用する</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
