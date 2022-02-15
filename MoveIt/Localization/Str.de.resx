@@ -267,7 +267,7 @@
     <value>Nach außen skalieren</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>Ein-/Ausblenden der Auswahl-Markierungen</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Überspringen</value>
@@ -433,7 +433,7 @@ PO-Objekte mit Move It löscht, sind diese dauerhaft verschwunden.</value>
     <value>Ist diese Option aktiviert, wird die Hoch-Taste in Richtung Norden bewegen, unten nach Süden, links nach Westen und rechts nach Osten.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>UnifiedUI verwenden</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
