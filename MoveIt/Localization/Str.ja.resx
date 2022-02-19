@@ -267,7 +267,7 @@
     <value>外側に拡大縮小</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>セレクターの表示/非表示</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>ステップ実行</value>
