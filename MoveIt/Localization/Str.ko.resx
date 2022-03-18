@@ -432,7 +432,7 @@
     <value>이 옵션이 활성화될 경우, 키보드의 방향키를 누르면 해당하는 방향의 방위로 이동합니다. 방향키를 위로 누르면 북쪽으로, 아래로 누르면 남쪽으로 이동합니다.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>UnifiedUI 사용</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
