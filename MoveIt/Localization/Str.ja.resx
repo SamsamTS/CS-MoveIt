@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>外側に拡大縮小</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>セレクターの表示/非表示</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>ステップ実行</value>
   </data>
@@ -428,6 +431,10 @@ POオブジェクトを削除すると、完全に消去されます。</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>チェックされている場合、Upキーで北に、Downキーで南に、左キーで西に、右キーで東に移動します。</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>UnifiedUI を使用する</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>角度</value>

@@ -266,6 +266,9 @@
   <data name="key_ScaleOut" xml:space="preserve">
     <value>向外缩放</value>
   </data>
+  <data name="key_ShowSelectors" xml:space="preserve">
+    <value>显示/隐藏选择器</value>
+  </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>逐层选择</value>
   </data>
@@ -428,6 +431,10 @@
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
     <value>如果选中，上键将是向北方向移动。下键是南方向，左键是西方向，右键是东方向。</value>
+  </data>
+  <data name="options_UseUUI" xml:space="preserve">
+    <value>将图标加入UnifiedUI中</value>
+    <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
     <value>角度</value>
