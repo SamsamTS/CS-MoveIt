@@ -303,6 +303,8 @@ namespace MoveIt
 
             float newAngle = state.angle + deltaAngle;
 
+            //Debug.Log($"State:{state.position.y}, stateTH:{state.terrainHeight}, delta:{deltaPosition.y}, new:{newPosition.y}, newTH:{TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition)}");
+
             PropTool.RenderOverlay(cameraInfo, info, newPosition, scale, newAngle, toolColor);
         }
 

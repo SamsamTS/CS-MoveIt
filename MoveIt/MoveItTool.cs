@@ -751,11 +751,11 @@ namespace MoveIt
             //{
             //    AddDebugBox(b, new Color32(255, 31, 31, 31));
             //}
-            //Log.Debug($"AAA UpdateAreas:\nFull:{areasToUpdate.Count}\nFast:{areasToQuickUpdate.Count}");
             HashSet<Bounds> merged = areasToUpdate;
             merged.UnionWith(areasToQuickUpdate);
             merged = MergeBounds(merged);
             bool full = areasToUpdate.Count() != 0;
+            //Log.Debug($"AAA UpdateAreas:\nFull:{areasToUpdate.Count}\nMerged:{merged}\nFast:{areasToQuickUpdate.Count}");
             //foreach (Bounds b in merged)
             //{
             //    b.Expand(4f);

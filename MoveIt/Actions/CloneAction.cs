@@ -101,6 +101,7 @@ namespace MoveIt
             }
 
             state.position = position;
+            state.terrainHeight = position.y;
             m_states.Add(state);
             center = position;
         }
