@@ -125,7 +125,6 @@ namespace MoveIt
             moveYpos, moveYneg, 
             turnNeg, turnPos, 
             scaleOut, scaleIn, 
-            deselectAll, undo, redo,
             clone, bulldoze,
 
             convertToPO,
@@ -134,6 +133,8 @@ namespace MoveIt
         };
 
         public static SavedInputKey[] InToolKeysAlways => new SavedInputKey[] {
+            deselectAll, // after de-selecting, then there is no selection and that can cause confusion. therefore we put de-select all here.
+            undo, redo,
             viewGrid, viewUnderground, viewDebug, viewSelectors,
             activatePO, 
             stepOverKey,
