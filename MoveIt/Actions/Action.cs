@@ -19,6 +19,8 @@ namespace MoveIt
 
         public static HashSet<Instance> selection = new HashSet<Instance>();
         public static bool affectsSegments = true;
+        
+        public static bool HasSelection() => selection.Count > 0;
 
         public abstract void Do();
         public abstract void Undo();

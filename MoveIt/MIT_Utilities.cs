@@ -73,8 +73,14 @@ namespace MoveIt
             try
             {
                 var hotkeys = new UUIHotKeys { ActivationKey = OptionsKeymapping.toggleTool };
+                foreach (var item in OptionsKeymapping.InToolKeysForSelection) {
+                    hotkeys.AddInToolKey(item, Action.HasSelection);
+                }
+                foreach (var item in OptionsKeymapping.InToolKeysAlways) {
+                    hotkeys.AddInToolKey(item);
+                }
                 Texture2D texture = ResourceLoader.loadTextureFromAssembly("MoveIt.Icons.MoveIt.png");
-                
+
                 UUIButton = UUIHelpers.RegisterToolButton(
                     name: "MoveItTool",
                     groupName: null,
