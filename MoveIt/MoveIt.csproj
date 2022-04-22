@@ -224,7 +224,7 @@
     </Reference>
     <Reference Include="EManagersLib.API, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Rob\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods - Deactivated\EML\EManagersLib.API.dll</HintPath>
+      <HintPath>..\..\..\Libraries\EManagersLib.API.dll</HintPath>
     </Reference>
     <Reference Include="ICities">
       <HintPath>$(MangedDLLPath)\ICities.dll</HintPath>
@@ -232,9 +232,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnifiedUILib">
-      <HintPath>..\..\..\Libraries\UnifiedUILib.dll</HintPath>
-    </Reference>
+    <PackageReference Include="UnifiedUILib" Version="2.2.8" />
     <Reference Include="UnityEngine">
       <HintPath>$(MangedDLLPath)\UnityEngine.dll</HintPath>
       <Private>False</Private>

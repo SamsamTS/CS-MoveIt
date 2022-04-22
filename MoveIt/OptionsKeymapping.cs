@@ -95,6 +95,7 @@ namespace MoveIt
 
         public static readonly SavedInputKey clone = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
         public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
+        
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
@@ -118,6 +119,26 @@ namespace MoveIt
         public static readonly SavedInputKey alignSlopeFull = new SavedInputKey("alignSlopeFull", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignTerrainHeight = new SavedInputKey("alignTerrainHeight", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
+        public static SavedInputKey[] InToolKeysForSelection => new SavedInputKey[] { 
+            moveXpos, moveXneg, 
+            moveZpos, moveZneg, 
+            moveYpos, moveYneg, 
+            turnNeg, turnPos, 
+            scaleOut, scaleIn, 
+            clone, bulldoze,
+
+            convertToPO,
+
+            alignLine, alignLineUnspaced, alignMirror, reset, alignMoveTo, alignRandom, alignGroup, alignInplace, alignSlope, alignSlopeQuick, alignSlopeFull, alignTerrainHeight, alignHeights,
+        };
+
+        public static SavedInputKey[] InToolKeysAlways => new SavedInputKey[] {
+            deselectAll, // after de-selecting, then there is no selection and that can cause confusion. therefore we put de-select all here.
+            undo, redo,
+            viewGrid, viewUnderground, viewDebug, viewSelectors,
+            activatePO, 
+            stepOverKey,
+        };
 
         //public static readonly SavedInputKey testKey = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, false, false, true), true);
 
@@ -136,6 +157,7 @@ namespace MoveIt
             uILabel.text = label;
             uIButton.text = savedInputKey.ToLocalizedString("KEYNAME");
             uIButton.objectUserData = savedInputKey;
+            uIButton.eventVisibilityChanged += ButtonVisibilityChanged;
         }
 
         protected void OnEnable()
@@ -209,6 +231,12 @@ namespace MoveIt
                 return KeyCode.Mouse6;
             }
             return KeyCode.None;
+        }
+
+        private static void ButtonVisibilityChanged(UIComponent component, bool isVisible) {
+            if (isVisible && component.objectUserData is SavedInputKey savedInputKey) {
+                (component as UIButton).text = savedInputKey.ToLocalizedString("KEYNAME");
+            }
         }
 
         protected void OnBindingKeyDown(UIComponent comp, UIKeyEventParameter p)
