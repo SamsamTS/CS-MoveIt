@@ -267,7 +267,7 @@
     <value>Escalar hacia fuera</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>Mostrar / Ocultar Selectores</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Alternar entre objetos superpuestos</value>
@@ -433,7 +433,7 @@ un PO con Move It, desaparecerán PERMANENTEMENTE.</value>
     <value>Si está marcado, la tecla Arriba moverá hacia el Norte, Abajo hacia el Sur, Izquierda hacia el Oeste, Derecha hacia el Este.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>Usar UnifiedUI</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
