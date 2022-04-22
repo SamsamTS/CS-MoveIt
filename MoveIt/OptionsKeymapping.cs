@@ -136,6 +136,7 @@ namespace MoveIt
             uILabel.text = label;
             uIButton.text = savedInputKey.ToLocalizedString("KEYNAME");
             uIButton.objectUserData = savedInputKey;
+            uibutton.eventVisibilityChanged += ButtonVisibilityChanged;
         }
 
         protected void OnEnable()
@@ -209,6 +210,12 @@ namespace MoveIt
                 return KeyCode.Mouse6;
             }
             return KeyCode.None;
+        }
+
+        private static void ButtonVisibilityChanged(UIComponent component, bool isVisible) {
+            if (isVisible && component.objectUserData is SavedInputKey savedInputKey) {
+                (component as UIButton).text = savedInputKey.ToLocalizedString("KEYNAME");
+            }
         }
 
         protected void OnBindingKeyDown(UIComponent comp, UIKeyEventParameter p)
