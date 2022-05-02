@@ -267,7 +267,7 @@
     <value>Redimensionar para fora</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>Mostrar/Esconder Seletores</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Passar por Cima</value>
@@ -362,11 +362,11 @@
     <value>Opções Extras</value>
   </data>
   <data name="options_fixTreeSnapping" xml:space="preserve">
-    <value>Fix Tree Snapping</value>
+    <value>Fixar Tree Snapping</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
-    <value>If Tree Snapping is causing tree heights to be off, click this straight after loading your city.</value>
+    <value>Se o Tree Snapping estivar fazendo as alturas das árvores ficarem incorretas, clique aqui após carregar sua cidade.</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
@@ -434,7 +434,7 @@ PERMANENTEMENTE deletados.</value>
     <value>Se marcado, a tecla para cima se moverá na direção do Norte, para baixo é para sul, para esquerda é para oeste, para a direita é para leste.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>Usar a UnifiedUI</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
