@@ -175,7 +175,7 @@ namespace MoveIt
                         action.angleDelta += angle;
                     }
                 }
-                else if (ToolState == ToolStates.Default && Action.selection.Count > 0)
+                else if (ToolState == ToolStates.Default && Action.HasSelection())
                 {
                     if (ProcessMoveKeys(e, out Vector3 direction, out float angle))
                     {

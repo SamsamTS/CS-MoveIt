@@ -469,7 +469,7 @@ namespace MoveIt
 
                 ActionQueue.instance.current?.Overlays(cameraInfo, GetSelectorColor(m_alignColor), GetSelectorColor(m_despawnColor));
 
-                if (Action.selection.Count > 0)
+                if (Action.HasSelection())
                 {
                     // Highlight Selected Items
                     foreach (Instance instance in Action.selection)
@@ -533,7 +533,7 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.MouseDragging)
             {
-                if (Action.selection.Count > 0)
+                if (Action.HasSelection())
                 {
                     foreach (Instance instance in Action.selection)
                     {
@@ -576,7 +576,7 @@ namespace MoveIt
                 bool removing = Event.current.alt;
                 bool adding = Event.current.shift;
 
-                if ((removing || adding) && Action.selection.Count > 0)
+                if ((removing || adding) && Action.HasSelection())
                 {
                     foreach (Instance instance in Action.selection)
                     {

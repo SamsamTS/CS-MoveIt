@@ -386,7 +386,7 @@ namespace MoveIt
                     {
                         if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
                         {
-                            if (Action.selection.Count > 0)
+                            if (Action.HasSelection())
                             {
                                 DuplicateAction action = new DuplicateAction();
                                 if (action.Count > 0)

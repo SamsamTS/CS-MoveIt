@@ -484,7 +484,7 @@ namespace MoveIt
                 TransformAction action = ActionQueue.instance.current as TransformAction;
                 if (action == null)
                 {
-                    if (Action.selection.Count == 0) return;
+                    if (!Action.HasSelection()) return;
 
                     action = new TransformAction();
                     ActionQueue.instance.Push(action);

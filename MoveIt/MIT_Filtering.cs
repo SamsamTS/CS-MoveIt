@@ -72,12 +72,19 @@ namespace MoveIt
             bool repeatSearch;
             do
             {
-                if (PO.Active && selectProc)
+                if (PO.Active && (selectProc || selectPicker))
                 {
                     foreach (PO_Object obj in PO.Objects)
                     {
                         if (!obj.isHidden() && stepOver.isValidPO(obj.Id))
                         {
+                            if (!selectProc)
+                            { // Implies selectPicker is true
+                                if (obj.GetPrefab() != Filters.Picker.Info)
+                                {
+                                    continue;
+                                }
+                            }
                             float radius = obj.Size / 2;
                             bool inXBounds = obj.Position.x > (location.x - radius) && obj.Position.x < (location.x + radius);
                             bool inZBounds = obj.Position.z > (location.z - radius) && obj.Position.z < (location.z + radius);
@@ -323,10 +330,17 @@ namespace MoveIt
                 InstanceID id = new InstanceID();
                 ItemClass.Layer itemLayers = GetItemLayers();
 
-                if (PO.Active && filterProcs)
+                if (PO.Active && (filterProcs || filterPicker))
                 {
                     foreach (PO_Object obj in PO.Objects)
                     {
+                        if (!filterProcs)
+                        { // Implies filterPicker is true
+                            if (obj.GetPrefab() != Filters.Picker.Info)
+                            {
+                                continue;
+                            }
+                        }
                         if (!obj.isHidden() && PointInRectangle(m_selection, obj.Position))
                         {
                             id.NetLane = obj.Id;

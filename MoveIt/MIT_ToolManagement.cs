@@ -67,7 +67,7 @@ namespace MoveIt
 
             if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning && ToolState != ToolStates.ToolActive) return false;
 
-            if (Action.selection.Count == 0) return false;
+            if (!Action.HasSelection()) return false;
 
             SetToolState(newToolState, mode, 1);
             UIMoreTools.CheckCloseMenu();
@@ -100,7 +100,7 @@ namespace MoveIt
             {
                 if (ToolState != ToolStates.Default && ToolState != ToolStates.Aligning) return;
 
-                if (Action.selection.Count > 0)
+                if (Action.HasSelection())
                 {
                     CloneAction action = new CloneAction();
 
@@ -141,7 +141,7 @@ namespace MoveIt
         {
             if (ToolState != ToolStates.Default) return;
 
-            if (Action.selection.Count > 0)
+            if (Action.HasSelection())
             {
                 lock (ActionQueue.instance)
                 {
@@ -155,7 +155,7 @@ namespace MoveIt
         {
             if (ToolState != ToolStates.Default) return;
 
-            if (Action.selection.Count > 0)
+            if (Action.HasSelection())
             {
                 lock (ActionQueue.instance)
                 {

@@ -216,7 +216,7 @@ namespace MoveIt
             tPO.GetField("isRootOfGroup").SetValue(procObj, flag);
         }
 
-        private PrefabInfo GetPrefab()
+        internal PrefabInfo GetPrefab()
         {
             if (m_dummy)
             {
