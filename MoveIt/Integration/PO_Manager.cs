@@ -243,11 +243,11 @@ namespace MoveIt
                 {
                     InitGroups();
                     string msg = $"PO Groups: {Groups.Count} found\n";
-                    foreach (PO_Group g in MoveItTool.PO.Groups)
-                    {
-                        msg += $"{g.objects.Count} ({g.root.Id}), ";
-                    }
-                    Log.Debug(msg);
+                    //foreach (PO_Group g in MoveItTool.PO.Groups)
+                    //{
+                    //    msg += $"{g.objects.Count} ({g.root.Id}), ";
+                    //}
+                    //Log.Debug(msg);
                 }
                 else
                 {
