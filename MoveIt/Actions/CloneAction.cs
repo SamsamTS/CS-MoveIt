@@ -60,6 +60,7 @@ namespace MoveIt
                 {
                     isSubInstance = false,
                     isHidden = false,
+                    flags = Building.Flags.Completed
                 };
                 state.Info.Prefab = prefab;
                 InstanceID id = new InstanceID
