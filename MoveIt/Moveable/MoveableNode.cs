@@ -550,6 +550,7 @@ namespace MoveIt
             {
                 node.m_bounds = new Bounds(node.m_position, new Vector3(16f, 0f, 16f));
             }
+            node.m_bounds.center = node.m_position;
 
             return node.m_bounds;
         }
