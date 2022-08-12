@@ -261,6 +261,11 @@ namespace MoveIt
 
         public override void Move(Vector3 location, float angle)
         {
+            Singleton<SimulationManager>.instance.AddAction(() => MoveProcess(location, angle));
+        }
+
+        internal void MoveProcess(Vector3 location, float angle)
+        { 
             if (!isValid) return;
 
             TransformAngle = angle;

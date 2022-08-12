@@ -624,7 +624,7 @@ namespace MoveIt
                 throw new Exception($"Failed to mirror PO");
             }
 
-            action.DoProcess();
+            action.DoMirrorProcess();
         }
     }
 }

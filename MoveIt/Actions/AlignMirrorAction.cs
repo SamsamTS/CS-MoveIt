@@ -20,7 +20,7 @@ namespace MoveIt
             base.Do();
         }
 
-        public void DoProcess()
+        public void DoMirrorProcess()
         {
             Dictionary<Instance, float> instanceRotations = new Dictionary<Instance, float>();
 

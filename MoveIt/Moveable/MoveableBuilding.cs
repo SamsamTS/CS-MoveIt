@@ -595,7 +595,7 @@ namespace MoveIt
 
             int length = buildingBuffer[building].Length;
             BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, OverlayPosition, OverlayAngle, toolColor, false);
-
+;
             foreach (Instance subInstance in subInstances)
             {
                 if (subInstance is MoveableNode mn)
@@ -744,7 +744,7 @@ namespace MoveIt
             }
 
             info.m_buildingAI.CheckRoadAccess(building, ref buildingBuffer[building]);
-            if ((buildingBuffer[building].m_problems & Notification.Problem.RoadNotConnected) == Notification.Problem.RoadNotConnected ||
+            if ((buildingBuffer[building].m_problems & Notification.Problem1.RoadNotConnected) == Notification.Problem1.RoadNotConnected ||
                 !buildingBuffer[building].CheckZoning(zone1, zone2, true))
             {
                 return true;

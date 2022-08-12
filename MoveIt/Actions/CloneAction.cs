@@ -311,6 +311,11 @@ namespace MoveIt
 
         public override void Do()
         {
+            Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
+        }
+
+        internal void DoProcess()
+        {
             if (MoveItTool.POProcessing > 0)
             {
                 return;
