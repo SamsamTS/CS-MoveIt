@@ -59,7 +59,7 @@ namespace MoveIt
         public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
-        public static SavedBool hideChangesWindow = new SavedBool("hideChanges290", settingsFileName, false, true);
+        public static SavedBool hideChangesWindow = new SavedBool("hideChanges291", settingsFileName, false, true);
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
@@ -235,7 +235,7 @@ namespace MoveIt
         private float m_sensitivityTogglePosX; // Where sensitivity was last toggled, X-axis absolute
         private float m_sensitivityAngleOffset; // Accumulated angle offset from low sensitivity
 
-        private NetSegment m_segmentGuide, m_segmentGuide2;
+        private NetSegment m_segmentGuide;//, m_segmentGuide2;
 
         private bool m_prevRenderZones;
         private ToolBase m_prevTool;
@@ -292,16 +292,16 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
-            //string msg = $"Mods:";
-            //foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
-            //{
-            //    msg += $"\n{pluginInfo.name} ({pluginInfo.isEnabled}, {pluginInfo.userModInstance.GetType().Name}):\n  ";
-            //    foreach (Assembly assembly in pluginInfo.GetAssemblies())
-            //    {
-            //        msg += $"{assembly.GetName().Name.ToLower()}, ";
-            //    }
-            //}
-            //Log.Debug(msg);
+            string msg = $"Mods:";
+            foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
+            {
+                msg += $"\n{pluginInfo.name} ({pluginInfo.isEnabled}, {pluginInfo.userModInstance.GetType().Name}):\n  ";
+                foreach (Assembly assembly in pluginInfo.GetAssemblies())
+                {
+                    msg += $"{assembly.GetName().Name.ToLower()}, ";
+                }
+            }
+            Log.Debug(msg);
 
             try
             {
@@ -337,9 +337,14 @@ namespace MoveIt
                 UIToolOptionPanel.instance.isVisible = true;
             }
 
-            if (!hideChangesWindow && UIChangesWindow.instance != null)
+            if (!hideChangesWindow)
             {
-                UIChangesWindow.instance.isVisible = true;
+                UIChangesWindow.Open(typeof(UIChangesWindow));
+            }
+
+            if (true) // check LSM
+            {
+                UILSMWarning.Open(typeof(UILSMWarning));
             }
 
             m_pauseMenu = UIView.library.Get("PauseMenu");
@@ -373,21 +378,6 @@ namespace MoveIt
 
             UIMoreTools.UpdateMoreTools();
             UpdatePillarMap();
-
-            //string msg2 = $"Assemblies:";
-            //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            //{
-            //    msg2 += $"\n{assembly.GetName().Name.ToLower()}";
-            //}
-            //Log.Debug(msg2);
-
-            //string msg3 = "Plugins:";
-            //foreach (PluginManager.PluginInfo pi in PluginManager.instance.GetPluginsInfo())
-            //{
-            //    msg3 += $"\n{pi.publishedFileID.AsUInt64} - {pi.name} ({pi.isEnabled})" +
-            //        $"\n - {pi.modPath}";
-            //}
-            //Log.Debug(msg3);
         }
 
         protected override void OnDisable()
@@ -570,21 +560,21 @@ namespace MoveIt
 
                                 RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, GetSelectorColor(m_selectedColor), bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
 
-                                if (m_segmentGuide2.m_startNode != 0 && m_segmentGuide2.m_endNode != 0)
-                                {
-                                    bezier.a = nodeBuffer[m_segmentGuide2.m_startNode].m_position;
-                                    bezier.d = nodeBuffer[m_segmentGuide2.m_endNode].m_position;
+                                //if (m_segmentGuide2.m_startNode != 0 && m_segmentGuide2.m_endNode != 0)
+                                //{
+                                //    bezier.a = nodeBuffer[m_segmentGuide2.m_startNode].m_position;
+                                //    bezier.d = nodeBuffer[m_segmentGuide2.m_endNode].m_position;
 
-                                    smoothStart = ((nodeBuffer[m_segmentGuide2.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-                                    smoothEnd = ((nodeBuffer[m_segmentGuide2.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                                //    smoothStart = ((nodeBuffer[m_segmentGuide2.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
+                                //    smoothEnd = ((nodeBuffer[m_segmentGuide2.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
 
-                                    NetSegment.CalculateMiddlePoints(
-                                        bezier.a, m_segmentGuide2.m_startDirection,
-                                        bezier.d, m_segmentGuide2.m_endDirection,
-                                        smoothStart, smoothEnd, out bezier.b, out bezier.c);
+                                //    NetSegment.CalculateMiddlePoints(
+                                //        bezier.a, m_segmentGuide2.m_startDirection,
+                                //        bezier.d, m_segmentGuide2.m_endDirection,
+                                //        smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                                    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, GetSelectorColor(m_selectedColor * 0.75f), bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
-                                }
+                                //    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, GetSelectorColor(m_selectedColor * 0.75f), bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
+                                //}
                             }
                         }
                     }

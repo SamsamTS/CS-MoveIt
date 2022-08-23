@@ -173,6 +173,11 @@ namespace MoveIt
         /// <returns></returns>
         public static bool PasteFromExternal(PrefabInfo prefab)
         {
+            if (prefab == null)
+            {
+                Log.Debug($"PasteFromExternal prefab is null!");
+            }
+
             if (prefab is NetInfo)
             {
                 return false;

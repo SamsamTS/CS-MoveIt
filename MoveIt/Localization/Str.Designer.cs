@@ -19,7 +19,7 @@ namespace MoveIt.Localization {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Str {
@@ -669,6 +669,37 @@ namespace MoveIt.Localization {
         internal static string key_Undo {
             get {
                 return ResourceManager.GetString("key_Undo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Important Notice!
+        ///
+        ///Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+        ///
+        ///Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by Algernon..
+        /// </summary>
+        internal static string lsmWarning {
+            get {
+                return ResourceManager.GetString("lsmWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LSM Revisited on Workshop.
+        /// </summary>
+        internal static string lsmWorkshopBtn {
+            get {
+                return ResourceManager.GetString("lsmWorkshopBtn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visit the Steam Workshop page for Loading Screen Mod Revisited.
+        /// </summary>
+        internal static string lsmWorkshopBtn_Tooltip {
+            get {
+                return ResourceManager.GetString("lsmWorkshopBtn_Tooltip", resourceCulture);
             }
         }
         

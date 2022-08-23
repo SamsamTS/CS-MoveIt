@@ -386,13 +386,13 @@ namespace MoveIt
             return true;
         }
 
-        internal static Assembly GetAssembly(string modName, string assName, string assNameExcept = "")
+        internal static Assembly GetAssembly(string modName, string assName, string assNameExcept = "", bool onlyEnabled = true)
         {
             foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
             {
                 try
                 {
-                    if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && pluginInfo.isEnabled)
+                    if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && pluginInfo.isEnabled == onlyEnabled)
                     {
                         if (assNameExcept.Length > 0)
                         {

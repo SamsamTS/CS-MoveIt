@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MoveIt
 {
-    static class Filters
+    public static class Filters
     {
         static readonly string[] SurfaceMeshNames = new string[]
         {
