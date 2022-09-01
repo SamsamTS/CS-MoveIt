@@ -330,6 +330,20 @@
   <data name="key_Undo" xml:space="preserve">
     <value>Deshacer</value>
   </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Important Notice!
+
+Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by Algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited on Workshop</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Visit the Steam Workshop page for Loading Screen Mod Revisited</value>
+  </data>
   <data name="mod_description" xml:space="preserve">
     <value>Mover objetos</value>
   </data>
@@ -513,16 +527,14 @@ un PO con Move It, desaparecerán PERMANENTEMENTE.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Novedades en Move It 2.9.0:
+    <value>New in Move It 2.9.0:
 
-- Traducción a todos los idiomas que soporta el juego, además de japonés y tailandés.
-- Integración con Intersection Marking Tool, Traffic Manager: President Edition y Node Controller para que la configuración de estos mods se copie en Move It (ten en cuenta que estos mods pueden necesitar una actualización por su parte).
-- Control de pilares avanzado opcional, para que los pilares no sean reseteados por el juego.
-- Numerosas mejoras en rendimiento y estabilidad.
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
 
-Lee la Move It Guide en el Workshop para más información.
-
-Haz clic en cualquier lugar de este cuadro de diálogo para cerrarlo.</value>
+Read the workshop Move It Guide for more information.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Quieres eliminar {0} permanentemente?</value>
