@@ -340,10 +340,10 @@ namespace MoveIt
                 UIToolOptionPanel.instance.isVisible = true;
             }
 
-            if (!hideChangesWindow)
-            {
-                m_whatsNewPanel = UIChangesWindow.Open(typeof(UIChangesWindow));
-            }
+            //if (!hideChangesWindow)
+            //{
+            //    m_whatsNewPanel = UIChangesWindow.Open(typeof(UIChangesWindow));
+            //}
 
             if (!lsmHasNagged && FoundOldLSM()) // check LSM
             {
