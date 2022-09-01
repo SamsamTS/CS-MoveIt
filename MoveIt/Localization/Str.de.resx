@@ -330,6 +330,20 @@
   <data name="key_Undo" xml:space="preserve">
     <value>Rückgängig</value>
   </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Important Notice!
+
+Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by Algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited on Workshop</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Visit the Steam Workshop page for Loading Screen Mod Revisited</value>
+  </data>
   <data name="mod_description" xml:space="preserve">
     <value>Dinge verschieben</value>
   </data>
@@ -513,16 +527,14 @@ PO-Objekte mit Move It löscht, sind diese dauerhaft verschwunden.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Neu in Move It 2.9.0:
+    <value>New in Move It 2.9.0:
 
-- Übersetzung in alle Sprachen, die das Spiel unterstützt, plus Japanisch und Thai.
-- Integration mit Intersection Marking Tool, Traffic Manager: President Edition und Node Controller, so dass die Einstellungen dieser Mods in Move It kopiert werden (Bitte beachten: Diese Mods müssen eventuell aktualisiert werden).
-- Optionale erweiterte Pfeiler-Kontrolle, so dass Säulen nicht durch das Spiel zurückgesetzt werden.
-- Zahlreiche Leistungs- und Stabilitätsverbesserungen.
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
 
-Lese den Workshop Move It Guide für weitere Informationen.
-
-Klicke irgendwo auf dieses Feld, um es zu schließen.</value>
+Read the workshop Move It Guide for more information.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Eintrag '{0}' permanent löschen?</value>
