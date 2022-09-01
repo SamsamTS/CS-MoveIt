@@ -330,6 +330,20 @@
   <data name="key_Undo" xml:space="preserve">
     <value>실행 취소</value>
   </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Important Notice!
+
+Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by Algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited on Workshop</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Visit the Steam Workshop page for Loading Screen Mod Revisited</value>
+  </data>
   <data name="mod_description" xml:space="preserve">
     <value>모든 사물 이동</value>
   </data>
@@ -512,16 +526,14 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Move It 2.9.0의 변경점:
+    <value>New in Move It 2.9.0:
 
-- 게임이 지원하는 모든 언어의 번역이 추가되었습니다. (일본어, 태국어 포함)
-- Intersection Marking Tool, Traffic Manager 그리고 Node Controller와의 통합으로 이들 모드의 설정이 Move It에 적용되었습니다.(참고로 해당 모드들은 업데이트가 필요할 수 있습니다.)
-- 선택적인 고급 필러 컨트롤으로 기둥이 게임에서 재설정되지 않습니다.
-- 성능 및 안정성 향상
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
 
-자세한 내용은 창작마당의 Move It 가이드를 참조하십시오.
-
-상자를 닫으려면 이 상자의 아무 곳이나 클릭하십시오.</value>
+Read the workshop Move It Guide for more information.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>영구적으로 '{0}' 개의 파일을 삭제하시겠습니까?</value>
