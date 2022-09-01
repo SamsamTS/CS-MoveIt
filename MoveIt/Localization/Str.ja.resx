@@ -330,6 +330,20 @@
   <data name="key_Undo" xml:space="preserve">
     <value>元に戻す</value>
   </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Important Notice!
+
+Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by Algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited on Workshop</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Visit the Steam Workshop page for Loading Screen Mod Revisited</value>
+  </data>
   <data name="mod_description" xml:space="preserve">
     <value>いろいろなものを移動させます</value>
   </data>
@@ -513,16 +527,14 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Move It 2.9.0 アップデート
+    <value>New in Move It 2.9.0:
 
-- ゲームがサポートする全ての言語に加え、日本語とタイ語をサポート
-- Intersection Marking Tool, Traffic Manager: President Edition, Node Controllerとの統合により、これらのMODの設定はMove Itにコピーされます（MODのアップデートを必要とするかもしれません）。
-- オプションに「高度な柱の制御」が追加されました。柱がゲームによって初期化されなくなります。
-- 数多くのパフォーマンスと安定性の改善。
+- Translation into all languages the game supports, plus Japanese and Thai.
+- Integration with Intersection Marking Tool, Traffic Manager: President Edition, and Node Controller so these mods' settings are copied in Move It (please note, these mods may need updating).
+- Optional advanced pillar control, so pillars don't get reset by the game.
+- Numerous performance and stability improvements.
 
-詳細については、ワークショップの Move It ガイドをお読みください。
-
-※閉じるには、このボックスの任意の場所をクリックします。</value>
+Read the workshop Move It Guide for more information.</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>ファイル '{0}' を完全に削除しますか？</value>
