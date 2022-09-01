@@ -59,7 +59,7 @@ namespace MoveIt
         public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
-        public static SavedBool hideChangesWindow = new SavedBool("hideChanges291", settingsFileName, false, true);
+        public static SavedBool hideChangesWindow = new SavedBool("hideChanges297", settingsFileName, false, true);
         public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
         public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
         public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
@@ -254,6 +254,9 @@ namespace MoveIt
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
         protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
+        internal UIPopupPanel m_whatsNewPanel, m_lsmWarningPanel;
+        private bool lsmHasNagged = false;
+
         public ToolAction m_nextAction = ToolAction.None;
 
         private static System.Random _rand = null;
@@ -292,16 +295,16 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
-            string msg = $"Mods:";
-            foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
-            {
-                msg += $"\n{pluginInfo.name} ({pluginInfo.isEnabled}, {pluginInfo.userModInstance.GetType().Name}):\n  ";
-                foreach (Assembly assembly in pluginInfo.GetAssemblies())
-                {
-                    msg += $"{assembly.GetName().Name.ToLower()}, ";
-                }
-            }
-            Log.Debug(msg);
+            //string msg = $"Mods:";
+            //foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
+            //{
+            //    msg += $"\n{pluginInfo.name} ({pluginInfo.isEnabled}, {pluginInfo.userModInstance.GetType().Name}):\n  ";
+            //    foreach (Assembly assembly in pluginInfo.GetAssemblies())
+            //    {
+            //        msg += $"{assembly.GetName().Name.ToLower()}, ";
+            //    }
+            //}
+            //Log.Debug(msg);
 
             try
             {
@@ -339,12 +342,13 @@ namespace MoveIt
 
             if (!hideChangesWindow)
             {
-                UIChangesWindow.Open(typeof(UIChangesWindow));
+                m_whatsNewPanel = UIChangesWindow.Open(typeof(UIChangesWindow));
             }
 
-            if (true) // check LSM
+            if (!lsmHasNagged && FoundOldLSM()) // check LSM
             {
-                UILSMWarning.Open(typeof(UILSMWarning));
+                m_lsmWarningPanel = UILSMWarning.Open(typeof(UILSMWarning));
+                lsmHasNagged = true;
             }
 
             m_pauseMenu = UIView.library.Get("PauseMenu");
@@ -400,9 +404,16 @@ namespace MoveIt
                 UpdateSegments();
                 SetToolState();
 
-                if (UIChangesWindow.instance != null)
+                if (m_whatsNewPanel != null)
                 {
-                    UIChangesWindow.instance.isVisible = false;
+                    m_whatsNewPanel.isVisible = false;
+                    m_whatsNewPanel = null;
+                }
+
+                if (m_lsmWarningPanel != null)
+                {
+                    m_lsmWarningPanel.isVisible = false;
+                    m_lsmWarningPanel = null;
                 }
 
                 if (UIToolOptionPanel.instance != null)

@@ -1189,9 +1189,7 @@ namespace MoveIt.Localization {
         ///- Optional advanced pillar control, so pillars don&apos;t get reset by the game.
         ///- Numerous performance and stability improvements.
         ///
-        ///Read the workshop Move It Guide for more information.
-        ///
-        ///Click anywhere on this box t [rest of string was truncated]&quot;;.
+        ///Read the workshop Move It Guide for more information..
         /// </summary>
         internal static string whatsNew {
             get {

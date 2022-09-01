@@ -16,8 +16,6 @@ namespace MoveIt
         public float sizeX = 465f, sizeY = 292f;
         public string title = "Move It";
 
-        public static UIPopupPanel instance;
-
         public override void Start()
         {
             name = "MoveIt_PopupWindow";
@@ -85,37 +83,31 @@ namespace MoveIt
             };
         }
 
-        public static void Open(Type type)
+        public static UIPopupPanel Open(Type type)
         {
-            if (instance == null)
-            {
-                instance = UIView.GetAView().AddUIComponent(type) as UIPopupPanel;
-                UIView.PushModal(instance);
-            }
+            UIPopupPanel instance = UIView.GetAView().AddUIComponent(type) as UIPopupPanel;
+            UIView.PushModal(instance);
+            return instance;
         }
 
-        public static void Close()
+        public void Close()
         {
-            if (instance != null)
+            UIView.PopModal();
+
+            UIComponent modalEffect = GetUIView().panelsLibraryModalEffect;
+            if (modalEffect != null && modalEffect.isVisible)
             {
-                UIView.PopModal();
-
-                UIComponent modalEffect = instance.GetUIView().panelsLibraryModalEffect;
-                if (modalEffect != null && modalEffect.isVisible)
+                ValueAnimator.Animate("ModalEffect", delegate (float val)
                 {
-                    ValueAnimator.Animate("ModalEffect", delegate (float val)
-                    {
-                        modalEffect.opacity = val;
-                    }, new AnimatedFloat(1f, 0f, 0.7f, EasingType.CubicEaseOut), delegate
-                    {
-                        modalEffect.Hide();
-                    });
-                }
-
-                instance.isVisible = false;
-                Destroy(instance.gameObject);
-                this = null;
+                    modalEffect.opacity = val;
+                }, new AnimatedFloat(1f, 0f, 0.7f, EasingType.CubicEaseOut), delegate
+                {
+                    modalEffect.Hide();
+                });
             }
+
+            isVisible = false;
+            Destroy(this.gameObject);
         }
 
         protected override void OnKeyDown(UIKeyEventParameter p)
@@ -162,9 +154,12 @@ namespace MoveIt
         {
             base.Start();
 
+            height += 70;
+            blurb.height += 70;
             blurb.text = Str.whatsNew;
 
             CloseButton();
+            MoveItTool.hideChangesWindow.value = true;
         }
     }
 
@@ -189,222 +184,4 @@ namespace MoveIt
             };
         }
     }
-
-
-
-
-
-    //public class UIPopupPanel : UIPanel
-    //{
-    //    public static UIPopupPanel instance;
-    //    private string blurb = "";
-    //    private float extraPadding = 5f;
-    //    private UIButton closeBtn;
-
-    //    public override void Start()
-    //    {
-    //        name = "FindIt_UpdateNoticePopUp";
-    //        atlas = UIUtils.GetAtlas("Ingame");
-    //        backgroundSprite = "GenericPanelWhite";
-    //        size = new Vector2(500, 240);
-
-    //        UILabel title = AddUIComponent<UILabel>();
-    //        title.text = "Move It";
-    //        title.textColor = new Color32(0, 0, 0, 255);
-    //        title.relativePosition = new Vector3(extraPadding * 2, extraPadding * 2);
-
-    //        UIButton close = AddUIComponent<UIButton>();
-    //        close.size = new Vector2(30f, 30f);
-    //        close.text = "X";
-    //        close.textScale = 0.9f;
-    //        close.textColor = new Color32(0, 0, 0, 255);
-    //        close.focusedTextColor = new Color32(0, 0, 0, 255);
-    //        close.hoveredTextColor = new Color32(109, 109, 109, 255);
-    //        close.pressedTextColor = new Color32(128, 128, 128, 102);
-    //        close.textPadding = new RectOffset(8, 8, 8, 8);
-    //        close.canFocus = false;
-    //        close.playAudioEvents = true;
-    //        close.relativePosition = new Vector3(width - close.width, 0);
-    //        close.eventClicked += (c, p) => Close();
-
-    //        UILabel message = AddUIComponent<UILabel>();
-    //        message.text = "\n" + blurb;
-    //        message.textColor = new Color32(0, 0, 0, 255);
-    //        message.relativePosition = new Vector3(extraPadding * 4, extraPadding + title.height + extraPadding);
-
-    //        closeBtn = SamsamTS.UIUtils.CreateButton(this);
-    //        closeBtn.size = new Vector2(100, 40);
-    //        closeBtn.text = "Close";
-    //        closeBtn.relativePosition = new Vector3(extraPadding * 2, message.relativePosition.y + message.height + extraPadding * 2);
-    //        closeBtn.eventClick += (c, p) =>
-    //        {
-    //            Close();
-    //        };
-
-    //        height = closeBtn.relativePosition.y + closeBtn.height + 10;
-    //        width = message.width + 40;
-    //        close.relativePosition = new Vector3(width - close.width, 0);
-    //        closeBtn.Focus();
-    //    }
-
-    //    private static void Close()
-    //    {
-    //        if (instance != null)
-    //        {
-    //            // UIView.PopModal();
-    //            instance.isVisible = false;
-    //            Destroy(instance.gameObject);
-    //            instance = null;
-    //        }
-    //    }
-
-    //    protected override void OnKeyDown(UIKeyEventParameter p)
-    //    {
-    //        if (Input.GetKey(KeyCode.Escape))
-    //        {
-    //            p.Use();
-    //            Close();
-    //        }
-
-    //        base.OnKeyDown(p);
-    //    }
-
-    //    public static void ShowAt()
-    //    {
-    //        if (instance == null)
-    //        {
-    //            instance = UIView.GetAView().AddUIComponent(typeof(UIPopupPanel)) as UIPopupPanel;
-    //            instance.Show(true);
-    //        }
-    //        else
-    //        {
-    //            instance.Show(true);
-    //        }
-    //    }
-
-    //    private Vector3 deltaPosition;
-    //    protected override void OnMouseDown(UIMouseEventParameter p)
-    //    {
-    //        if (p.buttons.IsFlagSet(UIMouseButton.Right))
-    //        {
-    //            Vector3 mousePosition = Input.mousePosition;
-    //            mousePosition.y = m_OwnerView.fixedHeight - mousePosition.y;
-    //            deltaPosition = absolutePosition - mousePosition;
-
-    //            BringToFront();
-    //        }
-    //    }
-
-    //    protected override void OnMouseMove(UIMouseEventParameter p)
-    //    {
-    //        if (p.buttons.IsFlagSet(UIMouseButton.Right))
-    //        {
-    //            Vector3 mousePosition = Input.mousePosition;
-    //            mousePosition.y = m_OwnerView.fixedHeight - mousePosition.y;
-    //            absolutePosition = mousePosition + deltaPosition;
-    //        }
-    //    }
-    //}
-
-
-
-
-
-
-    //public class UIPopupPanel : UILabel
-    //{
-    //    public static UIPopupPanel instance;
-
-    //    internal string m_blurb = "";
-
-    //    public override void Start()
-    //    {
-    //        atlas = UIUtils.GetAtlas("Ingame");
-    //        backgroundSprite = "GenericPanelWhite";
-
-    //        size = new Vector2(500, 300);
-    //        padding = new RectOffset(10, 10, 10, 10);
-    //        textColor = new Color32(0, 0, 0, 255);
-    //        textScale = 0.9f;
-
-    //        wordWrap = true;
-    //        autoHeight = true;
-
-    //        instance = this;
-    //        text = m_blurb;
-
-    //        UIButton close = new UIButton
-    //        {
-    //            name = "close",
-    //            width = 100,
-    //            height = 30,
-    //            absolutePosition = new Vector2(instance.width / 2 + 50, instance.height - 50)
-    //        };
-
-    //        close.eventClicked += (c, p) =>
-    //        {
-    //            instance.isVisible = false;
-    //        };
-    //    }
-
-    //    protected override void OnMouseEnter(UIMouseEventParameter p)
-    //    {
-    //        textColor = new Color32(99, 99, 99, 255);
-    //    }
-
-    //    protected override void OnMouseLeave(UIMouseEventParameter p)
-    //    {
-    //        textColor = new Color32(0, 0, 0, 255);
-    //    }
-
-    //    protected override void OnVisibilityChanged()
-    //    {
-    //        if (isVisible)
-    //        {
-    //            RefreshPosition();
-    //        }
-    //        base.OnVisibilityChanged();
-    //    }
-
-    //    protected override void OnSizeChanged()
-    //    {
-    //        RefreshPosition();
-    //    }
-
-    //    public void RefreshPosition()
-    //    {
-    //        float x = (GetUIView().GetScreenResolution().x / 2) - (width / 2);
-    //        float y = (GetUIView().GetScreenResolution().y / 2) - (height / 2) - 50;
-
-    //        absolutePosition = new Vector3(x, y);
-    //    }
-
-    //    protected override void OnClick(UIMouseEventParameter p)
-    //    {
-    //        //isVisible = false;
-    //        //MoveItTool.hideChangesWindow.value = true;
-    //        // Close and disable
-    //    }
-    //}
-
-    //public class UIChangesWindow : UIPopupPanel
-    //{
-    //    //"New in Move It 2.8.0:\n\n" +
-    //    //"- Slope Align now automatically uses the 2 furthest apart select objects (Shift+Click on the tool icon to manually select the 2 points).\n\n" +
-    //    //"- Toolbox (More Tools) menu redesigned, and some icons changed.\n\n" + 
-    //    //"- Line Tool - Evenly space out objects in a straight line.\n\n" +
-    //    //"- Set Position Tool - Change a selection's coordinates.\n\n" +
-    //    //"- Move and delete paths for ship, aircraft, ferries, helicopters, etc.\n\n" +
-    //    //"- Options page redesigned.\n\n" +
-    //    //"- Many other tweaks and optimisations!\n\n" +
-    //    //"Read the workshop Move It Guide for more information.\n\n" +
-    //    //"Click anywhere on this box to close it.";
-
-    //    public override void Start()
-    //    {
-    //        m_blurb = Str.whatsNew;
-
-    //        base.Start();
-    //    }
-    //}
 }

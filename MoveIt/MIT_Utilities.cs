@@ -392,7 +392,7 @@ namespace MoveIt
             {
                 try
                 {
-                    if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && pluginInfo.isEnabled == onlyEnabled)
+                    if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && (!onlyEnabled || pluginInfo.isEnabled))
                     {
                         if (assNameExcept.Length > 0)
                         {
@@ -511,6 +511,29 @@ namespace MoveIt
                 message = "No ghost nodes found, nothing has been changed.";
             }
             panel.SetMessage("Removing Ghost Nodes", message, false);
+        }
+
+        /// <summary>
+        /// Check for old versions of Loading Screen Mod, to nag the player to update
+        /// </summary>
+        /// <returns>Was an old version found?</returns>
+        internal static bool FoundOldLSM()
+        {
+            Log.Debug($"LSM:\n" +
+                $"Thale: {GetAssembly("mod", "loadingscreenmod", "loadingscreenmodrevisited", false) != null}\n" +
+                $"Klyte: {GetAssembly("mod", "loadingscreenmodklyte", "", false) != null}");
+
+            if (GetAssembly("mod", "loadingscreenmodklyte", "", false) != null)
+            {
+                return true;
+            }
+
+            if (GetAssembly("mod", "loadingscreenmod", "loadingscreenmodrevisited", false) != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         internal static byte RandomByte(byte min, byte max)
