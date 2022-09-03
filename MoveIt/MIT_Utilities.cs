@@ -519,10 +519,6 @@ namespace MoveIt
         /// <returns>Was an old version found?</returns>
         internal static bool FoundOldLSM()
         {
-            Log.Debug($"LSM:\n" +
-                $"Thale: {GetAssembly("mod", "loadingscreenmod", "loadingscreenmodrevisited", false) != null}\n" +
-                $"Klyte: {GetAssembly("mod", "loadingscreenmodklyte", "", false) != null}");
-
             if (GetAssembly("mod", "loadingscreenmodklyte", "", false) != null)
             {
                 return true;

@@ -12,12 +12,11 @@ namespace MoveIt
             int maxSize = 1024;
             Texture2D texture2D = new Texture2D(maxSize, maxSize, TextureFormat.ARGB32, false);
             Texture2D[] textures = new Texture2D[spriteNames.Length];
-            Rect[] regions = new Rect[spriteNames.Length];
 
             for (int i = 0; i < spriteNames.Length; i++)
                 textures[i] = loadTextureFromAssembly(assemblyPath + spriteNames[i] + ".png");
 
-            regions = texture2D.PackTextures(textures, 2, maxSize);
+            Rect[] regions = texture2D.PackTextures(textures, 2, maxSize);
 
             UITextureAtlas textureAtlas = ScriptableObject.CreateInstance<UITextureAtlas>();
             Material material = Object.Instantiate(UIView.GetAView().defaultAtlas.material);
