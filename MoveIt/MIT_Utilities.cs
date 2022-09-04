@@ -513,6 +513,15 @@ namespace MoveIt
             panel.SetMessage("Removing Ghost Nodes", message, false);
         }
 
+        internal static void NagOldLSM()
+        {
+            if (!lsmHasNagged)// && FoundOldLSM()) // check LSM
+            {
+                m_lsmWarningPanel = UILSMWarning.Open(typeof(UILSMWarning));
+                lsmHasNagged = true;
+            }
+        }
+
         /// <summary>
         /// Check for old versions of Loading Screen Mod, to nag the player to update
         /// </summary>

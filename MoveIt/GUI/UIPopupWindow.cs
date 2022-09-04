@@ -148,7 +148,7 @@ namespace MoveIt
     }
 
 
-    public class UIChangesWindow : UIPopupPanel
+    public class UIPopupWindow : UIPopupPanel
     {
         public override void Start()
         {
@@ -180,7 +180,7 @@ namespace MoveIt
             button.relativePosition = new Vector3(width / 2 - button.width / 2, height - 40);
             button.eventClicked += (c, p) =>
             {
-                Process.Start("https://steamcommunity.com/sharedfiles/filedetails/?id=1619685021");
+                Process.Start("https://steamcommunity.com/sharedfiles/filedetails/?id=2858591409");
             };
         }
     }

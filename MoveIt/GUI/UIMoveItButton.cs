@@ -30,7 +30,7 @@ namespace MoveIt
         {
             LoadResources();
 
-            m_changesWindow = GetUIView().AddUIComponent(typeof(UIChangesWindow)) as UIChangesWindow;
+            m_changesWindow = GetUIView().AddUIComponent(typeof(UIPopupWindow)) as UIPopupWindow;
             m_changesWindow.isVisible = false;
 
             m_lsmWarningWindow = GetUIView().AddUIComponent(typeof(UILSMWarning)) as UILSMWarning;

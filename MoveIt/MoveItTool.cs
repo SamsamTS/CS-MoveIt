@@ -254,8 +254,9 @@ namespace MoveIt
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
         protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
-        internal UIPopupPanel m_whatsNewPanel, m_lsmWarningPanel;
-        private bool lsmHasNagged = false;
+        internal UIPopupPanel m_whatsNewPanel;
+        internal static UIPopupPanel m_lsmWarningPanel;
+        private static bool lsmHasNagged = false;
 
         public ToolAction m_nextAction = ToolAction.None;
 
@@ -345,11 +346,7 @@ namespace MoveIt
             //    m_whatsNewPanel = UIChangesWindow.Open(typeof(UIChangesWindow));
             //}
 
-            if (!lsmHasNagged && FoundOldLSM()) // check LSM
-            {
-                m_lsmWarningPanel = UILSMWarning.Open(typeof(UILSMWarning));
-                lsmHasNagged = true;
-            }
+            NagOldLSM();
 
             m_pauseMenu = UIView.library.Get("PauseMenu");
 

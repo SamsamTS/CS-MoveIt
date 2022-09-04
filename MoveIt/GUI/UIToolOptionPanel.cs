@@ -316,9 +316,9 @@ namespace MoveIt
                 MoveItTool.marqueeSelection = p == UIButton.ButtonState.Focused;
                 m_filtersPanel.isVisible = MoveItTool.marqueeSelection;
 
-                if (MoveItTool.instance.m_lsmWarningPanel != null)
+                if (MoveItTool.m_lsmWarningPanel != null)
                 {
-                    MoveItTool.instance.m_lsmWarningPanel.RefreshPosition();
+                    MoveItTool.m_lsmWarningPanel.RefreshPosition();
                 }
                 if (MoveItTool.instance.m_whatsNewPanel != null)
                 {

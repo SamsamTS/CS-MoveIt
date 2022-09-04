@@ -677,7 +677,7 @@ namespace MoveIt.Localization {
         ///
         ///Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
         ///
-        ///Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by Algernon..
+        ///Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by algernon..
         /// </summary>
         internal static string lsmWarning {
             get {
