@@ -267,7 +267,7 @@
     <value>Масштабировать наружу</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>Показать/Скрыть выделения</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Пропустить выделенное</value>
