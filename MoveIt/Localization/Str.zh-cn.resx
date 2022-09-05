@@ -331,11 +331,11 @@
     <value>撤销</value>
   </data>
   <data name="lsmWarning" xml:space="preserve">
-    <value>Important Notice!
+    <value>重要通知!
 
-Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+Loading Screen Mod (LSM) 已经不与城市：天际线 1.15版本 (新DLC：Plazas &amp; Promenades) 相兼容。
 
-Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by algernon.</value>
+请退订LSM与LSM Fix，改为订阅由algernon发布的Loading Screen Mod Revisited。</value>
     <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
   </data>
   <data name="lsmWorkshopBtn" xml:space="preserve">
