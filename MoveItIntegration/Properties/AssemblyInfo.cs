@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные со сборкой.
 [assembly: AssemblyTitle("MoveItIntegration")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Integration for Cities Skylines mods to activate after Move It actions")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Quboid")]
 [assembly: AssemblyProduct("MoveItIntegration")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCopyright("Copyright © 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

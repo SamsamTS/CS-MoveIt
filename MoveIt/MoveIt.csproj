@@ -232,7 +232,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
-    <PackageReference Include="UnifiedUILib" Version="2.2.8" />
+    <PackageReference Include="UnifiedUILib" Version="2.2.12" />
     <Reference Include="UnityEngine">
       <HintPath>$(MangedDLLPath)\UnityEngine.dll</HintPath>
       <Private>False</Private>

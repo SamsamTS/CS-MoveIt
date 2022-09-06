@@ -60,6 +60,7 @@ namespace MoveIt
             blurb.size = new Vector2(width - 10, 214);
             blurb.relativePosition = new Vector2(5, 28);
             blurb.padding = new RectOffset(6, 6, 8, 8);
+            blurb.atlas = atlas;
             blurb.SendToBack();
 
             closeTop.eventClicked += (c, p) =>
