@@ -515,7 +515,7 @@ namespace MoveIt
 
         internal static void NagOldLSM()
         {
-            if (!lsmHasNagged)// && FoundOldLSM()) // check LSM
+            if (!lsmHasNagged && FoundOldLSM()) // check LSM
             {
                 m_lsmWarningPanel = UILSMWarning.Open(typeof(UILSMWarning));
                 lsmHasNagged = true;
