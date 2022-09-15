@@ -267,7 +267,7 @@
     <value>Scala all'esterno (ingrandisci)</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>Mostra/Nascondi Selettori</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Procedi oltre</value>
@@ -331,18 +331,18 @@
     <value>Annulla</value>
   </data>
   <data name="lsmWarning" xml:space="preserve">
-    <value>Important Notice!
+    <value>ATTENZIONE
 
-Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+Loading Screen Mod (LSM) non è compatibile con Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
 
-Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by algernon.</value>
+Si prega di annullare l'iscrizione a LSM e LSM Fix, e iscriversi invece a Loading Screen Mod Revisited di algernon.</value>
     <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
   </data>
   <data name="lsmWorkshopBtn" xml:space="preserve">
-    <value>LSM Revisited on Workshop</value>
+    <value>LSM Revisited sul Workshop</value>
   </data>
   <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
-    <value>Visit the Steam Workshop page for Loading Screen Mod Revisited</value>
+    <value>Visita la pagina dello Steam Workshop per Loading Screen Mod Revisited</value>
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>Sposta oggetti</value>
@@ -447,7 +447,7 @@ oggetti PO con MoveIt, saranno immediatamente cancellati, PERMANENTEMENTE.</valu
     <value>Se selezionato, il tasto Su si muoverà verso Nord, Giù verso Sud, Sinistra verso Ovest, Destra verso Est.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
-    <value>Use UnifiedUI</value>
+    <value>Utilizza UnifiedUI</value>
     <comment>Do not translate 'UnifiedUI'</comment>
   </data>
   <data name="setpos_A_Tooltip" xml:space="preserve">
