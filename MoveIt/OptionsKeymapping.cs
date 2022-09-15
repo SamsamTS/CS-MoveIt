@@ -160,20 +160,20 @@ namespace MoveIt
             uIButton.eventVisibilityChanged += ButtonVisibilityChanged;
         }
 
-        protected void OnEnable()
-        {
-            LocaleManager.eventLocaleChanged += new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
-        }
+        //protected void OnEnable()
+        //{
+        //    LocaleManager.eventLocaleChanged += new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
+        //}
 
-        protected void OnDisable()
-        {
-            LocaleManager.eventLocaleChanged -= new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
-        }
+        //protected void OnDisable()
+        //{
+        //    LocaleManager.eventLocaleChanged -= new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
+        //}
 
-        protected void OnLocaleChanged()
-        {
-            this.RefreshBindableInputs();
-        }
+        //protected void OnLocaleChanged()
+        //{
+        //    this.RefreshBindableInputs();
+        //}
 
         protected bool IsModifierKey(KeyCode code)
         {
@@ -287,26 +287,26 @@ namespace MoveIt
             }
         }
 
-        protected void RefreshBindableInputs()
-        {
-            foreach (UIComponent current in component.GetComponentsInChildren<UIComponent>())
-            {
-                UITextComponent uITextComponent = current.Find<UITextComponent>("Binding");
-                if (uITextComponent != null)
-                {
-                    SavedInputKey savedInputKey = uITextComponent.objectUserData as SavedInputKey;
-                    if (savedInputKey != null)
-                    {
-                        uITextComponent.text = savedInputKey.ToLocalizedString("KEYNAME");
-                    }
-                }
-                UILabel uILabel = current.Find<UILabel>("Name");
-                if (uILabel != null)
-                {
-                    uILabel.text = Locale.Get("KEYMAPPING", uILabel.stringUserData);
-                }
-            }
-        }
+        //protected void RefreshBindableInputs()
+        //{
+        //    foreach (UIComponent current in component.GetComponentsInChildren<UIComponent>())
+        //    {
+        //        UITextComponent uITextComponent = current.Find<UITextComponent>("Binding");
+        //        if (uITextComponent != null)
+        //        {
+        //            SavedInputKey savedInputKey = uITextComponent.objectUserData as SavedInputKey;
+        //            if (savedInputKey != null)
+        //            {
+        //                uITextComponent.text = savedInputKey.ToLocalizedString("KEYNAME");
+        //            }
+        //        }
+        //        UILabel uILabel = current.Find<UILabel>("Name");
+        //        if (uILabel != null)
+        //        {
+        //            uILabel.text = Locale.Get("KEYMAPPING", uILabel.stringUserData);
+        //        }
+        //    }
+        //}
 
         protected InputKey GetDefaultEntry(string entryName)
         {
