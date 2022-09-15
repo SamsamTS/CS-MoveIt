@@ -267,7 +267,7 @@
     <value>Масштабировать наружу</value>
   </data>
   <data name="key_ShowSelectors" xml:space="preserve">
-    <value>Show/Hide Selectors</value>
+    <value>Показать/Скрыть выделения</value>
   </data>
   <data name="key_StepOver" xml:space="preserve">
     <value>Пропустить выделенное</value>
@@ -329,6 +329,20 @@
   </data>
   <data name="key_Undo" xml:space="preserve">
     <value>Отменить</value>
+  </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Важно!
+
+Загрузка экрана мода (LSM) не совместима с Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Пожалуйста, отключите подписку от LSM или LSM Fix, и подпишитесь на загрузку Screen Mod Revisited посредством algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited в мастерской</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Посетите мастерскую Steam для подписки на Loading Screen Mod Revisited</value>
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>Инструмент для перемещение объектов</value>
@@ -512,16 +526,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Новое в Move It 2.9.0:
-
-- Перевод на все языки, поддерживаемые игрой, плюс японский и тайский.
-- Интеграция с Intersection Marking Tool, Traffic Manager: President Edition, и Node Controller, чтобы настройки этих модов были скопированы в Move It (обратите внимание, что эти моды могут потребовать обновления).
-- Расширенный контроль над колоннами, так чтобы они не обнулялись игрой.
-- Многочисленные улучшения производительности и стабильности.
-
-Для получения дополнительной информации прочтите руководство по работе Move It в воркшопе.
-
-Щелкните в любом месте на этом окне, чтобы закрыть его.</value>
+    <value></value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Вы хотите удалить файл '{0}' безвозвратно?</value>

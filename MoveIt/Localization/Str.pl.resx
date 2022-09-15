@@ -330,6 +330,20 @@
   <data name="key_Undo" xml:space="preserve">
     <value>Cofnij</value>
   </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Ważna informacja!
+
+Loading Screen Mod (LSM) nie jest zgodne z Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Proszę wypisać się z poprawki LSM lub LSM, a zamiast tego subskrybuj Loading Screen Mod Revisited stworzonego przez algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited na Warsztacie</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Odwiedź stronę Loading Screen Mod Revisited na Warsztacie Steam</value>
+  </data>
   <data name="mod_description" xml:space="preserve">
     <value>Przenoś obiekty</value>
   </data>
@@ -513,16 +527,7 @@ obiekty PO z Move It, natychmiast i NIEODWRACALNIE znikną.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Nowości w Move It 2.9.0:
-
-- Tłumaczenia na wszystkie języki wspierane przez grę, a także japoński i tajski.
-- Integracja z Intersection Marking Tool, Traffic Manager: President Edition i Node Controller, aby ich ustawienia były kopiowane przez Move It (może wymagać aktualizacji tych narzędzi).
-- Opcjonalna zaawansowana kontrola filarów, aby ich pozycja nie była resetowana przez grę.
-- Liczne poprawki wydajności i stabilności.
-
-Przeczytaj instrukcję Move It w Warsztacie Steam, aby uzyskać więcej informacji.
-
-Kliknij gdziekolwiek w tym polu, aby je zamknąć.</value>
+    <value></value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Czy chcesz trwale usunąć plik '{0}'?</value>

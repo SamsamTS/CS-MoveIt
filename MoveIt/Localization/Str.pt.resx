@@ -130,19 +130,19 @@
     <value>Seleção por Marcação</value>
   </data>
   <data name="baseUI_MoveItButton_Tooltip" xml:space="preserve">
-    <value>Mova Isso</value>
+    <value>Move It</value>
   </data>
   <data name="baseUI_Single_Tooltip" xml:space="preserve">
     <value>Seleção Única</value>
   </data>
   <data name="baseUI_ToggleGrid_Tooltip" xml:space="preserve">
-    <value>Ativar/Desativar Grade</value>
+    <value>Alternar Grade</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Ativar/Desativar Objetos Procedurais</value>
+    <value>Alternar Objetos Procedurais</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
-    <value>Ativar/Desativar Encaixe</value>
+    <value>Alternar Encaixe</value>
   </data>
   <data name="baseUI_ToggleUnderground_Tooltip" xml:space="preserve">
     <value>Alternar Visualização Subterrânea</value>
@@ -172,7 +172,7 @@
     <value>Seletor</value>
   </data>
   <data name="filter_Picker_Tooltip" xml:space="preserve">
-    <value>Escolha um objeto para filtrar objetos do mesmo tipo</value>
+    <value>Selecione um objeto para filtrar objetos do mesmo tipo</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
     <value>PO</value>
@@ -185,7 +185,7 @@
     <value>Props</value>
   </data>
   <data name="filter_Roads" xml:space="preserve">
-    <value>Estradas</value>
+    <value>Ruas</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
     <value>Segmentos</value>
@@ -201,11 +201,11 @@
     <value>Árvores</value>
   </data>
   <data name="integration_NS2_Found" xml:space="preserve">
-    <value>Mod "Network Skins 2" encontrado, integração habilitada!</value>
+    <value>Network Skins 2 encontrado, integração habilitada!</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_NS2_Notfound" xml:space="preserve">
-    <value>Mod "Network Skins 2" não encontrado, ou NS1 e NS2 estão ambos inscritos, integração desabilitada.</value>
+    <value>Network Skins 2 não encontrado, ou NS1 e NS2 estão ambos inscritos, integração desabilitada.</value>
     <comment>Use the name for Network Skins that appears in the Content Manager in your language.</comment>
   </data>
   <data name="integration_PO_Found" xml:space="preserve">
@@ -213,7 +213,7 @@
     <comment>Do not translate 'PO'. {0} denotes where the PO version number is inserted.</comment>
   </data>
   <data name="integration_PO_Notfound" xml:space="preserve">
-    <value>Mod PO não encontrado, integração desabilitada.</value>
+    <value>PO não encontrado, integração desabilitada.</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="integration_PO_WrongVersion" xml:space="preserve">
@@ -237,19 +237,19 @@
     <value>Mover para Baixo</value>
   </data>
   <data name="key_MoveEast" xml:space="preserve">
-    <value>Mover para Leste</value>
+    <value>Mover para o Leste</value>
   </data>
   <data name="key_MoveNorth" xml:space="preserve">
-    <value>Mover para Norte</value>
+    <value>Mover para o Norte</value>
   </data>
   <data name="key_MoveSouth" xml:space="preserve">
-    <value>Mover para Sul</value>
+    <value>Mover para o Sul</value>
   </data>
   <data name="key_MoveUp" xml:space="preserve">
     <value>Mover para Cima</value>
   </data>
   <data name="key_MoveWest" xml:space="preserve">
-    <value>Mover para Oeste</value>
+    <value>Mover para o Oeste</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>Refazer</value>
@@ -276,17 +276,17 @@
     <value>Ligar/Desligar Painel de Debug</value>
   </data>
   <data name="key_ToggleGridView" xml:space="preserve">
-    <value>Ligar/Desligar exibição da grade</value>
+    <value>Alternar exibição de grade</value>
   </data>
   <data name="key_TogglePO" xml:space="preserve">
     <value>Alternar PO Ativo/Inativo</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="key_ToggleTool" xml:space="preserve">
-    <value>Ligar/Desligar Ferramenta</value>
+    <value>Alternar Ferramenta</value>
   </data>
   <data name="key_ToggleUndergroundView" xml:space="preserve">
-    <value>Ligar/Desligar Visualização Subterrânea</value>
+    <value>Alternar Visualização Subterrânea</value>
   </data>
   <data name="key_ToolFullSlope" xml:space="preserve">
     <value>Inclinação Completa</value>
@@ -325,10 +325,24 @@
     <value>Alinhar à Altura do Objeto</value>
   </data>
   <data name="key_ToolToTerrainHeight" xml:space="preserve">
-    <value>Alinhar à altura do terreno</value>
+    <value>Alinhar à Altura do Terreno</value>
   </data>
   <data name="key_Undo" xml:space="preserve">
     <value>Desfazer</value>
+  </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>Aviso importante!
+
+Loading Screen Mod (LSM) não é compatível com Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
+
+Por favor, cancele a inscrição do LSM ou LSM Fix, e inscreva-se no Loading Screen Mod Revisited por algernon.</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>LSM Revisited na Oficina</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>Visite a página da Oficina Steam para ver Loading Screen Mod Revisited</value>
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>Move as coisas</value>
@@ -344,10 +358,10 @@
     <value>Selecionar torres e pilares, segurando Alt apenas</value>
   </data>
   <data name="options_AutoCloseToolbox" xml:space="preserve">
-    <value>Fechar menu de ferramentas automaticamente</value>
+    <value>Fechar menu de Ferramentas automaticamente</value>
   </data>
   <data name="options_AutoCloseToolbox_Tooltip" xml:space="preserve">
-    <value>Marque isto para fechar o menu de ferramentas depois de escolher a ferramenta.</value>
+    <value>Marque isto para fechar o menu de Ferramentas depois de escolher a ferramenta.</value>
   </data>
   <data name="options_Beg" xml:space="preserve">
     <value>Por favor, suporte o desenvolvimento do "Move It" e dos meus outros mods.</value>
@@ -366,7 +380,7 @@
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_fixTreeSnappingTooltip" xml:space="preserve">
-    <value>Se o Tree Snapping estivar fazendo as alturas das árvores ficarem incorretas, clique aqui após carregar sua cidade.</value>
+    <value>Se o Tree Snapping estiver fazendo as alturas das árvores ficarem incorretas, clique aqui após carregar sua cidade.</value>
     <comment>Don't translate "Tree Snapping"</comment>
   </data>
   <data name="options_HidePODeletionWarning" xml:space="preserve">
@@ -380,13 +394,13 @@
     <value>Patreon</value>
   </data>
   <data name="options_PatreonTooltip" xml:space="preserve">
-    <value>Me suporte no Patreon</value>
+    <value>Me apoie no Patreon</value>
   </data>
   <data name="options_Paypal" xml:space="preserve">
     <value>Paypal</value>
   </data>
   <data name="options_PaypalTooltip" xml:space="preserve">
-    <value>Me suporte no Paypal</value>
+    <value>Me apoie no Paypal</value>
   </data>
   <data name="options_PODeleteWarning" xml:space="preserve">
     <value>Por favor, note: você não pode desfazer a demolição do PO. Isso significa
@@ -404,13 +418,13 @@ PERMANENTEMENTE deletados.</value>
     <value>Objetos Procedurais</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
-    <value>Remover nós fantasmas</value>
+    <value>Remover Nós Fantasmas</value>
   </data>
   <data name="options_RemoveGhostNodes_Tooltip" xml:space="preserve">
     <value>Use este botão dentro do jogo para remover nós-fantasma (nós sem segmentos anexados). Nota: isto irá limpar o histórico de desfazer do Move It!</value>
   </data>
   <data name="options_ResetButtonPosition" xml:space="preserve">
-    <value>Redefinir a posição do botão</value>
+    <value>Redefinir a Posição do Botão</value>
   </data>
   <data name="options_RightClickCancel" xml:space="preserve">
     <value>Botão direito cancela a clonagem</value>
@@ -419,10 +433,10 @@ PERMANENTEMENTE deletados.</value>
     <value>Se marcado, o botão direito irá cancelar a clonagem em vez de girar 45°.</value>
   </data>
   <data name="options_ShortcutsGeneral" xml:space="preserve">
-    <value>Atalhos gerais</value>
+    <value>Atalhos Gerais</value>
   </data>
   <data name="options_ShortcutsToolbox" xml:space="preserve">
-    <value>Atalhos das ferramentas</value>
+    <value>Atalhos das Ferramentas</value>
   </data>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Mostrar painel de debug do Move It</value>
@@ -431,7 +445,7 @@ PERMANENTEMENTE deletados.</value>
     <value>Usar movimentos da bússola</value>
   </data>
   <data name="options_UseCompass_Tooltip" xml:space="preserve">
-    <value>Se marcado, a tecla para cima se moverá na direção do Norte, para baixo é para sul, para esquerda é para oeste, para a direita é para leste.</value>
+    <value>Se marcado, a tecla para Cima se moverá na direção do Norte, para Baixo irá para o Sul, para a Esquerda irá para o Oeste, para a Direita irá para o Leste.</value>
   </data>
   <data name="options_UseUUI" xml:space="preserve">
     <value>Usar a UnifiedUI</value>
@@ -458,7 +472,7 @@ PERMANENTEMENTE deletados.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_HeightTools_Tooltip" xml:space="preserve">
-    <value>Ferramentas de altura</value>
+    <value>Ferramentas de Altura</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="toolbox_ImportSelection" xml:space="preserve">
@@ -514,16 +528,7 @@ PERMANENTEMENTE deletados.</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Novo em Move-it 2.9.0:
-
-- Tradução para todos os idiomas que o jogo suporta, além de Japonês e Tailandês.
-- Integração com os Mods Intersection Marking Tool, Traffic Manager: President Edition, e Node Controller para que as configurações destes mods sejam copiadas no Move-It (Por favor, note que estes mods podem precisar de atualização).
-- Controle de pilar avançado opcional, para que os pilares não sejam redefinidos pelo jogo.
-- Muitas melhorias de estabilidade e desempenho.
-
-Leia o Guia do Move-It na Workshop para mais informações.
-
-Clique em qualquer lugar nesta janela para fechá-la.</value>
+    <value></value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Você deseja deletar o arquivo '{0}' permanentemente?</value>
@@ -547,7 +552,7 @@ Você deseja substituí-lo?</value>
     <comment>The select file's name is inserted where {0} is. Try to keep each line length approximately the same length as in English, even if this requires a different number of lines.</comment>
   </data>
   <data name="xml_OverwriteTitle" xml:space="preserve">
-    <value>Sobrescrever Arquivo</value>
+    <value>Sobrescrever arquivo</value>
   </data>
   <data name="xml_Restore" xml:space="preserve">
     <value>Restaurar</value>

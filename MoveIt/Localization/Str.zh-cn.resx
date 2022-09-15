@@ -188,7 +188,7 @@
     <value>道路</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
-    <value>路段</value>
+    <value>分段</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
     <value>地皮</value>
@@ -329,6 +329,20 @@
   </data>
   <data name="key_Undo" xml:space="preserve">
     <value>撤销</value>
+  </data>
+  <data name="lsmWarning" xml:space="preserve">
+    <value>重要通知!
+
+Loading Screen Mod (LSM) 已经不与城市：天际线 1.15版本 (新DLC：Plazas &amp; Promenades) 相兼容。
+
+请退订LSM与LSM Fix，改为订阅由algernon发布的Loading Screen Mod Revisited。</value>
+    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
+  </data>
+  <data name="lsmWorkshopBtn" xml:space="preserve">
+    <value>创意工坊上的LSM Revisited</value>
+  </data>
+  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
+    <value>访问创意工坊以订阅Loading Screen Mod Revisited</value>
   </data>
   <data name="mod_description" xml:space="preserve">
     <value>移动一切物品</value>
@@ -513,16 +527,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value>Move It 2.9.0更新了什么：
-
-- 支持游戏内置的所有语言，还另外附加了日语和泰语。
-- 与Intersection Marking Tool，Traffic Manager: President Edition和Node Controller集成在一起，因此这些模组的设置被复制到Move It中（请注意，这些mod可能需要更新）。
-- 可选的高级桥墩控制，因此桥墩不会被游戏重置。
-- 许多性能和稳定性方面的改进。
-
-阅读创意工坊的Move It指南以获得更多信息。
-
-点击界面任意位置关闭此界面。</value>
+    <value></value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>你想要永远删除文件 '{0}' 吗？</value>
