@@ -139,7 +139,7 @@
     <value>Attiva/disattiva griglia</value>
   </data>
   <data name="baseUI_TogglePO_Tooltip" xml:space="preserve">
-    <value>Attiva/disattiva Oggetti Procedurali</value>
+    <value>Attiva/disattiva Procedural Objects</value>
   </data>
   <data name="baseUI_ToggleSnapping_Tooltip" xml:space="preserve">
     <value>Attiva/Disattiva Snapping</value>
@@ -175,7 +175,7 @@
     <value>Scegliere un oggetto da filtrare per oggetti dello stesso tipo</value>
   </data>
   <data name="filter_PO" xml:space="preserve">
-    <value>PO (Oggetti Procedurali)</value>
+    <value>PO (Procedural Objects)</value>
     <comment>Do not translate 'PO'.</comment>
   </data>
   <data name="filter_Powerlines" xml:space="preserve">
@@ -414,7 +414,7 @@ oggetti PO con MoveIt, saranno immediatamente cancellati, PERMANENTEMENTE.</valu
     <value>Aiuta a posizionare gli oggetti quando il frame-rate è scarso.</value>
   </data>
   <data name="options_ProceduralObjects" xml:space="preserve">
-    <value>Oggetti Procedurali (PO)</value>
+    <value>Procedural Objects (PO)</value>
   </data>
   <data name="options_RemoveGhostNodes" xml:space="preserve">
     <value>Rimuovi Nodi Fantasma</value>
