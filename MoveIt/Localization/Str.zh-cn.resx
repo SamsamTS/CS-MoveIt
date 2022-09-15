@@ -188,7 +188,7 @@
     <value>道路</value>
   </data>
   <data name="filter_Segments" xml:space="preserve">
-    <value>路段</value>
+    <value>分段</value>
   </data>
   <data name="filter_Surfaces" xml:space="preserve">
     <value>地皮</value>
