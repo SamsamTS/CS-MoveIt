@@ -784,6 +784,11 @@ namespace MoveIt
             {
                 buildingBuffer[building].m_nextGridBuilding = BuildingManager.instance.m_buildingGrid[num3];
                 BuildingManager.instance.m_buildingGrid[num3] = building;
+                if (buildingBuffer[building].m_nextGridBuilding == building)
+                {
+                    Log.Error($"Building #{building} has self as nextGirdBuilding");
+                    buildingBuffer[building].m_nextGridBuilding = 0;
+                }
             }
             finally
             {
@@ -804,26 +809,28 @@ namespace MoveIt
             }
             try
             {
-                ushort num4 = 0;
-                ushort num5 = buildingManager.m_buildingGrid[num3];
-                int num6 = 0;
-                while (num5 != 0)
+                ushort loopPreviousId = 0;
+                ushort loopNextId = buildingManager.m_buildingGrid[num3];
+                int count = 0;
+
+                // Loop through buildings in this grid square
+                while (loopNextId != 0)
                 {
-                    if (num5 == building)
-                    {
-                        if (num4 == 0)
+                    if (loopNextId == building)
+                    { // found building being moved
+                        if (loopPreviousId == 0)
                         {
                             buildingManager.m_buildingGrid[num3] = data.m_nextGridBuilding;
                         }
                         else
                         {
-                            buildingBuffer[(int)num4].m_nextGridBuilding = data.m_nextGridBuilding;
+                            buildingBuffer[(int)loopPreviousId].m_nextGridBuilding = data.m_nextGridBuilding;
                         }
                         break;
                     }
-                    num4 = num5;
-                    num5 = buildingBuffer[(int)num5].m_nextGridBuilding;
-                    if (++num6 > 49152)
+                    loopPreviousId = loopNextId;
+                    loopNextId = buildingBuffer[(int)loopNextId].m_nextGridBuilding;
+                    if (++count > 49152)
                     {
                         CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
                         break;

@@ -193,22 +193,22 @@ namespace MoveIt
 
             Move(newPosition, 0);
 
-            if (state.pillarState != null)
-            {
-                //ushort pillarId = state.pillarState.instance.id.Building;
-                //ref Building buildingData = ref BuildingManager.instance.m_buildings.m_buffer[pillarId];
-                //if ((buildingData.m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
-                //{
-                //    buildingData.m_flags |= Building.Flags.Hidden;
-                //    state.pillarState.instance.isHidden = true;
-                //}
+            //if (state.pillarState != null)
+            //{
+            //    //ushort pillarId = state.pillarState.instance.id.Building;
+            //    //ref Building buildingData = ref BuildingManager.instance.m_buildings.m_buffer[pillarId];
+            //    //if ((buildingData.m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
+            //    //{
+            //    //    buildingData.m_flags |= Building.Flags.Hidden;
+            //    //    state.pillarState.instance.isHidden = true;
+            //    //}
 
-                Vector3 subPosition = state.pillarState.position - center;
-                subPosition = matrix4x.MultiplyPoint(subPosition);
-                subPosition.y = state.pillarState.position.y - state.position.y + newPosition.y;
+            //    Vector3 subPosition = state.pillarState.position - center;
+            //    subPosition = matrix4x.MultiplyPoint(subPosition);
+            //    subPosition.y = state.pillarState.position.y - state.position.y + newPosition.y;
 
-                state.pillarState.instance.Move(subPosition, state.pillarState.angle + deltaAngle);
-            }
+            //    state.pillarState.instance.Move(subPosition, state.pillarState.angle + deltaAngle);
+            //}
         }
 
         public List<Instance> GetSubInstances()
