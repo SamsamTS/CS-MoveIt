@@ -440,6 +440,14 @@ POオブジェクトを削除すると、完全に消去されます。</value>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>デバッグ画面を表示</value>
   </data>
+  <data name="options_superSelect" xml:space="preserve">
+    <value>Allow Move It to select everything. Use with care!</value>
+  </data>
+  <data name="options_superSelect_Tooltip" xml:space="preserve">
+    <value>This will let Move It select everything. Do not use this unless you know exactly what you are doing.
+
+THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
+  </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>方角を合わせる</value>
   </data>
