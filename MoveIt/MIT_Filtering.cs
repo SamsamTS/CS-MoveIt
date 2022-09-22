@@ -149,7 +149,7 @@ namespace MoveIt
                                 if (stepOver.isValidN(node) && IsNodeValid(ref nodeBuffer[node], itemLayers) && RayCastNode(ref nodeBuffer[node], ray, -1000f, out float t, out float priority) && t < smallestDist)
                                 {
                                     ushort building = 0;
-                                    if (!Event.current.alt)
+                                    if (!superSelect && !Event.current.alt)
                                     {
                                         building = NetNode.FindOwnerBuilding(node, 363f);
                                     }
@@ -191,7 +191,7 @@ namespace MoveIt
                                             segmentBuffer[segment].RayCast(segment, ray, -1000f, false, out float t, out float priority) && t < smallestDist)
                                 {
                                     ushort building = 0;
-                                    if (!Event.current.alt)
+                                    if (!superSelect && !Event.current.alt)
                                     {
                                         building = FindOwnerBuilding(segment, 363f);
                                     }
@@ -391,7 +391,8 @@ namespace MoveIt
                             {
                                 if (IsNodeValid(ref nodeBuffer[node], itemLayers) && PointInRectangle(m_selection, nodeBuffer[node].m_position))
                                 {
-                                    ushort building = NetNode.FindOwnerBuilding(node, 363f);
+                                    ushort building = 0;
+                                    if (!superSelect) building = NetNode.FindOwnerBuilding(node, 363f);
 
                                     if (building != 0)
                                     {
@@ -428,7 +429,8 @@ namespace MoveIt
                             {
                                 if (IsSegmentValid(ref segmentBuffer[segment], itemLayers) && PointInRectangle(m_selection, segmentBuffer[segment].m_bounds.center))
                                 {
-                                    ushort building = FindOwnerBuilding(segment, 363f);
+                                    ushort building = 0;
+                                    if (!superSelect) building = FindOwnerBuilding(segment, 363f);
 
                                     if (building != 0)
                                     {
@@ -584,6 +586,7 @@ namespace MoveIt
 
         private bool IsBuildingValid(ref Building building, ItemClass.Layer itemLayers)
         {
+            if (superSelect) return true;
             if ((building.m_flags & Building.Flags.Created) == Building.Flags.Created)
             {
                 return (building.Info.m_class.m_layer & itemLayers) != ItemClass.Layer.None;
@@ -594,6 +597,7 @@ namespace MoveIt
 
         private bool IsNodeValid(ref NetNode node, ItemClass.Layer itemLayers)
         {
+            if (superSelect) return true;
             if ((node.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)
             {
                 return (node.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;
@@ -604,6 +608,7 @@ namespace MoveIt
 
         private bool IsSegmentValid(ref NetSegment segment, ItemClass.Layer itemLayers)
         {
+            if (superSelect) return true;
             if ((segment.m_flags & NetSegment.Flags.Created) == NetSegment.Flags.Created)
             {
                 return (segment.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;

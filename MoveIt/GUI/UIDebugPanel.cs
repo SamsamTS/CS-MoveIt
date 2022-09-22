@@ -99,7 +99,7 @@ namespace MoveIt
             if (id == InstanceID.Empty)
             {
                 lastId = id;
-                HoverLarge.textColor = new Color32(255, 255, 255, 255);
+                HoverLarge.textColor = (MoveItTool.superSelect ? new Color32(255, 55, 55, 255) : new Color32(255, 255, 255, 255));
                 yield break;
             }
             if (lastId == id)

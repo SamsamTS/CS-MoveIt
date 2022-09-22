@@ -206,6 +206,12 @@ namespace MoveIt
 
                 group.AddSpace(20);
 
+                checkBox = (UICheckBox)group.AddCheckbox(Str.options_superSelect, MoveItTool.superSelect, (b) =>
+                {
+                    MoveItTool.superSelect = b;
+                });
+                checkBox.tooltip = Str.options_superSelect_Tooltip;
+
                 checkBox = (UICheckBox)group.AddCheckbox(Str.options_DisableDebugLogging, DebugUtils.hideDebugMessages.value, (b) =>
                 {
                     DebugUtils.hideDebugMessages.value = b;

@@ -975,6 +975,26 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Move It to select everything. Use with care!.
+        /// </summary>
+        internal static string options_superSelect {
+            get {
+                return ResourceManager.GetString("options_superSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will let Move It select everything. Do not use this unless you know exactly what you are doing.
+        ///
+        ///THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!.
+        /// </summary>
+        internal static string options_superSelect_Tooltip {
+            get {
+                return ResourceManager.GetString("options_superSelect_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use compass movements.
         /// </summary>
         internal static string options_UseCompass {

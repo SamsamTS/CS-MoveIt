@@ -82,6 +82,7 @@ namespace MoveIt
         public static bool filterSegments = true;
         public static bool filterNetworks = false;
         public static bool filterProcs = true;
+        public static bool superSelect = false;
 
         public static bool followTerrain = true;
         public static bool marqueeSelection = false;
