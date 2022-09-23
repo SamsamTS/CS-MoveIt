@@ -440,6 +440,14 @@ POオブジェクトを削除すると、完全に消去されます。</value>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>デバッグ画面を表示</value>
   </data>
+  <data name="options_superSelect" xml:space="preserve">
+    <value>Move Itで全てが選択可能です。 使用時は要注意！</value>
+  </data>
+  <data name="options_superSelect_Tooltip" xml:space="preserve">
+    <value>有効にすると、Move Itで「何もかも全て」が選択可能です。 何をするか分からない場合は、機能を使用しないで下さい。
+
+警告: 非常に強力な機能で、都市を簡単に破壊できます！</value>
+  </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>方角を合わせる</value>
   </data>

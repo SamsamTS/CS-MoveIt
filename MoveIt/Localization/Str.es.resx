@@ -440,6 +440,13 @@ un PO con Move It, desaparecerán PERMANENTEMENTE.</value>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Mostrar el panel de depuración</value>
   </data>
+  <data name="options_superSelect" xml:space="preserve">
+    <value>Permitir a Move It! seleccionar todo. ¡Usar con cuidado!</value>
+  </data>
+  <data name="options_superSelect_Tooltip" xml:space="preserve">
+    <value>Esto permite a Move It! seleccionar todo. No utilices esto excepto que sepas lo que estas haciendo.
+Esto es extramadamente poderoso y puede arruinar tu ciudad!</value>
+  </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>Usar movimientos cardinales</value>
   </data>

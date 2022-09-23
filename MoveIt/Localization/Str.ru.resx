@@ -439,6 +439,14 @@
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Показать панель отладки Move It</value>
   </data>
+  <data name="options_superSelect" xml:space="preserve">
+    <value>Позволить Move It выбирать все что угодно. Используйте с осторожностью!</value>
+  </data>
+  <data name="options_superSelect_Tooltip" xml:space="preserve">
+    <value>Это даст возможность Move It выбирать все что угодно. Не используйте это если вы не знаете точно что вы хотите сделать.
+
+ЭТО ВСЕМОГУЩАЯ ФУНКЦИЯ КОТОРАЯ МОЖЕТ СЛОМАТЬ МАШ ГОРОД!</value>
+  </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>Перемещение по сторонам света</value>
   </data>

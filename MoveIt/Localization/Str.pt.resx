@@ -441,6 +441,14 @@ PERMANENTEMENTE deletados.</value>
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Mostrar painel de debug do Move It</value>
   </data>
+  <data name="options_superSelect" xml:space="preserve">
+    <value>Permitir que Move It selecione tudo. Use com cuidado!</value>
+  </data>
+  <data name="options_superSelect_Tooltip" xml:space="preserve">
+    <value>Isto deixará que Move It selecione tudo. Não use essa função se não souber exatamente o que está fazendo.
+
+ESTA FUNÇÃO É EXTREMAMENTE PODEROSA E IRÁ QUEBRAR A SUA CIDADE!</value>
+  </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>Usar movimentos da bússola</value>
   </data>

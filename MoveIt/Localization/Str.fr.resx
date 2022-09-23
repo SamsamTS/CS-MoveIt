@@ -440,6 +440,14 @@ des PO avec Move It, ils ne porront être récupérés que dans une Sauvegarde a
   <data name="options_ShowDebugPanel" xml:space="preserve">
     <value>Afficher le panneau de débogage Move It</value>
   </data>
+  <data name="options_superSelect" xml:space="preserve">
+    <value>Permettre à Move It de tout sélectionner. À utiliser avec précaution!</value>
+  </data>
+  <data name="options_superSelect_Tooltip" xml:space="preserve">
+    <value>Cela permettra de tout sélectionner. N'utilisez pas cette option à moins que vous ne sachiez exactement ce que vous faites.
+
+CECI EST EXTRÊMEMENT PUISSANT ET DÉTRUIRA VOTRE VILLE !</value>
+  </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>Aligner les mouvements à la grille du jeu</value>
   </data>
