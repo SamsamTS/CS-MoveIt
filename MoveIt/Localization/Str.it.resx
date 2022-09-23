@@ -441,7 +441,7 @@ oggetti PO con MoveIt, saranno immediatamente cancellati, PERMANENTEMENTE.</valu
     <value>Mostra il pannello di debug di MoveIt</value>
   </data>
   <data name="options_superSelect" xml:space="preserve">
-    <value>Allow Move It to select everything. Use with care!</value>
+    <value>Consenti a Move It di selezionare tutto. Usa con cautela!</value>
   </data>
   <data name="options_superSelect_Tooltip" xml:space="preserve">
     <value>This will let Move It select everything. Do not use this unless you know exactly what you are doing.
