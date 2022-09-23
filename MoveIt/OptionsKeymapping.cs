@@ -32,6 +32,8 @@ namespace MoveIt
             AddKeymapping(Str.key_ToggleDebugPanel, viewDebug);
             AddKeymapping(Str.key_StepOver, stepOverKey);
             AddKeymapping(Str.key_ShowSelectors, viewSelectors);
+            AddKeymapping(Str.baseUI_Single_Tooltip, selectSingle);
+            AddKeymapping(Str.baseUI_Marquee_Tooltip, selectMarquee);
         }
     }
 
@@ -89,6 +91,8 @@ namespace MoveIt
         public static readonly SavedInputKey scaleOut = new SavedInputKey("scaleOut", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Equals, false, false, false), true);
         public static readonly SavedInputKey scaleIn = new SavedInputKey("scaleIn", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, false, false, false), true);
 
+        public static readonly SavedInputKey selectSingle = new SavedInputKey("selectSingle", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey selectMarquee = new SavedInputKey("selectMarquee", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey deselectAll = new SavedInputKey("deselectAll", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.D, false, false, true), true);
         public static readonly SavedInputKey undo = new SavedInputKey("undo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
         public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);

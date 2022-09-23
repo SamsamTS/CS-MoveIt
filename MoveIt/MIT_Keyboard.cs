@@ -77,6 +77,14 @@ namespace MoveIt
                         m_debugPanel.Visible(showDebugPanel);
                     }
                 }
+                else if (OptionsKeymapping.selectSingle.IsPressed(e))
+                {
+                    UIToolOptionPanel.instance.m_single.SimulateClick();
+                }
+                else if (OptionsKeymapping.selectMarquee.IsPressed(e))
+                {
+                    UIToolOptionPanel.instance.m_marquee.SimulateClick();
+                }
                 else if (OptionsKeymapping.viewSelectors.IsPressed(e))
                 {
                     m_showSelectors = !m_showSelectors;

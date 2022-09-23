@@ -16,8 +16,8 @@ namespace MoveIt
         private UIMultiStateButton m_snapping;
 
         private UITabstrip m_tabStrip;
-        private UIButton m_single;
-        private UIButton m_marquee;
+        internal UIButton m_single;
+        internal UIButton m_marquee;
         private UIButton m_copy;
         private UIButton m_bulldoze;
         private UIButton m_moreTools;
