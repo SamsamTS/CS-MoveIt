@@ -442,12 +442,12 @@ PERMANENTEMENTE deletados.</value>
     <value>Mostrar painel de debug do Move It</value>
   </data>
   <data name="options_superSelect" xml:space="preserve">
-    <value>Allow Move It to select everything. Use with care!</value>
+    <value>Permitir que Move It selecione tudo. Use com cuidado!</value>
   </data>
   <data name="options_superSelect_Tooltip" xml:space="preserve">
-    <value>This will let Move It select everything. Do not use this unless you know exactly what you are doing.
+    <value>Isto deixará que Move It selecione tudo. Não use essa função se não souber exatamente o que está fazendo.
 
-THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
+ESTA FUNÇÃO É EXTREMAMENTE PODEROSA E IRÁ QUEBRAR A SUA CIDADE!</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>Usar movimentos da bússola</value>
