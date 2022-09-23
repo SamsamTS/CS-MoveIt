@@ -94,7 +94,7 @@ namespace MoveIt
             return false;
         }
 
-        public void StartCloning()
+        public void StartCloning(float angleDelta = 0f)
         {
             lock (ActionQueue.instance)
             {
@@ -111,6 +111,7 @@ namespace MoveIt
                         m_sensitivityTogglePosAbs = m_clickPositionAbs = action.center;
 
                         ActionQueue.instance.Push(action);
+                        action.angleDelta = angleDelta;
 
                         SetToolState(ToolStates.Cloning);
                         UIToolOptionPanel.RefreshCloneButton();

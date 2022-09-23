@@ -1,7 +1,6 @@
 ﻿using ColossalFramework;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 namespace MoveIt
@@ -314,7 +313,7 @@ namespace MoveIt
             Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
         }
 
-        internal void DoProcess()
+        public void DoProcess()
         {
             if (MoveItTool.POProcessing > 0)
             {
@@ -337,14 +336,17 @@ namespace MoveIt
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
 
-                    if (clone != null)
+                    if (clone == null)
                     {
-                        m_clones.Add(clone);
-                        m_stateToClone.Add(state, clone);
-                        m_InstanceID_origToClone.Add(state.instance.id, clone.id);
-                        m_origToCloneUpdate.Add(state.instance, clone);
-                        m_nodeOrigToClone.Add(state.instance.id.NetNode, clone.id.NetNode);
+                        Log.Debug($"Failed to clone node {state}");
+                        continue;
                     }
+
+                    m_clones.Add(clone);
+                    m_stateToClone.Add(state, clone);
+                    m_InstanceID_origToClone.Add(state.instance.id, clone.id);
+                    m_origToCloneUpdate.Add(state.instance, clone);
+                    m_nodeOrigToClone.Add(state.instance.id.NetNode, clone.id.NetNode);
                 }
             }
 
@@ -369,7 +371,7 @@ namespace MoveIt
                     if (state is SegmentState segmentState)
                     {
                         MoveItTool.NS.SetSegmentModifiers(clone.id.NetSegment, segmentState);
-                        if(segmentState.LaneIDs!=null)
+                        if(segmentState.LaneIDs != null)
                         {
                             // old version does not store lane ids
                             var clonedLaneIds = MoveableSegment.GetLaneIds(clone.id.NetSegment);

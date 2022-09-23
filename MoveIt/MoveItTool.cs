@@ -723,9 +723,9 @@ namespace MoveIt
                             {
                                 ActionQueue.instance.Do();
 
-                                if (ActionQueue.instance.current is CloneAction)
+                                if (ActionQueue.instance.current is CloneAction a)
                                 {
-                                    StartCloning();
+                                    StartCloning(a.angleDelta);
                                 }
                                 break;
                             }
