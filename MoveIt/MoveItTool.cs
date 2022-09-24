@@ -669,9 +669,7 @@ namespace MoveIt
         {
             if (ToolState == ToolStates.Cloning || ToolState == ToolStates.RightDraggingClone)
             {
-                //Log.Debug($"AAA01 {ToolState}");
                 CloneActionBase action = ActionQueue.instance.current as CloneActionBase;
-                //Log.Debug($"AAA02 {action}");
 
                 Matrix4x4 matrix4x = default;
                 matrix4x.SetTRS(action.center + action.moveDelta, Quaternion.AngleAxis(action.angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
@@ -680,8 +678,6 @@ namespace MoveIt
                 {
                     try
                     {
-                        //Log.Debug($"AAA03 {state}");
-                        //Log.Debug($"AAA04 {state.instance}");
                         state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, GetSelectorColor(m_hoverColor));
                     }
                     catch (Exception e)
@@ -725,7 +721,7 @@ namespace MoveIt
 
                                 if (ActionQueue.instance.current is CloneAction a)
                                 {
-                                    StartCloning(a.angleDelta);
+                                    StartCloning();
                                 }
                                 break;
                             }

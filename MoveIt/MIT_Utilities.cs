@@ -654,5 +654,23 @@ namespace MoveIt
 
             action.DoMirrorProcess();
         }
+
+
+
+        ////this.StartCoroutine(ProcessMirror(action, () =>
+        ////{
+        ////    ;
+        ////}));
+        
+        //internal IEnumerator ProcessMirror(AlignMirrorAction action, System.Action onComplete)
+        //{
+        //    AsyncAction mirrorAction = Singleton<SimulationManager>.instance.AddAction(() => action.DoMirrorProcess());
+        //    while (!mirrorAction.completedOrFailed)
+        //    {
+        //        yield return 0;
+        //    }
+
+        //    Debug.Log($"FINISHED!");
+        //}
     }
 }

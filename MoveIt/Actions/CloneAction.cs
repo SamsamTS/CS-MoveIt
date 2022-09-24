@@ -310,11 +310,14 @@ namespace MoveIt
 
         public override void Do()
         {
-            Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
+            AsyncAction process = Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
+
+            //while (!process.completedOrFailed) { }
         }
 
         public void DoProcess()
         {
+            Debug.Log($"Starting");
             if (MoveItTool.POProcessing > 0)
             {
                 return;
@@ -448,6 +451,8 @@ namespace MoveIt
                     }
                 }
             }
+
+            Debug.Log($"Finished");
         }
         
         public override void Undo()
