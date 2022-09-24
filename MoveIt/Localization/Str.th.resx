@@ -440,12 +440,12 @@ Loading Screen Mod (หรือ LSM) ไม่สามารถเข้าก
     <value>แสดงแผงข้อบกพร่องของ Move It</value>
   </data>
   <data name="options_superSelect" xml:space="preserve">
-    <value>Allow Move It to select everything. Use with care!</value>
+    <value>อนุญาตให้ Move It สามารภเลือกได้ทุกสิ่งทุกอย่าง (โปรดใช้ด้วยความระมัดระวัง)</value>
   </data>
   <data name="options_superSelect_Tooltip" xml:space="preserve">
-    <value>This will let Move It select everything. Do not use this unless you know exactly what you are doing.
+    <value>สิ่งนี้จะทำให้ Move It สามารถเลือกทุกสิ่งทุกอย่างได้ กรุณาอย่าใช้ตัวเลือกนี้ เว้นแต่คุณรู้ว่าคุณกำลังจะทำอะไร
 
-THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
+นี่เป็นตัวเลือกที่ทรงพลังมาก และนั่นจะทำให้เมืองของคุณพังได้</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>ใช้เข็มทิศในการเคลื่อนย้าย</value>
