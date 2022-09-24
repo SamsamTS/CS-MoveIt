@@ -440,12 +440,12 @@ LSM 또는 LSM Fix의 구독을 취소하고 대신 algernon의 Loading Screen M
     <value>무브 잇의 디버그 창 표시</value>
   </data>
   <data name="options_superSelect" xml:space="preserve">
-    <value>Allow Move It to select everything. Use with care!</value>
+    <value>Move It이 모든 것을 선택할 수 있게 합니다. 유의하며 사용하세요!</value>
   </data>
   <data name="options_superSelect_Tooltip" xml:space="preserve">
-    <value>This will let Move It select everything. Do not use this unless you know exactly what you are doing.
+    <value>이것은 Move It이 모든 것을 선택할 수 있게 합니다. 당신이 무엇을 하고 있는지 정확히 알지 못하는 한 이것을 사용하지 마세요.
 
-THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
+이것은 매우 강력하며 당신의 도시를 파괴할 것입니다!</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>나침반 방위 이동 사용</value>
