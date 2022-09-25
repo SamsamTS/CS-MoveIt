@@ -85,6 +85,7 @@ namespace MoveIt
                 ToolsModifierControl.SetTool<DefaultTool>();
 
             MoveItTool.m_debugPanel = null;
+            ActionQueue.instance?.CleanQueue();
             UnityEngine.Object.Destroy(DebugGameObject);
             UnityEngine.Object.Destroy(MoveToToolObject);
             if (PO_Manager.gameObject != null)

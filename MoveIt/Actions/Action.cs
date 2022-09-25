@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 
 namespace MoveIt
 {
-    public abstract class Action
+    public abstract class Action// : MonoBehaviour
     {
         public enum TypeMasks : ushort
         {

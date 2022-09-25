@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -310,14 +311,84 @@ namespace MoveIt
 
         public override void Do()
         {
-            AsyncAction process = Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
+        //    DoPrepare().Enumerate();
+        //}
 
-            //while (!process.completedOrFailed) { }
+        //internal IEnumerator DoPrepare()
+        //{
+        //    if (!this)
+        //    {
+        //        Log.Error($"CloneActionBase is null, skipping cloning");
+        //        yield break;
+        //    }
+
+        //    yield return StartCoroutine(DoEncapsulate());
+        //}
+
+        //internal IEnumerator DoEncapsulate()
+        //{
+        //    Debug.Log($"    DoEncapsulate Starting");
+        //    AsyncAction process = Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
+        //    while (!process.completedOrFailed)
+        //    {
+        //        yield return 0;
+        //    }
+            DoProcess();
+
+            m_origToClone = m_origToCloneUpdate;
+
+            // Select clones
+            selection = m_clones;
+            MoveItTool.m_debugPanel.UpdatePanel();
+
+            UpdateArea(GetTotalBounds(false));
+            try
+            {
+                MoveItTool.UpdatePillarMap();
+            }
+            catch (Exception e)
+            {
+                DebugUtils.Log("CloneActionBase.Do failed");
+                DebugUtils.LogException(e);
+            }
+
+            // Clone integrations
+            foreach (var item in m_stateToClone)
+            {
+                foreach (var data in item.Key.IntegrationData)
+                {
+                    try
+                    {
+                        //Debug.Log($"Integrated-Paste\n- {item.Value.id} {item.Value.id.Debug()}\n- {data.Value}");
+                        data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
+                    }
+                    catch (Exception e)
+                    {
+                        InstanceID sourceInstanceID = item.Key.instance.id;
+                        InstanceID targetInstanceID = item.Value.id;
+                        Log.Error($"integration {data.Key} Failed to paste from " +
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                        DebugUtils.LogException(e);
+                    }
+                }
+            }
+
+            if (m_origToClone != null)
+            {
+                Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
+
+                foreach (Instance key in m_origToClone.Keys)
+                {
+                    toReplace.Add(m_origToClone[key], m_origToCloneUpdate[key]);
+                    DebugUtils.Log("To replace: " + m_origToClone[key].id.RawData + " -> " + m_origToCloneUpdate[key].id.RawData);
+                }
+
+                ActionQueue.instance.ReplaceInstancesForward(toReplace);
+            }
         }
 
         public void DoProcess()
         {
-            Debug.Log($"Starting");
             if (MoveItTool.POProcessing > 0)
             {
                 return;
@@ -400,59 +471,6 @@ namespace MoveIt
                     _ = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
             }
-
-            if (m_origToClone != null)
-            {
-                Dictionary<Instance, Instance> toReplace = new Dictionary<Instance, Instance>();
-
-                foreach (Instance key in m_origToClone.Keys)
-                {
-                    toReplace.Add(m_origToClone[key], m_origToCloneUpdate[key]);
-                    DebugUtils.Log("To replace: " + m_origToClone[key].id.RawData + " -> " + m_origToCloneUpdate[key].id.RawData);
-                }
-
-                ActionQueue.instance.ReplaceInstancesForward(toReplace);
-            }
-
-            m_origToClone = m_origToCloneUpdate;
-
-            // Select clones
-            selection = m_clones;
-            MoveItTool.m_debugPanel.UpdatePanel();
-
-            UpdateArea(GetTotalBounds(false));
-            try
-            { 
-                MoveItTool.UpdatePillarMap();
-            }
-            catch (Exception e)
-            {
-                DebugUtils.Log("CloneActionBase.Do failed");
-                DebugUtils.LogException(e);
-            }
-
-            // Clone integrations
-            foreach (var item in m_stateToClone)
-            {
-                foreach (var data in item.Key.IntegrationData)
-                {
-                    try
-                    {
-                        //Debug.Log($"Integrated-Paste\n- {item.Value.id} {item.Value.id.Debug()}\n- {data.Value}");
-                        data.Key.Paste(item.Value.id, data.Value, m_InstanceID_origToClone);
-                    }
-                    catch (Exception e)
-                    {
-                        InstanceID sourceInstanceID = item.Key.instance.id;
-                        InstanceID targetInstanceID = item.Value.id;
-                        Log.Error($"integration {data.Key} Failed to paste from " +
-                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
-                        DebugUtils.LogException(e);
-                    }
-                }
-            }
-
-            Debug.Log($"Finished");
         }
         
         public override void Undo()

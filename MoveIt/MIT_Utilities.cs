@@ -13,6 +13,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using UnifiedUI.Helpers;
 using UnityEngine;
+using System.Collections;
 
 namespace MoveIt
 {
@@ -672,5 +673,13 @@ namespace MoveIt
 
         //    Debug.Log($"FINISHED!");
         //}
+    }
+
+    public static class ExtendEnumerator
+    {
+        public static void Enumerate(this IEnumerator enumerator)
+        {
+            while (enumerator.MoveNext()) { }
+        }
     }
 }

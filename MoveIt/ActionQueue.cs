@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnifiedUI.Helpers;
 using UnityEngine;
 
 namespace MoveIt
@@ -47,6 +48,14 @@ namespace MoveIt
             {
                 m_tail = (m_tail + 1) % m_actions.Length;
             }
+
+            // Clean up previous actions
+            //if (m_actions[m_current] is MonoBehaviour)
+            //{
+            //    Debug.Log($"Destroying MonoBehaviour action");
+            //    m_actions[m_current].Destroy();
+            //    m_actions[m_current] = null;
+            //}
 
             m_actions[m_current] = action;
 
@@ -171,6 +180,18 @@ namespace MoveIt
 
                 return m_actions[m_current];
             }
+        }
+
+        public void CleanQueue()
+        {
+            //for (int i = 0; i < m_actions.Length; i++)
+            //{
+            //    if (m_actions[i] is MonoBehaviour)
+            //    {
+            //        m_actions[i].Destroy();
+            //        m_actions[i] = null;
+            //    }
+            //}
         }
 
         public string DebugQueue()

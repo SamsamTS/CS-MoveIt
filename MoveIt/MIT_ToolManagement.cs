@@ -102,7 +102,7 @@ namespace MoveIt
 
                 if (Action.HasSelection())
                 {
-                    CloneAction action = new CloneAction();
+                    CloneAction action = new CloneAction();// GameObject("MIT_CloneAction").AddComponent<CloneAction>();
 
                     if (action.Count > 0)
                     {
