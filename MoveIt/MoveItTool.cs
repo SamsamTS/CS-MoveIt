@@ -297,17 +297,6 @@ namespace MoveIt
 
         protected override void OnEnable()
         {
-            //string msg = $"Mods:";
-            //foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
-            //{
-            //    msg += $"\n{pluginInfo.name} ({pluginInfo.isEnabled}, {pluginInfo.userModInstance.GetType().Name}):\n  ";
-            //    foreach (Assembly assembly in pluginInfo.GetAssemblies())
-            //    {
-            //        msg += $"{assembly.GetName().Name.ToLower()}, ";
-            //    }
-            //}
-            //Log.Debug(msg);
-
             try
             {
                 if (PO == null)

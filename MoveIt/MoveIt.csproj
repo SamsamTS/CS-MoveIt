@@ -103,6 +103,7 @@
     <EmbeddedResource Include="Icons\MoveIt.png" />
     <EmbeddedResource Include="Icons\MoveIt_focused.png" />
     <EmbeddedResource Include="Icons\MoveIt_hover.png" />
+    <EmbeddedResource Include="Localization\Str.cs.resx" />
     <EmbeddedResource Include="Localization\Str.de.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
