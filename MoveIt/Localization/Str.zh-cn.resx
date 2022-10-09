@@ -441,12 +441,12 @@ Loading Screen Mod (LSM) 已经不与城市：天际线 1.15版本 (新DLC：Pla
     <value>显示Move It调试面板</value>
   </data>
   <data name="options_superSelect" xml:space="preserve">
-    <value>Allow Move It to select everything. Use with care!</value>
+    <value>允许Move It来选择一切物品。慎用!</value>
   </data>
   <data name="options_superSelect_Tooltip" xml:space="preserve">
-    <value>This will let Move It select everything. Do not use this unless you know exactly what you are doing.
+    <value>这将让Move It选择所有物品。除非你确实知道你正在做什么，否则千万不要使用此功能。
 
-THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
+此功能非常强大，以至于能让你的城市直接被毁坏!</value>
   </data>
   <data name="options_UseCompass" xml:space="preserve">
     <value>使用指南针式运动</value>
