@@ -30,6 +30,15 @@ namespace MoveIt
     }
 
     /// <summary>
+    /// Data for each entry in the file list
+    /// </summary>
+    public struct FileData
+    {
+        public string Name;
+        public DateTime Date;
+    }
+
+    /// <summary>
     /// This component is specifically designed the handle the display of
     /// very large amount of rows in a scrollable panel while minimizing
     /// the impact on the performances.

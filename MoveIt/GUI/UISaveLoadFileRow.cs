@@ -4,18 +4,24 @@ using MoveIt.Localization;
 using System;
 
 using UIUtils = SamsamTS.UIUtils;
+using MoveIt.GUI;
 
 namespace MoveIt
 {
-    public class UISaveLoadFileRow : UIPanel, IUIFastListRow<string>
+    public class UISaveLoadFileRow : UIPanel, IUIFastListRow<FileData>
     {
         public UILabel fileNameLabel;
+        public UILabel fileDateLabel;
 
         public UIButton loadToPosition;
         public UIButton saveLoadButton;
         public UIButton deleteButton;
 
         private UIPanel m_background;
+        private Color active = Color.white;
+        private Color inactive = new Color(0, 225, 225);
+
+        private bool IsExport => UISaveLoadWindow.instance is UISaveWindow;
 
         public UIPanel background
         {
@@ -44,22 +50,33 @@ namespace MoveIt
             fileNameLabel.autoSize = false;
             fileNameLabel.height = 30;
             fileNameLabel.verticalAlignment = UIVerticalAlignment.Middle;
-            fileNameLabel.relativePosition = new Vector3(8, 8);
+            fileNameLabel.relativePosition = new Vector3(56, 8);
+            fileNameLabel.textColor = inactive;
+
+            fileDateLabel = AddUIComponent<UILabel>();
+            fileDateLabel.textScale = 0.9f;
+            fileDateLabel.autoSize = false;
+            fileDateLabel.size = new Vector2(100f, 30f);
+            fileDateLabel.height = 30;
+            fileDateLabel.verticalAlignment = UIVerticalAlignment.Middle;
+            fileDateLabel.textAlignment = UIHorizontalAlignment.Right;
+            fileDateLabel.relativePosition = new Vector3(56, 8);
+            fileDateLabel.textColor = active;
 
             deleteButton = UIUtils.CreateButton(this);
             deleteButton.name = "MoveIt_DeleteFileButton";
             deleteButton.text = "X";
             deleteButton.size = new Vector2(40f, 30f);
-            deleteButton.relativePosition = new Vector3((UISaveWindow.instance != null ? 430 : 510) - deleteButton.width - 8, 8);
+            deleteButton.relativePosition = new Vector3(8 /*(IsExport ? 430 : 510) - deleteButton.width - 8*/, 8);
             deleteButton.tooltip = Str.xml_DeleteLabel;
 
             saveLoadButton = UIUtils.CreateButton(this);
             saveLoadButton.name = "MoveIt_SaveLoadFileButton";
-            saveLoadButton.text = UISaveWindow.instance != null ? Str.xml_Export : Str.xml_Import;
+            saveLoadButton.text = UISaveLoadWindow.instance != null ? Str.xml_Export : Str.xml_Import;
             saveLoadButton.size = new Vector2(80f, 30f);
-            saveLoadButton.relativePosition = new Vector3(deleteButton.relativePosition.x - saveLoadButton.width - 8, 8);
+            saveLoadButton.relativePosition = new Vector3(520, 8);
 
-            if (UISaveWindow.instance == null) // Importing
+            if (!IsExport) // Importing
             {
                 loadToPosition = UIUtils.CreateButton(this);
                 loadToPosition.name = "MoveIt_loadToPosition";
@@ -84,7 +101,7 @@ namespace MoveIt
             saveLoadButton.eventClicked += (c, p) =>
             {
                 UIView.Find("DefaultTooltip")?.Hide();
-                if (UISaveWindow.instance != null)
+                if (IsExport)
                 {
                     UISaveWindow.Export(fileNameLabel.text);
                 }
@@ -103,31 +120,37 @@ namespace MoveIt
                     {
                         MoveItTool.instance.Delete(fileNameLabel.text);
 
-                        if (UISaveWindow.instance != null)
-                        {
-                            UISaveWindow.instance.RefreshFileList();
-                        }
-                        else
-                        {
-                            UILoadWindow.instance.RefreshFileList();
-                        }
+                        UISaveLoadWindow.instance.RefreshFileList();
                     }
                 });
             };
 
-            if (UISaveWindow.instance == null) // Importing
+            if (!IsExport) // Importing
             {
-                fileNameLabel.width = loadToPosition.relativePosition.x - 16f;
+                fileDateLabel.relativePosition = new Vector3(loadToPosition.relativePosition.x - 108f, 8);
             }
             else
             {
-                fileNameLabel.width = saveLoadButton.relativePosition.x - 16f;
+                fileDateLabel.relativePosition = new Vector3(saveLoadButton.relativePosition.x - 108f, 8);
             }
+            fileNameLabel.width = fileDateLabel.relativePosition.x - 8f - fileNameLabel.relativePosition.x;
         }
 
-        public void Display(string data, int i)
+        public void Display(FileData data, int i)
         {
-            fileNameLabel.text = data;
+            fileNameLabel.text = data.Name;
+            fileDateLabel.text = data.Date.ToShortDateString();
+
+            if (UISaveLoadWindow.instance.sortType == UISaveLoadWindow.sortTypes.Date)
+            {
+                fileNameLabel.textColor = inactive;
+                fileDateLabel.textColor = active;
+            }
+            else
+            {
+                fileNameLabel.textColor = active;
+                fileDateLabel.textColor = inactive;
+            }
 
             if (i % 2 == 1)
             {

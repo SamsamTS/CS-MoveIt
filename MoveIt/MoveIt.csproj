@@ -56,6 +56,7 @@
     <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
     <Compile Include="GUI\UIMoreToPanel.cs" />
+    <Compile Include="GUI\UISaveLoadWindow.cs" />
     <Compile Include="PropInstance.cs" />
     <Compile Include="PropLayer.cs" />
     <Compile Include="Integration\PO_Group.cs" />

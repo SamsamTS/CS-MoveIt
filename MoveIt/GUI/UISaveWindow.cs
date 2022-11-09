@@ -1,60 +1,35 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
+using MoveIt.GUI;
 using MoveIt.Localization;
 using System;
 using System.IO;
 using UnityEngine;
-
 using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
 {
-    public class UISaveWindow : UIPanel
+    public class UISaveWindow : UISaveLoadWindow
     {
         public static readonly SavedInt saveWindowX = new SavedInt("saveWindowX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt saveWindowY = new SavedInt("saveWindowY", MoveItTool.settingsFileName, -1000, true);
 
-        public class UIFastList : UIFastList<string, UISaveLoadFileRow> { }
-        public UIFastList fastList;
-
-        public UITextField fileNameInput;
-
         public UIButton saveButton;
         public UIPanel savePanel;
-
-        public UIButton close;
-
-        public static UISaveWindow instance;
 
         public override void Start()
         {
             name = "MoveIt_SaveWindow";
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
-            size = new Vector2(465, 272); // 180
+            size = new Vector2(565, 272); // 180
             canFocus = true;
 
             UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
             dragHandle.target = parent;
             dragHandle.relativePosition = Vector3.zero;
 
-            close = AddUIComponent<UIButton>();
-            close.size = new Vector2(30f, 30f);
-            close.text = "X";
-            close.textScale = 0.9f;
-            close.textColor = new Color32(118, 123, 123, 255);
-            close.focusedTextColor = new Color32(118, 123, 123, 255);
-            close.hoveredTextColor = new Color32(140, 142, 142, 255);
-            close.pressedTextColor = new Color32(99, 102, 102, 102);
-            close.textPadding = new RectOffset(8, 8, 8, 8);
-            close.canFocus = false;
-            close.playAudioEvents = true;
-            close.relativePosition = new Vector3(width - close.width, 0);
-
-            close.eventClicked += (c, p) =>
-            {
-                Close();
-            };
+            AddCloseButton();
 
             UILabel label = AddUIComponent<UILabel>();
             label.textScale = 0.9f;
@@ -93,13 +68,15 @@ namespace MoveIt
 
             fileNameInput.size = new Vector2(saveButton.relativePosition.x - 16f, 30f);
 
+            AddSortingPanel(savePanel.relativePosition.y + savePanel.height + 8);
+
             // FastList
             fastList = AddUIComponent<UIFastList>();
             fastList.backgroundSprite = "UnlockingPanel";
             fastList.width = width - 16;
             fastList.height = 46 * 7;
             fastList.canSelect = true;
-            fastList.relativePosition = new Vector3(8, savePanel.relativePosition.y + savePanel.height + 8);
+            fastList.relativePosition = new Vector3(8, sortPanel.relativePosition.y + sortPanel.height + 8);
 
             fastList.rowHeight = 46f;
 
@@ -170,76 +147,14 @@ namespace MoveIt
             }
         }
 
-        public static void Close()
-        {
-            if (instance != null)
-            {
-                UIView.PopModal();
-
-                UIComponent modalEffect = instance.GetUIView().panelsLibraryModalEffect;
-                if (modalEffect != null && modalEffect.isVisible)
-                {
-                    ValueAnimator.Animate("ModalEffect", delegate (float val)
-                    {
-                        modalEffect.opacity = val;
-                    }, new AnimatedFloat(1f, 0f, 0.7f, EasingType.CubicEaseOut), delegate
-                    {
-                        modalEffect.Hide();
-                    });
-                }
-
-                instance.isVisible = false;
-                Destroy(instance.gameObject);
-                instance = null;
-            }
-        }
-
-        protected override void OnKeyDown(UIKeyEventParameter p)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                p.Use();
-                Close();
-            }
-
-            base.OnKeyDown(p);
-        }
-
         protected override void OnPositionChanged()
         {
-            Vector2 resolution = GetUIView().GetScreenResolution();
-
-            if (absolutePosition.x == -1000)
-            {
-                absolutePosition = new Vector2((resolution.x - width) / 2, (resolution.y - height) / 2);
-                MakePixelPerfect();
-            }
-
-            absolutePosition = new Vector2(
-                (int)Mathf.Clamp(absolutePosition.x, 0, resolution.x - width),
-                (int)Mathf.Clamp(absolutePosition.y, 0, resolution.y - height));
-
-            saveWindowX.value = (int)absolutePosition.x;
-            saveWindowY.value = (int)absolutePosition.y;
-
-            base.OnPositionChanged();
+            base.OnPositionChanged(saveWindowY, saveWindowY);
         }
 
-        public void RefreshFileList()
+        public override void RefreshFileList()
         {
-            fastList.rowsData.Clear();
-
-            if (Directory.Exists(MoveItTool.saveFolder))
-            {
-                string[] files = Directory.GetFiles(MoveItTool.saveFolder, "*.xml");
-
-                foreach (string file in files)
-                {
-                    fastList.rowsData.Add(Path.GetFileNameWithoutExtension(file));
-                }
-
-                fastList.DisplayAt(0);
-            }
+            base.RefreshFileList();
 
             fileNameInput.Focus();
             fileNameInput.SelectAll();
