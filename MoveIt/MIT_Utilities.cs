@@ -197,6 +197,7 @@ namespace MoveIt
                     version = ModInfo.version,
                     center = center,
                     includesPO = includesPO,
+                    terrainHeight = Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(center),
                     states = new InstanceState[selection.Count]
                 };
 
@@ -266,6 +267,14 @@ namespace MoveIt
                     using (FileStream stream = new FileStream(path, FileMode.Open))
                     {
                         selectionState = xmlSerializer.Deserialize(stream) as Selection;
+                        if (new Version(selectionState.version).CompareTo(new Version(2, 9, 9)) == -1)
+                        { // XML pre-dates terrain height date
+                            foreach (InstanceState state in selectionState.states)
+                            {
+                                selectionState.terrainHeight = state.terrainHeight;
+                                break;
+                            }
+                        }
                     }
                 }
                 catch (Exception e)
@@ -308,9 +317,8 @@ namespace MoveIt
                     UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Assets missing", "The following assets are missing and will be ignored:\n\n" + string.Join("\n", missingPrefabs.ToArray()), false);
                 }
 
-                // Set props to fixed-height if in asset editor
                 if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.AssetEditor) != ItemClass.Availability.None)
-                {
+                { // Set props to fixed-height if in asset editor
                     foreach (InstanceState state in selectionState.states)
                     {
                         if (state is PropState ps)
@@ -318,6 +326,19 @@ namespace MoveIt
                             ps.fixedHeight = true;
                             ps.position.y = ps.position.y - ps.terrainHeight + 60f; // 60 is editor's terrain height
                         }
+                    }
+                }
+                else if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.Game) != ItemClass.Availability.None)
+                { 
+                    if (!followTerrain)
+                    { // Set import height to terrain height
+                        float heightDelta = Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(RaycastMouseLocation()) - selectionState.terrainHeight;
+
+                        foreach (InstanceState state in selectionState.states)
+                        {
+                            state.position.y += heightDelta;
+                        }
+                        selectionState.center.y += heightDelta;
                     }
                 }
 

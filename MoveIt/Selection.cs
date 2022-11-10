@@ -8,6 +8,7 @@ namespace MoveIt
         public Vector3 center;
         public string version;
         public bool includesPO;
+        public float terrainHeight;
 
         [XmlElement("state")]
         public InstanceState[] states;
