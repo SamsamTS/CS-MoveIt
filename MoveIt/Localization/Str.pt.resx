@@ -538,6 +538,13 @@ ESTA FUNÇÃO É EXTREMAMENTE PODEROSA E IRÁ QUEBRAR A SUA CIDADE!</value>
   <data name="whatsNew" xml:space="preserve">
     <value></value>
   </data>
+  <data name="xml_Asc" xml:space="preserve">
+    <value>Asc</value>
+    <comment>Shortened version of "Ascending" (alternatively "Up"). Maximum 6 characters.</comment>
+  </data>
+  <data name="xml_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Você deseja deletar o arquivo '{0}' permanentemente?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
@@ -548,11 +555,21 @@ ESTA FUNÇÃO É EXTREMAMENTE PODEROSA E IRÁ QUEBRAR A SUA CIDADE!</value>
   <data name="xml_DeleteLabel" xml:space="preserve">
     <value>Excluir seleção salva</value>
   </data>
+  <data name="xml_Desc" xml:space="preserve">
+    <value>Desc</value>
+    <comment>Shortened version of "Descending" (alternatively "Down"). Maximum 6 characters.</comment>
+  </data>
   <data name="xml_Export" xml:space="preserve">
     <value>Exportar</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
     <value>Importar</value>
+  </data>
+  <data name="xml_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="xml_OpenFolder" xml:space="preserve">
+    <value>Open Folder</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>O arquivo '{0}' já existe.
@@ -573,5 +590,8 @@ Você deseja substituí-lo?</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
     <value>Seleção inválida</value>
+  </data>
+  <data name="xml_Size" xml:space="preserve">
+    <value>Size</value>
   </data>
 </root>
