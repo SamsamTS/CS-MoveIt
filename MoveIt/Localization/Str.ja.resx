@@ -538,11 +538,11 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <value></value>
   </data>
   <data name="xml_Asc" xml:space="preserve">
-    <value>Asc</value>
+    <value>昇順</value>
     <comment>Shortened version of "Ascending" (alternatively "Up"). Maximum 6 characters.</comment>
   </data>
   <data name="xml_Date" xml:space="preserve">
-    <value>Date</value>
+    <value>日付</value>
   </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>ファイル '{0}' を完全に削除しますか？</value>
@@ -555,7 +555,7 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <value>保存済み選択項目を削除</value>
   </data>
   <data name="xml_Desc" xml:space="preserve">
-    <value>Desc</value>
+    <value>降順</value>
     <comment>Shortened version of "Descending" (alternatively "Down"). Maximum 6 characters.</comment>
   </data>
   <data name="xml_Export" xml:space="preserve">
@@ -565,10 +565,10 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <value>インポート</value>
   </data>
   <data name="xml_Name" xml:space="preserve">
-    <value>Name</value>
+    <value>名前</value>
   </data>
   <data name="xml_OpenFolder" xml:space="preserve">
-    <value>Open Folder</value>
+    <value>フォルダを開く</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>ファイル '{0}' はすでに存在します。
@@ -591,6 +591,6 @@ POオブジェクトを削除すると、完全に消去されます。</value>
     <value>選択が無効です</value>
   </data>
   <data name="xml_Size" xml:space="preserve">
-    <value>Size</value>
+    <value>サイズ</value>
   </data>
 </root>
