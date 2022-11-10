@@ -537,6 +537,13 @@ THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
   <data name="whatsNew" xml:space="preserve">
     <value />
   </data>
+  <data name="xml_Asc" xml:space="preserve">
+    <value>Asc</value>
+    <comment>Shortened version of "Ascending" (alternatively "Up"). Maximum 6 characters.</comment>
+  </data>
+  <data name="xml_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Do you want to delete the file '{0}' permanently?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
@@ -547,11 +554,21 @@ THIS IS EXTREMELY POWERFUL AND WILL BREAK YOUR CITY!</value>
   <data name="xml_DeleteLabel" xml:space="preserve">
     <value>Delete saved selection</value>
   </data>
+  <data name="xml_Desc" xml:space="preserve">
+    <value>Desc</value>
+    <comment>Shortened version of "Descending" (alternatively "Down"). Maximum 6 characters.</comment>
+  </data>
   <data name="xml_Export" xml:space="preserve">
     <value>Export</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
     <value>Import</value>
+  </data>
+  <data name="xml_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="xml_OpenFolder" xml:space="preserve">
+    <value>Open Folder</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>The file '{0}' already exists.

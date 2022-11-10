@@ -18,8 +18,8 @@ namespace MoveIt
         public UIButton deleteButton;
 
         private UIPanel m_background;
-        private Color active = Color.white;
-        private Color inactive = new Color(0, 225, 225);
+        private Color activeColor = Color.white;
+        private Color inactiveColor = new Color(0.8f, 0.8f, 0.8f);
 
         private bool IsExport => UISaveLoadWindow.instance is UISaveWindow;
 
@@ -51,17 +51,17 @@ namespace MoveIt
             fileNameLabel.height = 30;
             fileNameLabel.verticalAlignment = UIVerticalAlignment.Middle;
             fileNameLabel.relativePosition = new Vector3(56, 8);
-            fileNameLabel.textColor = inactive;
+            fileNameLabel.textColor = inactiveColor;
 
             fileDateLabel = AddUIComponent<UILabel>();
-            fileDateLabel.textScale = 0.9f;
+            fileDateLabel.textScale = 0.8f;
             fileDateLabel.autoSize = false;
-            fileDateLabel.size = new Vector2(100f, 30f);
+            fileDateLabel.size = new Vector2(80f, 30f);
             fileDateLabel.height = 30;
             fileDateLabel.verticalAlignment = UIVerticalAlignment.Middle;
             fileDateLabel.textAlignment = UIHorizontalAlignment.Right;
             fileDateLabel.relativePosition = new Vector3(56, 8);
-            fileDateLabel.textColor = active;
+            fileDateLabel.textColor = activeColor;
 
             deleteButton = UIUtils.CreateButton(this);
             deleteButton.name = "MoveIt_DeleteFileButton";
@@ -72,9 +72,9 @@ namespace MoveIt
 
             saveLoadButton = UIUtils.CreateButton(this);
             saveLoadButton.name = "MoveIt_SaveLoadFileButton";
-            saveLoadButton.text = UISaveLoadWindow.instance != null ? Str.xml_Export : Str.xml_Import;
+            saveLoadButton.text = IsExport ? Str.xml_Export : Str.xml_Import;
             saveLoadButton.size = new Vector2(80f, 30f);
-            saveLoadButton.relativePosition = new Vector3(520, 8);
+            saveLoadButton.relativePosition = new Vector3(UISaveLoadWindow.instance.width - saveLoadButton.size.x - 42, 8);
 
             if (!IsExport) // Importing
             {
@@ -127,11 +127,11 @@ namespace MoveIt
 
             if (!IsExport) // Importing
             {
-                fileDateLabel.relativePosition = new Vector3(loadToPosition.relativePosition.x - 108f, 8);
+                fileDateLabel.relativePosition = new Vector3(loadToPosition.relativePosition.x - fileDateLabel.width - 8f, 8);
             }
             else
             {
-                fileDateLabel.relativePosition = new Vector3(saveLoadButton.relativePosition.x - 108f, 8);
+                fileDateLabel.relativePosition = new Vector3(saveLoadButton.relativePosition.x - fileDateLabel.width - 8f, 8);
             }
             fileNameLabel.width = fileDateLabel.relativePosition.x - 8f - fileNameLabel.relativePosition.x;
         }
@@ -143,13 +143,13 @@ namespace MoveIt
 
             if (UISaveLoadWindow.instance.sortType == UISaveLoadWindow.sortTypes.Date)
             {
-                fileNameLabel.textColor = inactive;
-                fileDateLabel.textColor = active;
+                fileNameLabel.textColor = inactiveColor;
+                fileDateLabel.textColor = activeColor;
             }
             else
             {
-                fileNameLabel.textColor = active;
-                fileDateLabel.textColor = inactive;
+                fileNameLabel.textColor = activeColor;
+                fileDateLabel.textColor = inactiveColor;
             }
 
             if (i % 2 == 1)
@@ -163,6 +163,7 @@ namespace MoveIt
                 background.backgroundSprite = null;
             }
         }
+
         public void Select(bool isRowOdd)
         {
 

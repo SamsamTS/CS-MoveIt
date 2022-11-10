@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using UIUtils = SamsamTS.UIUtils;
 using UnityEngine;
+using MoveIt.Localization;
+using System.Collections;
 
 namespace MoveIt.GUI
 {
@@ -36,6 +38,23 @@ namespace MoveIt.GUI
         }
         public sortTypes sortType;
         public sortOrders sortOrder;
+
+        protected UIDragHandle AddDragHandle()
+        {
+            UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
+            dragHandle.target = parent;
+            dragHandle.relativePosition = Vector3.zero;
+            return dragHandle;
+        }
+
+        protected void AddLabel(string label)
+        {
+            UILabel labelPnl = AddUIComponent<UILabel>();
+            labelPnl.textScale = 0.9f;
+            labelPnl.text = label;
+            labelPnl.relativePosition = new Vector2(8, 8);
+            labelPnl.SendToBack();
+        }
 
         protected void AddCloseButton()
         {
@@ -70,19 +89,19 @@ namespace MoveIt.GUI
             // Open Folder
             openFolder = UIUtils.CreateButton(sortPanel);
             openFolder.name = "MoveIt_OpenFolderButton";
-            openFolder.text = "Open Folder";
+            openFolder.text = Str.xml_OpenFolder;
             openFolder.size = new Vector2(150f, 30f);
             openFolder.relativePosition = new Vector3(8, 8);
 
             sortOrderBtn = UIUtils.CreateButton(sortPanel);
             sortOrderBtn.name = "MoveIt_SortOrderButton";
-            sortOrderBtn.text = "Desc";
+            sortOrderBtn.text = Str.xml_Desc;
             sortOrderBtn.size = new Vector2(100f, 30f);
             sortOrderBtn.relativePosition = new Vector3(sortPanel.width - sortOrderBtn.width - 8, 8);
 
             sortTypeBtn = UIUtils.CreateButton(sortPanel);
             sortTypeBtn.name = "MoveIt_SortTypeButton";
-            sortTypeBtn.text = "Date";
+            sortTypeBtn.text = Str.xml_Date;
             sortTypeBtn.size = new Vector2(100f, 30f);
             sortTypeBtn.relativePosition = new Vector3(sortOrderBtn.relativePosition.x - sortTypeBtn.width - 8, 8);
 
@@ -97,7 +116,7 @@ namespace MoveIt.GUI
             sortOrderBtn.eventClicked += (c, p) =>
             {
                 sortOrder = sortOrder == sortOrders.Descending ? sortOrders.Ascending : sortOrders.Descending;
-                sortOrderBtn.text = sortOrder == sortOrders.Descending ? "Desc" : "Asc";
+                sortOrderBtn.text = sortOrder == sortOrders.Descending ? Str.xml_Desc : Str.xml_Asc;
 
                 RefreshFileList();
             };
@@ -105,7 +124,7 @@ namespace MoveIt.GUI
             sortTypeBtn.eventClicked += (c, p) =>
             {
                 sortType = sortType == sortTypes.Name ? sortTypes.Date : sortTypes.Name;
-                sortTypeBtn.text = sortType == sortTypes.Date ? "Date" : "Name";
+                sortTypeBtn.text = sortType == sortTypes.Date ? Str.xml_Date : Str.xml_Name;
 
                 RefreshFileList();
             };
@@ -166,20 +185,60 @@ namespace MoveIt.GUI
 
             if (Directory.Exists(MoveItTool.saveFolder))
             {
-                string[] files = Directory.GetFiles(MoveItTool.saveFolder, "*.xml");
+                int i = 0;
+                string[] fileList = Directory.GetFiles(MoveItTool.saveFolder, "*.xml");
+                FileData[] files = new FileData[fileList.Length];
 
-                foreach (string file in files)
+                foreach (string file in fileList)
                 {
                     FileData data = new FileData()
                     {
                         Name = Path.GetFileNameWithoutExtension(file),
                         Date = File.GetLastWriteTime(file)
                     };
-                    fastList.rowsData.Add(data);
+                    files[i++] = data;
+                }
+
+                if (sortType == sortTypes.Name)
+                {
+                    Array.Sort(files, new CompareName());
+                }
+                else if (sortType == sortTypes.Date)
+                {
+                    Array.Sort(files, new CompareDate());
+                }
+                if (sortOrder == sortOrders.Descending)
+                {
+                    Array.Reverse(files);
+                }
+
+                foreach (FileData file in files)
+                {
+                    fastList.rowsData.Add(file);
                 }
 
                 fastList.DisplayAt(0);
             }
+        }
+    }
+
+    class CompareName : IComparer<FileData>
+    {
+        int IComparer<FileData>.Compare(FileData a, FileData b)
+        {
+            return ((new CaseInsensitiveComparer()).Compare(a.Name, b.Name));
+        }
+    }
+
+    class CompareDate : IComparer<FileData>
+    {
+        int IComparer<FileData>.Compare(FileData a, FileData b)
+        {
+            if (a.Date > b.Date)
+            {
+                return 1;
+            }
+            return -1;
         }
     }
 }

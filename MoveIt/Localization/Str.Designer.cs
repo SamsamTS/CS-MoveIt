@@ -1211,6 +1211,24 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Asc.
+        /// </summary>
+        internal static string xml_Asc {
+            get {
+                return ResourceManager.GetString("xml_Asc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        internal static string xml_Date {
+            get {
+                return ResourceManager.GetString("xml_Date", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to delete the file &apos;{0}&apos; permanently?.
         /// </summary>
         internal static string xml_DeleteConfirmMessage {
@@ -1238,6 +1256,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Desc.
+        /// </summary>
+        internal static string xml_Desc {
+            get {
+                return ResourceManager.GetString("xml_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export.
         /// </summary>
         internal static string xml_Export {
@@ -1252,6 +1279,24 @@ namespace MoveIt.Localization {
         internal static string xml_Import {
             get {
                 return ResourceManager.GetString("xml_Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string xml_Name {
+            get {
+                return ResourceManager.GetString("xml_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Folder.
+        /// </summary>
+        internal static string xml_OpenFolder {
+            get {
+                return ResourceManager.GetString("xml_OpenFolder", resourceCulture);
             }
         }
         

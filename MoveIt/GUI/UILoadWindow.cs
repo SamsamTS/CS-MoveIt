@@ -18,20 +18,14 @@ namespace MoveIt
             name = "MoveIt_SaveWindow";
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
-            size = new Vector2(645, 272);
+            size = new Vector2(680, 272);
             canFocus = true;
 
-            UIDragHandle dragHandle = AddUIComponent<UIDragHandle>();
-            dragHandle.target = parent;
-            dragHandle.relativePosition = Vector3.zero;
+            UIDragHandle dragHandle = AddDragHandle();
 
             AddCloseButton();
 
-            UILabel label = AddUIComponent<UILabel>();
-            label.textScale = 0.9f;
-            label.text = Str.xml_Import;
-            label.relativePosition = new Vector2(8, 8);
-            label.SendToBack();
+            AddLabel(Str.xml_Import);
 
             AddSortingPanel(28f);
 
