@@ -18,7 +18,7 @@ namespace MoveIt
             name = "MoveIt_SaveWindow";
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "SubcategoriesPanel";
-            size = new Vector2(680, 272);
+            size = new Vector2(790, 392);
             canFocus = true;
 
             UIDragHandle dragHandle = AddDragHandle();
@@ -31,13 +31,13 @@ namespace MoveIt
 
             // FastList
             fastList = AddUIComponent<UIFastList>();
+            fastList.rowHeight = 46f;
+            fastList.atlas = atlas;
             fastList.backgroundSprite = "UnlockingPanel";
             fastList.width = width - 16;
-            fastList.height = 46 * 7;
+            fastList.height = fastList.rowHeight * 9;
             fastList.canSelect = true;
             fastList.relativePosition = new Vector3(8, sortPanel.relativePosition.y + sortPanel.height + 8);
-
-            fastList.rowHeight = 46f;
 
             height = fastList.relativePosition.y + fastList.height + 8;
             dragHandle.size = size;

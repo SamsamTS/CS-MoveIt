@@ -590,4 +590,7 @@ Do you want to overwrite it?</value>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
     <value>Selection invalid</value>
   </data>
+  <data name="xml_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
 </root>

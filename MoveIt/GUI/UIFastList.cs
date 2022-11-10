@@ -36,6 +36,23 @@ namespace MoveIt
     {
         public string Name;
         public DateTime Date;
+        public long Size;
+
+        public string GetSize()
+        {
+            float s = Size;
+            if (s > 1024)
+            {
+                s /= 1024;
+                if (s > 1024)
+                {
+                    s /= 1024;
+                    return String.Format("{0:0.##}MB", s);
+                }
+                return String.Format("{0:0.##}KB", s);
+            }
+            return String.Format("{0:0.##}B", s);
+        }
     }
 
     /// <summary>
@@ -62,6 +79,7 @@ namespace MoveIt
     {
         #region Private members
         private UIPanel m_panel;
+        private UITextureAtlas m_Atlas;
         private UIScrollbar m_scrollbar;
         private FastList<I> m_rows;
         private FastList<O> m_rowsData;
@@ -120,6 +138,31 @@ namespace MoveIt
                     m_backgroundSprite = value;
                     if (m_panel != null)
                         m_panel.backgroundSprite = value;
+                }
+            }
+        }
+
+        public UITextureAtlas atlas
+        {
+            get
+            {
+                if (m_Atlas == null)
+                {
+                    UIView uIView = GetUIView();
+                    if (uIView != null)
+                    {
+                        m_Atlas = uIView.defaultAtlas;
+                    }
+                }
+
+                return m_Atlas;
+            }
+            set
+            {
+                if (!UITextureAtlas.Equals(value, m_Atlas))
+                {
+                    m_Atlas = value;
+                    Invalidate();
                 }
             }
         }
@@ -514,6 +557,7 @@ namespace MoveIt
             m_panel = AddUIComponent<UIPanel>();
             m_panel.width = width - 10f;
             m_panel.height = height;
+            m_panel.atlas = atlas;
             m_panel.backgroundSprite = m_backgroundSprite;
             m_panel.color = m_color;
             m_panel.clipChildren = true;

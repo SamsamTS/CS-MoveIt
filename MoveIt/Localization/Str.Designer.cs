@@ -1354,5 +1354,14 @@ namespace MoveIt.Localization {
                 return ResourceManager.GetString("xml_SelectionInvalidTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        internal static string xml_Size {
+            get {
+                return ResourceManager.GetString("xml_Size", resourceCulture);
+            }
+        }
     }
 }

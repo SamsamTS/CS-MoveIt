@@ -14,6 +14,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using UnifiedUI.Helpers;
 using UnityEngine;
+using MoveIt.GUI;
 
 namespace MoveIt
 {
@@ -273,6 +274,9 @@ namespace MoveIt
         }
 
         public UIComponent UUIButton;
+
+        public static UISaveLoadWindow.SortTypes sortType = UISaveLoadWindow.SortTypes.Date;
+        public static UISaveLoadWindow.SortOrders sortOrder = UISaveLoadWindow.SortOrders.Descending;
 
         protected override void Awake()
         {
@@ -758,7 +762,7 @@ namespace MoveIt
             merged.UnionWith(areasToQuickUpdate);
             merged = MergeBounds(merged);
             bool full = areasToUpdate.Count() != 0;
-            //Log.Debug($"AAA UpdateAreas:\nFull:{areasToUpdate.Count}\nMerged:{merged}\nFast:{areasToQuickUpdate.Count}");
+            //Log.Debug($"UpdateAreas:\nFull:{areasToUpdate.Count}\nMerged:{merged}\nFast:{areasToQuickUpdate.Count}");
             //foreach (Bounds b in merged)
             //{
             //    b.Expand(4f);
