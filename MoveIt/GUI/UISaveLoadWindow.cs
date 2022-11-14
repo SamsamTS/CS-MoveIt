@@ -94,7 +94,7 @@ namespace MoveIt.GUI
 
             sortOrderBtn = UIUtils.CreateButton(sortPanel);
             sortOrderBtn.name = "MoveIt_SortOrderButton";
-            sortOrderBtn.size = new Vector2(100f, 30f);
+            sortOrderBtn.size = new Vector2(36f, 30f);
             sortOrderBtn.relativePosition = new Vector3(sortPanel.width - sortOrderBtn.width - 8, 8);
 
             sortTypeBtn = UIUtils.CreateButton(sortPanel);
@@ -225,11 +225,13 @@ namespace MoveIt.GUI
                 if (MoveItTool.sortOrder == SortOrders.Descending)
                 {
                     Array.Reverse(files);
-                    sortOrderBtn.text = Str.xml_Desc;
+                    sortOrderBtn.textPadding = new RectOffset(0, 0, 4, 0);
+                    sortOrderBtn.text = "▼";
                 }
                 else
                 {
-                    sortOrderBtn.text = Str.xml_Asc;
+                    sortOrderBtn.textPadding = new RectOffset(0, 0, 2, 0);
+                    sortOrderBtn.text = "▲";
                 }
 
                 foreach (FileData file in files)

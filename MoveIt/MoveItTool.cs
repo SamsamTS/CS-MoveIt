@@ -1,18 +1,12 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
 using ColossalFramework.IO;
-using ColossalFramework.Plugins;
 using ColossalFramework.UI;
-using ICities;
 using MoveItIntegration;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Xml.Serialization;
-using UnifiedUI.Helpers;
 using UnityEngine;
 using MoveIt.GUI;
 
@@ -146,10 +140,7 @@ namespace MoveIt
             set
             {
                 m_toolsMode = value;
-                if (m_debugPanel != null)
-                {
-                    m_debugPanel.UpdatePanel();
-                }
+                m_debugPanel?.UpdatePanel();
             }
         }
         private static ushort m_alignToolPhase = 0;
@@ -159,10 +150,7 @@ namespace MoveIt
             set
             {
                 m_alignToolPhase = value;
-                if (m_debugPanel != null)
-                {
-                    m_debugPanel.UpdatePanel();
-                }
+                m_debugPanel?.UpdatePanel();
             }
         }
 
@@ -268,7 +256,10 @@ namespace MoveIt
             get
             {
                 if (_rand == null)
+                {
                     _rand = new System.Random();
+                }
+
                 return _rand;
             }
         }
