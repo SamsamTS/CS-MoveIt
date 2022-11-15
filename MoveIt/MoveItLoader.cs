@@ -1,12 +1,10 @@
-﻿using ColossalFramework;
-using ColossalFramework.UI;
-using ColossalFramework.Globalization;
+﻿using ColossalFramework.Globalization;
 using ColossalFramework.Plugins;
 using ICities;
 using MoveIt.Localization;
 using System;
 using System.Collections.Generic;
-using UnifiedUI.Helpers;
+using System.IO;
 using UnityEngine;
 
 namespace MoveIt
@@ -41,6 +39,8 @@ namespace MoveIt
             {
                 Log.Error($"InstallMod with existing instance!");
             }
+
+            Directory.CreateDirectory(MoveItTool.saveFolder);
 
             MoveItTool.stepOver = new StepOver();
 

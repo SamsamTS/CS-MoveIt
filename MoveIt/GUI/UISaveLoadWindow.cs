@@ -104,7 +104,7 @@ namespace MoveIt.GUI
 
             openFolder.eventClicked += (c, p) =>
             {
-                Application.OpenURL(MoveItTool.saveFolder);
+                Utils.OpenInFileBrowser(MoveItTool.saveFolder);
             };
 
             sortOrderBtn.eventClicked += (c, p) =>
@@ -189,58 +189,61 @@ namespace MoveIt.GUI
         {
             fastList.rowsData.Clear();
 
-            if (Directory.Exists(MoveItTool.saveFolder))
+            if (!Directory.Exists(MoveItTool.saveFolder))
             {
-                int i = 0;
-                DirectoryInfo directory = new DirectoryInfo(MoveItTool.saveFolder);
-                FileInfo[] fileInfos = directory.GetFiles("*.xml", SearchOption.AllDirectories);
-                FileData[] files = new FileData[fileInfos.Length];
-
-                foreach (FileInfo file in fileInfos)
-                {
-                    FileData data = new FileData()
-                    {
-                        Name = Path.GetFileNameWithoutExtension(file.FullName),
-                        Date = file.LastAccessTime,
-                        Size = file.Length
-                    };
-                    files[i++] = data;
-                }
-
-                if (MoveItTool.sortType == SortTypes.Name)
-                {
-                    Array.Sort(files, new CompareName());
-                    sortTypeBtn.text = Str.xml_Name;
-                }
-                else if (MoveItTool.sortType == SortTypes.Size)
-                {
-                    Array.Sort(files, new CompareSize());
-                    sortTypeBtn.text = Str.xml_Size;
-                }
-                else if (MoveItTool.sortType == SortTypes.Date)
-                {
-                    Array.Sort(files, new CompareDate());
-                    sortTypeBtn.text = Str.xml_Date;
-                }
-                if (MoveItTool.sortOrder == SortOrders.Descending)
-                {
-                    Array.Reverse(files);
-                    sortOrderBtn.textPadding = new RectOffset(0, 0, 4, 0);
-                    sortOrderBtn.text = "▼";
-                }
-                else
-                {
-                    sortOrderBtn.textPadding = new RectOffset(0, 0, 2, 0);
-                    sortOrderBtn.text = "▲";
-                }
-
-                foreach (FileData file in files)
-                {
-                    fastList.rowsData.Add(file);
-                }
-
-                fastList.DisplayAt(0);
+                Log.Error("XML folder does not exist!");
+                return;
             }
+
+            int i = 0;
+            DirectoryInfo directory = new DirectoryInfo(MoveItTool.saveFolder);
+            FileInfo[] fileInfos = directory.GetFiles("*.xml", SearchOption.AllDirectories);
+            FileData[] files = new FileData[fileInfos.Length];
+
+            foreach (FileInfo file in fileInfos)
+            {
+                FileData data = new FileData()
+                {
+                    Name = Path.GetFileNameWithoutExtension(file.FullName),
+                    Date = file.LastAccessTime,
+                    Size = file.Length
+                };
+                files[i++] = data;
+            }
+
+            if (MoveItTool.sortType == SortTypes.Name)
+            {
+                Array.Sort(files, new CompareName());
+                sortTypeBtn.text = Str.xml_Name;
+            }
+            else if (MoveItTool.sortType == SortTypes.Size)
+            {
+                Array.Sort(files, new CompareSize());
+                sortTypeBtn.text = Str.xml_Size;
+            }
+            else if (MoveItTool.sortType == SortTypes.Date)
+            {
+                Array.Sort(files, new CompareDate());
+                sortTypeBtn.text = Str.xml_Date;
+            }
+            if (MoveItTool.sortOrder == SortOrders.Descending)
+            {
+                Array.Reverse(files);
+                sortOrderBtn.textPadding = new RectOffset(0, 0, 4, 0);
+                sortOrderBtn.text = "▼";
+            }
+            else
+            {
+                sortOrderBtn.textPadding = new RectOffset(0, 0, 2, 0);
+                sortOrderBtn.text = "▲";
+            }
+
+            foreach (FileData file in files)
+            {
+                fastList.rowsData.Add(file);
+            }
+
+            fastList.DisplayAt(0);
         }
     }
 

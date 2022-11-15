@@ -1,15 +1,12 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
-using ColossalFramework.IO;
 using ColossalFramework.Plugins;
 using ColossalFramework.UI;
-using MoveItIntegration;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Xml.Serialization;
 using UnifiedUI.Helpers;
 using UnityEngine;
@@ -206,8 +203,6 @@ namespace MoveIt
                 {
                     selectionState.states[i++] = instance.SaveToState();
                 }
-
-                Directory.CreateDirectory(saveFolder);
 
                 //Log.Debug($"selectionState:{selectionState.states.Length}\n" + ObjectDumper.Dump(selectionState));
 
