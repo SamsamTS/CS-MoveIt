@@ -1,4 +1,6 @@
-﻿using ColossalFramework.UI;
+﻿using ColossalFramework;
+using ColossalFramework.UI;
+using UnifiedUI.Util;
 using UnityEngine;
 
 namespace MoveIt
@@ -171,6 +173,14 @@ namespace MoveIt
                 else if (OptionsKeymapping.alignMoveTo.IsPressed(e))
                 {
                     UIMoreTools.MoreToolsClicked("MoveIt_MoveToBtn");
+                }
+                else if (OptionsKeymapping.quickUnderground.IsKeyDown())
+                {
+                    QuickTunnelView = true;
+                }
+                else if (OptionsKeymapping.quickUnderground.IsKeyUp())
+                {
+                    QuickTunnelView = false;
                 }
 
                 if (ToolState == ToolStates.Cloning)

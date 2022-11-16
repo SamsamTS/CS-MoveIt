@@ -207,6 +207,21 @@ namespace MoveIt
             }
         }
 
+        private static bool _isQuickTunnelViewPressed = false;
+        internal static bool QuickTunnelView
+        {
+            get => _isQuickTunnelViewPressed;
+
+            set
+            {
+                if (_isQuickTunnelViewPressed != value)
+                {
+                    UIToolOptionPanel.instance.underground.SimulateClick();
+                    _isQuickTunnelViewPressed = value;
+                }
+            }
+        }
+
         internal UIMoveItButton m_button;
         private UIComponent m_pauseMenu;
 
@@ -345,10 +360,25 @@ namespace MoveIt
 
             InfoManager.instance.SetCurrentMode(m_prevInfoMode, subInfoMode);
 
-            if (UIToolOptionPanel.instance != null && UIToolOptionPanel.instance.grid != null)
+            if (UIToolOptionPanel.instance != null)
             {
-                gridVisible = UIToolOptionPanel.instance.grid.activeStateIndex == 1;
-                tunnelVisible = UIToolOptionPanel.instance.underground.activeStateIndex == 1;
+                if (UIToolOptionPanel.instance.grid != null)
+                {
+                    gridVisible = UIToolOptionPanel.instance.grid.activeStateIndex == 1;
+                }
+
+                if (UIToolOptionPanel.instance.underground != null)
+                {
+                    if (tunnelVisible)
+                    {
+                        UIToolOptionPanel.instance.underground.activeStateIndex = 1;
+                        m_prevInfoMode = InfoManager.InfoMode.None;
+                    }
+                    else
+                    {
+                        UIToolOptionPanel.instance.underground.activeStateIndex = 0;
+                    }
+                }
             }
 
             if (PO.Active)

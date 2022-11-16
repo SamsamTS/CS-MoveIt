@@ -34,6 +34,7 @@ namespace MoveIt
             AddKeymapping(Str.key_ShowSelectors, viewSelectors);
             AddKeymapping(Str.baseUI_Single_Tooltip, selectSingle);
             AddKeymapping(Str.baseUI_Marquee_Tooltip, selectMarquee);
+            AddKeymapping(Str.key_QuickUndergroundView, quickUnderground);
         }
     }
 
@@ -104,6 +105,7 @@ namespace MoveIt
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewSelectors = new SavedInputKey("viewSelectors", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey quickUnderground = new SavedInputKey("quickUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.U, false, false, false), true);
 
         public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);
@@ -123,13 +125,14 @@ namespace MoveIt
         public static readonly SavedInputKey alignSlopeFull = new SavedInputKey("alignSlopeFull", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignTerrainHeight = new SavedInputKey("alignTerrainHeight", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
+
         public static SavedInputKey[] InToolKeysForSelection => new SavedInputKey[] { 
             moveXpos, moveXneg, 
             moveZpos, moveZneg, 
             moveYpos, moveYneg, 
             turnNeg, turnPos, 
             scaleOut, scaleIn, 
-            clone, bulldoze,
+            clone, bulldoze, quickUnderground,
 
             convertToPO,
 

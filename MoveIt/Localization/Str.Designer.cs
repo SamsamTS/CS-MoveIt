@@ -439,6 +439,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hold for Underground View.
+        /// </summary>
+        internal static string key_QuickUndergroundView {
+            get {
+                return ResourceManager.GetString("key_QuickUndergroundView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo.
         /// </summary>
         internal static string key_Redo {
