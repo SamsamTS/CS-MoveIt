@@ -137,7 +137,7 @@ namespace MoveIt
 
                         if (selectProps || selectDecals || selectSurfaces || (selectPicker && Filters.Picker.IsProp))
                         {
-                            PropLayer.Manager.RaycastHoverInstance(ref i, ref j, ref stepOver, ref ray, ref smallestDist, ref id);
+                            PropLayer.Manager.RaycastHoverInstance(ref i, ref j, ref stepOver, ref ray, ref smallestDist, ref id, itemLayers);
                         }
 
                         if (selectNodes || selectBuilding || (selectPicker && Filters.Picker.IsNode))
@@ -246,7 +246,7 @@ namespace MoveIt
                             uint tree = TreeManager.instance.m_treeGrid[i * 540 + j];
                             while (tree != 0)
                             {
-                                if (stepOver.isValidT(tree) && treeBuffer[tree].RayCast(tree, ray, out float t, out float targetSqr) && t < smallestDist)
+                                if (stepOver.isValidT(tree) && IsTreeValid(ref treeBuffer[tree], itemLayers) && treeBuffer[tree].RayCast(tree, ray, out float t, out float targetSqr) && t < smallestDist)
                                 {
                                     if (Filters.Filter(treeBuffer[tree].Info))
                                     {
@@ -380,7 +380,7 @@ namespace MoveIt
 
                         if (filterProps || filterDecals || filterSurfaces || (filterPicker && Filters.Picker.IsProp))
                         {
-                            PropLayer.Manager.GetMarqueeList(ref i, ref j, ref id, ref m_selection, ref list);
+                            PropLayer.Manager.GetMarqueeList(ref i, ref j, ref id, ref m_selection, ref list, itemLayers);
                         }
 
                         if (filterNodes || filterBuildings || (filterPicker && Filters.Picker.IsNode))
@@ -478,7 +478,7 @@ namespace MoveIt
                             {
                                 if (PointInRectangle(m_selection, treeBuffer[tree].Position))
                                 {
-                                    if (Filters.Filter(treeBuffer[tree].Info))
+                                    if (Filters.Filter(treeBuffer[tree].Info) && IsTreeValid(ref treeBuffer[tree], itemLayers))
                                     {
                                         id.Tree = tree;
                                         list.Add(id);
@@ -574,13 +574,12 @@ namespace MoveIt
             }
             else if (InfoManager.instance.CurrentMode == InfoManager.InfoMode.Underground)
             { // Removes Default assignment
-                itemLayers = ItemClass.Layer.MetroTunnels; 
+                itemLayers = ItemClass.Layer.MetroTunnels;
             }
             else
             {
                 itemLayers |= ItemClass.Layer.Markers;
             }
-
             return itemLayers;
         }
 
@@ -612,6 +611,17 @@ namespace MoveIt
             if ((segment.m_flags & NetSegment.Flags.Created) == NetSegment.Flags.Created)
             {
                 return (segment.Info.GetConnectionClass().m_layer & itemLayers) != ItemClass.Layer.None;
+            }
+
+            return false;
+        }
+
+        private bool IsTreeValid(ref TreeInstance tree, ItemClass.Layer itemLayers)
+        {
+            if (superSelect) return true;
+            if (((TreeInstance.Flags)tree.m_flags & TreeInstance.Flags.Created) == TreeInstance.Flags.Created)
+            {
+                return (tree.Info.m_class.m_layer & itemLayers) != ItemClass.Layer.None;
             }
 
             return false;

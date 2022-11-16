@@ -59,6 +59,7 @@ namespace MoveIt
 
     public interface IPropsWrapper
     {
+        IInfo GetInfo(uint id);
         IInfo GetInfo(InstanceID id);
         IProp Buffer(uint id);
         IProp Buffer(InstanceID id);
@@ -71,8 +72,8 @@ namespace MoveIt
         bool GetFixedHeight(InstanceID id);
         void SetFixedHeight(InstanceID id, bool fixedHeight);
         InstanceID StepOver(uint id);
-        void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id);
-        void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list);
+        void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id, ItemClass.Layer itemLayers);
+        void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list, ItemClass.Layer itemLayers);
         bool GetSnappingState();
     }
 
@@ -83,6 +84,11 @@ namespace MoveIt
         public PropsManager()
         {
             propBuffer = Singleton<PropManager>.instance.m_props.m_buffer;
+        }
+
+        public IInfo GetInfo(uint id)
+        {
+            return new Info_Prefab(PropManager.instance.m_props.m_buffer[(ushort)id].Info);
         }
 
         public IInfo GetInfo(InstanceID id)
@@ -104,7 +110,7 @@ namespace MoveIt
         {
             return id.Prop;
         }
-        
+
         public float GetScale(InstanceID id, IProp prop)
         {
             Randomizer randomizer = new Randomizer(prop.Index);
@@ -158,13 +164,13 @@ namespace MoveIt
             }
         }
 
-        public void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id)
+        public void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id, ItemClass.Layer itemLayers)
         {
             ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
             int count = 0;
             while (prop != 0u)
             {
-                if (stepOver.isValidP(prop) && Filters.Filter(propBuffer[prop].Info))
+                if (stepOver.isValidP(prop) && IsPropValid(ref propBuffer[prop], itemLayers) && Filters.Filter(propBuffer[prop].Info))
                 {
                     if (propBuffer[prop].RayCast(prop, ray, out float t, out float targetSqr) && t < smallestDist)
                     {
@@ -182,13 +188,13 @@ namespace MoveIt
             }
         }
 
-        public void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list)
+        public void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list, ItemClass.Layer itemLayers)
         {
             ushort prop = PropManager.instance.m_propGrid[i * 270 + j];
             int count = 0;
             while (prop != 0u)
             {
-                if (Filters.Filter(propBuffer[prop].Info))
+                if (IsPropValid(ref propBuffer[prop], itemLayers) && Filters.Filter(propBuffer[prop].Info))
                 {
                     if (MoveItTool.instance.PointInRectangle(m_selection, propBuffer[prop].Position))
                     {
@@ -205,6 +211,18 @@ namespace MoveIt
                 }
             }
         }
+
+        private bool IsPropValid(ref PropInstance prop, ItemClass.Layer itemLayers)
+        {
+            if (MoveItTool.superSelect) return true;
+            if (((PropInstance.Flags)prop.m_flags & PropInstance.Flags.Created) == PropInstance.Flags.Created)
+            {
+                return (prop.Info.m_class.m_layer & itemLayers) != ItemClass.Layer.None;
+            }
+
+            return false;
+        }
+
         public bool GetSnappingState() => false;
     }
 
@@ -214,6 +232,11 @@ namespace MoveIt
         public EPropsManager()
         {
             PropAPI.Initialize();
+        }
+
+        public IInfo GetInfo(uint id)
+        {
+            return new Info_Prefab(PropAPI.Wrapper.GetInfo(id));
         }
 
         public IInfo GetInfo(InstanceID id)
@@ -285,11 +308,11 @@ namespace MoveIt
             }
         }
 
-        public void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id)
+        public void RaycastHoverInstance(ref int i, ref int j, ref StepOver stepOver, ref Segment3 ray, ref float smallestDist, ref InstanceID id, ItemClass.Layer itemLayers)
         {
             foreach (uint propID in PropAPI.Wrapper.GetPropGridEnumerable(i, j))
             {
-                if (stepOver.isValidP(propID) && Filters.Filter(PropAPI.Wrapper.GetInfo(propID)))
+                if (stepOver.isValidP(propID) && IsPropValid(propID, itemLayers) && Filters.Filter(PropAPI.Wrapper.GetInfo(propID)))
                 {
                     if (PropAPI.Wrapper.RayCast(propID, ray, out float t, out float targetSqr) && t < smallestDist)
                     {
@@ -300,11 +323,11 @@ namespace MoveIt
             }
         }
 
-        public void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list)
+        public void GetMarqueeList(ref int i, ref int j, ref InstanceID id, ref Quad3 m_selection, ref HashSet<Instance> list, ItemClass.Layer itemLayers)
         {
             foreach (uint propID in PropAPI.Wrapper.GetPropGridEnumerable(i, j))
             {
-                if (Filters.Filter(PropAPI.Wrapper.GetInfo(propID)))
+                if (IsPropValid(propID, itemLayers) && Filters.Filter(PropAPI.Wrapper.GetInfo(propID)))
                 {
                     if (MoveItTool.instance.PointInRectangle(m_selection, PropAPI.Wrapper.GetPosition(propID)))
                     {
@@ -313,6 +336,17 @@ namespace MoveIt
                     }
                 }
             }
+        }
+
+        private bool IsPropValid(uint propID, ItemClass.Layer itemLayers)
+        {
+            if (MoveItTool.superSelect) return true;
+            if (((PropInstance.Flags)Buffer(propID).m_flags & PropInstance.Flags.Created) == PropInstance.Flags.Created)
+            {
+                return (PropAPI.Wrapper.GetInfo(propID).m_class.m_layer & itemLayers) != ItemClass.Layer.None;
+            }
+
+            return false;
         }
 
         public bool GetSnappingState() => PropAPI.Wrapper.IsSnappingEnabled;
