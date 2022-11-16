@@ -251,6 +251,9 @@
   <data name="key_MoveWest" xml:space="preserve">
     <value>Подвинуть на восток</value>
   </data>
+  <data name="key_QuickUndergroundView" xml:space="preserve">
+    <value>Hold for Underground View</value>
+  </data>
   <data name="key_Redo" xml:space="preserve">
     <value>Повторить</value>
   </data>
