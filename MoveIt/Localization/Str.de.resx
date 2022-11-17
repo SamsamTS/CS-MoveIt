@@ -252,7 +252,7 @@
     <value>Nach Westen bewegen</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>Halten für die unterirdische Ansicht</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>Wiederholen</value>
