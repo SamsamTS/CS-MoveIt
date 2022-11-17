@@ -252,7 +252,7 @@
     <value>向西移动</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>保留地下视图</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>重做</value>
