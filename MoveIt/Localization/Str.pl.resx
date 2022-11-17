@@ -251,6 +251,9 @@
   <data name="key_MoveWest" xml:space="preserve">
     <value>Przesuń na zachód</value>
   </data>
+  <data name="key_QuickUndergroundView" xml:space="preserve">
+    <value>Hold for Underground View</value>
+  </data>
   <data name="key_Redo" xml:space="preserve">
     <value>Powtórz</value>
   </data>
@@ -537,6 +540,13 @@ OPCJA JEST NIEZWYKLE POTĘŻNA, MOŻE ZNISZCZYĆ TWOJE MIASTO!</value>
   <data name="whatsNew" xml:space="preserve">
     <value></value>
   </data>
+  <data name="xml_Asc" xml:space="preserve">
+    <value>Rosnąco</value>
+    <comment>Shortened version of "Ascending" (alternatively "Up"). Maximum 6 characters.</comment>
+  </data>
+  <data name="xml_Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>Czy chcesz trwale usunąć plik '{0}'?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
@@ -547,11 +557,21 @@ OPCJA JEST NIEZWYKLE POTĘŻNA, MOŻE ZNISZCZYĆ TWOJE MIASTO!</value>
   <data name="xml_DeleteLabel" xml:space="preserve">
     <value>Usuń zapisane zaznaczenie</value>
   </data>
+  <data name="xml_Desc" xml:space="preserve">
+    <value>Malejąco</value>
+    <comment>Shortened version of "Descending" (alternatively "Down"). Maximum 6 characters.</comment>
+  </data>
   <data name="xml_Export" xml:space="preserve">
     <value>Eksportuj</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
     <value>Importuj</value>
+  </data>
+  <data name="xml_Name" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="xml_OpenFolder" xml:space="preserve">
+    <value>Otwórz folder</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>Plik '{0}' już istnieje.
@@ -572,5 +592,8 @@ Czy chcesz go nadpisać?</value>
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
     <value>Zaznaczenie nieprawidłowe</value>
+  </data>
+  <data name="xml_Size" xml:space="preserve">
+    <value>Rozmiar</value>
   </data>
 </root>

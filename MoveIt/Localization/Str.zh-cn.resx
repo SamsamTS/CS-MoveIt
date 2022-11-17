@@ -251,6 +251,9 @@
   <data name="key_MoveWest" xml:space="preserve">
     <value>向西移动</value>
   </data>
+  <data name="key_QuickUndergroundView" xml:space="preserve">
+    <value>保留地下视图</value>
+  </data>
   <data name="key_Redo" xml:space="preserve">
     <value>重做</value>
   </data>
@@ -537,6 +540,13 @@ Loading Screen Mod (LSM) 已经不与城市：天际线 1.15版本 (新DLC：Pla
   <data name="whatsNew" xml:space="preserve">
     <value></value>
   </data>
+  <data name="xml_Asc" xml:space="preserve">
+    <value>升序</value>
+    <comment>Shortened version of "Ascending" (alternatively "Up"). Maximum 6 characters.</comment>
+  </data>
+  <data name="xml_Date" xml:space="preserve">
+    <value>日期</value>
+  </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>你想要永远删除文件 '{0}' 吗？</value>
     <comment>The select file's name is inserted where {0} is.</comment>
@@ -547,11 +557,21 @@ Loading Screen Mod (LSM) 已经不与城市：天际线 1.15版本 (新DLC：Pla
   <data name="xml_DeleteLabel" xml:space="preserve">
     <value>删除已保存的选择</value>
   </data>
+  <data name="xml_Desc" xml:space="preserve">
+    <value>降序</value>
+    <comment>Shortened version of "Descending" (alternatively "Down"). Maximum 6 characters.</comment>
+  </data>
   <data name="xml_Export" xml:space="preserve">
     <value>导出</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
     <value>导入</value>
+  </data>
+  <data name="xml_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="xml_OpenFolder" xml:space="preserve">
+    <value>打开文件夹</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>文件 '{0}' 已经存在。
@@ -572,5 +592,8 @@ Loading Screen Mod (LSM) 已经不与城市：天际线 1.15版本 (新DLC：Pla
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
     <value>选择无效</value>
+  </data>
+  <data name="xml_Size" xml:space="preserve">
+    <value>大小</value>
   </data>
 </root>

@@ -251,6 +251,9 @@
   <data name="key_MoveWest" xml:space="preserve">
     <value>เลื่อนไปทางทิศตะวันตก</value>
   </data>
+  <data name="key_QuickUndergroundView" xml:space="preserve">
+    <value>Hold for Underground View</value>
+  </data>
   <data name="key_Redo" xml:space="preserve">
     <value>ทำซ้ำ</value>
   </data>
@@ -536,6 +539,13 @@ Loading Screen Mod (หรือ LSM) ไม่สามารถเข้าก
   <data name="whatsNew" xml:space="preserve">
     <value></value>
   </data>
+  <data name="xml_Asc" xml:space="preserve">
+    <value>ขึ้น</value>
+    <comment>Shortened version of "Ascending" (alternatively "Up"). Maximum 6 characters.</comment>
+  </data>
+  <data name="xml_Date" xml:space="preserve">
+    <value>วัน</value>
+  </data>
   <data name="xml_DeleteConfirmMessage" xml:space="preserve">
     <value>คุณต้องการลบไฟล์ '{0}' โดยถาวรหรือไม่?</value>
     <comment>The select file's name is inserted where {0} is.</comment>
@@ -546,11 +556,21 @@ Loading Screen Mod (หรือ LSM) ไม่สามารถเข้าก
   <data name="xml_DeleteLabel" xml:space="preserve">
     <value>ลบสิ่งที่บันทึกการเลือก</value>
   </data>
+  <data name="xml_Desc" xml:space="preserve">
+    <value>ลง</value>
+    <comment>Shortened version of "Descending" (alternatively "Down"). Maximum 6 characters.</comment>
+  </data>
   <data name="xml_Export" xml:space="preserve">
     <value>ส่งออก</value>
   </data>
   <data name="xml_Import" xml:space="preserve">
     <value>นำเข้า</value>
+  </data>
+  <data name="xml_Name" xml:space="preserve">
+    <value>ชื่อ</value>
+  </data>
+  <data name="xml_OpenFolder" xml:space="preserve">
+    <value>เปิดโฟลเดอร์</value>
   </data>
   <data name="xml_OverwriteMessage" xml:space="preserve">
     <value>ไฟล์ '{0}' มีอยู่แล้ว
@@ -571,5 +591,8 @@ Loading Screen Mod (หรือ LSM) ไม่สามารถเข้าก
   </data>
   <data name="xml_SelectionInvalidTitle" xml:space="preserve">
     <value>การเลือกที่ไม่ถูกต้อง</value>
+  </data>
+  <data name="xml_Size" xml:space="preserve">
+    <value>ขนาด</value>
   </data>
 </root>
