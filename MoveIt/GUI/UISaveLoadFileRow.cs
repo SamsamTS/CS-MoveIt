@@ -144,9 +144,10 @@ namespace MoveIt
 
         public void Display(FileData data, int i)
         {
-            fileNameLabel.text = data.Name;
+            fileNameLabel.text = data.m_name;
             fileSizeLabel.text = data.GetSize();
-            fileDateLabel.text = data.Date.ToShortDateString();
+            fileDateLabel.text = data.GetDate();
+            fileDateLabel.tooltip = data.GetDateExtended();
 
             fileNameLabel.textColor = inactiveColor;
             fileSizeLabel.textColor = inactiveColor;

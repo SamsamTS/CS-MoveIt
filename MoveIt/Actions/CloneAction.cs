@@ -471,6 +471,15 @@ namespace MoveIt
                     _ = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
                 }
             }
+
+            if (m_states.Count == 1)
+            {
+                foreach (InstanceState state in m_states)
+                {
+                    MoveItTool.CloneSingleObject(state.Info.Prefab);
+                    break;
+                }
+            }
         }
         
         public override void Undo()

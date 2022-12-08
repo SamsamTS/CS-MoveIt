@@ -102,6 +102,7 @@ namespace MoveIt
                 }, new AnimatedFloat(0f, 1f, 0.7f, EasingType.CubicEaseOut));
             }
 
+            fastList.listPosition = scrollPos;
             BringToFront();
             fileNameInput.Focus();
         }

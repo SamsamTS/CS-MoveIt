@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using ColossalFramework.UI;
-
+﻿using ColossalFramework.UI;
+using UnityEngine;
 using System;
 
 namespace MoveIt
@@ -34,13 +33,28 @@ namespace MoveIt
     /// </summary>
     public struct FileData
     {
-        public string Name;
-        public DateTime Date;
-        public long Size;
+        public string m_name;
+        public DateTime m_date;
+        public long m_size;
+
+        public string GetName()
+        {
+            return m_name;
+        }
+
+        public string GetDate()
+        {
+            return m_date.ToShortDateString();
+        }
+
+        public string GetDateExtended()
+        {
+            return m_date.ToLongTimeString() + ", " + m_date.ToLongDateString();
+        }
 
         public string GetSize()
         {
-            float s = Size;
+            float s = m_size;
             if (s > 1024)
             {
                 s /= 1024;

@@ -198,5 +198,12 @@ namespace MoveIt
 
             return false;
         }
+
+        /// <summary>
+        /// Method for other mods (e.g. Picker) to hook when cloning a single object
+        /// </summary>
+        /// <param name="prefab">The PrefabInfo of the object</param>
+        public static void CloneSingleObject(PrefabInfo prefab)
+        { }
     }
 }

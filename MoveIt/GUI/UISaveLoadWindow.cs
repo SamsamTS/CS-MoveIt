@@ -25,6 +25,7 @@ namespace MoveIt.GUI
         public UIButton close;
 
         public UITextField fileNameInput;
+        protected static float scrollPos = 0f;
 
         public enum SortTypes
         {
@@ -72,6 +73,7 @@ namespace MoveIt.GUI
 
             close.eventClicked += (c, p) =>
             {
+                scrollPos = fastList.listPosition;
                 Close();
             };
         }
@@ -204,9 +206,9 @@ namespace MoveIt.GUI
             {
                 FileData data = new FileData()
                 {
-                    Name = Path.GetFileNameWithoutExtension(file.FullName),
-                    Date = file.LastAccessTime,
-                    Size = file.Length
+                    m_name = Path.GetFileNameWithoutExtension(file.FullName),
+                    m_date = file.LastWriteTime,
+                    m_size = file.Length
                 };
                 files[i++] = data;
             }
@@ -226,6 +228,7 @@ namespace MoveIt.GUI
                 Array.Sort(files, new CompareDate());
                 sortTypeBtn.text = Str.xml_Date;
             }
+
             if (MoveItTool.sortOrder == SortOrders.Descending)
             {
                 Array.Reverse(files);
@@ -251,7 +254,7 @@ namespace MoveIt.GUI
     {
         int IComparer<FileData>.Compare(FileData a, FileData b)
         {
-            return ((new CaseInsensitiveComparer()).Compare(a.Name, b.Name));
+            return ((new CaseInsensitiveComparer()).Compare(a.m_name, b.m_name));
         }
     }
 
@@ -259,9 +262,13 @@ namespace MoveIt.GUI
     {
         int IComparer<FileData>.Compare(FileData a, FileData b)
         {
-            if (a.Date > b.Date)
+            if (a.m_date.Ticks > b.m_date.Ticks)
             {
                 return 1;
+            }
+            else if (a.m_date.Ticks == b.m_date.Ticks)
+            {
+                return 0;
             }
             return -1;
         }
@@ -271,7 +278,7 @@ namespace MoveIt.GUI
     {
         int IComparer<FileData>.Compare(FileData a, FileData b)
         {
-            return (int)(a.Size - b.Size);
+            return (int)(a.m_size - b.m_size);
         }
     }
 }
