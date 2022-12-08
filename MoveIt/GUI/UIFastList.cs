@@ -1,6 +1,5 @@
 ﻿using ColossalFramework.UI;
 using UnityEngine;
-using System;
 
 namespace MoveIt
 {
@@ -26,47 +25,6 @@ namespace MoveIt
         /// <param name="isRowOdd">Use this to display a different look for your odd rows</param>
         void Deselect(bool isRowOdd);
         #endregion
-    }
-
-    /// <summary>
-    /// Data for each entry in the file list
-    /// </summary>
-    public struct FileData
-    {
-        public string m_name;
-        public DateTime m_date;
-        public long m_size;
-
-        public string GetName()
-        {
-            return m_name;
-        }
-
-        public string GetDate()
-        {
-            return m_date.ToShortDateString();
-        }
-
-        public string GetDateExtended()
-        {
-            return m_date.ToLongTimeString() + ", " + m_date.ToLongDateString();
-        }
-
-        public string GetSize()
-        {
-            float s = m_size;
-            if (s > 1024)
-            {
-                s /= 1024;
-                if (s > 1024)
-                {
-                    s /= 1024;
-                    return String.Format("{0:0.##}MB", s);
-                }
-                return String.Format("{0:0.##}KB", s);
-            }
-            return String.Format("{0:0.##}B", s);
-        }
     }
 
     /// <summary>

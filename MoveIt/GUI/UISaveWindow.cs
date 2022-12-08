@@ -9,7 +9,7 @@ using UIUtils = SamsamTS.UIUtils;
 
 namespace MoveIt
 {
-    public class UISaveWindow : UISaveLoadWindow
+    public class UISaveWindow : XMLWindow
     {
         public static readonly SavedInt saveWindowX = new SavedInt("saveWindowX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt saveWindowY = new SavedInt("saveWindowY", MoveItTool.settingsFileName, -1000, true);

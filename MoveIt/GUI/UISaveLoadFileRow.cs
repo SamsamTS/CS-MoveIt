@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
+using MoveIt.GUI;
 using MoveIt.Localization;
 using System;
-
 using UIUtils = SamsamTS.UIUtils;
-using MoveIt.GUI;
 
 namespace MoveIt
 {
@@ -20,7 +19,7 @@ namespace MoveIt
         private Color activeColor = Color.white;
         private Color inactiveColor = new Color(0.8f, 0.8f, 0.8f);
 
-        private bool IsExport => UISaveLoadWindow.instance is UISaveWindow;
+        private bool IsExport => XMLWindow.instance is UISaveWindow;
 
         public UIPanel background
         {
@@ -85,7 +84,7 @@ namespace MoveIt
             saveLoadButton.text = IsExport ? Str.xml_Export : Str.xml_Import;
             saveLoadButton.size = new Vector2(70f, 30f);
             saveLoadButton.textScale = 0.9f;
-            saveLoadButton.relativePosition = new Vector3(UISaveLoadWindow.instance.width - saveLoadButton.size.x - 42, 8);
+            saveLoadButton.relativePosition = new Vector3(XMLWindow.instance.width - saveLoadButton.size.x - 42, 8);
 
             if (!IsExport) // Importing
             {
@@ -100,6 +99,7 @@ namespace MoveIt
                 loadToPosition.eventClicked += (c, p) =>
                 {
                     UIView.Find("DefaultTooltip")?.Hide();
+                    XMLWindow.scrollPos = XMLWindow.instance.fastList.listPosition;
                     UILoadWindow.Close();
                     Destroy(loadToPosition);
                     MoveItTool.instance.Restore(fileNameLabel.text);
@@ -132,7 +132,7 @@ namespace MoveIt
                     {
                         MoveItTool.instance.Delete(fileNameLabel.text);
 
-                        UISaveLoadWindow.instance.RefreshFileList();
+                        XMLWindow.instance.RefreshFileList();
                     }
                 });
             };
@@ -152,13 +152,13 @@ namespace MoveIt
             fileNameLabel.textColor = inactiveColor;
             fileSizeLabel.textColor = inactiveColor;
             fileDateLabel.textColor = inactiveColor;
-            switch (MoveItTool.sortType)
+            switch (MoveItTool.SortType)
             {
-                case UISaveLoadWindow.SortTypes.Name:
+                case XMLWindow.SortTypes.Name:
                     fileNameLabel.textColor = activeColor;
                     break;
 
-                case UISaveLoadWindow.SortTypes.Size:
+                case XMLWindow.SortTypes.Size:
                     fileSizeLabel.textColor = activeColor;
                     break;
 

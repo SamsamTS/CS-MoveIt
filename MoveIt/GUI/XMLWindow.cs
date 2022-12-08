@@ -1,23 +1,24 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
+using MoveIt.Localization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using UIUtils = SamsamTS.UIUtils;
 using UnityEngine;
-using MoveIt.Localization;
-using System.Collections;
 
 namespace MoveIt.GUI
 {
-    public abstract class UISaveLoadWindow : UIPanel
+    public abstract class XMLWindow : UIPanel
     {
+        public static readonly SavedString savedSortType = new SavedString("savedSortType", MoveItTool.settingsFileName, "Date", true);
+        public static readonly SavedString savedSortOrder = new SavedString("savedSortOrder", MoveItTool.settingsFileName, "Descending", true);
+
         public class UIFastList : UIFastList<FileData, UISaveLoadFileRow> { }
         public UIFastList fastList;
 
-        public static UISaveLoadWindow instance;
+        public static XMLWindow instance;
 
         public UIPanel sortPanel;
         public UIButton openFolder, sortTypeBtn, sortOrderBtn;
@@ -25,19 +26,7 @@ namespace MoveIt.GUI
         public UIButton close;
 
         public UITextField fileNameInput;
-        protected static float scrollPos = 0f;
-
-        public enum SortTypes
-        {
-            Name,
-            Size,
-            Date
-        }
-        public enum SortOrders
-        {
-            Descending,
-            Ascending
-        }
+        internal static float scrollPos = 0f;
 
         protected UIDragHandle AddDragHandle()
         {
@@ -111,26 +100,26 @@ namespace MoveIt.GUI
 
             sortOrderBtn.eventClicked += (c, p) =>
             {
-                MoveItTool.sortOrder = MoveItTool.sortOrder == SortOrders.Descending ? SortOrders.Ascending : SortOrders.Descending;
+                MoveItTool.SortOrder = MoveItTool.SortOrder == SortOrders.Descending ? SortOrders.Ascending : SortOrders.Descending;
 
                 RefreshFileList();
             };
 
             sortTypeBtn.eventClicked += (c, p) =>
             {
-                SortTypes old = MoveItTool.sortType;
+                SortTypes old = MoveItTool.SortType;
                 switch (old)
                 {
                     case SortTypes.Name:
-                        MoveItTool.sortType = SortTypes.Size;
+                        MoveItTool.SortType = SortTypes.Size;
                         break;
 
                     case SortTypes.Size:
-                        MoveItTool.sortType = SortTypes.Date;
+                        MoveItTool.SortType = SortTypes.Date;
                         break;
 
                     case SortTypes.Date:
-                        MoveItTool.sortType = SortTypes.Name;
+                        MoveItTool.SortType = SortTypes.Name;
                         break;
                 }
 
@@ -213,23 +202,23 @@ namespace MoveIt.GUI
                 files[i++] = data;
             }
 
-            if (MoveItTool.sortType == SortTypes.Name)
+            if (MoveItTool.SortType == SortTypes.Name)
             {
                 Array.Sort(files, new CompareName());
                 sortTypeBtn.text = Str.xml_Name;
             }
-            else if (MoveItTool.sortType == SortTypes.Size)
+            else if (MoveItTool.SortType == SortTypes.Size)
             {
                 Array.Sort(files, new CompareSize());
                 sortTypeBtn.text = Str.xml_Size;
             }
-            else if (MoveItTool.sortType == SortTypes.Date)
+            else if (MoveItTool.SortType == SortTypes.Date)
             {
                 Array.Sort(files, new CompareDate());
                 sortTypeBtn.text = Str.xml_Date;
             }
 
-            if (MoveItTool.sortOrder == SortOrders.Descending)
+            if (MoveItTool.SortOrder == SortOrders.Descending)
             {
                 Array.Reverse(files);
                 sortOrderBtn.textPadding = new RectOffset(0, 0, 4, 0);
@@ -248,6 +237,20 @@ namespace MoveIt.GUI
 
             fastList.DisplayAt(0);
         }
+
+        public enum SortTypes
+        {
+            Name,
+            Size,
+            Date
+        }
+
+        public enum SortOrders
+        {
+            Descending,
+            Ascending
+        }
+
     }
 
     class CompareName : IComparer<FileData>

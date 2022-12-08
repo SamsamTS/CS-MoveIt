@@ -8,7 +8,7 @@ using MoveIt.GUI;
 
 namespace MoveIt
 {
-    public class UILoadWindow : UISaveLoadWindow
+    public class UILoadWindow : XMLWindow
     {
         public static readonly SavedInt loadWindowX = new SavedInt("loadWindowX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt loadWindowY = new SavedInt("loadWindowY", MoveItTool.settingsFileName, -1000, true);

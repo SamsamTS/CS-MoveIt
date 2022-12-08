@@ -281,8 +281,16 @@ namespace MoveIt
 
         public UIComponent UUIButton;
 
-        public static UISaveLoadWindow.SortTypes sortType = UISaveLoadWindow.SortTypes.Date;
-        public static UISaveLoadWindow.SortOrders sortOrder = UISaveLoadWindow.SortOrders.Descending;
+        public static XMLWindow.SortTypes SortType
+        {
+            get => XMLUtils.SortType(XMLWindow.savedSortType);
+            set => XMLWindow.savedSortType.value = XMLUtils.SortType(value);
+        }
+        public static XMLWindow.SortOrders SortOrder
+        {
+            get => XMLUtils.SortOrders(XMLWindow.savedSortOrder);
+            set => XMLWindow.savedSortOrder.value = XMLUtils.SortOrders(value);
+        }
 
         protected override void Awake()
         {

@@ -50,13 +50,14 @@
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="EncodeUtil.cs" />
+    <Compile Include="GUI\XMLUtils.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="GUI\UIMoreTools.cs" />
     <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
     <Compile Include="GUI\UIMoreToPanel.cs" />
-    <Compile Include="GUI\UISaveLoadWindow.cs" />
+    <Compile Include="GUI\XMLWindow.cs" />
     <Compile Include="PropInstance.cs" />
     <Compile Include="PropLayer.cs" />
     <Compile Include="Integration\PO_Group.cs" />
