@@ -252,7 +252,7 @@
     <value>Vers l'Ouest</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>Activer temporairement la vue souterraine</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>Refaire (redo)</value>
