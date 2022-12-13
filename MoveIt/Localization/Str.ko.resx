@@ -252,7 +252,7 @@
     <value>서쪽으로 이동</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>누른 채로 지하 뷰 보기</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>되돌리기</value>

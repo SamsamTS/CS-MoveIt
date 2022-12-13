@@ -252,7 +252,7 @@
     <value>西に移動</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>長押しで地下表示</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>やり直し</value>

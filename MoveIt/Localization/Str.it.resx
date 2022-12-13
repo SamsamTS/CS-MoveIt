@@ -252,7 +252,7 @@
     <value>Muovi verso ovest</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>Premere per Visualizzazione Sotterranea</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>Ripristina</value>
