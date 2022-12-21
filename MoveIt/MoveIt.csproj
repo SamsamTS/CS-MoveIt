@@ -58,6 +58,7 @@
     <Compile Include="GUI\UILoadWindow.cs" />
     <Compile Include="GUI\UIMoreToPanel.cs" />
     <Compile Include="GUI\XMLWindow.cs" />
+    <Compile Include="Moveable\AssetEditorSubBuilding.cs" />
     <Compile Include="PropInstance.cs" />
     <Compile Include="PropLayer.cs" />
     <Compile Include="Integration\PO_Group.cs" />
@@ -269,6 +270,7 @@
       <Name>MoveItIntegration</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\..\..\QCommon\Repo\QCommon\QCommon\Shared\QCommon Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>set "ModDir=%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\"

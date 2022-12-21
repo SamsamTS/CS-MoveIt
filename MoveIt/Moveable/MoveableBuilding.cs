@@ -35,6 +35,7 @@ namespace MoveIt
     public class MoveableBuilding : Instance
     {
         internal bool isSubInstance = false;
+        internal AssetEditorSubBuilding m_assetEditorSubBuilding = null;
 
         public override HashSet<ushort> segmentList
         {
@@ -72,6 +73,8 @@ namespace MoveIt
             isSubInstance = sub;
             isHidden = (buildingBuffer[id.Building].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden;
             Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
+
+            m_assetEditorSubBuilding = new AssetEditorSubBuilding(instanceID);
 
             ResetSubInstances();
         }
@@ -128,6 +131,7 @@ namespace MoveIt
             RelocateBuilding(building, ref buildingBuffer[building], buildingState.position, buildingState.angle);
             isSubInstance = buildingState.isSubInstance;
             isHidden = buildingState.isHidden;
+            m_assetEditorSubBuilding?.LoadFromState(buildingState);
 
             if (buildingState.subStates != null)
             {
@@ -278,6 +282,8 @@ namespace MoveIt
         {
             if (!isValid) return;
 
+            m_assetEditorSubBuilding.Move(location, angle);
+
             TransformAngle = angle;
             TransformPosition = location;
 
@@ -417,6 +423,7 @@ namespace MoveIt
                     }
                 }
                 cloneInstance.ResetSubInstances();
+                cloneInstance.m_assetEditorSubBuilding.Create(clone, cloneInstance.angle, (BuildingInfo)cloneInstance.Info.Prefab, (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f), newPosition);
             }
 
             return cloneInstance;
@@ -490,11 +497,13 @@ namespace MoveIt
         public void AddFixedHeightFlag(ushort building)
         {
             buildingBuffer[building].m_flags = buildingBuffer[building].m_flags | Building.Flags.FixedHeight;
+            m_assetEditorSubBuilding.SetFixedHeight(true);
         }
 
         public void RemoveFixedHeightFlag(ushort building)
         {
             buildingBuffer[building].m_flags = buildingBuffer[building].m_flags & ~Building.Flags.FixedHeight;
+            m_assetEditorSubBuilding.SetFixedHeight(false);
         }
 
         public bool GetFixedHeightFlag(ushort building)

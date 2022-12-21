@@ -4,12 +4,12 @@ using ColossalFramework.IO;
 using ColossalFramework.UI;
 using ICities;
 using MoveIt.Localization;
+using QCommonLib;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MoveIt
 {
@@ -38,7 +38,7 @@ namespace MoveIt
 
         public string Name
         {
-            get { return "Move It " + version; }
+            get { return "Move It " + QVersion.Version(); }
         }
 
         public string Description
@@ -46,7 +46,7 @@ namespace MoveIt
             get { return Str.mod_description; }
         }
 
-        internal static CultureInfo Culture => new CultureInfo(SingletonLite<LocaleManager>.instance.language == "zh" ? "zh-cn" : SingletonLite<LocaleManager>.instance.language);
+        internal static CultureInfo Culture => QCommon.GetCultureInfo(); //new CultureInfo(SingletonLite<LocaleManager>.instance.language == "zh" ? "zh-cn" : SingletonLite<LocaleManager>.instance.language);
 
         public const string version = "2.9.10";
 
@@ -252,11 +252,11 @@ namespace MoveIt
             }
         }
 
-        internal static bool InGame() => SceneManager.GetActiveScene().name == "Game";
+        //internal static bool InGame() => SceneManager.GetActiveScene().name == "Game";
 
         public void OnEnabled()
         {
-            if (InGame())
+            if (QCommon.Scene ==  QCommon.SceneTypes.Game)
             {
                 // basic ingame hot reload
                 MoveItLoader.loadMode = LoadMode.NewGame;
@@ -266,7 +266,7 @@ namespace MoveIt
 
         public void OnDisabled()
         {
-            if (InGame())
+            if (QCommon.Scene == QCommon.SceneTypes.Game)
             {
                 // basic in game hot unload
                 MoveItLoader.UninstallMod();

@@ -247,6 +247,7 @@ namespace MoveIt
 
                 if (state.instance.isValid)
                 {
+                    ((MoveableBuilding)state.instance).m_assetEditorSubBuilding.Destroy(state.instance.id.Building);
                     state.instance.Delete();
                 }
             }

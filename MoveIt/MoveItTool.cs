@@ -783,6 +783,8 @@ namespace MoveIt
 
         public void UpdateAreas()
         {
+            AssetEditorSubBuilding.UpdatePanel();
+
             //foreach (Bounds b in areasToUpdate)
             //{
             //    AddDebugBox(b, new Color32(255, 31, 31, 31));
