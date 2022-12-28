@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Plugins;
 using MoveIt.Localization;
+using QCommonLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace MoveIt
         {
             Enabled = false;
 
-            Assembly = MoveItTool.GetAssembly("networkskinsmod", "networkskins", "cimtools");
+            Assembly = QCommon.GetAssembly("networkskinsmod", "networkskins", "cimtools");
             if (Assembly != null)
             {
                 tNS = Assembly.GetType("NetworkSkins.Skins.NetworkSkin");
@@ -143,7 +144,7 @@ namespace MoveIt
 
         internal static string getVersionText()
         {
-            if (MoveItTool.GetAssembly("networkskinsmod", "networkskins", "cimtools") != null)
+            if (QCommon.CheckAssembly("networkskinsmod", "networkskins", "cimtools"))
             {
                 return Str.integration_NS2_Found;
             }

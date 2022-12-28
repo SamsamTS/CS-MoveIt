@@ -48,6 +48,13 @@ namespace MoveIt
 
             SubBuildingsDict.Add(id, m_info);
 
+            List<BuildingInfo.SubInfo> subInfos = new List<BuildingInfo.SubInfo>();
+            foreach (var sub in SubBuildingsDict)
+            {
+                subInfos.Add(sub.Value);
+            }
+            EditPrefabInfo.m_subBuildings = subInfos.ToArray();
+
             UpdatePanel();
         }
 
@@ -82,6 +89,7 @@ namespace MoveIt
 
             m_info.m_fixedHeight = isFixed;
         }
+
 
         internal static void UpdatePanel()
         {

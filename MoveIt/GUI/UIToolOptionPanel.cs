@@ -313,17 +313,8 @@ namespace MoveIt
 
             m_marquee.eventButtonStateChanged += (c, p) =>
             {
-                MoveItTool.marqueeSelection = p == UIButton.ButtonState.Focused;
+                MoveItTool.marqueeSelection = (p == UIButton.ButtonState.Focused);
                 m_filtersPanel.isVisible = MoveItTool.marqueeSelection;
-
-                if (MoveItTool.m_lsmWarningPanel != null)
-                {
-                    MoveItTool.m_lsmWarningPanel.RefreshPosition();
-                }
-                if (MoveItTool.instance.m_whatsNewPanel != null)
-                {
-                    MoveItTool.instance.m_whatsNewPanel.RefreshPosition();
-                }
             };
             m_marquee.eventDoubleClick += (UIComponent c, UIMouseEventParameter p) =>
             {

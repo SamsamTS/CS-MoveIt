@@ -1,16 +1,13 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
-using ColossalFramework.Plugins;
 using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Serialization;
 using UnifiedUI.Helpers;
 using UnityEngine;
-using System.Collections;
 
 namespace MoveIt
 {
@@ -161,7 +158,7 @@ namespace MoveIt
                 }
             }
             watch.Stop();
-            Log.Info($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
+            Log.Debug($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
         }
 
         public static bool IsExportSelectionValid()
@@ -346,7 +343,6 @@ namespace MoveIt
                     if (restore)
                     {
                         SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
-                        //ActionQueue.instance.Do(); // For restore to position
                     }
                     else
                     {
@@ -381,7 +377,7 @@ namespace MoveIt
 
         internal static bool isTreeAnarchyEnabled()
         {
-            if (GetAssembly("tamod", "treeanarchy") == null)
+            if (QCommonLib.QCommon.CheckAssembly("tamod", "treeanarchy"))
             {
                 Log.Debug($"TreeAnarchy not found");
                 return false;
@@ -393,7 +389,7 @@ namespace MoveIt
 
         internal static bool isTreeSnappingEnabled()
         {
-            if (GetAssembly("mod", "treesnapping") == null)
+            if (QCommonLib.QCommon.CheckAssembly("mod", "treesnapping"))
             {
                 Log.Debug($"TreeSnapping not found");
                 return false;
@@ -403,38 +399,38 @@ namespace MoveIt
             return true;
         }
 
-        internal static Assembly GetAssembly(string modName, string assName, string assNameExcept = "", bool onlyEnabled = true)
-        {
-            foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
-            {
-                try
-                {
-                    if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && (!onlyEnabled || pluginInfo.isEnabled))
-                    {
-                        if (assNameExcept.Length > 0)
-                        {
-                            if (pluginInfo.GetAssemblies().Any(mod => mod.GetName().Name.ToLower() == assNameExcept))
-                            {
-                                break;
-                            }
-                        }
-                        foreach (Assembly assembly in pluginInfo.GetAssemblies())
-                        {
-                            if (assembly.GetName().Name.ToLower() == assName)
-                            {
-                                return assembly;
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
-                } // If the plugin fails to process, move on to next plugin
-            }
+        //internal static Assembly GetAssembly(string modName, string assName, string assNameExcept = "", bool onlyEnabled = true)
+        //{
+        //    foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
+        //    {
+        //        try
+        //        {
+        //            if (pluginInfo.userModInstance?.GetType().Name.ToLower() == modName && (!onlyEnabled || pluginInfo.isEnabled))
+        //            {
+        //                if (assNameExcept.Length > 0)
+        //                {
+        //                    if (pluginInfo.GetAssemblies().Any(mod => mod.GetName().Name.ToLower() == assNameExcept))
+        //                    {
+        //                        break;
+        //                    }
+        //                }
+        //                foreach (Assembly assembly in pluginInfo.GetAssemblies())
+        //                {
+        //                    if (assembly.GetName().Name.ToLower() == assName)
+        //                    {
+        //                        return assembly;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Log.Error(e);
+        //        } // If the plugin fails to process, move on to next plugin
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         internal static void FixTreeFixedHeightFlag()
         {
@@ -528,34 +524,6 @@ namespace MoveIt
                 message = "No ghost nodes found, nothing has been changed.";
             }
             panel.SetMessage("Removing Ghost Nodes", message, false);
-        }
-
-        internal static void NagOldLSM()
-        {
-            if (!lsmHasNagged && FoundOldLSM()) // check LSM
-            {
-                m_lsmWarningPanel = UILSMWarning.Open(typeof(UILSMWarning));
-                lsmHasNagged = true;
-            }
-        }
-
-        /// <summary>
-        /// Check for old versions of Loading Screen Mod, to nag the player to update
-        /// </summary>
-        /// <returns>Was an old version found?</returns>
-        internal static bool FoundOldLSM()
-        {
-            if (GetAssembly("mod", "loadingscreenmodklyte", "", false) != null)
-            {
-                return true;
-            }
-
-            if (GetAssembly("mod", "loadingscreenmod", "loadingscreenmodrevisited", false) != null)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         internal static byte RandomByte(byte min, byte max)
@@ -691,11 +659,11 @@ namespace MoveIt
         //}
     }
 
-    public static class ExtendEnumerator
-    {
-        public static void Enumerate(this IEnumerator enumerator)
-        {
-            while (enumerator.MoveNext()) { }
-        }
-    }
+    //public static class ExtendEnumerator
+    //{
+    //    public static void Enumerate(this IEnumerator enumerator)
+    //    {
+    //        while (enumerator.MoveNext()) { }
+    //    }
+    //}
 }

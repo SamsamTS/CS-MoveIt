@@ -10,8 +10,6 @@ namespace MoveIt
         public static readonly SavedInt savedX = new SavedInt("savedX", MoveItTool.settingsFileName, -1000, true);
         public static readonly SavedInt savedY = new SavedInt("savedY", MoveItTool.settingsFileName, -1000, true);
 
-        private UIPopupPanel m_changesWindow, m_lsmWarningWindow;
-
         private UIComponent BulldoserButton
         {
             get
@@ -29,12 +27,6 @@ namespace MoveIt
         public override void Start()
         {
             LoadResources();
-
-            m_changesWindow = GetUIView().AddUIComponent(typeof(UIPopupWindow)) as UIPopupWindow;
-            m_changesWindow.isVisible = false;
-
-            m_lsmWarningWindow = GetUIView().AddUIComponent(typeof(UILSMWarning)) as UILSMWarning;
-            m_lsmWarningWindow.isVisible = false;
 
             name = "MoveIt";
             tooltip = Str.baseUI_MoveItButton_Tooltip + " " + ModInfo.version;

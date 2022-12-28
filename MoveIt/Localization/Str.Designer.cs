@@ -682,37 +682,6 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Important Notice!
-        ///
-        ///Loading Screen Mod (LSM) is not compatible with Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
-        ///
-        ///Please unsubscribe from LSM or LSM Fix, and instead subscribe to Loading Screen Mod Revisited by algernon..
-        /// </summary>
-        internal static string lsmWarning {
-            get {
-                return ResourceManager.GetString("lsmWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LSM Revisited on Workshop.
-        /// </summary>
-        internal static string lsmWorkshopBtn {
-            get {
-                return ResourceManager.GetString("lsmWorkshopBtn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Visit the Steam Workshop page for Loading Screen Mod Revisited.
-        /// </summary>
-        internal static string lsmWorkshopBtn_Tooltip {
-            get {
-                return ResourceManager.GetString("lsmWorkshopBtn_Tooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Move things.
         /// </summary>
         internal static string mod_description {

@@ -259,10 +259,6 @@ namespace MoveIt
         protected static NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
         protected static Building[] buildingBuffer = Singleton<BuildingManager>.instance.m_buildings.m_buffer;
 
-        internal UIPopupPanel m_whatsNewPanel;
-        internal static UIPopupPanel m_lsmWarningPanel;
-        private static bool lsmHasNagged = false;
-
         public ToolAction m_nextAction = ToolAction.None;
 
         private static System.Random _rand = null;
@@ -354,8 +350,6 @@ namespace MoveIt
             //    m_whatsNewPanel = UIChangesWindow.Open(typeof(UIChangesWindow));
             //}
 
-            NagOldLSM();
-
             m_pauseMenu = UIView.library.Get("PauseMenu");
 
             m_prevInfoMode = InfoManager.instance.CurrentMode;
@@ -423,18 +417,6 @@ namespace MoveIt
                 UpdateAreas();
                 UpdateSegments();
                 SetToolState();
-
-                if (m_whatsNewPanel != null)
-                {
-                    m_whatsNewPanel.isVisible = false;
-                    m_whatsNewPanel = null;
-                }
-
-                if (m_lsmWarningPanel != null)
-                {
-                    m_lsmWarningPanel.isVisible = false;
-                    m_lsmWarningPanel = null;
-                }
 
                 if (UIToolOptionPanel.instance != null)
                 {
@@ -763,6 +745,7 @@ namespace MoveIt
 
                     if (areaUpdateCountdown == 0)
                     {
+                        AssetEditorSubBuilding.UpdatePanel();
                         UpdateAreas();
                     }
 
@@ -783,8 +766,6 @@ namespace MoveIt
 
         public void UpdateAreas()
         {
-            AssetEditorSubBuilding.UpdatePanel();
-
             //foreach (Bounds b in areasToUpdate)
             //{
             //    AddDebugBox(b, new Color32(255, 31, 31, 31));
