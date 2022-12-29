@@ -1,25 +1,22 @@
 ﻿using ColossalFramework.UI;
-
 using UnityEngine;
-
 using System.IO;
 using System.Reflection;
 
 namespace MoveIt
 {
-    class ResourceLoader
+    public class ResourceLoader
     {
         public static UITextureAtlas CreateTextureAtlas(string atlasName, string[] spriteNames, string assemblyPath)
         {
             int maxSize = 1024;
             Texture2D texture2D = new Texture2D(maxSize, maxSize, TextureFormat.ARGB32, false);
             Texture2D[] textures = new Texture2D[spriteNames.Length];
-            Rect[] regions = new Rect[spriteNames.Length];
 
             for (int i = 0; i < spriteNames.Length; i++)
                 textures[i] = loadTextureFromAssembly(assemblyPath + spriteNames[i] + ".png");
 
-            regions = texture2D.PackTextures(textures, 2, maxSize);
+            Rect[] regions = texture2D.PackTextures(textures, 2, maxSize);
 
             UITextureAtlas textureAtlas = ScriptableObject.CreateInstance<UITextureAtlas>();
             Material material = Object.Instantiate(UIView.GetAView().defaultAtlas.material);
@@ -104,7 +101,7 @@ namespace MoveIt
             return UIView.GetAView().defaultAtlas;
         }
 
-        private static Texture2D loadTextureFromAssembly(string path)
+        internal static Texture2D loadTextureFromAssembly(string path)
         {
             Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
 

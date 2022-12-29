@@ -8,13 +8,13 @@ namespace MoveIt
 
         private HashSet<InstanceState> m_states = new HashSet<InstanceState>();
 
-        public AlignHeightAction()
+        public AlignHeightAction() : base()
         {
             foreach (Instance instance in selection)
             {
                 if (instance.isValid)
                 {
-                    m_states.Add(instance.GetState());
+                    m_states.Add(instance.SaveToState(false));
                 }
             }
         }
@@ -36,7 +36,7 @@ namespace MoveIt
         {
             foreach (InstanceState state in m_states)
             {
-                state.instance.SetState(state);
+                state.instance.LoadFromState(state);
             }
 
             UpdateArea(GetTotalBounds(false));

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Quboid, MacSergey</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://github.com/Quboid/CS-MoveIt/tree/master/MoveItIntegration/</projectUrl>
+    <description>Integration for Cities Skylines mods to activate after Move It actions</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>Cities Skylines mod modification</tags>
+  </metadata>
+</package>

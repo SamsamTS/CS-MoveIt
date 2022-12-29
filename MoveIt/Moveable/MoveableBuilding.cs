@@ -1,13 +1,10 @@
-﻿using UnityEngine;
-
+﻿using ColossalFramework;
+using ColossalFramework.Math;
 using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-
-using ColossalFramework;
-using ColossalFramework.Math;
-
+using UnityEngine;
 
 namespace MoveIt
 {
@@ -15,6 +12,8 @@ namespace MoveIt
     {
         public Building.Flags flags;
         public int length;
+        public bool isSubInstance;
+        public bool isHidden;
 
         [XmlElement("subStates")]
         public InstanceState[] subStates;
@@ -35,53 +34,7 @@ namespace MoveIt
 
     public class MoveableBuilding : Instance
     {
-        public IEnumerable<Instance> subInstances
-        {
-            get
-            {
-                if (buildingBuffer[id.Building].m_parentBuilding == 0)
-                {
-                    ushort building = buildingBuffer[id.Building].m_subBuilding;
-                    int count = 0;
-                    while (building != 0)
-                    {
-
-                        InstanceID buildingID = default(InstanceID);
-                        buildingID.Building = building;
-
-                        yield return new MoveableBuilding(buildingID);
-                        building = buildingBuffer[building].m_subBuilding;
-
-                        if (++count > 49152)
-                        {
-                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                            break;
-                        }
-                    }
-
-                    ushort node = buildingBuffer[id.Building].m_netNode;
-                    count = 0;
-                    while (node != 0)
-                    {
-                        ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
-                        if (layer != ItemClass.Layer.PublicTransport)
-                        {
-                            InstanceID nodeID = default(InstanceID);
-                            nodeID.NetNode = node;
-                            yield return new MoveableNode(nodeID);
-                        }
-
-                        node = nodeBuffer[node].m_nextBuildingNode;
-
-                        if (++count > 32768)
-                        {
-                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        internal bool isSubInstance = false;
 
         public override HashSet<ushort> segmentList
         {
@@ -96,7 +49,7 @@ namespace MoveIt
                     ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
                     if (layer != ItemClass.Layer.PublicTransport)
                     {
-                        InstanceID nodeID = default(InstanceID);
+                        InstanceID nodeID = default;
                         nodeID.NetNode = node;
                         segments.UnionWith(new MoveableNode(nodeID).segmentList);
                     }
@@ -105,7 +58,7 @@ namespace MoveIt
 
                     if (++count > 32768)
                     {
-                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
                         break;
                     }
                 }
@@ -114,53 +67,76 @@ namespace MoveIt
             }
         }
 
-        public MoveableBuilding(InstanceID instanceID) : base(instanceID) { }
-
-        public override InstanceState GetState()
+        public MoveableBuilding(InstanceID instanceID, bool sub = false) : base(instanceID)
         {
-            BuildingState state = new BuildingState();
+            isSubInstance = sub;
+            isHidden = (buildingBuffer[id.Building].m_flags & Building.Flags.Hidden) == Building.Flags.Hidden;
+            Info = new Info_Prefab(BuildingManager.instance.m_buildings.m_buffer[instanceID.Building].Info);
 
-            state.instance = this;
-            state.info = info;
+            ResetSubInstances();
+        }
 
-            state.position = buildingBuffer[id.Building].m_position;
-            state.angle = buildingBuffer[id.Building].m_angle;
+        public override InstanceState SaveToState(bool integrate = true)
+        {
+            BuildingState state = new BuildingState
+            {
+                instance = this,
+                Info = Info,
+                position = buildingBuffer[id.Building].m_position,
+                angle = buildingBuffer[id.Building].m_angle,
+                flags = buildingBuffer[id.Building].m_flags,
+                length = buildingBuffer[id.Building].Length,
+                isSubInstance = isSubInstance,
+                isHidden = isHidden,
+                isCustomContent = Info.Prefab.m_isCustomContent
+            };
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
-            state.flags = buildingBuffer[id.Building].m_flags;
-            state.length = buildingBuffer[id.Building].Length;
 
             List<InstanceState> subStates = new List<InstanceState>();
 
-            foreach (Instance instance in subInstances)
+            foreach (Instance subInstance in subInstances)
             {
-                if (instance != null && instance.isValid)
+                if (subInstance != null && subInstance.isValid)
                 {
-                    subStates.Add(instance.GetState());
+                    if (subInstance.id.Building > 0)
+                    {
+                        subStates.Add(((MoveableBuilding)subInstance).SaveToState());
+                    }
+                    else
+                    {
+                        subStates.Add(subInstance.SaveToState());
+                    }
                 }
             }
 
             if (subStates.Count > 0)
                 state.subStates = subStates.ToArray();
 
+            state.SaveIntegrations(integrate);
+
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
             if (!(state is BuildingState buildingState)) return;
 
             ushort building = buildingState.instance.id.Building;
 
             buildingBuffer[building].m_flags = buildingState.flags;
+            AddFixedHeightFlag(building);
             RelocateBuilding(building, ref buildingBuffer[building], buildingState.position, buildingState.angle);
+            isSubInstance = buildingState.isSubInstance;
+            isHidden = buildingState.isHidden;
 
             if (buildingState.subStates != null)
             {
                 foreach (InstanceState subState in buildingState.subStates)
                 {
-                    subState.instance.SetState(subState);
+                    subState.instance.LoadFromState(subState);
                 }
             }
+            buildingBuffer[building].m_flags = buildingState.flags;
         }
 
         public override Vector3 position
@@ -170,6 +146,11 @@ namespace MoveIt
                 if (id.IsEmpty) return Vector3.zero;
                 return buildingBuffer[id.Building].m_position;
             }
+            set
+            {
+                if (id.IsEmpty) return;
+                buildingBuffer[id.Building].m_position = value;
+            }
         }
 
         public override float angle
@@ -178,6 +159,11 @@ namespace MoveIt
             {
                 if (id.IsEmpty) return 0f;
                 return buildingBuffer[id.Building].m_angle;
+            }
+            set
+            {
+                if (id.IsEmpty) return;
+                buildingBuffer[id.Building].m_angle = (value + Mathf.PI * 2) % (Mathf.PI * 2);
             }
         }
 
@@ -190,6 +176,14 @@ namespace MoveIt
             }
         }
 
+        public int Length
+        {
+            get
+            {
+                return buildingBuffer[id.Building].m_length;
+            }
+        }
+
         public override void Transform(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain)
         {
             BuildingState state = instanceState as BuildingState;
@@ -198,42 +192,99 @@ namespace MoveIt
             newPosition.y = state.position.y + deltaHeight;
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+            bool isFixed = GetFixedHeightFlag(id.Building);
+            if (!isFixed) AddFixedHeightFlag(id.Building);
 
             if (followTerrain)
             {
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
 
-            // TODO: when should the flag be set?
-            if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
-            {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
-            {
-                RemoveFixedHeightFlag(id.Building);
-            }
-
+            AddFixedHeightFlag(id.Building);
             Move(newPosition, state.angle + deltaAngle);
+
+            Matrix4x4 matrixSub = default;
+            matrixSub.SetTRS(Vector3.zero, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             if (state.subStates != null)
             {
                 foreach (InstanceState subState in state.subStates)
                 {
-                    Vector3 subPosition = subState.position - center;
-                    subPosition = matrix4x.MultiplyPoint(subPosition);
+                    Vector3 subOffset = (subState.position - center) - (state.position - center);
+                    Vector3 subPosition = TransformPosition + matrixSub.MultiplyPoint(subOffset);
+
                     subPosition.y = subState.position.y - state.position.y + newPosition.y;
 
                     subState.instance.Move(subPosition, subState.angle + deltaAngle);
+                    if (subState.instance is MoveableNode mn)
+                    {
+                        if (mn.Pillar != null)
+                        {
+                            mn.Pillar.Move(subPosition, subState.angle + deltaAngle);
+                        }
+                    }
+
+                    if (subState is BuildingState bs)
+                    {
+                        if (bs.subStates != null)
+                        {
+                            foreach (InstanceState subSubState in bs.subStates)
+                            {
+                                Vector3 subSubOffset = (subSubState.position - center) - (state.position - center);
+                                Vector3 subSubPosition = TransformPosition + matrixSub.MultiplyPoint(subSubOffset);
+
+                                subSubPosition.y = subSubState.position.y - state.position.y + newPosition.y;
+
+                                subSubState.instance.Move(subSubPosition, subSubState.angle + deltaAngle);
+                                if (subSubState.instance is MoveableNode mn2)
+                                {
+                                    if (mn2.Pillar != null)
+                                    {
+                                        mn2.Pillar.Move(subSubPosition, subSubState.angle + deltaAngle);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
+
+            if (!isFixed && Mathf.Abs(terrainHeight - newPosition.y) < 0.01f)
+            {
+                RemoveFixedHeightFlag(id.Building);
+            }
+        }
+
+        internal override void SetHidden(bool hide)
+        {
+            buildingBuffer[id.Building].m_flags = ToggleBuildingHiddenFlag(id.Building, hide);
+        }
+
+        public void InitialiseDrag()
+        {
+            Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
+            bounds.Expand(32f);
+            Action.UpdateArea(bounds);
+        }
+
+        public void FinaliseDrag()
+        {
+            Bounds bounds = new Bounds(position, new Vector3(Length, 0, Length));
+            bounds.Expand(32f);
+            Action.UpdateArea(bounds);
         }
 
         public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
 
-            RelocateBuilding(id.Building, ref buildingBuffer[id.Building], location, angle);
+            TransformAngle = angle;
+            TransformPosition = location;
+
+            if (!isVirtual())
+            {
+                RelocateBuilding(id.Building, ref buildingBuffer[id.Building], location, angle);
+            }
         }
 
         public override void SetHeight(float height)
@@ -241,16 +292,8 @@ namespace MoveIt
             Vector3 newPosition = position;
 
             float terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
-
-            // TODO: when should the flag be set?
-            if (Mathf.Abs(terrainHeight - height) > 0.01f)
-            {
-                AddFixedHeightFlag(id.Building);
-            }
-            else
-            {
-                RemoveFixedHeightFlag(id.Building);
-            }
+            bool isFixed = GetFixedHeightFlag(id.Building);
+            if (!isFixed) AddFixedHeightFlag(id.Building);
 
             foreach (Instance subInstance in subInstances)
             {
@@ -262,9 +305,37 @@ namespace MoveIt
 
             newPosition.y = height;
             Move(newPosition, angle);
+
+            if (!isFixed && Mathf.Abs(terrainHeight - newPosition.y) < 0.01f)
+            {
+                RemoveFixedHeightFlag(id.Building);
+            }
         }
 
-        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override void SetHeight()
+        {
+            Building b = (Building)data;
+            b.m_baseHeight = 0;
+            SetHeight(TerrainManager.instance.SampleOriginalRawHeightSmooth(position));
+        }
+
+        internal MoveableBuilding Duplicate()
+        {
+            if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
+                (BuildingInfo)Info.Prefab, position, angle,
+                buildingBuffer[id.Building].Length, SimulationManager.instance.m_currentBuildIndex))
+            {
+                buildingBuffer[clone].m_flags |= Building.Flags.FixedHeight;
+                buildingBuffer[clone].m_position = position;
+                InstanceID cloneID = default;
+                cloneID.Building = clone;
+                return new MoveableBuilding(cloneID);
+            }
+
+            throw new Exception($"Failed to duplicate {id.Building}!");
+        }
+
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             BuildingState state = instanceState as BuildingState;
 
@@ -278,7 +349,7 @@ namespace MoveIt
                 newPosition.y = newPosition.y + terrainHeight - state.terrainHeight;
             }
             MoveableBuilding cloneInstance = null;
-            BuildingInfo info = state.info as BuildingInfo;
+            BuildingInfo info = state.Info.Prefab as BuildingInfo;
 
             float newAngle = state.angle + deltaAngle;
             if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
@@ -287,7 +358,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.Building = clone;
                 cloneInstance = new MoveableBuilding(cloneID);
 
@@ -299,8 +370,15 @@ namespace MoveIt
                 {
                     buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.FixedHeight;
                 }
+                if ((state.flags & Building.Flags.Historical) != Building.Flags.None)
+                {
+                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Historical;
+                }
+                if ((state.flags & Building.Flags.Hidden) != Building.Flags.None)
+                {
+                    buildingBuffer[clone].m_flags = buildingBuffer[clone].m_flags | Building.Flags.Hidden;
+                }
 
-                // TODO: when should the flag be set?
                 if (Mathf.Abs(terrainHeight - newPosition.y) > 0.01f)
                 {
                     AddFixedHeightFlag(clone);
@@ -312,7 +390,7 @@ namespace MoveIt
 
                 if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
                 {
-                    Matrix4x4 subMatrix4x = default(Matrix4x4);
+                    Matrix4x4 subMatrix4x = default;
                     subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                     for (int i = 0; i < info.m_subBuildings.Length; i++)
                     {
@@ -338,17 +416,19 @@ namespace MoveIt
                         }
                     }
                 }
+                cloneInstance.ResetSubInstances();
             }
 
             return cloneInstance;
         }
 
+        // For Deletion Undo
         public override Instance Clone(InstanceState instanceState, Dictionary<ushort, ushort> clonedNodes)
         {
             BuildingState state = instanceState as BuildingState;
 
             MoveableBuilding cloneInstance = null;
-            BuildingInfo info = state.info as BuildingInfo;
+            BuildingInfo info = state.Info.Prefab as BuildingInfo;
 
             if (BuildingManager.instance.CreateBuilding(out ushort clone, ref SimulationManager.instance.m_randomizer,
                 info, state.position, state.angle,
@@ -356,7 +436,7 @@ namespace MoveIt
             {
                 SimulationManager.instance.m_currentBuildIndex++;
 
-                InstanceID cloneID = default(InstanceID);
+                InstanceID cloneID = default;
                 cloneID.Building = clone;
                 cloneInstance = new MoveableBuilding(cloneID);
 
@@ -364,7 +444,7 @@ namespace MoveIt
 
                 if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
                 {
-                    Matrix4x4 subMatrix4x = default(Matrix4x4);
+                    Matrix4x4 subMatrix4x = default;
                     subMatrix4x.SetTRS(state.position, Quaternion.AngleAxis(state.angle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                     for (int i = 0; i < info.m_subBuildings.Length; i++)
                     {
@@ -390,6 +470,7 @@ namespace MoveIt
                         }
                     }
                 }
+                cloneInstance.ResetSubInstances();
             }
 
             return cloneInstance;
@@ -397,7 +478,13 @@ namespace MoveIt
 
         public override void Delete()
         {
-            if (isValid) BuildingManager.instance.ReleaseBuilding(id.Building);
+            if (isValid)
+            {
+                SimulationManager.instance.AddAction(() =>
+                {
+                    BuildingManager.instance.ReleaseBuilding(id.Building);
+                });
+            }
         }
 
         public void AddFixedHeightFlag(ushort building)
@@ -410,16 +497,80 @@ namespace MoveIt
             buildingBuffer[building].m_flags = buildingBuffer[building].m_flags & ~Building.Flags.FixedHeight;
         }
 
+        public bool GetFixedHeightFlag(ushort building)
+        {
+            return (buildingBuffer[building].m_flags & Building.Flags.FixedHeight) == Building.Flags.FixedHeight;
+        }
+        
+        internal void ResetSubInstances()
+        {
+            List<Instance> instances = new List<Instance>();
+            int count = 0;
+
+            if (!isSubInstance)
+            {
+                ushort building = buildingBuffer[id.Building].m_subBuilding;
+                while (building != 0)
+                {
+                    InstanceID buildingID = default;
+                    buildingID.Building = building;
+
+                    instances.Add(new MoveableBuilding(buildingID, true));
+                    building = buildingBuffer[building].m_subBuilding;
+
+                    if (++count > 49152)
+                    {
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Buildings: Invalid list detected!\n" + Environment.StackTrace);
+                        break;
+                    }
+                }
+            }
+
+            ushort node = buildingBuffer[id.Building].m_netNode;
+            count = 0;
+            while (node != 0)
+            {
+                ItemClass.Layer layer = nodeBuffer[node].Info.m_class.m_layer;
+                if (layer != ItemClass.Layer.PublicTransport)
+                {
+                    InstanceID nodeID = default;
+                    nodeID.NetNode = node;
+                    instances.Add(new MoveableNode(nodeID));
+                }
+
+                node = nodeBuffer[node].m_nextBuildingNode;
+                if ((nodeBuffer[node].m_flags & NetNode.Flags.Created) != NetNode.Flags.Created)
+                {
+                    node = 0;
+                }
+
+                if (++count > 32768)
+                {
+                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Nodes: Invalid list detected!\n" + Environment.StackTrace);
+                    break;
+                }
+            }
+
+            subInstances = instances;
+        }
+
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
             BuildingInfo info = buildingBuffer[id.Building].Info;
 
             float radius = Mathf.Max(info.m_cellWidth * 4f, info.m_cellLength * 4f);
-            Bounds bounds = new Bounds(buildingBuffer[id.Building].m_position, new Vector3(radius, 0, radius));
+            Bounds bounds = new Bounds(OverlayPosition, new Vector3(radius, 0, radius));
 
             foreach (Instance subInstance in subInstances)
             {
-                bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                if (subInstance is MoveableBuilding mb)
+                {
+                    bounds.Encapsulate(mb.GetBounds(ignoreSegments));
+                }
+                else
+                {
+                    bounds.Encapsulate(subInstance.GetBounds(ignoreSegments));
+                }
             }
 
             return bounds;
@@ -428,11 +579,12 @@ namespace MoveIt
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity) return;
 
             ushort building = id.Building;
             BuildingInfo buildingInfo = buildingBuffer[building].Info;
 
-            if (WillBuildingDespawn(building))
+            if (toolColor != MoveItTool.m_alignColor && WillBuildingDespawn(building))
             {
                 toolColor = despawnColor;
             }
@@ -442,54 +594,37 @@ namespace MoveIt
             toolColor.a *= alpha;
 
             int length = buildingBuffer[building].Length;
-            Vector3 position = buildingBuffer[building].m_position;
-            float angle = buildingBuffer[building].m_angle;
-            BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, position, angle, toolColor, false);
-
-            ushort node = buildingBuffer[building].m_netNode;
-            int count = 0;
-            while (node != 0)
+            BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, OverlayPosition, OverlayAngle, toolColor, false);
+;
+            foreach (Instance subInstance in subInstances)
             {
-                for (int k = 0; k < 8; k++)
+                if (subInstance is MoveableNode mn)
                 {
-                    ushort segment2 = netManager.m_nodes.m_buffer[node].GetSegment(k);
-                    if (segment2 != 0 && netManager.m_segments.m_buffer[segment2].m_startNode == node && (netManager.m_segments.m_buffer[segment2].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
+                    ushort node = mn.id.NetNode;
+                    for (int k = 0; k < 8; k++)
                     {
-                        NetTool.RenderOverlay(cameraInfo, ref netManager.m_segments.m_buffer[segment2], toolColor, toolColor);
+                        ushort segment = netManager.m_nodes.m_buffer[node].GetSegment(k);
+                        if (segment != 0 && netManager.m_segments.m_buffer[segment].m_startNode == node && (netManager.m_segments.m_buffer[segment].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None)
+                        {
+                            NetTool.RenderOverlay(cameraInfo, ref netManager.m_segments.m_buffer[segment], toolColor, toolColor);
+                        }
                     }
                 }
-                node = netManager.m_nodes.m_buffer[node].m_nextBuildingNode;
-
-                if (++count > 32768)
+                else if (subInstance is MoveableBuilding mb)
                 {
-                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                    break;
-                }
-            }
-            ushort subBuilding = buildingBuffer[building].m_subBuilding;
-            count = 0;
-            while (subBuilding != 0)
-            {
-                BuildingInfo subBuildingInfo = buildingBuffer[subBuilding].Info;
-                int subLength = buildingBuffer[subBuilding].Length;
-                Vector3 subPosition = buildingBuffer[subBuilding].m_position;
-                float subAngle = buildingBuffer[subBuilding].m_angle;
-                BuildingTool.RenderOverlay(cameraInfo, subBuildingInfo, subLength, subPosition, subAngle, toolColor, false);
-                subBuilding = buildingBuffer[subBuilding].m_subBuilding;
-
-                if (++count > 49152)
-                {
-                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                    break;
+                    Building b = buildingBuffer[mb.id.Building];
+                    BuildingTool.RenderOverlay(cameraInfo, (BuildingInfo)mb.Info.Prefab, b.Length, mb.OverlayPosition, mb.OverlayAngle, toolColor, false);
                 }
             }
         }
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity) return;
+
             BuildingState state = instanceState as BuildingState;
 
-            BuildingInfo buildingInfo = state.info as BuildingInfo;
+            BuildingInfo buildingInfo = state.Info.Prefab as BuildingInfo;
 
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaPosition.y;
@@ -501,18 +636,18 @@ namespace MoveIt
 
             float newAngle = state.angle + deltaAngle;
 
-            buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, newPosition, newAngle, default(Segment3));
+            buildingInfo.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, newPosition, newAngle, default);
             BuildingTool.RenderOverlay(cameraInfo, buildingInfo, state.length, newPosition, newAngle, toolColor, false);
             if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
             {
-                Matrix4x4 subMatrix4x = default(Matrix4x4);
+                Matrix4x4 subMatrix4x = default;
                 subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
                 for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
                 {
                     BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
                     Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
                     float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
-                    buildingInfo2.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, position, angle, default(Segment3));
+                    buildingInfo2.m_buildingAI.RenderBuildOverlay(cameraInfo, toolColor, position, angle, default);
                     BuildingTool.RenderOverlay(cameraInfo, buildingInfo2, 0, position, angle, toolColor, true);
                 }
             }
@@ -520,39 +655,61 @@ namespace MoveIt
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            BuildingState state = instanceState as BuildingState;
+            RenderCloneGeometryImplementation(instanceState, ref matrix4x, deltaPosition, deltaAngle, center, followTerrain, cameraInfo);
+        }
 
-            BuildingInfo buildingInfo = state.info as BuildingInfo;
-            Color color = GetColor(state.instance.id.Building, buildingInfo);
+        public static void RenderCloneGeometryImplementation(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo)
+        {
+            BuildingInfo info = instanceState.Info.Prefab as BuildingInfo;
+            Color color = GetColor(instanceState.instance.id.Building, info);
 
-            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
-            newPosition.y = state.position.y + deltaPosition.y;
+            Vector3 newPosition = matrix4x.MultiplyPoint(instanceState.position - center);
+            newPosition.y = instanceState.position.y + deltaPosition.y;
 
             if (followTerrain)
             {
-                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+                newPosition.y = newPosition.y - instanceState.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             }
 
-            float newAngle = state.angle + deltaAngle;
+            float newAngle = instanceState.angle + deltaAngle;
 
-            buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, newPosition, newAngle, 0);
-            BuildingTool.RenderGeometry(cameraInfo, buildingInfo, state.length, newPosition, newAngle, false, color);
-            if (buildingInfo.m_subBuildings != null && buildingInfo.m_subBuildings.Length != 0)
+            info.m_buildingAI.RenderBuildGeometry(cameraInfo, newPosition, newAngle, 0);
+            BuildingTool.RenderGeometry(cameraInfo, info, info.GetLength(), newPosition, newAngle, false, color);
+            if (info.m_subBuildings != null && info.m_subBuildings.Length != 0)
             {
-                Matrix4x4 subMatrix4x = default(Matrix4x4);
+                Matrix4x4 subMatrix4x = default;
                 subMatrix4x.SetTRS(newPosition, Quaternion.AngleAxis(newAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
-                for (int i = 0; i < buildingInfo.m_subBuildings.Length; i++)
+                for (int i = 0; i < info.m_subBuildings.Length; i++)
                 {
-                    BuildingInfo buildingInfo2 = buildingInfo.m_subBuildings[i].m_buildingInfo;
-                    Vector3 position = subMatrix4x.MultiplyPoint(buildingInfo.m_subBuildings[i].m_position);
-                    float angle = buildingInfo.m_subBuildings[i].m_angle * 0.0174532924f + newAngle;
+                    BuildingInfo buildingInfo2 = info.m_subBuildings[i].m_buildingInfo;
+                    Vector3 position = subMatrix4x.MultiplyPoint(info.m_subBuildings[i].m_position);
+                    float angle = info.m_subBuildings[i].m_angle * Mathf.Deg2Rad + newAngle;
                     buildingInfo2.m_buildingAI.RenderBuildGeometry(cameraInfo, position, angle, 0);
                     BuildingTool.RenderGeometry(cameraInfo, buildingInfo2, 0, position, angle, true, color);
                 }
             }
         }
 
-        private Color GetColor(ushort buildingID, BuildingInfo info)
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo, Color toolColor)
+        {
+            if (isHidden) return;
+            if (!Virtual) return;
+            BuildingInfo buildingInfo = Info.Prefab as BuildingInfo;
+            Color color = GetColor(id.Building, buildingInfo);
+
+            buildingInfo.m_buildingAI.RenderBuildGeometry(cameraInfo, OverlayPosition, OverlayAngle, 0);
+            BuildingTool.RenderGeometry(cameraInfo, buildingInfo, Length, OverlayPosition, OverlayAngle, false, color);
+
+            foreach (Instance subInstance in subInstances)
+            {
+                if (subInstance is MoveableBuilding msb)
+                {
+                    msb.RenderGeometry(cameraInfo, toolColor);
+                }
+            }
+        }
+
+        internal static Color GetColor(ushort buildingID, BuildingInfo info)
         {
             if (!info.m_useColorVariations)
             {
@@ -587,7 +744,7 @@ namespace MoveIt
             }
 
             info.m_buildingAI.CheckRoadAccess(building, ref buildingBuffer[building]);
-            if ((buildingBuffer[building].m_problems & Notification.Problem.RoadNotConnected) == Notification.Problem.RoadNotConnected ||
+            if ((buildingBuffer[building].m_problems & Notification.Problem1.RoadNotConnected) == Notification.Problem1.RoadNotConnected ||
                 !buildingBuffer[building].CheckZoning(zone1, zone2, true))
             {
                 return true;
@@ -598,19 +755,21 @@ namespace MoveIt
 
         private void RelocateBuilding(ushort building, ref Building data, Vector3 position, float angle)
         {
-            BuildingInfo info = data.Info;
             RemoveFromGrid(building, ref data);
-            if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
-            {
-                BuildingManager.instance.UpdateParkingSpaces(building, ref data);
-            }
+
+            //BuildingInfo info = data.Info;
+            //if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
+            //{
+            //    Log.Debug($"PARKING (RB)\n#{building}:{info.name}");
+            //    BuildingManager.instance.UpdateParkingSpaces(building, ref data);
+            //}
 
             data.m_position = position;
-            data.m_angle = angle;
+            data.m_angle = (angle + Mathf.PI * 2) % (Mathf.PI * 2);
 
             AddToGrid(building, ref data);
             data.CalculateBuilding(building);
-            BuildingManager.instance.UpdateBuildingRenderer(building, true);
+            Singleton<SimulationManager>.instance.AddAction(() => BuildingManager.instance.UpdateBuildingRenderer(building, true));
         }
 
         private static void AddToGrid(ushort building, ref Building data)
@@ -623,8 +782,13 @@ namespace MoveIt
             }
             try
             {
-                buildingBuffer[(int)building].m_nextGridBuilding = BuildingManager.instance.m_buildingGrid[num3];
+                buildingBuffer[building].m_nextGridBuilding = BuildingManager.instance.m_buildingGrid[num3];
                 BuildingManager.instance.m_buildingGrid[num3] = building;
+                if (buildingBuffer[building].m_nextGridBuilding == building)
+                {
+                    Log.Error($"Building #{building} has self as nextGirdBuilding");
+                    buildingBuffer[building].m_nextGridBuilding = 0;
+                }
             }
             finally
             {
@@ -645,26 +809,28 @@ namespace MoveIt
             }
             try
             {
-                ushort num4 = 0;
-                ushort num5 = buildingManager.m_buildingGrid[num3];
-                int num6 = 0;
-                while (num5 != 0)
+                ushort loopPreviousId = 0;
+                ushort loopNextId = buildingManager.m_buildingGrid[num3];
+                int count = 0;
+
+                // Loop through buildings in this grid square
+                while (loopNextId != 0)
                 {
-                    if (num5 == building)
-                    {
-                        if (num4 == 0)
+                    if (loopNextId == building)
+                    { // found building being moved
+                        if (loopPreviousId == 0)
                         {
                             buildingManager.m_buildingGrid[num3] = data.m_nextGridBuilding;
                         }
                         else
                         {
-                            buildingBuffer[(int)num4].m_nextGridBuilding = data.m_nextGridBuilding;
+                            buildingBuffer[(int)loopPreviousId].m_nextGridBuilding = data.m_nextGridBuilding;
                         }
                         break;
                     }
-                    num4 = num5;
-                    num5 = buildingBuffer[(int)num5].m_nextGridBuilding;
-                    if (++num6 > 49152)
+                    loopPreviousId = loopNextId;
+                    loopNextId = buildingBuffer[(int)loopNextId].m_nextGridBuilding;
+                    if (++count > 49152)
                     {
                         CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
                         break;

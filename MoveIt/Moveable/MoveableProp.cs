@@ -1,18 +1,24 @@
-﻿using UnityEngine;
-
-using System.Collections.Generic;
+﻿using ColossalFramework;
 using ColossalFramework.Math;
-
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace MoveIt
 {
     public class PropState : InstanceState
     {
         public bool single;
+        public bool fixedHeight;
     }
 
     public class MoveableProp : Instance
     {
+        /// <summary>
+        /// As a prop without FixedHeight is moved, track the vertical offset to maintain height if FixedHeight is then enabled
+        /// </summary>
+        private float yTerrainOffset = 0;
+
         public override HashSet<ushort> segmentList
         {
             get
@@ -21,34 +27,44 @@ namespace MoveIt
             }
         }
 
-        public MoveableProp(InstanceID instanceID) : base(instanceID) { }
-
-        public override InstanceState GetState()
+        public MoveableProp(InstanceID instanceID) : base(instanceID)
         {
-            PropState state = new PropState();
+            Info = PropLayer.Manager.GetInfo(instanceID);
+        }
 
-            state.instance = this;
+        public override InstanceState SaveToState(bool integrate = true)
+        {
+            PropState state = new PropState
+            {
+                instance = this,
+                isCustomContent = Info.Prefab.m_isCustomContent
+            };
 
-            ushort prop = id.Prop;
-            state.info = info;
+            IProp prop = PropLayer.Manager.Buffer(id);
 
-            state.position = PropManager.instance.m_props.m_buffer[prop].Position;
-            state.angle = PropManager.instance.m_props.m_buffer[prop].Angle;
+            state.Info = Info;
+
+            state.position = prop.Position;
+            state.angle = prop.Angle;
             state.terrainHeight = TerrainManager.instance.SampleOriginalRawHeightSmooth(state.position);
+            state.single = prop.Single;
+            state.fixedHeight = prop.FixedHeight;
 
-            state.single = PropManager.instance.m_props.m_buffer[prop].Single;
+            state.SaveIntegrations(integrate);
 
             return state;
         }
 
-        public override void SetState(InstanceState state)
+        public override void LoadFromState(InstanceState state)
         {
-            if (!(state is InstanceState propState)) return;
+            if (!(state is PropState propState)) return;
 
-            ushort prop = id.Prop;
-            PropManager.instance.m_props.m_buffer[prop].Angle = propState.angle;
-            PropManager.instance.MoveProp(prop, propState.position);
-            PropManager.instance.UpdatePropRenderer(prop, true);
+            IProp prop = PropLayer.Manager.Buffer(id);
+            prop.Angle = propState.angle;
+            prop.FixedHeight = propState.fixedHeight;
+
+            prop.MoveProp(propState.position);
+            prop.UpdatePropRenderer(true);
         }
 
         public override Vector3 position
@@ -56,7 +72,12 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return Vector3.zero;
-                return PropManager.instance.m_props.m_buffer[id.Prop].Position;
+                return PropLayer.Manager.Buffer(id).Position;
+            }
+            set
+            {
+                if (id.IsEmpty) PropLayer.Manager.Buffer(id).Position = Vector3.zero;
+                else PropLayer.Manager.Buffer(id).Position = value;
             }
         }
 
@@ -65,7 +86,12 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return 0f;
-                return PropManager.instance.m_props.m_buffer[id.Prop].Angle;
+                return PropLayer.Manager.Buffer(id).Angle;
+            }
+            set
+            {
+                if (id.IsEmpty) return;
+                PropLayer.Manager.Buffer(id).Angle = (value + Mathf.PI * 2) % (Mathf.PI * 2);
             }
         }
 
@@ -74,7 +100,7 @@ namespace MoveIt
             get
             {
                 if (id.IsEmpty) return false;
-                return PropManager.instance.m_props.m_buffer[id.Prop].m_flags != 0;
+                return PropLayer.Manager.Buffer(id).m_flags != 0;
             }
         }
 
@@ -83,22 +109,78 @@ namespace MoveIt
             Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
             newPosition.y = state.position.y + deltaHeight;
 
-            if (followTerrain)
+            if (!PropLayer.Manager.Buffer(id).FixedHeight && deltaHeight != 0 && (MoveItLoader.loadMode == ICities.LoadMode.LoadAsset || MoveItLoader.loadMode == ICities.LoadMode.NewAsset))
             {
-                newPosition.y = newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+                PropLayer.Manager.Buffer(id).FixedHeight = true;
             }
 
+            newPosition.y = GetPropYPos(state, deltaHeight, newPosition, followTerrain);
+
             Move(newPosition, state.angle + deltaAngle);
+        }
+
+        internal float GetPropYPos(InstanceState state, float deltaHeight, Vector3 newPosition, bool followTerrain, bool isClone = false)
+        {
+            IPropsWrapper manager = PropLayer.Manager;
+            float y;
+
+            float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
+
+            if (PropLayer.EML)
+            {
+                if (!manager.GetSnappingState())
+                {
+                    y = terrainHeight;
+                }
+                else if (manager.GetFixedHeight(id))
+                { // If it's already fixed height, handle followTerrain. If the state is being cloned, don't use the terrain-height offset
+                    y = newPosition.y + (isClone ? 0 : yTerrainOffset);
+                    if (followTerrain)
+                    {
+                        y += terrainHeight - state.terrainHeight;
+                    }
+                }
+                else
+                { // Snapping is on and it is not fixed height yet
+                    if (deltaHeight != 0)
+                    {
+                        manager.SetFixedHeight(id, true);
+                        y = terrainHeight + deltaHeight;
+                        yTerrainOffset = terrainHeight - state.terrainHeight;
+                    }
+                    else
+                    {
+                        y = terrainHeight;
+                    }
+                }
+                return y;
+            }
+            else
+            {
+                if (followTerrain)
+                {
+                    return newPosition.y + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition) - state.terrainHeight;
+                }
+            }
+
+            return newPosition.y;
+
+            //Log.Debug($"{path}\nstate:{state.terrainHeight} tH-state:{terrainHeight - state.terrainHeight}, yTO:{yTerrainOffset}\n" +
+            //    $"ft:{followTerrain}, ts:{MoveItTool.treeSnapping}, fh:{trees[treeID].FixedHeight}, dh:{deltaHeight}\n" +
+            //    $"FRAME  - newY:{newPosition.y}, oldY:{position.y}, diff:{newPosition.y - position.y}\n" +
+            //    $"ADJUST - adjY:{y}, newY:{newPosition.y}, diff:{y - newPosition.y}\n" +
+            //    $"TOTAL  - adjY:{y}, oldY:{position.y}, diff:{y - position.y}\n" +
+            //    $"HEIGHT - adjY:{y}, terrainHeight:{terrainHeight}, diff:{y - terrainHeight}");
         }
 
         public override void Move(Vector3 location, float angle)
         {
             if (!isValid) return;
 
-            ushort prop = id.Prop;
-            PropManager.instance.m_props.m_buffer[prop].Angle = angle;
-            PropManager.instance.MoveProp(prop, location);
-            PropManager.instance.UpdatePropRenderer(prop, true);
+            IProp prop = PropLayer.Manager.Buffer(id);
+            prop.Angle = angle;
+            prop.MoveProp(location);
+            prop.UpdatePropRenderer(true);
         }
 
         public override void SetHeight(float height)
@@ -106,12 +188,30 @@ namespace MoveIt
             Vector3 newPosition = position;
             newPosition.y = height;
 
-            ushort prop = id.Prop;
-            PropManager.instance.MoveProp(prop, newPosition);
-            PropManager.instance.UpdatePropRenderer(prop, true);
+            if (PropLayer.Manager.GetSnappingState())
+            {
+                float terrainHeight = Singleton<TerrainManager>.instance.SampleDetailHeight(newPosition);
+                if (height > terrainHeight + 0.075f || height < terrainHeight - 0.075f)
+                {
+                    PropLayer.Manager.SetFixedHeight(id, true);
+                }
+                else
+                {
+                    PropLayer.Manager.SetFixedHeight(id, false);
+                }
+            }
+
+            IProp prop = PropLayer.Manager.Buffer(id);
+            prop.MoveProp(newPosition);
+            prop.UpdatePropRenderer(true);
         }
 
-        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes)
+        public override void SetHeight()
+        {
+            SetHeight(TerrainManager.instance.SampleDetailHeight(position));
+        }
+
+        public override Instance Clone(InstanceState instanceState, ref Matrix4x4 matrix4x, float deltaHeight, float deltaAngle, Vector3 center, bool followTerrain, Dictionary<ushort, ushort> clonedNodes, Action action)
         {
             PropState state = instanceState as PropState;
 
@@ -125,13 +225,11 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            PropInstance[] buffer = PropManager.instance.m_props.m_buffer;
-
-            if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
-                state.info as PropInfo, newPosition, state.angle + deltaAngle, state.single))
+            if (PropLayer.Manager.CreateProp(out uint clone, state.Info.Prefab as PropInfo, newPosition, state.angle + deltaAngle, state.single))
             {
-                InstanceID cloneID = default(InstanceID);
-                cloneID.Prop = clone;
+                InstanceID cloneID = default;
+                cloneID = PropLayer.Manager.SetProp(cloneID, clone);
+                PropLayer.Manager.Buffer(cloneID).FixedHeight = state.fixedHeight;
                 cloneInstance = new MoveableProp(cloneID);
             }
 
@@ -144,11 +242,10 @@ namespace MoveIt
 
             Instance cloneInstance = null;
 
-            if (PropManager.instance.CreateProp(out ushort clone, ref SimulationManager.instance.m_randomizer,
-                state.info as PropInfo, state.position, state.angle, state.single))
+            if (PropLayer.Manager.CreateProp(out uint clone, state.Info.Prefab as PropInfo, state.position, state.angle, state.single))
             {
-                InstanceID cloneID = default(InstanceID);
-                cloneID.Prop = clone;
+                InstanceID cloneID = default;
+                cloneID = PropLayer.Manager.SetProp(cloneID, clone);
                 cloneInstance = new MoveableProp(cloneID);
             }
 
@@ -157,32 +254,29 @@ namespace MoveIt
 
         public override void Delete()
         {
-            if (isValid) PropManager.instance.ReleaseProp(id.Prop);
+            if (isValid) PropLayer.Manager.Buffer(id).ReleaseProp();
         }
 
         public override Bounds GetBounds(bool ignoreSegments = true)
         {
-            ushort prop = id.Prop;
-            PropInfo info = PropManager.instance.m_props.m_buffer[prop].Info;
+            IProp prop = PropLayer.Manager.Buffer(id);
 
-            Randomizer randomizer = new Randomizer(prop);
-            float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
-            float radius = Mathf.Max(info.m_generatedInfo.m_size.x, info.m_generatedInfo.m_size.z) * scale;
+            float scale = PropLayer.Manager.GetScale(id, prop);
+            float radius = Mathf.Max(prop.Info.m_generatedInfo.m_size.x, prop.Info.m_generatedInfo.m_size.z) * scale;
 
-            return new Bounds(PropManager.instance.m_props.m_buffer[prop].Position, new Vector3(radius, 0, radius));
+            return new Bounds(prop.Position, new Vector3(radius, 0, radius));
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo, Color toolColor, Color despawnColor)
         {
             if (!isValid) return;
+            if (MoveItTool.m_isLowSensitivity) return;
 
-            ushort prop = id.Prop;
-            PropManager propManager = PropManager.instance;
-            PropInfo propInfo = propManager.m_props.m_buffer[prop].Info;
-            Vector3 position = propManager.m_props.m_buffer[prop].Position;
-            float angle = propManager.m_props.m_buffer[prop].Angle;
-            Randomizer randomizer = new Randomizer((int)prop);
-            float scale = propInfo.m_minScale + (float)randomizer.Int32(10000u) * (propInfo.m_maxScale - propInfo.m_minScale) * 0.0001f;
+            IProp prop = PropLayer.Manager.Buffer(id);
+            PropInfo propInfo = prop.Info;
+            Vector3 position = prop.Position;
+            float angle = prop.Angle;
+            float scale = PropLayer.Manager.GetScale(id, prop);
             float alpha = 1f;
             PropTool.CheckOverlayAlpha(propInfo, scale, ref alpha);
             toolColor.a *= alpha;
@@ -191,9 +285,11 @@ namespace MoveIt
 
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
+            if (MoveItTool.m_isLowSensitivity) return;
+
             PropState state = instanceState as PropState;
 
-            PropInfo info = state.info as PropInfo;
+            PropInfo info = state.Info.Prefab as PropInfo;
             Randomizer randomizer = new Randomizer(state.instance.id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
@@ -206,27 +302,34 @@ namespace MoveIt
             }
 
             float newAngle = state.angle + deltaAngle;
+
+            //Debug.Log($"State:{state.position.y}, stateTH:{state.terrainHeight}, delta:{deltaPosition.y}, new:{newPosition.y}, newTH:{TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition)}");
 
             PropTool.RenderOverlay(cameraInfo, info, newPosition, scale, newAngle, toolColor);
         }
 
         public override void RenderCloneGeometry(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
-            PropState state = instanceState as PropState;
+            RenderCloneGeometryImplementation(instanceState, ref matrix4x, deltaPosition, deltaAngle, center, followTerrain, cameraInfo);
+        }
 
-            PropInfo info = state.info as PropInfo;
-            Randomizer randomizer = new Randomizer(state.instance.id.Prop);
+        public static void RenderCloneGeometryImplementation(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo)
+        {
+            InstanceID id = instanceState.instance.id;
+
+            PropInfo info = instanceState.Info.Prefab as PropInfo;
+            Randomizer randomizer = new Randomizer(id.Prop);
             float scale = info.m_minScale + (float)randomizer.Int32(10000u) * (info.m_maxScale - info.m_minScale) * 0.0001f;
 
-            Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
-            newPosition.y = state.position.y + deltaPosition.y;
+            Vector3 newPosition = matrix4x.MultiplyPoint(instanceState.position - center);
+            newPosition.y = instanceState.position.y + deltaPosition.y;
 
             if (followTerrain)
             {
-                newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+                newPosition.y = newPosition.y - instanceState.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
             }
 
-            float newAngle = state.angle + deltaAngle;
+            float newAngle = instanceState.angle + deltaAngle;
             
             if (info.m_requireHeightMap)
             {

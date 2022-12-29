@@ -21,43 +21,63 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\ProgramFiles\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="ColossalManaged">
-      <HintPath>..\..\..\ProgramFiles\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
-    </Reference>
-    <Reference Include="ICities">
-      <HintPath>..\..\..\ProgramFiles\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\ProgramFiles\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionQueue.cs" />
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\AlignHeightAction.cs" />
+    <Compile Include="Actions\AlignRotationSuite.cs" />
+    <Compile Include="Actions\AlignSlopeAction.cs" />
+    <Compile Include="Actions\AlignTerrainHeightAction.cs" />
     <Compile Include="Actions\BulldozeAction.cs" />
     <Compile Include="Actions\CloneAction.cs" />
+    <Compile Include="Actions\ConvertToPOAction.cs" />
+    <Compile Include="Actions\AlignMirrorAction.cs" />
+    <Compile Include="Actions\LineAction.cs" />
+    <Compile Include="Actions\ScaleAction.cs" />
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
+    <Compile Include="EncodeUtil.cs" />
+    <Compile Include="GUI\XMLUtils.cs" />
+    <Compile Include="GUI\UIDebugPanel.cs" />
+    <Compile Include="Filters.cs" />
+    <Compile Include="GUI\UIMoreTools.cs" />
+    <Compile Include="GUI\UIFilters.cs" />
     <Compile Include="GUI\UILoadWindow.cs" />
+    <Compile Include="GUI\UIMoreToPanel.cs" />
+    <Compile Include="GUI\XMLWindow.cs" />
+    <Compile Include="PropInstance.cs" />
+    <Compile Include="PropLayer.cs" />
+    <Compile Include="Integration\PO_Group.cs" />
+    <Compile Include="Integration\PO_Object.cs" />
+    <Compile Include="Localization\Str.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Str.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Log.cs" />
+    <Compile Include="MIT_Events.cs" />
+    <Compile Include="MIT_Filtering.cs" />
+    <Compile Include="MIT_Keyboard.cs" />
+    <Compile Include="MIT_OnToolUpdate.cs" />
+    <Compile Include="MIT_ToolManagement.cs" />
+    <Compile Include="MIT_Utilities.cs" />
+    <Compile Include="Moveable\MoveableProc.cs" />
+    <Compile Include="Integration\PO_Logic.cs" />
+    <Compile Include="Integration\PO_Manager.cs" />
+    <Compile Include="Integration\NetworkSkins.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="GUI\UIFastList.cs" />
     <Compile Include="GUI\UISaveLoadFileRow.cs" />
@@ -76,14 +96,54 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GUI\ResourceLoader.cs" />
     <Compile Include="GUI\UIMoveItButton.cs" />
-    <Compile Include="GUI\UITipsWindow.cs" />
+    <Compile Include="GUI\UIPopupWindow.cs" />
     <Compile Include="GUI\UIToolOptionPanel.cs" />
     <Compile Include="GUI\UIUtils.cs" />
+    <Compile Include="StepOver.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MoveIt.png" />
     <EmbeddedResource Include="Icons\MoveIt_focused.png" />
     <EmbeddedResource Include="Icons\MoveIt_hover.png" />
+    <EmbeddedResource Include="Localization\Str.cs.resx" />
+    <EmbeddedResource Include="Localization\Str.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.ja.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.ko.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.pl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.pt.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Str.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.ru.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.th.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Str.zh-cn.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Copy.png" />
@@ -100,8 +160,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Group.png" />
-    <EmbeddedResource Include="Icons\Load.png" />
     <EmbeddedResource Include="Icons\Save.png" />
+    <EmbeddedResource Include="Icons\Load.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Save_disabled.png" />
@@ -110,11 +170,120 @@
     <EmbeddedResource Include="Icons\Grid.png" />
     <EmbeddedResource Include="Icons\GridFocused.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignGroup.png" />
+    <EmbeddedResource Include="Icons\AlignIndividual.png" />
+    <EmbeddedResource Include="Icons\AlignRandom.png" />
+    <EmbeddedResource Include="Icons\MoreTools.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NFCollapse.png" />
+    <EmbeddedResource Include="Icons\NFCollapseHover.png" />
+    <EmbeddedResource Include="Icons\NFExpand.png" />
+    <EmbeddedResource Include="Icons\NFExpandHover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignSlope.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignSlopeA.png" />
+    <EmbeddedResource Include="Icons\AlignSlopeB.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PO.png" />
+    <EmbeddedResource Include="Icons\POFocused.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignTerrainHeight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EyeDropper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignMirror.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ConvertToPO.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ResetObject.png" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SteamPath>~/Library/Application Support/Steam/</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)\Steam</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)</SteamPath>
+    <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
+    <MangedDLLPath>$(CSPath)\Cities_Data\Managed</MangedDLLPath>
+    <MangedDLLPath Condition="!  Exists ('$(MangedDLLPath)')">..\dependencies</MangedDLLPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(MangedDLLPath)\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ColossalManaged">
+      <HintPath>$(MangedDLLPath)\ColossalManaged.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="EManagersLib.API, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\EManagersLib.API.dll</HintPath>
+    </Reference>
+    <Reference Include="ICities">
+      <HintPath>$(MangedDLLPath)\ICities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <PackageReference Include="UnifiedUILib" Version="2.2.12" />
+    <Reference Include="UnityEngine">
+      <HintPath>$(MangedDLLPath)\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignLine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SubmenuBG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MenuHeight.png" />
+    <EmbeddedResource Include="Icons\MenuOthers.png" />
+    <EmbeddedResource Include="Icons\MenuRotate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlignGroupActive.png" />
+    <EmbeddedResource Include="Icons\AlignIndividualActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MoveTo.png" />
+    <EmbeddedResource Include="Icons\MoveToActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SubmenuSeparator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MoveItIntegration\MoveItIntegration.csproj">
+      <Project>{77e7b3bd-ab18-4caa-ae86-46a4216fb81c}</Project>
+      <Name>MoveItIntegration</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"
-del "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\$(TargetFileName)"
-xcopy /y "$(TargetPath)" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"</PostBuildEvent>
+    <PostBuildEvent>set "ModDir=%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\"
+rmdir /s /q "%25ModDir%25"
+
+mkdir "%25ModDir%25"
+xcopy /y /e "$(TargetDir)*" "%25ModDir%25"
+
+set "UNITY_PATH=$(MSBuildExtensionsPath64)\..\Unity"
+IF not EXIST "%25UNITY_PATH%25 " set "UNITY_PATH=$(SolutionDir)Unity"
+set "MONODIR=%25UNITY_PATH%25\Editor\Data\MonoBleedingEdge\"
+echo MONODIR is %25MONODIR%25
+"%25MONODIR%25\bin\mono.exe" "%25MONODIR%25\lib\mono\4.5\pdb2mdb.exe" "$(TargetPath)"
+IF EXIST "$(TargetPath).mdb" xcopy /y "$(TargetPath).mdb" "%25ModDir%25"
+del "%25ModDir%25*.pdb"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
