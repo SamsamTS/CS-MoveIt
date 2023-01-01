@@ -333,20 +333,6 @@
   <data name="key_Undo" xml:space="preserve">
     <value>เลิกทำ</value>
   </data>
-  <data name="lsmWarning" xml:space="preserve">
-    <value>ประกาศสำคัญ!
-
-Loading Screen Mod (หรือ LSM) ไม่สามารถเข้ากันได้กับ Cities Skylines เวอร์ชัน 1.15 (Plazas &amp; Promenades DLC)
-
-โปรดทำการยกเลิกรายการที่เป็น LSM หรือ LSM Fix และเปลี่ยนไปใช้งาน Loading Screen Mod Revisited ที่พัฒนาโดย algernon แทน</value>
-    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
-  </data>
-  <data name="lsmWorkshopBtn" xml:space="preserve">
-    <value>LSM Revisited บนเวิร์กชอป</value>
-  </data>
-  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
-    <value>เยี่ยมชมหน้าเว็บ Steam Workshop ของ Loading Screen Mod Revisited</value>
-  </data>
   <data name="mod_description" xml:space="preserve">
     <value>ย้ายสิ่งต่าง ๆ</value>
   </data>
@@ -537,7 +523,7 @@ Loading Screen Mod (หรือ LSM) ไม่สามารถเข้าก
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="xml_Asc" xml:space="preserve">
     <value>ขึ้น</value>
