@@ -322,7 +322,7 @@ namespace MoveIt
                 }
                 else if ((ToolManager.instance.m_properties.m_mode & ItemClass.Availability.Game) != ItemClass.Availability.None)
                 { 
-                    if (!followTerrain)
+                    if (!restore && !followTerrain)
                     { // Set import height to terrain height
                         float heightDelta = Singleton<TerrainManager>.instance.SampleOriginalRawHeightSmooth(RaycastMouseLocation()) - selectionState.terrainHeight;
 
