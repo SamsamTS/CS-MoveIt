@@ -252,7 +252,7 @@
     <value>เลื่อนไปทางทิศตะวันตก</value>
   </data>
   <data name="key_QuickUndergroundView" xml:space="preserve">
-    <value>Hold for Underground View</value>
+    <value>กดค้างเพื่อแสดงมุมมองใต้ดิน</value>
   </data>
   <data name="key_Redo" xml:space="preserve">
     <value>ทำซ้ำ</value>
