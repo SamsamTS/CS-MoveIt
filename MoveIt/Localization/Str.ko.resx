@@ -333,20 +333,6 @@
   <data name="key_Undo" xml:space="preserve">
     <value>실행 취소</value>
   </data>
-  <data name="lsmWarning" xml:space="preserve">
-    <value>중요 공지!
-
-Loading Screen Mod (LSM) 는 Cities Skylines 1.15 (Plazas &amp; Promenades DLC) 와 호환되지 않습니다. 
-
-LSM 또는 LSM Fix의 구독을 취소하고 대신 algernon의 Loading Screen Mod Revisited를 구독하십시오.</value>
-    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
-  </data>
-  <data name="lsmWorkshopBtn" xml:space="preserve">
-    <value>창작마당의 LSM Revisited</value>
-  </data>
-  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
-    <value>Loading Screen Mod Revisited의 Staem 창작마당 페이지 방문하기</value>
-  </data>
   <data name="mod_description" xml:space="preserve">
     <value>모든 사물 이동</value>
   </data>
@@ -537,7 +523,7 @@ LSM 또는 LSM Fix의 구독을 취소하고 대신 algernon의 Loading Screen M
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="xml_Asc" xml:space="preserve">
     <value>오름차순</value>

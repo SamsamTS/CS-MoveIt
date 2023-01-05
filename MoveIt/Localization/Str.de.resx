@@ -333,20 +333,6 @@
   <data name="key_Undo" xml:space="preserve">
     <value>Rückgängig</value>
   </data>
-  <data name="lsmWarning" xml:space="preserve">
-    <value>Wichtiger Hinweis:
-
-Loading Screen Mod (LSM) ist nicht kompatibel mit Cities Skylines 1.15 (Plazas &amp; Promenades DLC).
-
-Bitte kündige das Abonnement von LSM oder LSM temp Fix und abonniere stattdessen Loading Screen Mod Revisited (LSMR) von algernon.</value>
-    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
-  </data>
-  <data name="lsmWorkshopBtn" xml:space="preserve">
-    <value>LSM Revisited im Workshop</value>
-  </data>
-  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
-    <value>Besuche die Steam-Workshop-Seite um Loading Screen Mod Revisited herunterzuladen</value>
-  </data>
   <data name="mod_description" xml:space="preserve">
     <value>Dinge verschieben</value>
   </data>
@@ -538,7 +524,7 @@ DIES IST EXTREM MÄCHTIG UND KANN DIE STADT ZERSTÖREN!</value>
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="xml_Asc" xml:space="preserve">
     <value>Auf</value>

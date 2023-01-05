@@ -333,20 +333,6 @@
   <data name="key_Undo" xml:space="preserve">
     <value>Отменить</value>
   </data>
-  <data name="lsmWarning" xml:space="preserve">
-    <value>Важно!
-
-Загрузка экрана мода (LSM) не совместима с Skylines 1.15 (Plazas &amp; Promenades DLC).
-
-Пожалуйста, отключите подписку от LSM или LSM Fix, и подпишитесь на загрузку Screen Mod Revisited посредством algernon.</value>
-    <comment>"Plazas &amp; Promenades" should be the new DLC in your language.</comment>
-  </data>
-  <data name="lsmWorkshopBtn" xml:space="preserve">
-    <value>LSM Revisited в мастерской</value>
-  </data>
-  <data name="lsmWorkshopBtn_Tooltip" xml:space="preserve">
-    <value>Посетите мастерскую Steam для подписки на Loading Screen Mod Revisited</value>
-  </data>
   <data name="mod_description" xml:space="preserve">
     <value>Инструмент для перемещение объектов</value>
   </data>
@@ -537,7 +523,7 @@
     <comment>Length needs to be short, not much longer than "Rotate At Centre".</comment>
   </data>
   <data name="whatsNew" xml:space="preserve">
-    <value></value>
+    <value/>
   </data>
   <data name="xml_Asc" xml:space="preserve">
     <value>▲</value>
