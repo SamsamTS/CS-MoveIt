@@ -1,4 +1,5 @@
-﻿using ColossalFramework.Globalization;
+﻿using ColossalFramework;
+using ColossalFramework.Globalization;
 using ColossalFramework.Plugins;
 using ICities;
 using MoveIt.Localization;
@@ -119,7 +120,7 @@ namespace MoveIt
 
         internal static void LocaleChanged()
         {
-            Log.Debug($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name}");
+            Log.Debug($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name} ({SingletonLite<LocaleManager>.instance.language})");
             Str.Culture = ModInfo.Culture;
         }
     }

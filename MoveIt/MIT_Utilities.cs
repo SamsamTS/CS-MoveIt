@@ -377,7 +377,7 @@ namespace MoveIt
 
         internal static bool isTreeAnarchyEnabled()
         {
-            if (QCommonLib.QCommon.CheckAssembly("tamod", "treeanarchy"))
+            if (!QCommonLib.QCommon.CheckAssembly("tamod", "treeanarchy"))
             {
                 Log.Debug($"TreeAnarchy not found");
                 return false;
@@ -389,7 +389,7 @@ namespace MoveIt
 
         internal static bool isTreeSnappingEnabled()
         {
-            if (QCommonLib.QCommon.CheckAssembly("mod", "treesnapping"))
+            if (!QCommonLib.QCommon.CheckAssembly("mod", "treesnapping"))
             {
                 Log.Debug($"TreeSnapping not found");
                 return false;
