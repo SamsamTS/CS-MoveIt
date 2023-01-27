@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Math;
+using ColossalFramework.PlatformServices;
 using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
@@ -293,14 +294,72 @@ namespace MoveIt
             if (selectionState != null && selectionState.states != null && selectionState.states.Length > 0)
             {
                 HashSet<string> missingPrefabs = new HashSet<string>();
+                HashSet<ushort> includedNodes = new HashSet<ushort>();
+                HashSet<ushort> includedSegments = new HashSet<ushort>();
+                List<InstanceState> newStates = new List<InstanceState>(selectionState.states);
+                int startCount = selectionState.states.Length;
 
+                // Look for missing prefabs, nodes, and segments
                 foreach (InstanceState state in selectionState.states)
                 {
+                    if (state == null || state.Info == null || state.instance == null)
+                    {
+                        newStates.Remove(state);
+                        continue;
+                    }
                     if (state.Info.Prefab == null)
                     {
                         missingPrefabs.Add(state.prefabName);
+                        newStates.Remove(state);
+                    }
+                    else
+                    {
+                        InstanceID id = state.instance.id;
+                        if (id.Type == InstanceType.NetNode)
+                            includedNodes.Add(id.NetNode);
+                        else if (id.Type == InstanceType.NetSegment)
+                            includedSegments.Add(id.NetSegment);
                     }
                 }
+                selectionState.states = newStates.ToArray();
+
+                // Strip out segments with missing nodes
+                foreach (InstanceState state in selectionState.states)
+                {
+                    if (state is SegmentState ss)
+                    {
+                        if (!(includedNodes.Contains(ss.startNodeId) && includedNodes.Contains(ss.endNodeId)))
+                        {
+                            newStates.Remove(state);
+                            includedSegments.Remove(ss.instance.id.NetSegment);
+                        }
+                    }
+                }
+                selectionState.states = newStates.ToArray();
+
+                // Remove missing segment references and strip out nodes that have no remaining segments
+                foreach (InstanceState state in selectionState.states)
+                {
+                    if (state is NodeState ns)
+                    {
+                        List<ushort> newSegmentsList = new List<ushort>(ns.segmentsList);
+                        foreach (ushort segId in ns.segmentsList)
+                        {
+                            if (!includedSegments.Contains(segId))
+                            {
+                                newSegmentsList.Remove(segId);
+                            }
+                        }
+                        if (newSegmentsList.Count == 0)
+                        {
+                            newStates.Remove(state);
+                            includedNodes.Remove(ns.instance.id.NetNode);
+                        }
+                        else ns.segmentsList = newSegmentsList;
+                    }
+                }
+                selectionState.states = newStates.ToArray();
+                Log.Info($"Cleaned import (state count:{startCount}->{newStates.Count})");
 
                 if (missingPrefabs.Count > 0)
                 {
