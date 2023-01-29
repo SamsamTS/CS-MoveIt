@@ -107,6 +107,15 @@ namespace MoveIt
             Move(newPosition, 0f);
         }
 
+        /// <summary>
+        /// Calculate the new Y-Pos for the tree
+        /// </summary>
+        /// <param name="state">The tree state</param>
+        /// <param name="deltaHeight">The height difference before snapping</param>
+        /// <param name="newPosition">The new position for the tree</param>
+        /// <param name="followTerrain">Should tree follow terrain?</param>
+        /// <param name="isClone">Is this the clone ghost rendering?</param>
+        /// <returns></returns>
         internal float GetTreeYPos(InstanceState state, float deltaHeight, Vector3 newPosition, bool followTerrain, bool isClone = false)
         {
             TreeInstance[] trees = Singleton<TreeManager>.instance.m_trees.m_buffer;

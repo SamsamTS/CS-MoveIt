@@ -424,10 +424,44 @@ namespace MoveIt
                 }
             }
 
+            // Clone buildings next (so attached nodes are created before segments)
+            List<ushort> attachedNodes = new List<ushort>();
+            foreach (InstanceState state in m_states)
+            {
+                if (state is BuildingState)
+                {
+                    string msg2 = "";
+                    int c2 = 0;
+                    Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
+
+                    if (clone == null)
+                    {
+                        Log.Debug($"Failed to clone building {state}");
+                        continue;
+                    }
+
+                    m_clones.Add(clone);
+                    m_stateToClone.Add(state, clone);
+                    m_InstanceID_origToClone.Add(state.instance.id, clone.id);
+                    m_origToCloneUpdate.Add(state.instance, clone);
+
+                    foreach (Instance inst in clone.subInstances)
+                    {
+                        if (inst is MoveableNode mn)
+                        {
+                            attachedNodes.Add(mn.id.NetNode);
+                            NetInfo node = (NetInfo)mn.Info.Prefab; 
+                            msg2 += $"\n  {mn.id.NetNode}:{mn.Info.Name} [{mn.position}] ({node.m_class.m_service}/{node.m_class.m_subService})";
+                            c2++;
+                        }
+                    }
+                }
+            }
+
             // Clone everything else except PO
             foreach (InstanceState state in m_states)
             {
-                if (!(state is NodeState || state is ProcState))
+                if (!(state is NodeState || state is BuildingState || state is ProcState))
                 {
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
 
@@ -461,6 +495,37 @@ namespace MoveIt
                     }
                 }
             }
+
+            // Look for overlapping nodes
+            int c = 0;
+            HashSet<Instance> tmpClones = new HashSet<Instance>(m_clones);
+            foreach (Instance inst in tmpClones)
+            {
+                if (inst is MoveableNode mn)
+                {
+                    NetNode node = (NetNode)mn.data;
+                    NetInfo nodeInfo = (NetInfo)mn.Info.Prefab;
+                    c++;
+
+                    foreach (ushort attachedId in attachedNodes)
+                    {
+                        NetNode attached = nodeBuffer[attachedId];
+
+                        if ((node.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable && (attached.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable &&
+                            node.Info.m_class.m_service == attached.Info.m_class.m_service && node.Info.m_class.m_subService == attached.Info.m_class.m_subService)
+                        {
+                            if ((mn.position - attached.m_position).magnitude < 0.01f)
+                            {
+                                if (MoveableNode.MergeNodes(attachedId, mn.id.NetNode)) // Matching nodes overlap, combine them
+                                {
+                                    m_clones.Remove(inst);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Log.Debug($"Independent nodes: {c}, attached nodes: {attachedNodes.Count}, objects: {m_clones.Count} (was: {tmpClones.Count})");
 
             // Clone PO
             MoveItTool.PO.MapGroupClones(m_states, this);

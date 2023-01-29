@@ -1,6 +1,4 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Math;
-using MoveItIntegration;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -586,6 +584,88 @@ namespace MoveIt
                     msb.RenderGeometry(cameraInfo, toolColor);
                 }
             }
+        }
+
+        /// <summary>
+        /// Combine two nodes into one
+        /// </summary>
+        /// <param name="parentId">The node id to merge into</param>
+        /// <param name="childId">The node id to merge from, is then deleted</param>
+        /// <returns>True if successful (child is deleted), false if failed and child remains</returns>
+        public static bool MergeNodes(ushort parentId, ushort childId)
+        {
+            ref NetNode parent = ref nodeBuffer[parentId];
+            ref NetNode child = ref nodeBuffer[childId];
+
+            if (!((parent.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created && (child.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)) return false;
+            if (!(parent.Info.m_class.m_service == child.Info.m_class.m_service && parent.Info.m_class.m_subService == child.Info.m_class.m_subService)) return false;
+
+            List<ushort> segments = new List<ushort>();
+            for (int i = 0; i < 8; i++)
+            {
+                if (parent.GetSegment(i) > 0) segments.Add(parent.GetSegment(i));
+                if (child.GetSegment(i) > 0) segments.Add(child.GetSegment(i));
+            }
+            string msg = "";
+            foreach (ushort x in segments) msg += $"{x}, ";
+            Log.Debug($"BBB03 {parentId},{childId} {segments.Count}: {msg}");
+            if (segments.Count < 2 || segments.Count > 8) return false;
+
+            parent.m_segment0 = segments[0];
+            parent.m_segment1 = segments[1];
+            if (segments.Count > 2) parent.m_segment2 = segments[2]; else parent.m_segment2 = 0;
+            if (segments.Count > 3) parent.m_segment3 = segments[3]; else parent.m_segment3 = 0;
+            if (segments.Count > 4) parent.m_segment4 = segments[4]; else parent.m_segment4 = 0;
+            if (segments.Count > 5) parent.m_segment5 = segments[5]; else parent.m_segment5 = 0;
+            if (segments.Count > 6) parent.m_segment6 = segments[6]; else parent.m_segment6 = 0;
+            if (segments.Count > 7) parent.m_segment7 = segments[7]; else parent.m_segment7 = 0;
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (child.GetSegment(i) > 0) SwitchSegmentNode(child.GetSegment(i), childId, parentId);
+            }
+
+            if (child.m_segment0 > 0) { child.m_segment0 = 0; }
+            if (child.m_segment1 > 0) { child.m_segment1 = 0; }
+            if (child.m_segment2 > 0) { child.m_segment2 = 0; }
+            if (child.m_segment3 > 0) { child.m_segment3 = 0; }
+            if (child.m_segment4 > 0) { child.m_segment4 = 0; }
+            if (child.m_segment5 > 0) { child.m_segment5 = 0; }
+            if (child.m_segment6 > 0) { child.m_segment6 = 0; }
+            if (child.m_segment7 > 0) { child.m_segment7 = 0; }
+
+            InstanceID instanceID = default;
+            instanceID.NetNode = childId;
+            MoveableNode childNode = new MoveableNode(instanceID);
+            childNode.Delete();
+
+            Log.Info($"Merged node {childId} into {parentId} ({segments.Count} segments)");
+
+            return true;
+        }
+
+        private static void SwitchSegmentNode(ushort segmentId, ushort fromId, ushort toId)
+        {
+            ref NetSegment segment = ref segmentBuffer[segmentId];
+            if (segment.m_startNode == fromId)
+                segment.m_startNode = toId;
+            else if (segment.m_endNode == fromId)
+                segment.m_endNode = toId;
+            else
+                Log.Debug($"BBB05 Node not found for segment #{segmentId} (switching {fromId} to {toId})");
+            Log.Debug($"BBB06 Node switch segment #{segmentId} (switching {fromId} to {toId}) - {segmentBuffer[segmentId].m_startNode},{segmentBuffer[segmentId].m_endNode}");
+        }
+
+        public static IEnumerable<ushort> GetSegments(NetNode node)
+        {
+            if (node.m_segment0 > 0) { Log.Debug($"DDD00.2 {node.m_segment0}"); yield return node.m_segment0; }
+            if (node.m_segment1 > 0) { Log.Debug($"DDD01.2 {node.m_segment1}"); yield return node.m_segment1; }
+            if (node.m_segment2 > 0) { Log.Debug($"DDD02.2 {node.m_segment2}"); yield return node.m_segment2; }
+            if (node.m_segment3 > 0) { Log.Debug($"DDD03.2 {node.m_segment3}"); yield return node.m_segment3; }
+            if (node.m_segment4 > 0) { Log.Debug($"DDD04.2 {node.m_segment4}"); yield return node.m_segment4; }
+            if (node.m_segment5 > 0) { Log.Debug($"DDD05.2 {node.m_segment5}"); yield return node.m_segment5; }
+            if (node.m_segment6 > 0) { Log.Debug($"DDD06.2 {node.m_segment6}"); yield return node.m_segment6; }
+            if (node.m_segment7 > 0) { Log.Debug($"DDD07.2 {node.m_segment7}"); yield return node.m_segment7; }
         }
     }
 }
