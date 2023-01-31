@@ -97,7 +97,8 @@ namespace MoveIt
 
         internal static Color m_hoverColor = new Color32(0, 181, 255, 250);
         internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
-        internal static Color m_nodeSnapColor = new Color32(0, 100, 200, 250);
+        internal static Color m_nodeMergeColor = new Color32(20, 80, 180, 220);
+        internal static Color m_nodeSnapColor = new Color32(220, 100, 200, 250);
         internal static Color m_moveColor = new Color32(125, 196, 30, 244);
         internal static Color m_removeColor = new Color32(255, 160, 47, 191);
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
@@ -667,9 +668,16 @@ namespace MoveIt
                 foreach (InstanceState state in action.m_states)
                 {
                     Color color = m_hoverColor;
-                    if (state == action.m_mergingNode)
+                    if (state is NodeState ns)
                     {
-                        color = m_nodeSnapColor;
+                        if (action.m_snapNode != null && state == action.m_snapNode.nodeState)
+                        {
+                            color = m_nodeSnapColor;
+                        }
+                        else if (NodeMergeData.CanMerge(action.m_nodeMergeData, ns))
+                        {
+                            color = m_nodeMergeColor;
+                        }
                     }
                     else if (state is ProcState)
                     {

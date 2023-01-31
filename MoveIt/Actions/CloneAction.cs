@@ -149,8 +149,8 @@ namespace MoveIt
         public float angleDelta;
         public bool followTerrain;
 
-        internal NodeState m_mergingNode = null;
-        internal InstanceID m_mergingParent = default;
+        internal NodeMergeData m_snapNode = null;
+        internal List<NodeMergeData> m_nodeMergeData = new List<NodeMergeData>();
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>(); // the InstanceStates to be cloned
         internal HashSet<Instance> m_clones; // the resulting Instances

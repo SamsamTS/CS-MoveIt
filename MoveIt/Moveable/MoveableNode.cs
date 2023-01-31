@@ -41,7 +41,12 @@ namespace MoveIt
             }
         }
 
-        public ushort FindNearestNode()
+        /// <summary>
+        /// Find the nearest existing node that can be merged into
+        /// </summary>
+        /// <param name="original">The original state, rather than this temporary one</param>
+        /// <returns>The NodeMergeData, or null if none found</returns>
+        internal NodeMergeData FindNearestNode(NodeState original)
         {
             NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
             int c = 0;
@@ -77,7 +82,14 @@ namespace MoveIt
             //else
             //    Log.Debug($"DDD01.2 [{c}] NodeState #{instance.id.NetNode} nearest node found: #{result} @ {dist}m" + (msg == "" ? "" : $"\n  All: {msg}") + (msg2 == "" ? "" : $"\n  Valid: {msg2}"));
 
-            return result;
+            if (result == 0) return null;
+            return new NodeMergeData()
+            {
+                nodeState = original,
+                adjustedState = this,
+                parentNode = result,
+                status = NodeMergeStatuses.Merge
+            };
         }
     }
 
@@ -637,7 +649,8 @@ namespace MoveIt
         {
             if (ActionQueue.instance.current is CloneActionBase action)
             {
-                if (state == action.m_mergingNode && action.m_mergingParent.NetNode > 0)
+                NodeMergeData data = NodeMergeData.Get(action.m_nodeMergeData, (NodeState)state);
+                if (data != null)
                 {
                     Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
                     newPosition.y = state.position.y + deltaPosition.y;
@@ -647,7 +660,7 @@ namespace MoveIt
                         newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
                     }
 
-                    NetNode parent = nodeBuffer[action.m_mergingParent.NetNode];
+                    NetNode parent = nodeBuffer[data.parentNode];
 
                     if (!MoveItTool.m_isLowSensitivity)
                     {

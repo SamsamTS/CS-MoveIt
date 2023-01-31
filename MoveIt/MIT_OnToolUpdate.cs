@@ -292,7 +292,7 @@ namespace MoveIt
 
                                 if (NodeMerge)
                                 {
-                                    GetMergingNode(action, newMove, action.angleDelta, action.center, ref action.m_mergingNode, ref action.m_mergingParent);
+                                    action.m_snapNode = GetMergingNodes(action, newMove, action.angleDelta, action.center);
                                 }
 
                                 if (action.moveDelta != newMove)
@@ -492,15 +492,17 @@ namespace MoveIt
         }
 
         /// <summary>
-        /// Search a CloneActionBase action for most suitable merge candidate
+        /// Search a CloneActionBase action for possible merges and return most suitable snap candidate
         /// </summary>
         /// <param name="action"></param>
-        /// <param name="positionDelta"></param>
-        /// <param name="candidate"></param>
-        /// <param name="parent"></param>
+        /// <param name="moveDelta"></param>
+        /// <param name="angleDelta"></param>
+        /// <param name="center"></param>
         /// <returns></returns>
-        private bool GetMergingNode(CloneActionBase action, Vector3 moveDelta, float angleDelta, Vector3 center, ref NodeState candidate, ref InstanceID parent)
+        private NodeMergeData GetMergingNodes(CloneActionBase action, Vector3 moveDelta, float angleDelta, Vector3 center)
         {
+            action.m_nodeMergeData.Clear();
+
             // Look for nodes
             bool found = false;
             foreach (InstanceState state in action.m_states)
@@ -511,34 +513,36 @@ namespace MoveIt
                     break;
                 }
             }
-            if (!found) return false;
+            if (!found) return null;
 
             HashSet<InstanceState> states = new HashSet<InstanceState>();
             Dictionary<InstanceState, InstanceState> statesMap = action.CalculateStates(moveDelta, angleDelta, center, followTerrain, ref states);
 
-            candidate = null;
-            parent = default;
+            NodeMergeData snapCandidate = null;
             float distance = NodeMerging.MAX_SNAP_DISTANCE;
             foreach (InstanceState state in states)
             {
                 if (state is NodeState ns)
                 {
-                    ushort nearest = ns.FindNearestNode();
-                    if (nearest == 0) continue;
+                    NodeMergeData mergeData = ns.FindNearestNode((NodeState)statesMap[ns]);
+                    if (mergeData == null) continue;
+                    action.m_nodeMergeData.Add(mergeData);
 
-                    float d = NodeMerging.GetNodeDistance(nodeBuffer[nearest], ns.position);
-                    if (d < distance)
+                    if (mergeData.Distance < distance)
                     {
-                        candidate = (NodeState)statesMap[ns];
-                        parent.NetNode = nearest;
-                        distance = d;
+                        snapCandidate = mergeData;
+                        distance = mergeData.Distance;
                     }
                 }
             }
+            if (snapCandidate != null) snapCandidate.status = NodeMergeStatuses.Snap;
 
-            Log.Debug($"DDD02 candidate found:{(candidate == null ? "<null>" : candidate.Info.Prefab.name + " (#" + candidate.instance.id.NetNode + ")")}");
+            string msg = "";
+            foreach (var x in action.m_nodeMergeData) msg += $"{x}, ";
+            if (msg != "") msg = $"\n  {action.m_nodeMergeData.Count}: " + msg;
+            Log.Debug($"DDD02 candidate found:{(snapCandidate == null ? "<null>" : snapCandidate.nodeState.Info.Prefab.name + " (#" + snapCandidate.StateId + ")")}{msg}");
 
-            return true;
+            return snapCandidate;
         }
 
         private Vector3 GetSnapDelta(Vector3 moveDelta, float angleDelta, Vector3 center, out bool autoCurve)

@@ -44,6 +44,16 @@ namespace MoveIt
         }
 
         /// <summary>
+        /// Get the distance between a node and a vector
+        /// </summary>
+        /// <param name="data">NodeMergeData object</param>
+        /// <returns>Distance in metres</returns>
+        internal static float GetNodeDistance(NodeMergeData data)
+        {
+            return (data.GetParentNode().m_position - data.adjustedState.position).magnitude;
+        }
+
+        /// <summary>
         /// Check if two nodes can be combined
         /// </summary>
         /// <param name="parentId">The node InstanceID to be merged into</param>
@@ -177,5 +187,70 @@ namespace MoveIt
                 Log.Info($"Node not found for segment #{segmentId} (switching {fromId} to {toId})");
             Log.Debug($"BBB06 Node switch segment #{segmentId} (switching {fromId} to {toId}) - {segmentBuffer[segmentId].m_startNode},{segmentBuffer[segmentId].m_endNode}");
         }
+    }
+
+    internal class NodeMergeData
+    {
+        internal NodeState nodeState;
+        internal NodeState adjustedState;
+        internal ushort parentNode;
+        internal NodeMergeStatuses status;
+
+        private float _distance = -1;
+        internal float Distance
+        {
+            get
+            {
+                if (_distance == -1)
+                {
+                    _distance = NodeMerging.GetNodeDistance(this);
+                }
+                return _distance;
+            }
+        }
+
+        internal ushort StateId => nodeState.instance.id.NetNode;
+
+        internal NetNode GetParentNode()
+        {
+            return Singleton<NetManager>.instance.m_nodes.m_buffer[parentNode];
+        }
+
+        public override string ToString()
+        {
+            return $"{nodeState.instance.id.NetNode}:{parentNode}={Distance}";
+        }
+
+
+        internal static NodeMergeData Get(List<NodeMergeData> list, NodeState state)
+        {
+            foreach (NodeMergeData data in list)
+            {
+                if (data.nodeState == state && (data.status == NodeMergeStatuses.Snap || data.status == NodeMergeStatuses.Merge)) return data;
+            }
+            return null;
+        }
+
+        internal static bool CanMerge(List<NodeMergeData> list, NodeState state)
+        {
+            return Get(list, state) != null;
+        }
+
+        internal static NodeMergeData GetSnap(List<NodeMergeData> nodes)
+        {
+            foreach (NodeMergeData data in nodes)
+            {
+                if (data.status == NodeMergeStatuses.Snap) return data;
+            }
+            return null;
+        }
+    }
+
+    internal enum NodeMergeStatuses
+    {
+        None,
+        Merge,
+        Snap,
+        Invalid
     }
 }
