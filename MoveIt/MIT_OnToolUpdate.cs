@@ -290,6 +290,11 @@ namespace MoveIt
                                     newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out bool autoCurve);
                                 }
 
+                                if (NodeMerge)
+                                {
+                                    GetMergingNode(action, newMove, action.angleDelta, action.center, ref action.m_mergingNode, ref action.m_mergingParent);
+                                }
+
                                 if (action.moveDelta != newMove)
                                 {
                                     action.moveDelta = newMove;
@@ -486,6 +491,56 @@ namespace MoveIt
             return elapsed / (Stopwatch.Frequency / 1000);
         }
 
+        /// <summary>
+        /// Search a CloneActionBase action for most suitable merge candidate
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="positionDelta"></param>
+        /// <param name="candidate"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        private bool GetMergingNode(CloneActionBase action, Vector3 moveDelta, float angleDelta, Vector3 center, ref NodeState candidate, ref InstanceID parent)
+        {
+            // Look for nodes
+            bool found = false;
+            foreach (InstanceState state in action.m_states)
+            {
+                if (state is NodeState)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+
+            HashSet<InstanceState> states = new HashSet<InstanceState>();
+            Dictionary<InstanceState, InstanceState> statesMap = action.CalculateStates(moveDelta, angleDelta, center, followTerrain, ref states);
+
+            candidate = null;
+            parent = default;
+            float distance = NodeMerging.MAX_SNAP_DISTANCE;
+            foreach (InstanceState state in states)
+            {
+                if (state is NodeState ns)
+                {
+                    ushort nearest = ns.FindNearestNode();
+                    if (nearest == 0) continue;
+
+                    float d = NodeMerging.GetNodeDistance(nodeBuffer[nearest], ns.position);
+                    if (d < distance)
+                    {
+                        candidate = (NodeState)statesMap[ns];
+                        parent.NetNode = nearest;
+                        distance = d;
+                    }
+                }
+            }
+
+            Log.Debug($"DDD02 candidate found:{(candidate == null ? "<null>" : candidate.Info.Prefab.name + " (#" + candidate.instance.id.NetNode + ")")}");
+
+            return true;
+        }
+
         private Vector3 GetSnapDelta(Vector3 moveDelta, float angleDelta, Vector3 center, out bool autoCurve)
         {
             autoCurve = false;
@@ -502,8 +557,8 @@ namespace MoveIt
             NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
 
-            Matrix4x4 matrix4x = default;
-            matrix4x.SetTRS(center, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
+            //Matrix4x4 matrix4x = default;
+            //matrix4x.SetTRS(center, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             bool snap = false;
 
@@ -516,7 +571,7 @@ namespace MoveIt
 
             if (ActionQueue.instance.current is CloneActionBase cloneAction)
             {
-                newStates = cloneAction.CalculateStates(moveDelta, angleDelta, center, followTerrain);
+                cloneAction.CalculateStates(moveDelta, angleDelta, center, followTerrain, ref newStates);
             }
 
             // Snap to direction

@@ -78,8 +78,6 @@ namespace MoveIt
 
             m_info.m_position = Position(newLocation);
             m_info.m_angle = Angle(angle);
-
-            //Log.Debug($"AAA01 {m_info.m_buildingInfo.name} {m_info.m_position}/{m_info.m_angle}");
         }
 
         public void SetFixedHeight(bool isFixed)

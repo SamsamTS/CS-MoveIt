@@ -95,7 +95,7 @@ namespace MoveIt.GUI
 
             openFolder.eventClicked += (c, p) =>
             {
-                Utils.OpenInFileBrowser(MoveItTool.saveFolder);
+                ColossalFramework.Utils.OpenInFileBrowser(MoveItTool.saveFolder);
             };
 
             sortOrderBtn.eventClicked += (c, p) =>

@@ -172,10 +172,10 @@ namespace MoveIt
                 panel = ((UIHelper)group).self as UIPanel;
                 group.AddSpace(10);
 
-                button = (UIButton)group.AddButton(Str.options_RemoveGhostNodes, MoveItTool.CleanGhostNodes);
+                button = (UIButton)group.AddButton(Str.options_RemoveGhostNodes, Utils.CleanGhostNodes);
                 button.tooltip = Str.options_RemoveGhostNodes_Tooltip;
 
-                button = (UIButton)group.AddButton(Str.options_fixTreeSnapping, MoveItTool.FixTreeFixedHeightFlag);
+                button = (UIButton)group.AddButton(Str.options_fixTreeSnapping, Utils.FixTreeFixedHeightFlag);
                 button.tooltip = Str.options_fixTreeSnappingTooltip;
 
                 group.AddSpace(10);

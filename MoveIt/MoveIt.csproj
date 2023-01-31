@@ -59,6 +59,7 @@
     <Compile Include="GUI\UIMoreToPanel.cs" />
     <Compile Include="GUI\XMLWindow.cs" />
     <Compile Include="Moveable\AssetEditorSubBuilding.cs" />
+    <Compile Include="NodeMerging.cs" />
     <Compile Include="PropInstance.cs" />
     <Compile Include="PropLayer.cs" />
     <Compile Include="Integration\PO_Group.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="GUI\UIToolOptionPanel.cs" />
     <Compile Include="GUI\UIUtils.cs" />
     <Compile Include="StepOver.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MoveIt.png" />
@@ -268,6 +270,10 @@
       <Project>{77e7b3bd-ab18-4caa-ae86-46a4216fb81c}</Project>
       <Name>MoveItIntegration</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NodeMerge.png" />
+    <EmbeddedResource Include="Icons\NodeMergeFocused.png" />
   </ItemGroup>
   <Import Project="..\..\..\QCommon\Repo\QCommon\QCommon\Shared\QCommon Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

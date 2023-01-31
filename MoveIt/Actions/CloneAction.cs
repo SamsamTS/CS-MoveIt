@@ -149,6 +149,9 @@ namespace MoveIt
         public float angleDelta;
         public bool followTerrain;
 
+        internal NodeState m_mergingNode = null;
+        internal InstanceID m_mergingParent = default;
+
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>(); // the InstanceStates to be cloned
         internal HashSet<Instance> m_clones; // the resulting Instances
         internal HashSet<Instance> m_oldSelection; // The selection before cloning
@@ -311,28 +314,6 @@ namespace MoveIt
 
         public override void Do()
         {
-        //    DoPrepare().Enumerate();
-        //}
-
-        //internal IEnumerator DoPrepare()
-        //{
-        //    if (!this)
-        //    {
-        //        Log.Error($"CloneActionBase is null, skipping cloning");
-        //        yield break;
-        //    }
-
-        //    yield return StartCoroutine(DoEncapsulate());
-        //}
-
-        //internal IEnumerator DoEncapsulate()
-        //{
-        //    Debug.Log($"    DoEncapsulate Starting");
-        //    AsyncAction process = Singleton<SimulationManager>.instance.AddAction(() => DoProcess());
-        //    while (!process.completedOrFailed)
-        //    {
-        //        yield return 0;
-        //    }
             DoProcess();
 
             m_origToClone = m_origToCloneUpdate;
@@ -497,35 +478,42 @@ namespace MoveIt
             }
 
             // Look for overlapping nodes
-            int c = 0;
-            HashSet<Instance> tmpClones = new HashSet<Instance>(m_clones);
-            foreach (Instance inst in tmpClones)
-            {
-                if (inst is MoveableNode mn)
-                {
-                    NetNode node = (NetNode)mn.data;
-                    NetInfo nodeInfo = (NetInfo)mn.Info.Prefab;
-                    c++;
+            //int c = 0;
+            //HashSet<Instance> tmpClones = new HashSet<Instance>(m_clones);
+            //foreach (Instance inst in tmpClones)
+            //{
+            //    if (inst is MoveableNode mn)
+            //    {
+            //        NetNode node = (NetNode)mn.data;
+            //        NetInfo nodeInfo = (NetInfo)mn.Info.Prefab;
+            //        c++;
 
-                    foreach (ushort attachedId in attachedNodes)
-                    {
-                        NetNode attached = nodeBuffer[attachedId];
+            //        foreach (ushort attachedId in attachedNodes)
+            //        {
+            //            NetNode attached = nodeBuffer[attachedId];
 
-                        if ((node.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable && (attached.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable &&
-                            node.Info.m_class.m_service == attached.Info.m_class.m_service && node.Info.m_class.m_subService == attached.Info.m_class.m_subService)
-                        {
-                            if ((mn.position - attached.m_position).magnitude < 0.01f)
-                            {
-                                if (MoveableNode.MergeNodes(attachedId, mn.id.NetNode)) // Matching nodes overlap, combine them
-                                {
-                                    m_clones.Remove(inst);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            Log.Debug($"Independent nodes: {c}, attached nodes: {attachedNodes.Count}, objects: {m_clones.Count} (was: {tmpClones.Count})");
+            //            if ((node.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable && (attached.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable)
+            //            {
+            //                if (Utils.MergeNodes(attachedId, mn.id.NetNode))
+            //                {
+            //                    m_clones.Remove(inst);
+            //                }
+            //            }
+            //            //&&
+            //            //    node.Info.m_class.m_service == attached.Info.m_class.m_service && node.Info.m_class.m_subService == attached.Info.m_class.m_subService)
+            //            //{
+            //            //    if ((mn.position - attached.m_position).magnitude < 0.01f)
+            //            //    {
+            //            //        if (Utils.DoMergeNodes(attachedId, mn.id.NetNode)) // Matching nodes overlap, combine them
+            //            //        {
+            //            //            m_clones.Remove(inst);
+            //            //        }
+            //            //    }
+            //            //}
+            //        }
+            //    }
+            //}
+            //Log.Debug($"Independent nodes:{c}, attached nodes:{attachedNodes.Count}, objects:{m_clones.Count} (was:{tmpClones.Count})");
 
             // Clone PO
             MoveItTool.PO.MapGroupClones(m_states, this);
@@ -608,24 +596,21 @@ namespace MoveIt
             }
         }
 
-        public HashSet<InstanceState> CalculateStates(Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain)
+        public Dictionary<InstanceState, InstanceState> CalculateStates(Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, ref HashSet<InstanceState> newStates)
         {
             Matrix4x4 matrix4x = default;
             matrix4x.SetTRS(center + deltaPosition, Quaternion.AngleAxis(deltaAngle * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
-            HashSet<InstanceState> newStates = new HashSet<InstanceState>();
+            Dictionary<InstanceState, InstanceState> statesMap = new Dictionary<InstanceState, InstanceState>();
 
             foreach (InstanceState state in m_states)
             {
                 if (state.instance.isValid)
                 {
-                    InstanceState newState = new InstanceState
-                    {
-                        instance = state.instance,
-                        Info = state.Info,
-
-                        position = matrix4x.MultiplyPoint(state.position - center)
-                    };
+                    InstanceState newState = (InstanceState)Activator.CreateInstance(state.GetType()); // Maintain exact class type
+                    newState.instance = state.instance;
+                    newState.Info = state.Info;
+                    newState.position = matrix4x.MultiplyPoint(state.position - center);
                     newState.position.y = state.position.y + deltaPosition.y;
 
                     if (followTerrain)
@@ -637,9 +622,10 @@ namespace MoveIt
                     newState.angle = state.angle + deltaAngle;
 
                     newStates.Add(newState);
+                    statesMap.Add(newState, state);
                 }
             }
-            return newStates;
+            return statesMap;
         }
 
         public int Count

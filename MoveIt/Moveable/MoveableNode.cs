@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using ColossalFramework.Math;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -39,6 +40,45 @@ namespace MoveIt
                 }
             }
         }
+
+        public ushort FindNearestNode()
+        {
+            NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
+            int c = 0;
+            float dist = NodeMerging.MAX_SNAP_DISTANCE;
+
+            int num = Mathf.Clamp((int)(position.x / 64f + 135f), 0, 269);
+            int num2 = Mathf.Clamp((int)(position.z / 64f + 135f), 0, 269);
+            int num3 = num2 * 270 + num;
+            ushort node = NetManager.instance.m_nodeGrid[num3];
+            ushort result = 0;
+
+            //string msg = "";
+            //string msg2 = "";
+            do
+            {
+                //if (node > 0) msg += $"{node}:{NodeMerging.GetNodeDistance(nodeBuffer[node], position)}, ";
+                if (NodeMerging.CanMergeNodes(node, this))
+                {
+                    float d = NodeMerging.GetNodeDistance(nodeBuffer[node], position);
+                    if (d < dist)
+                    {
+                        result = node;
+                        dist = d;
+                    }
+                    //if (d < NodeMerging.MAX_SNAP_DISTANCE) msg2 += $"{node}:{d}, ";
+                }
+
+                node = nodeBuffer[node].m_nextGridNode;
+            }
+            while (node != 0 && c++ < 99);
+            //if (result == 0)
+            //    Log.Debug($"DDD01.1 [{c}] NodeState #{instance.id.NetNode} no node found");
+            //else
+            //    Log.Debug($"DDD01.2 [{c}] NodeState #{instance.id.NetNode} nearest node found: #{result} @ {dist}m" + (msg == "" ? "" : $"\n  All: {msg}") + (msg2 == "" ? "" : $"\n  Valid: {msg2}"));
+
+            return result;
+        }
     }
 
     public class MoveableNode : Instance
@@ -57,6 +97,7 @@ namespace MoveIt
                 return null;
             }
         }
+        public ushort m_snapNode = 0;
 
         public override HashSet<ushort> segmentList
         {
@@ -462,6 +503,27 @@ namespace MoveIt
                 {
                     buildingBuffer[((NetNode)(cloneInstance.data)).m_building].m_flags = buildingBuffer[((NetNode)data).m_building].m_flags;
                 }
+
+                //ushort nodeId = clone;
+                //string msg = $"";
+                //float dist = 999f;
+                //int c = 0;
+                //do
+                //{
+                //    if (Utils.CanMergeNodes(nodeId, cloneID, 5f))
+                //    {
+                //        msg += $"{nodeId}:{Utils.GetNodeDistance(nodeBuffer[nodeId], nodeBuffer[clone])}m, ";
+                //        float d = Utils.GetNodeDistance(nodeBuffer[nodeId], nodeBuffer[clone]);
+                //        if (d < dist)
+                //        {
+                //            m_snapNode = nodeId;
+                //            dist = d;
+                //        }
+                //    }
+                //    nodeId = nodeBuffer[nodeId].m_nextGridNode;
+                //}
+                //while (nodeId > 0 && c++ < 50);
+                //Log.Debug($"AAA {clone}:{m_snapNode}" + (msg == "" ? "" : $"\n  {msg}"));
             }
 
             return cloneInstance;
@@ -571,7 +633,39 @@ namespace MoveIt
             RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, OverlayPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
         }
 
-        public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
+        public override void RenderCloneOverlay(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
+        {
+            if (ActionQueue.instance.current is CloneActionBase action)
+            {
+                if (state == action.m_mergingNode && action.m_mergingParent.NetNode > 0)
+                {
+                    Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
+                    newPosition.y = state.position.y + deltaPosition.y;
+
+                    if (followTerrain)
+                    {
+                        newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
+                    }
+
+                    NetNode parent = nodeBuffer[action.m_mergingParent.NetNode];
+
+                    if (!MoveItTool.m_isLowSensitivity)
+                    {
+                        NetInfo netInfo = (NetInfo)state.Info.Prefab;
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, newPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
+
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, parent.m_position, Mathf.Max(6f, parent.Info.m_halfWidth * 2f), -1f, 1280f, false, true);
+                    }
+
+                    Bezier3 bezier;
+                    bezier.a = newPosition;
+                    bezier.d = parent.m_position;
+
+                    NetSegment.CalculateMiddlePoints(bezier.a, (newPosition - parent.m_position).normalized, bezier.d, (parent.m_position - newPosition).normalized, true, true, out bezier.b, out bezier.c);
+                    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, toolColor, bezier, 1f, 100000f, -100000f, -1f, 1280f, false, true);
+                }
+            }
+        }
 
         public override void RenderCloneGeometry(InstanceState state, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor) { }
         
@@ -584,88 +678,6 @@ namespace MoveIt
                     msb.RenderGeometry(cameraInfo, toolColor);
                 }
             }
-        }
-
-        /// <summary>
-        /// Combine two nodes into one
-        /// </summary>
-        /// <param name="parentId">The node id to merge into</param>
-        /// <param name="childId">The node id to merge from, is then deleted</param>
-        /// <returns>True if successful (child is deleted), false if failed and child remains</returns>
-        public static bool MergeNodes(ushort parentId, ushort childId)
-        {
-            ref NetNode parent = ref nodeBuffer[parentId];
-            ref NetNode child = ref nodeBuffer[childId];
-
-            if (!((parent.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created && (child.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)) return false;
-            if (!(parent.Info.m_class.m_service == child.Info.m_class.m_service && parent.Info.m_class.m_subService == child.Info.m_class.m_subService)) return false;
-
-            List<ushort> segments = new List<ushort>();
-            for (int i = 0; i < 8; i++)
-            {
-                if (parent.GetSegment(i) > 0) segments.Add(parent.GetSegment(i));
-                if (child.GetSegment(i) > 0) segments.Add(child.GetSegment(i));
-            }
-            string msg = "";
-            foreach (ushort x in segments) msg += $"{x}, ";
-            Log.Debug($"BBB03 {parentId},{childId} {segments.Count}: {msg}");
-            if (segments.Count < 2 || segments.Count > 8) return false;
-
-            parent.m_segment0 = segments[0];
-            parent.m_segment1 = segments[1];
-            if (segments.Count > 2) parent.m_segment2 = segments[2]; else parent.m_segment2 = 0;
-            if (segments.Count > 3) parent.m_segment3 = segments[3]; else parent.m_segment3 = 0;
-            if (segments.Count > 4) parent.m_segment4 = segments[4]; else parent.m_segment4 = 0;
-            if (segments.Count > 5) parent.m_segment5 = segments[5]; else parent.m_segment5 = 0;
-            if (segments.Count > 6) parent.m_segment6 = segments[6]; else parent.m_segment6 = 0;
-            if (segments.Count > 7) parent.m_segment7 = segments[7]; else parent.m_segment7 = 0;
-
-            for (int i = 0; i < 8; i++)
-            {
-                if (child.GetSegment(i) > 0) SwitchSegmentNode(child.GetSegment(i), childId, parentId);
-            }
-
-            if (child.m_segment0 > 0) { child.m_segment0 = 0; }
-            if (child.m_segment1 > 0) { child.m_segment1 = 0; }
-            if (child.m_segment2 > 0) { child.m_segment2 = 0; }
-            if (child.m_segment3 > 0) { child.m_segment3 = 0; }
-            if (child.m_segment4 > 0) { child.m_segment4 = 0; }
-            if (child.m_segment5 > 0) { child.m_segment5 = 0; }
-            if (child.m_segment6 > 0) { child.m_segment6 = 0; }
-            if (child.m_segment7 > 0) { child.m_segment7 = 0; }
-
-            InstanceID instanceID = default;
-            instanceID.NetNode = childId;
-            MoveableNode childNode = new MoveableNode(instanceID);
-            childNode.Delete();
-
-            Log.Info($"Merged node {childId} into {parentId} ({segments.Count} segments)");
-
-            return true;
-        }
-
-        private static void SwitchSegmentNode(ushort segmentId, ushort fromId, ushort toId)
-        {
-            ref NetSegment segment = ref segmentBuffer[segmentId];
-            if (segment.m_startNode == fromId)
-                segment.m_startNode = toId;
-            else if (segment.m_endNode == fromId)
-                segment.m_endNode = toId;
-            else
-                Log.Debug($"BBB05 Node not found for segment #{segmentId} (switching {fromId} to {toId})");
-            Log.Debug($"BBB06 Node switch segment #{segmentId} (switching {fromId} to {toId}) - {segmentBuffer[segmentId].m_startNode},{segmentBuffer[segmentId].m_endNode}");
-        }
-
-        public static IEnumerable<ushort> GetSegments(NetNode node)
-        {
-            if (node.m_segment0 > 0) { Log.Debug($"DDD00.2 {node.m_segment0}"); yield return node.m_segment0; }
-            if (node.m_segment1 > 0) { Log.Debug($"DDD01.2 {node.m_segment1}"); yield return node.m_segment1; }
-            if (node.m_segment2 > 0) { Log.Debug($"DDD02.2 {node.m_segment2}"); yield return node.m_segment2; }
-            if (node.m_segment3 > 0) { Log.Debug($"DDD03.2 {node.m_segment3}"); yield return node.m_segment3; }
-            if (node.m_segment4 > 0) { Log.Debug($"DDD04.2 {node.m_segment4}"); yield return node.m_segment4; }
-            if (node.m_segment5 > 0) { Log.Debug($"DDD05.2 {node.m_segment5}"); yield return node.m_segment5; }
-            if (node.m_segment6 > 0) { Log.Debug($"DDD06.2 {node.m_segment6}"); yield return node.m_segment6; }
-            if (node.m_segment7 > 0) { Log.Debug($"DDD07.2 {node.m_segment7}"); yield return node.m_segment7; }
         }
     }
 }

@@ -95,8 +95,9 @@ namespace MoveIt
         public HashSet<Bounds> areasToUpdate = new HashSet<Bounds>();
         public HashSet<Bounds> areasToQuickUpdate = new HashSet<Bounds>();
 
-        internal static Color m_hoverColor = new Color32(0, 181, 255, 255);
+        internal static Color m_hoverColor = new Color32(0, 181, 255, 250);
         internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
+        internal static Color m_nodeSnapColor = new Color32(0, 100, 200, 250);
         internal static Color m_moveColor = new Color32(125, 196, 30, 244);
         internal static Color m_removeColor = new Color32(255, 160, 47, 191);
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
@@ -222,6 +223,13 @@ namespace MoveIt
             }
         }
 
+        private bool _nodeMerge = true;
+        internal bool NodeMerge
+        {
+            get => _nodeMerge;
+            set => _nodeMerge = value;
+        }
+
         internal UIMoveItButton m_button;
         private UIComponent m_pauseMenu;
 
@@ -301,9 +309,9 @@ namespace MoveIt
             EnableUUI();
 
             followTerrain = followTerrainModeEnabled;
-            if (!isTreeAnarchyEnabled())
+            if (!Utils.isTreeAnarchyEnabled())
             {
-                treeSnapping = isTreeSnappingEnabled();
+                treeSnapping = Utils.isTreeSnappingEnabled();
             }
 
             PropLayer.Initialise();
@@ -659,7 +667,11 @@ namespace MoveIt
                 foreach (InstanceState state in action.m_states)
                 {
                     Color color = m_hoverColor;
-                    if (state is ProcState)
+                    if (state == action.m_mergingNode)
+                    {
+                        color = m_nodeSnapColor;
+                    }
+                    else if (state is ProcState)
                     {
                         color = m_POhoverColor;
                     }

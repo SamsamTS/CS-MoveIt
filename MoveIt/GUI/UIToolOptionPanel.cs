@@ -26,6 +26,7 @@ namespace MoveIt
         public UIMultiStateButton PO_button;
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;
+        public UIMultiStateButton mergeNodes;
 
         public UIPanel m_filtersPanel, m_filtersPanelList;
         public UIPanel m_moreToolsPanel;
@@ -522,7 +523,7 @@ namespace MoveIt
             m_viewOptions = AddUIComponent<UIPanel>();
             m_viewOptions.atlas = UIUtils.GetAtlas("Ingame");
             m_viewOptions.backgroundSprite = "InfoPanelBack";
-            m_viewOptions.size = new Vector2(44f, 80f);
+            m_viewOptions.size = new Vector2(44f, 116f);
 
             m_viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - m_viewOptions.width, absolutePosition.y - m_viewOptions.height - 8f);
 
@@ -597,6 +598,41 @@ namespace MoveIt
             };
 
 
+            mergeNodes = m_viewOptions.AddUIComponent<UIMultiStateButton>();
+            mergeNodes.atlas = GetIconsAtlas();
+            mergeNodes.name = "MoveIt_MergeNodesView";
+            mergeNodes.tooltip = "Merge Overlapping Nodes";
+            mergeNodes.playAudioEvents = true;
+
+            mergeNodes.size = new Vector2(36, 36);
+            mergeNodes.spritePadding = new RectOffset();
+
+            mergeNodes.backgroundSprites[0].disabled = "OptionBaseDisabled";
+            mergeNodes.backgroundSprites[0].hovered = "OptionBaseHovered";
+            mergeNodes.backgroundSprites[0].normal = "OptionBase";
+            mergeNodes.backgroundSprites[0].pressed = "OptionBasePressed";
+
+            mergeNodes.backgroundSprites.AddState();
+            mergeNodes.backgroundSprites[1].disabled = "OptionBaseDisabled";
+            mergeNodes.backgroundSprites[1].hovered = "";
+            mergeNodes.backgroundSprites[1].normal = "OptionBaseFocused";
+            mergeNodes.backgroundSprites[1].pressed = "OptionBasePressed";
+
+            mergeNodes.foregroundSprites[0].normal = "NodeMerge";
+
+            mergeNodes.foregroundSprites.AddState();
+            mergeNodes.foregroundSprites[1].normal = "NodeMergeFocused";
+
+            mergeNodes.relativePosition = new Vector3(4f, 76f);
+
+            mergeNodes.activeStateIndex = 0;
+
+            mergeNodes.eventClicked += (c, p) =>
+            {
+                MoveItTool.tunnelVisible = (underground.activeStateIndex == 1);
+            };
+
+
             if (MoveItTool.PO.Enabled)
             {
                 PO_button = m_viewOptions.AddUIComponent<UIMultiStateButton>();
@@ -624,7 +660,7 @@ namespace MoveIt
                 PO_button.foregroundSprites.AddState();
                 PO_button.foregroundSprites[1].normal = "POFocused";
 
-                PO_button.relativePosition = new Vector3(4f, 76f);
+                PO_button.relativePosition = new Vector3(4f, 112f);
 
                 PO_button.activeStateIndex = 0;
 
@@ -751,6 +787,8 @@ namespace MoveIt
                 "MenuHeight",
                 "MenuOthers",
                 "MenuRotate",
+                "NodeMerge",
+                "NodeMergeFocused",
                 "Save",
                 "Save_disabled",
                 "Load",
