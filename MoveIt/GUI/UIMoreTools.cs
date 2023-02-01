@@ -349,7 +349,7 @@ namespace MoveIt
 
         internal static void CheckCloseMenu()
         {
-            if (!MoveItTool.autoCloseAlignTools) return;
+            if (!Settings.autoCloseAlignTools) return;
 
             CloseMenu();
         }

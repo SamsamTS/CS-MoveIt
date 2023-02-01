@@ -208,7 +208,7 @@ namespace MoveIt
                     break;
                 }
             }
-            if (!MoveItTool.POShowDeleteWarning || !po)
+            if (!Settings.POShowDeleteWarning || !po)
             {
                 DoImplementation(false);
                 return;

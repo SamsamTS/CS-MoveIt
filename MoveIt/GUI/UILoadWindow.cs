@@ -10,8 +10,8 @@ namespace MoveIt
 {
     public class UILoadWindow : XMLWindow
     {
-        public static readonly SavedInt loadWindowX = new SavedInt("loadWindowX", MoveItTool.settingsFileName, -1000, true);
-        public static readonly SavedInt loadWindowY = new SavedInt("loadWindowY", MoveItTool.settingsFileName, -1000, true);
+        public static readonly SavedInt loadWindowX = new SavedInt("loadWindowX", Settings.settingsFileName, -1000, true);
+        public static readonly SavedInt loadWindowY = new SavedInt("loadWindowY", Settings.settingsFileName, -1000, true);
 
         public override void Start()
         {

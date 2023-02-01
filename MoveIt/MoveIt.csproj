@@ -100,6 +100,7 @@
     <Compile Include="GUI\UIMoveItButton.cs" />
     <Compile Include="GUI\UIToolOptionPanel.cs" />
     <Compile Include="GUI\UIUtils.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="StepOver.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

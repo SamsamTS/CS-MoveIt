@@ -11,8 +11,8 @@ namespace MoveIt
 {
     public class UISaveWindow : XMLWindow
     {
-        public static readonly SavedInt saveWindowX = new SavedInt("saveWindowX", MoveItTool.settingsFileName, -1000, true);
-        public static readonly SavedInt saveWindowY = new SavedInt("saveWindowY", MoveItTool.settingsFileName, -1000, true);
+        public static readonly SavedInt saveWindowX = new SavedInt("saveWindowX", Settings.settingsFileName, -1000, true);
+        public static readonly SavedInt saveWindowY = new SavedInt("saveWindowY", Settings.settingsFileName, -1000, true);
 
         public UIButton saveButton;
         public UIPanel savePanel;

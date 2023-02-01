@@ -265,7 +265,7 @@ namespace MoveIt
 
         protected HashSet<InstanceState> ProcessPillars(HashSet<InstanceState> states, bool makeClone)
         {
-            if (!MoveItTool.advancedPillarControl) return states;
+            if (!Settings.advancedPillarControl) return states;
 
             HashSet<ushort> nodesWithAttachments = new HashSet<ushort>();
 

@@ -86,7 +86,7 @@ namespace MoveIt
                 }
             }
 
-            bool fast = MoveItTool.fastMove != Event.current.shift;
+            bool fast = Settings.fastMove != Event.current.shift;
             UpdateArea(originalBounds, !fast || ((TypeMask & TypeMasks.Network) != TypeMasks.None));
             UpdateArea(GetTotalBounds(false), !fast);
         }

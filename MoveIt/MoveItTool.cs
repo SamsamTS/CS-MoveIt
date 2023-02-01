@@ -48,24 +48,11 @@ namespace MoveIt
             MoveTo
         }
 
-        public const string settingsFileName = "MoveItTool";
         public static readonly string saveFolder = Path.Combine(DataLocation.localApplicationData, "MoveItExports");
         public const int UI_Filter_CB_Height = 25;
         public const int Fastmove_Max = 100;
 
         public static MoveItTool instance;
-        public static SavedBool hideChangesWindow = new SavedBool("hideChanges297", settingsFileName, false, true);
-        public static SavedBool autoCloseAlignTools = new SavedBool("autoCloseAlignTools", settingsFileName, false, true);
-        public static SavedBool POShowDeleteWarning = new SavedBool("POShowDeleteWarning", settingsFileName, true, true);
-        public static SavedBool useCardinalMoves = new SavedBool("useCardinalMoves", settingsFileName, false, true);
-        public static SavedBool rmbCancelsCloning = new SavedBool("rmbCancelsCloning", settingsFileName, false, true);
-        public static SavedBool advancedPillarControl = new SavedBool("advancedPillarControl", settingsFileName, false, true);
-        public static SavedBool fastMove = new SavedBool("fastMove", settingsFileName, false, true);
-        public static SavedBool altSelectNodeBuildings = new SavedBool("altSelectNodeBuildings", settingsFileName, false, true);
-        public static SavedBool altSelectSegmentNodes = new SavedBool("altSelectSegmentNodes", settingsFileName, true, true);
-        public static SavedBool followTerrainModeEnabled = new SavedBool("followTerrainModeEnabled", settingsFileName, true, true);
-        public static SavedBool showDebugPanel = new SavedBool("showDebugPanel", settingsFileName, false, true);
-        public static SavedBool useUUI = new SavedBool("useUUI", settingsFileName, false, true);
 
         public static bool filterPicker = false;
         public static bool filterBuildings = true;
@@ -224,11 +211,19 @@ namespace MoveIt
             }
         }
 
-        private bool _nodeMerge = true;
+        private bool _nodeMerge = Settings.autoMergeNodes;
         internal bool NodeMerge
         {
             get => _nodeMerge;
-            set => _nodeMerge = value;
+            set // => _nodeMerge = value;
+            {
+                if (_nodeMerge != value)
+                {
+                    Log.Debug($"ZZZ NodeMerge: {_nodeMerge}=>{value}");
+                    _nodeMerge = value;
+                    Settings.autoMergeNodes.value = value;
+                }
+            }
         }
 
         internal UIMoveItButton m_button;
@@ -309,7 +304,7 @@ namespace MoveIt
             // Unified UI
             EnableUUI();
 
-            followTerrain = followTerrainModeEnabled;
+            followTerrain = Settings.followTerrainModeEnabled;
             if (!Utils.isTreeAnarchyEnabled())
             {
                 treeSnapping = Utils.isTreeSnappingEnabled();

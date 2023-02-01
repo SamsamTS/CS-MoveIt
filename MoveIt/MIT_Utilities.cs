@@ -60,7 +60,7 @@ namespace MoveIt
 
         internal void EnableUUI()
         {
-            if (!useUUI)
+            if (!Settings.useUUI)
             {
                 return;
             }
@@ -111,7 +111,7 @@ namespace MoveIt
 
         internal static void UpdatePillarMap()
         {
-            if (!advancedPillarControl) return;
+            if (!Settings.advancedPillarControl) return;
 
             //Log.Debug("UPM Start");
             var watch = new System.Diagnostics.Stopwatch();

@@ -30,7 +30,7 @@ namespace MoveIt
 
         internal void UpdatePanel()
         {
-            if (!MoveItTool.showDebugPanel)
+            if (!Settings.showDebugPanel)
             {
                 return;
             }
@@ -168,7 +168,7 @@ namespace MoveIt
             Panel.size = new Vector2(300, 120);
             Panel.absolutePosition = new Vector3(Panel.GetUIView().GetScreenResolution().x - 422, 3);
             Panel.clipChildren = true;
-            Panel.isVisible = MoveItTool.showDebugPanel;
+            Panel.isVisible = Settings.showDebugPanel;
 
             HoverLarge = Panel.AddUIComponent<UILabel>();
             HoverLarge.textScale = 0.8f;

@@ -80,7 +80,7 @@ namespace MoveIt
             m_followTerrain.eventClicked += (c, p) =>
             {
                 MoveItTool.followTerrain = (m_followTerrain.activeStateIndex == 1);
-                MoveItTool.followTerrainModeEnabled.value = (m_followTerrain.activeStateIndex == 1);
+                Settings.followTerrainModeEnabled.value = (m_followTerrain.activeStateIndex == 1);
             };
             #endregion
 
@@ -532,29 +532,10 @@ namespace MoveIt
             grid.atlas = GetIconsAtlas();
             grid.name = "MoveIt_GridView";
             grid.tooltip = Str.baseUI_ToggleGrid_Tooltip;
-            grid.playAudioEvents = true;
 
-            grid.size = new Vector2(36, 36);
-            grid.spritePadding = new RectOffset();
-
-            grid.backgroundSprites[0].disabled = "OptionBaseDisabled";
-            grid.backgroundSprites[0].hovered = "OptionBaseHovered";
-            grid.backgroundSprites[0].normal = "OptionBase";
-            grid.backgroundSprites[0].pressed = "OptionBasePressed";
-
-            grid.backgroundSprites.AddState();
-            grid.backgroundSprites[1].disabled = "OptionBaseDisabled";
-            grid.backgroundSprites[1].hovered = "";
-            grid.backgroundSprites[1].normal = "OptionBaseFocused";
-            grid.backgroundSprites[1].pressed = "OptionBasePressed";
-
-            grid.foregroundSprites[0].normal = "Grid";
-
-            grid.foregroundSprites.AddState();
-            grid.foregroundSprites[1].normal = "GridFocused";
+            SetViewOptionsProperties(grid, "Grid");
 
             grid.relativePosition = new Vector3(4f, 4f);
-
             grid.activeStateIndex = 0;
 
             grid.eventClicked += (c, p) =>
@@ -567,29 +548,10 @@ namespace MoveIt
             underground.atlas = UIUtils.GetAtlas("Ingame");
             underground.name = "MoveIt_UndergroundView";
             underground.tooltip = Str.baseUI_ToggleUnderground_Tooltip;
-            underground.playAudioEvents = true;
 
-            underground.size = new Vector2(36, 36);
-            underground.spritePadding = new RectOffset();
-
-            underground.backgroundSprites[0].disabled = "OptionBaseDisabled";
-            underground.backgroundSprites[0].hovered = "OptionBaseHovered";
-            underground.backgroundSprites[0].normal = "OptionBase";
-            underground.backgroundSprites[0].pressed = "OptionBasePressed";
-
-            underground.backgroundSprites.AddState();
-            underground.backgroundSprites[1].disabled = "OptionBaseDisabled";
-            underground.backgroundSprites[1].hovered = "";
-            underground.backgroundSprites[1].normal = "OptionBaseFocused";
-            underground.backgroundSprites[1].pressed = "OptionBasePressed";
-
-            underground.foregroundSprites[0].normal = "BulldozerOptionPipes";
-
-            underground.foregroundSprites.AddState();
-            underground.foregroundSprites[1].normal = "BulldozerOptionPipesFocused";
+            SetViewOptionsProperties(underground, "BulldozerOptionPipes");
 
             underground.relativePosition = new Vector3(4f, 40f);
-
             underground.activeStateIndex = 0;
 
             underground.eventClicked += (c, p) =>
@@ -601,35 +563,16 @@ namespace MoveIt
             mergeNodes = m_viewOptions.AddUIComponent<UIMultiStateButton>();
             mergeNodes.atlas = GetIconsAtlas();
             mergeNodes.name = "MoveIt_MergeNodesView";
-            mergeNodes.tooltip = "Merge Overlapping Nodes";
-            mergeNodes.playAudioEvents = true;
+            mergeNodes.tooltip = Str.baseUI_MergeNodesTooltip;
 
-            mergeNodes.size = new Vector2(36, 36);
-            mergeNodes.spritePadding = new RectOffset();
-
-            mergeNodes.backgroundSprites[0].disabled = "OptionBaseDisabled";
-            mergeNodes.backgroundSprites[0].hovered = "OptionBaseHovered";
-            mergeNodes.backgroundSprites[0].normal = "OptionBase";
-            mergeNodes.backgroundSprites[0].pressed = "OptionBasePressed";
-
-            mergeNodes.backgroundSprites.AddState();
-            mergeNodes.backgroundSprites[1].disabled = "OptionBaseDisabled";
-            mergeNodes.backgroundSprites[1].hovered = "";
-            mergeNodes.backgroundSprites[1].normal = "OptionBaseFocused";
-            mergeNodes.backgroundSprites[1].pressed = "OptionBasePressed";
-
-            mergeNodes.foregroundSprites[0].normal = "NodeMerge";
-
-            mergeNodes.foregroundSprites.AddState();
-            mergeNodes.foregroundSprites[1].normal = "NodeMergeFocused";
+            SetViewOptionsProperties(mergeNodes, "NodeMerge");
 
             mergeNodes.relativePosition = new Vector3(4f, 76f);
-
-            mergeNodes.activeStateIndex = 0;
+            mergeNodes.activeStateIndex = Settings.autoMergeNodes ? 1 : 0;
 
             mergeNodes.eventClicked += (c, p) =>
             {
-                MoveItTool.tunnelVisible = (underground.activeStateIndex == 1);
+                MoveItTool.instance.NodeMerge = (mergeNodes.activeStateIndex == 1);
             };
 
 
@@ -639,29 +582,10 @@ namespace MoveIt
                 PO_button.atlas = GetIconsAtlas();
                 PO_button.name = "MoveIt_PO_button";
                 PO_button.tooltip = Str.baseUI_TogglePO_Tooltip;
-                PO_button.playAudioEvents = true;
 
-                PO_button.size = new Vector2(36, 36);
-                PO_button.spritePadding = new RectOffset();
-
-                PO_button.backgroundSprites[0].disabled = "OptionBaseDisabled";
-                PO_button.backgroundSprites[0].hovered = "OptionBaseHovered";
-                PO_button.backgroundSprites[0].normal = "OptionBase";
-                PO_button.backgroundSprites[0].pressed = "OptionBasePressed";
-
-                PO_button.backgroundSprites.AddState();
-                PO_button.backgroundSprites[1].disabled = "OptionBaseDisabled";
-                PO_button.backgroundSprites[1].hovered = "";
-                PO_button.backgroundSprites[1].normal = "OptionBaseFocused";
-                PO_button.backgroundSprites[1].pressed = "OptionBasePressed";
-
-                PO_button.foregroundSprites[0].normal = "PO";
-
-                PO_button.foregroundSprites.AddState();
-                PO_button.foregroundSprites[1].normal = "POFocused";
+                SetViewOptionsProperties(PO_button, "PO");
 
                 PO_button.relativePosition = new Vector3(4f, 112f);
-
                 PO_button.activeStateIndex = 0;
 
                 PO_button.eventClicked += (c, p) =>
@@ -674,6 +598,30 @@ namespace MoveIt
             }
 
             #endregion
+        }
+
+        private void SetViewOptionsProperties(UIMultiStateButton btn, string sprite)
+        {
+            btn.playAudioEvents = true;
+
+            btn.size = new Vector2(36, 36);
+            btn.spritePadding = new RectOffset();
+
+            btn.backgroundSprites[0].disabled = "OptionBaseDisabled";
+            btn.backgroundSprites[0].hovered = "OptionBaseHovered";
+            btn.backgroundSprites[0].normal = "OptionBase";
+            btn.backgroundSprites[0].pressed = "OptionBasePressed";
+
+            btn.backgroundSprites.AddState();
+            btn.backgroundSprites[1].disabled = "OptionBaseDisabled";
+            btn.backgroundSprites[1].hovered = "";
+            btn.backgroundSprites[1].normal = "OptionBaseFocused";
+            btn.backgroundSprites[1].pressed = "OptionBasePressed";
+
+            mergeNodes.foregroundSprites[0].normal = sprite;
+
+            mergeNodes.foregroundSprites.AddState();
+            mergeNodes.foregroundSprites[1].normal = sprite + "Focused";
         }
 
         protected override void OnVisibilityChanged()

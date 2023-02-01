@@ -116,6 +116,14 @@ namespace MoveIt
             if (!((parent.m_flags & NetNode.Flags.Created) == NetNode.Flags.Created)) return false;
             if (!(parent.Info.m_class.m_service == childInfo.m_class.m_service && parent.Info.m_class.m_subService == childInfo.m_class.m_subService)) return false;
 
+            int segCount = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                if (parent.GetSegment(i) > 0) segCount++;
+                if (((NetNode)state.instance.data).GetSegment(i) > 0) segCount++;
+            }
+            if (segCount > 8) return false;
+
             return GetNodeDistance(parent, state.position) < tolerance;
         }
 

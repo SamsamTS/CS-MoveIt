@@ -185,11 +185,11 @@ namespace MoveIt
                                 {
                                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                                     {
-                                        action.Virtual = !fastMove;
+                                        action.Virtual = !Settings.fastMove;
                                     }
                                     else
                                     {
-                                        action.Virtual = fastMove;
+                                        action.Virtual = Settings.fastMove;
                                     }
                                 }
 
@@ -285,14 +285,19 @@ namespace MoveIt
                                 }
                                 newMove.y = y;
 
-                                if (snapping)
-                                {
-                                    newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out bool autoCurve);
-                                }
-
                                 if (NodeMerge)
                                 {
                                     action.m_snapNode = GetMergingNodes(action, newMove, action.angleDelta, action.center);
+                                    if (snapping && action.m_snapNode != null)
+                                    {
+                                        newMove += action.m_snapNode.GetParentNode().m_position - action.m_snapNode.adjustedState.position;
+                                        GetMergingNodes(action, newMove, action.angleDelta, action.center); // Recalculate node merges after snapping
+                                        //Log.Debug($"AAA01 {newMove} {action.m_snapNode.GetParentNode().m_position}, {action.m_snapNode.adjustedState.position} = {action.m_snapNode.GetParentNode().m_position - action.m_snapNode.adjustedState.position}");
+                                    }
+                                }
+                                else if (snapping)
+                                {
+                                    newMove = GetSnapDelta(newMove, action.angleDelta, action.center, out bool autoCurve);
                                 }
 
                                 if (action.moveDelta != newMove)
@@ -501,6 +506,7 @@ namespace MoveIt
         /// <returns></returns>
         private NodeMergeData GetMergingNodes(CloneActionBase action, Vector3 moveDelta, float angleDelta, Vector3 center)
         {
+            action.m_snapNode = null;
             action.m_nodeMergeData.Clear();
 
             // Look for nodes
@@ -537,10 +543,10 @@ namespace MoveIt
             }
             if (snapCandidate != null) snapCandidate.status = NodeMergeStatuses.Snap;
 
-            string msg = "";
-            foreach (var x in action.m_nodeMergeData) msg += $"{x}, ";
-            if (msg != "") msg = $"\n  {action.m_nodeMergeData.Count}: " + msg;
-            Log.Debug($"DDD02 candidate found:{(snapCandidate == null ? "<null>" : snapCandidate.nodeState.Info.Prefab.name + " (#" + snapCandidate.StateId + ")")}{msg}");
+            //string msg = "";
+            //foreach (var x in action.m_nodeMergeData) msg += $"{x}, ";
+            //if (msg != "") msg = $"\n  {action.m_nodeMergeData.Count}: " + msg;
+            //Log.Debug($"AAA02 candidate found:{(snapCandidate == null ? "<null>" : snapCandidate.nodeState.Info.Prefab.name + " (#" + snapCandidate.StateId + ")")}{msg}");
 
             return snapCandidate;
         }
@@ -566,14 +572,12 @@ namespace MoveIt
 
             bool snap = false;
 
-            HashSet<InstanceState> newStates = null;
-
+            HashSet<InstanceState> newStates = new HashSet<InstanceState>();
             if (ActionQueue.instance.current is TransformAction transformAction)
             {
                 newStates = transformAction.CalculateStates(moveDelta, angleDelta, center, followTerrain);
             }
-
-            if (ActionQueue.instance.current is CloneActionBase cloneAction)
+            else if (ActionQueue.instance.current is CloneActionBase cloneAction)
             {
                 cloneAction.CalculateStates(moveDelta, angleDelta, center, followTerrain, ref newStates);
             }
@@ -780,25 +784,6 @@ namespace MoveIt
             return false;
         }
 
-        //private SnapCandidate TrySnapping(Vector3 testPos, Vector3 newPosition, Vector3 moveDelta, float minSqDistance, string type)
-        //{
-        //    SnapCandidate candidate = new SnapCandidate
-        //    {
-        //        distance = Vector2.SqrMagnitude(VectorUtils.XZ(testPos - newPosition)),
-        //        type = type
-        //    };
-
-        //    if (candidate.distance < minSqDistance)
-        //    {
-        //        candidate.moveDelta = moveDelta + (testPos - newPosition);
-        //        candidate.moveDelta.y = moveDelta.y;
-
-        //        return candidate;
-        //    }
-
-        //    return null;
-        //}
-
         private Vector3 GetBuildingSnapPoint(Vector3 position, float angle, int length, int width)
         {
             float x = 0;
@@ -917,280 +902,6 @@ namespace MoveIt
 
             return newMoveDelta;
         }
-
-        //    private bool TrySnapNodeDirections(ushort node, Vector3 newPosition, Vector3 moveDelta, out Vector3 newMoveDelta, out bool autoCurve)
-        //    {
-        //        m_segmentGuide = default;
-
-        //        NetManager netManager = NetManager.instance;
-        //        NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
-        //        NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
-
-        //        float minSqDistance = nodeBuffer[node].Info.GetMinNodeDistance() / 2f;
-        //        minSqDistance *= minSqDistance;
-
-        //        autoCurve = false;
-        //        newMoveDelta = moveDelta;
-
-        //        List<SnapCandidate> candidates = new List<SnapCandidate>();
-        //        SnapCandidate testCandidate;
-
-        //        bool snap = false;
-
-        //        // Snap to curve
-        //        for (int i = 0; i < 8; i++)
-        //        {
-        //            ushort segmentId = nodeBuffer[node].GetSegment(i);
-        //            if (segmentId != 0)
-        //            {
-        //                for (int j = i + 1; j < 8; j++)
-        //                {
-        //                    ushort segmentB = nodeBuffer[node].GetSegment(j);
-
-        //                    if (segmentB != 0 && segmentB != segmentId)
-        //                    {
-        //                        NetSegment segment = default;
-        //                        segment.m_startNode = segmentBuffer[segmentId].m_startNode == node ? segmentBuffer[segmentId].m_endNode : segmentBuffer[segmentId].m_startNode;
-        //                        segment.m_endNode = segmentBuffer[segmentB].m_startNode == node ? segmentBuffer[segmentB].m_endNode : segmentBuffer[segmentB].m_startNode;
-
-        //                        segment.m_startDirection = (nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
-        //                        segment.m_endDirection = -segment.m_startDirection;
-
-        //                        segment.GetClosestPositionAndDirection(newPosition, out Vector3 testPos, out _);
-        //                        // Straight
-        //                        if ((testCandidate = TrySnapping(testPos, newPosition, moveDelta, minSqDistance, "StraightDual")) != null)
-        //                        {
-        //                            testCandidate.seg = segment;
-        //                            testCandidate.autoCurve = true;
-        //                            testCandidate.priority = 3;
-        //                            candidates.Add(testCandidate);
-        //                            snap = true;
-        //                        }
-
-        //                        for (int k = 0; k < 8; k++)
-        //                        {
-        //                            ushort segmentC = nodeBuffer[segment.m_startNode].GetSegment(k);
-        //                            if (segmentC != 0 && segmentC != segmentId)
-        //                            {
-        //                                for (int l = 0; l < 8; l++)
-        //                                {
-        //                                    ushort segmentD = nodeBuffer[segment.m_endNode].GetSegment(l);
-
-        //                                    if (segmentD != 0 && segmentD != segmentB)
-        //                                    {
-        //                                        segment.m_startDirection = segmentBuffer[segmentC].m_startNode == segment.m_startNode ? -segmentBuffer[segmentC].m_startDirection : -segmentBuffer[segmentC].m_endDirection;
-        //                                        segment.m_endDirection = segmentBuffer[segmentD].m_startNode == segment.m_endNode ? -segmentBuffer[segmentD].m_startDirection : -segmentBuffer[segmentD].m_endDirection;
-
-        //                                        Vector2 A = VectorUtils.XZ(nodeBuffer[segment.m_endNode].m_position - nodeBuffer[segment.m_startNode].m_position).normalized;
-        //                                        Vector2 B = VectorUtils.XZ(segment.m_startDirection);
-        //                                        float side1 = A.x * B.y - A.y * B.x;
-
-        //                                        B = VectorUtils.XZ(segment.m_endDirection);
-        //                                        float side2 = A.x * B.y - A.y * B.x;
-
-        //                                        if (Mathf.Sign(side1) != Mathf.Sign(side2) ||
-        //                                            (side1 != side2 && (side1 == 0 || side2 == 0)) ||
-        //                                            Vector2.Dot(A, VectorUtils.XZ(segment.m_startDirection)) < 0 ||
-        //                                            Vector2.Dot(A, VectorUtils.XZ(segment.m_endDirection)) > 0)
-        //                                        {
-        //                                            continue;
-        //                                        }
-
-        //                                        Bezier3 bezier = default;
-        //                                        bezier.a = Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_startNode].m_position;
-        //                                        bezier.d = Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_endNode].m_position;
-        //                                        bool smoothStart = (Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None;
-        //                                        bool smoothEnd = (Singleton<NetManager>.instance.m_nodes.m_buffer[segment.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None;
-        //                                        NetSegment.CalculateMiddlePoints(bezier.a, segment.m_startDirection, bezier.d, segment.m_endDirection, smoothStart, smoothEnd, out bezier.b, out bezier.c);
-
-        //                                        testPos = bezier.Position(0.5f);
-        //                                        // Curve Middle
-        //                                        if ((testCandidate = TrySnapping(testPos, newPosition, moveDelta, minSqDistance, "CurveMiddle")) != null)
-        //                                        {
-        //                                            testCandidate.seg = segment;
-        //                                            testCandidate.autoCurve = true;
-        //                                            testCandidate.priority = 2;
-        //                                            candidates.Add(testCandidate);
-        //                                            snap = true;
-        //                                        }
-        //                                        else
-        //                                        {
-        //                                            segment.GetClosestPositionAndDirection(newPosition, out testPos, out _);
-        //                                            // Curve
-        //                                            if ((testCandidate = TrySnapping(testPos, newPosition, moveDelta, minSqDistance, "Curve")) != null)
-        //                                            {
-        //                                                testCandidate.seg = segment;
-        //                                                testCandidate.autoCurve = true;
-        //                                                testCandidate.priority = 1;
-        //                                                candidates.Add(testCandidate);
-        //                                                snap = true;
-        //                                            }
-        //                                        }
-        //                                    }
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-
-
-        //        // Snap to tangent
-
-        //        if (!snap)
-        //        {
-        //            for (int i = 0; i < 8; i++)
-        //            {
-        //                ushort segmentId = nodeBuffer[node].GetSegment(i);
-        //                if (segmentId != 0)
-        //                {
-        //                    ushort testNode = segmentBuffer[segmentId].m_startNode == node ? segmentBuffer[segmentId].m_endNode : segmentBuffer[segmentId].m_startNode;
-        //                    Vector3 testPos = nodeBuffer[testNode].m_position;
-
-        //                    for (int j = 0; j < 8; j++)
-        //                    {
-        //                        ushort segmentC = nodeBuffer[testNode].GetSegment(j);
-
-        //                        if (segmentC != 0 && segmentC != segmentId)
-        //                        {
-        //                            bool duplicate = false;
-        //                            foreach (SnapCandidate candidate in candidates)
-        //                            {
-        //                                if ((segmentId == candidate.seg.m_startNode || segmentId == candidate.seg.m_endNode) && (segmentC == candidate.seg.m_startNode || segmentC == candidate.seg.m_endNode))
-        //                                {
-        //                                    Log.Debug($"Dup: {segmentId},{segmentC}");
-        //                                    duplicate = true;
-        //                                    break;
-        //                                }
-        //                            }
-        //                            if (duplicate) continue;
-
-        //                            // Straight
-        //                            Vector3 startDir = segmentBuffer[segmentC].m_startNode == testNode ? segmentBuffer[segmentC].m_startDirection : segmentBuffer[segmentC].m_endDirection;
-        //                            Vector3 offset = Line2.Offset(startDir, testPos - newPosition);
-        //                            offset = newPosition + offset - testPos;
-        //                            float num = offset.x * startDir.x + offset.z * startDir.z;
-
-        //                            //Log.Debug($"Node {node}, minSqDistance: {minSqDistance}\n" +
-        //                            //    $"segment: {segment}, segmentA:{segmentA}\n" +
-        //                            //    $"testPos: {testPos}, newPos: {newPosition}, offset: {offset}, oldOffset: {Line2.Offset(startDir, testPos - newPosition)}");
-
-        //                            if ((testCandidate = TrySnapping(testPos + startDir * num, newPosition, moveDelta, minSqDistance, "StraightSingle")) != null)
-        //                            {
-        //                                testCandidate.seg.m_startNode = node;
-        //                                testCandidate.seg.m_endNode = testNode;
-        //                                testCandidate.seg.m_startDirection = startDir;
-        //                                testCandidate.seg.m_endDirection = -startDir;
-        //                                testCandidate.priority = 5;
-        //                                testCandidate.autoCurve = false;
-
-        //                                candidates.Add(testCandidate);
-        //                                snap = true;
-        //                            }
-        //                            else
-        //                            {
-        //                                // 90°
-        //                                startDir = new Vector3(-startDir.z, startDir.y, startDir.x);
-        //                                offset = Line2.Offset(startDir, testPos - newPosition);
-        //                                offset = newPosition + offset - testPos;
-        //                                num = offset.x * startDir.x + offset.z * startDir.z;
-
-        //                                if ((testCandidate = TrySnapping(testPos + startDir * num, newPosition, moveDelta, minSqDistance, "Tangent90")) != null)
-        //                                {
-        //                                    testCandidate.seg.m_startNode = node;
-        //                                    testCandidate.seg.m_endNode = testNode;
-        //                                    testCandidate.seg.m_startDirection = startDir;
-        //                                    testCandidate.seg.m_endDirection = -startDir;
-        //                                    testCandidate.priority = 4;
-        //                                    testCandidate.autoCurve = false;
-
-        //                                    candidates.Add(testCandidate);
-        //                                    snap = true;
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //        if (snap)
-        //        {
-        //            candidates.Sort();
-
-        //            //string msg = $"Snapping {newPosition}:\n";
-        //            //int c = 0;
-        //            //DebugPoints.Clear();
-        //            //foreach (var candidate in candidates)
-        //            //{
-        //            //    msg += c++ + ": " + candidate.Debug() + "\n";
-        //            //    DebugPoints.Add(newPosition);
-        //            //}
-        //            //Log.Debug(msg);
-
-        //            m_segmentGuide2 = new NetSegment();
-        //            m_segmentGuide = candidates[0].seg;
-        //            newMoveDelta = candidates[0].moveDelta;
-        //            autoCurve = candidates[0].autoCurve;
-
-        //            if (candidates.Count > 1)
-        //            {
-        //                m_segmentGuide2 = candidates[1].seg;
-        //            }
-
-        //            //Log.Debug("Snapping\n" + 
-        //            //    $"{snapType} + {autoCurve}\n" + 
-        //            //    $"m_segmentGuide: ({newMoveDelta.x},{newMoveDelta.y},{newMoveDelta.z})\n" +
-        //            //    $"{nodeBuffer[m_segmentGuide.m_startNode].m_position} {m_segmentGuide.m_startDirection}\n" +
-        //            //    $"{nodeBuffer[m_segmentGuide.m_endNode].m_position} {m_segmentGuide.m_endDirection}\n" +
-        //            //    $"m_segmentGuide2: ({newMoveDelta2.x},{newMoveDelta2.y},{newMoveDelta2.z})\n" +
-        //            //    $"{nodeBuffer[m_segmentGuide2.m_startNode].m_position} {m_segmentGuide2.m_startDirection}\n" +
-        //            //    $"{nodeBuffer[m_segmentGuide2.m_endNode].m_position} {m_segmentGuide2.m_endDirection}");
-        //        }
-
-        //        return snap;
-        //    }
-        //}
-
-        //internal class SnapCandidate : IComparable<SnapCandidate>
-        //{
-        //    public NetSegment seg;
-        //    public float distance;
-        //    public Vector3 moveDelta;
-        //    public String type;
-        //    public bool autoCurve;
-        //    public byte priority;
-
-        //    public SnapCandidate()
-        //    {
-        //        seg = new NetSegment();
-        //        distance = 0f;
-        //        moveDelta = Vector3.zero;
-        //        type = "";
-        //        autoCurve = false;
-        //        priority = 6;
-        //    }
-
-        //    public int CompareTo(SnapCandidate compare)
-        //    {
-        //        if (compare.priority != priority)
-        //        {
-        //            return priority - compare.priority;
-        //        }
-
-        //        if (compare.distance > distance)
-        //        {
-        //            return -1;
-        //        }
-        //        return 1;
-        //    }
-
-        //    public String Debug()
-        //    {
-        //        return $"{priority}/{distance} {seg.m_startNode}-{seg.m_endNode} ({moveDelta.x},{moveDelta.y},{moveDelta.z}) {type} (autoCurve:{autoCurve})";
-        //    }
-        //}
 
         private bool TrySnapNodeDirections(ushort node, Vector3 newPosition, Vector3 moveDelta, out Vector3 newMoveDelta, out bool autoCurve)
         {

@@ -75,56 +75,56 @@ namespace MoveIt
 
         protected string m_EditingBindingCategory;
 
-        public static readonly SavedInputKey toggleTool = new SavedInputKey("toggleTool", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.M, false, false, false), true);
+        public static readonly SavedInputKey toggleTool = new SavedInputKey("toggleTool", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.M, false, false, false), true);
 
-        public static readonly SavedInputKey moveXpos = new SavedInputKey("moveXpos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, false, false, false), true);
-        public static readonly SavedInputKey moveXneg = new SavedInputKey("moveXneg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, false, false, false), true);
+        public static readonly SavedInputKey moveXpos = new SavedInputKey("moveXpos", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, false, false, false), true);
+        public static readonly SavedInputKey moveXneg = new SavedInputKey("moveXneg", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, false, false, false), true);
 
-        public static readonly SavedInputKey moveZpos = new SavedInputKey("moveZpos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.UpArrow, false, false, false), true);
-        public static readonly SavedInputKey moveZneg = new SavedInputKey("moveZneg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.DownArrow, false, false, false), true);
+        public static readonly SavedInputKey moveZpos = new SavedInputKey("moveZpos", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.UpArrow, false, false, false), true);
+        public static readonly SavedInputKey moveZneg = new SavedInputKey("moveZneg", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.DownArrow, false, false, false), true);
 
-        public static readonly SavedInputKey moveYpos = new SavedInputKey("moveYpos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.PageUp, false, false, false), true);
-        public static readonly SavedInputKey moveYneg = new SavedInputKey("moveYneg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.PageDown, false, false, false), true);
+        public static readonly SavedInputKey moveYpos = new SavedInputKey("moveYpos", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.PageUp, false, false, false), true);
+        public static readonly SavedInputKey moveYneg = new SavedInputKey("moveYneg", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.PageDown, false, false, false), true);
 
-        public static readonly SavedInputKey turnNeg = new SavedInputKey("turnNeg", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, true, false, false), true);
-        public static readonly SavedInputKey turnPos = new SavedInputKey("turnPos", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, true, false, false), true);
+        public static readonly SavedInputKey turnNeg = new SavedInputKey("turnNeg", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.LeftArrow, true, false, false), true);
+        public static readonly SavedInputKey turnPos = new SavedInputKey("turnPos", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.RightArrow, true, false, false), true);
 
-        public static readonly SavedInputKey scaleOut = new SavedInputKey("scaleOut", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Equals, false, false, false), true);
-        public static readonly SavedInputKey scaleIn = new SavedInputKey("scaleIn", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, false, false, false), true);
+        public static readonly SavedInputKey scaleOut = new SavedInputKey("scaleOut", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.Equals, false, false, false), true);
+        public static readonly SavedInputKey scaleIn = new SavedInputKey("scaleIn", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.Minus, false, false, false), true);
 
-        public static readonly SavedInputKey selectSingle = new SavedInputKey("selectSingle", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey selectMarquee = new SavedInputKey("selectMarquee", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey deselectAll = new SavedInputKey("deselectAll", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.D, false, false, true), true);
-        public static readonly SavedInputKey undo = new SavedInputKey("undo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
-        public static readonly SavedInputKey redo = new SavedInputKey("redo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
+        public static readonly SavedInputKey selectSingle = new SavedInputKey("selectSingle", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey selectMarquee = new SavedInputKey("selectMarquee", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey deselectAll = new SavedInputKey("deselectAll", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.D, false, false, true), true);
+        public static readonly SavedInputKey undo = new SavedInputKey("undo", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.Z, true, false, false), true);
+        public static readonly SavedInputKey redo = new SavedInputKey("redo", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.Y, true, false, false), true);
 
-        public static readonly SavedInputKey clone = new SavedInputKey("copy", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
-        public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
+        public static readonly SavedInputKey clone = new SavedInputKey("copy", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.C, true, false, false), true);
+        public static readonly SavedInputKey bulldoze = new SavedInputKey("bulldoze", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.B, true, false, false), true);
         
-        public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
-        public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey viewSelectors = new SavedInputKey("viewSelectors", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey quickUnderground = new SavedInputKey("quickUnderground", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.U, false, false, false), true);
+        public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
+        public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey viewSelectors = new SavedInputKey("viewSelectors", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey quickUnderground = new SavedInputKey("quickUnderground", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.U, false, false, false), true);
 
-        public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);
+        public static readonly SavedInputKey activatePO = new SavedInputKey("activatePO", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey convertToPO = new SavedInputKey("convertToPO", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.P, false, true, false), true);
 
-        public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);
+        public static readonly SavedInputKey stepOverKey = new SavedInputKey("stepOverKey", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.Tab, true, false, false), true);
 
-        public static readonly SavedInputKey alignLine = new SavedInputKey("alignLine", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignLineUnspaced = new SavedInputKey("alignLineUnspaced", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignMirror = new SavedInputKey("alignMirror", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey reset = new SavedInputKey("reset", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignMoveTo = new SavedInputKey("alignMoveTo", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignSlope = new SavedInputKey("alignSlope", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignSlopeQuick = new SavedInputKey("alignSlopeQuick", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignSlopeFull = new SavedInputKey("alignSlopeFull", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignTerrainHeight = new SavedInputKey("alignTerrainHeight", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
+        public static readonly SavedInputKey alignLine = new SavedInputKey("alignLine", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignLineUnspaced = new SavedInputKey("alignLineUnspaced", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignMirror = new SavedInputKey("alignMirror", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey reset = new SavedInputKey("reset", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignMoveTo = new SavedInputKey("alignMoveTo", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignRandom = new SavedInputKey("alignRandom", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignGroup = new SavedInputKey("alignGroup", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignInplace = new SavedInputKey("alignInplace", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignSlope = new SavedInputKey("alignSlope", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignSlopeQuick = new SavedInputKey("alignSlopeQuick", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignSlopeFull = new SavedInputKey("alignSlopeFull", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignTerrainHeight = new SavedInputKey("alignTerrainHeight", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey alignHeights = new SavedInputKey("alignHeights", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.H, true, false, false), true);
 
         public static SavedInputKey[] InToolKeysForSelection => new SavedInputKey[] { 
             moveXpos, moveXneg, 

@@ -97,6 +97,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Autoconnect Cloned Nodes.
+        /// </summary>
+        internal static string baseUI_MergeNodesTooltip {
+            get {
+                return ResourceManager.GetString("baseUI_MergeNodesTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move It.
         /// </summary>
         internal static string baseUI_MoveItButton_Tooltip {

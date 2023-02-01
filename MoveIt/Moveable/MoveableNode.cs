@@ -78,9 +78,9 @@ namespace MoveIt
             }
             while (node != 0 && c++ < 99);
             //if (result == 0)
-            //    Log.Debug($"DDD01.1 [{c}] NodeState #{instance.id.NetNode} no node found");
+            //    Log.Debug($"AAA03.1 [{c}] NodeState #{instance.id.NetNode} no node found");
             //else
-            //    Log.Debug($"DDD01.2 [{c}] NodeState #{instance.id.NetNode} nearest node found: #{result} @ {dist}m" + (msg == "" ? "" : $"\n  All: {msg}") + (msg2 == "" ? "" : $"\n  Valid: {msg2}"));
+            //    Log.Debug($"AAA03.2 [{c}] NodeState #{instance.id.NetNode} nearest node found: #{result} @ {dist}m" + (msg == "" ? "" : $"\n  All: {msg}") + (msg2 == "" ? "" : $"\n  Valid: {msg2}"));
 
             if (result == 0) return null;
             return new NodeMergeData()
@@ -535,7 +535,7 @@ namespace MoveIt
                 //    nodeId = nodeBuffer[nodeId].m_nextGridNode;
                 //}
                 //while (nodeId > 0 && c++ < 50);
-                //Log.Debug($"AAA {clone}:{m_snapNode}" + (msg == "" ? "" : $"\n  {msg}"));
+                //Log.Debug($"AAA04 {clone}:{m_snapNode}" + (msg == "" ? "" : $"\n  {msg}"));
             }
 
             return cloneInstance;

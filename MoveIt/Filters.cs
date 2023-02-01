@@ -206,7 +206,7 @@ namespace MoveIt
                 //Select P&P on hover with Alt
                 if ((building.m_flags & Building.Flags.Untouchable) == Building.Flags.Untouchable)
                 {
-                    if (MoveItTool.altSelectNodeBuildings)
+                    if (Settings.altSelectNodeBuildings)
                     {
                         if (!Event.current.alt)
                         {
@@ -234,7 +234,7 @@ namespace MoveIt
                 //Select P&P on hover with Alt
                 if ((building.m_flags & Building.Flags.Untouchable) == Building.Flags.Untouchable)
                 {
-                    if (MoveItTool.altSelectNodeBuildings)
+                    if (Settings.altSelectNodeBuildings)
                     {
                         if (!Event.current.alt)
                         {

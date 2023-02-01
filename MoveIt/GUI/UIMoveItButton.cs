@@ -7,8 +7,8 @@ namespace MoveIt
 {
     public class UIMoveItButton : UIButton
     {
-        public static readonly SavedInt savedX = new SavedInt("savedX", MoveItTool.settingsFileName, -1000, true);
-        public static readonly SavedInt savedY = new SavedInt("savedY", MoveItTool.settingsFileName, -1000, true);
+        public static readonly SavedInt savedX = new SavedInt("savedX", Settings.settingsFileName, -1000, true);
+        public static readonly SavedInt savedY = new SavedInt("savedY", Settings.settingsFileName, -1000, true);
 
         private UIComponent BulldoserButton
         {

@@ -72,11 +72,11 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.viewDebug.IsPressed(e))
                 {
-                    showDebugPanel.value = !showDebugPanel;
+                    Settings.showDebugPanel.value = !Settings.showDebugPanel;
                     if (m_debugPanel != null)
                     {
                         ClearDebugOverlays();
-                        m_debugPanel.Visible(showDebugPanel);
+                        m_debugPanel.Visible(Settings.showDebugPanel);
                     }
                 }
                 else if (OptionsKeymapping.selectSingle.IsPressed(e))
@@ -209,7 +209,7 @@ namespace MoveIt
                             direction.y *= YFACTOR;
                             direction.z *= ZFACTOR;
 
-                            if (!useCardinalMoves)
+                            if (!Settings.useCardinalMoves)
                             {
                                 Matrix4x4 matrix4x = default;
                                 matrix4x.SetTRS(Vector3.zero, Quaternion.AngleAxis(Camera.main.transform.localEulerAngles.y, Vector3.up), Vector3.one);

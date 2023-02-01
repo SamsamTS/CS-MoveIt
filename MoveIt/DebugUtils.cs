@@ -11,9 +11,9 @@ namespace MoveIt
 {
     public class DebugUtils
     {
-        public const string modPrefix = "[MoveIt " + ModInfo.version + "] ";
+        public static string modPrefix = "[MoveIt " + ModInfo.version + "] ";
 
-        public static SavedBool hideDebugMessages = new SavedBool("hideDebugMessages", MoveItTool.settingsFileName, true, true);
+        public static SavedBool hideDebugMessages = new SavedBool("hideDebugMessages", Settings.settingsFileName, true, true);
 
         public static void Log(string message)
         {
@@ -138,8 +138,7 @@ namespace MoveIt
                         _level++;
                     }
 
-                    IEnumerable enumerableElement = element as IEnumerable;
-                    if (enumerableElement != null)
+                    if (element is IEnumerable enumerableElement)
                     {
                         foreach (object item in enumerableElement)
                         {

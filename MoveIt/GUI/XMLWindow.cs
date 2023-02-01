@@ -12,16 +12,19 @@ namespace MoveIt.GUI
 {
     public abstract class XMLWindow : UIPanel
     {
-        public static readonly SavedString savedSortType = new SavedString("savedSortType", MoveItTool.settingsFileName, "Date", true);
-        public static readonly SavedString savedSortOrder = new SavedString("savedSortOrder", MoveItTool.settingsFileName, "Descending", true);
+        public static readonly SavedString savedSortType = new SavedString("savedSortType", Settings.settingsFileName, "Date", true);
+        public static readonly SavedString savedSortOrder = new SavedString("savedSortOrder", Settings.settingsFileName, "Descending", true);
 
         public class UIFastList : UIFastList<FileData, UISaveLoadFileRow> { }
         public UIFastList fastList;
 
         public static XMLWindow instance;
 
+        private bool IsExport => instance is UISaveWindow;
+
         public UIPanel sortPanel;
         public UIButton openFolder, sortTypeBtn, sortOrderBtn;
+        public UICheckBox mergeNodes;
 
         public UIButton close;
 
@@ -82,6 +85,20 @@ namespace MoveIt.GUI
             openFolder.text = Str.xml_OpenFolder;
             openFolder.size = new Vector2(150f, 30f);
             openFolder.relativePosition = new Vector3(8, 8);
+
+            if (!IsExport)
+            {
+                mergeNodes = UIUtils.CreateCheckBox(sortPanel);
+                mergeNodes.name = "MoveIt_MergeNodesCheckBox";
+                mergeNodes.text = "Autoconnect Nodes";
+                mergeNodes.relativePosition = new Vector3(openFolder.relativePosition.x + openFolder.size.x + 12, 15);
+                mergeNodes.isChecked = MoveItTool.instance.NodeMerge;
+
+                mergeNodes.eventCheckChanged += (s, e) => {
+                    UIToolOptionPanel.instance.mergeNodes.activeStateIndex = (e ? 1 : 0);
+                    MoveItTool.instance.NodeMerge = e;
+                };
+            }
 
             sortOrderBtn = UIUtils.CreateButton(sortPanel);
             sortOrderBtn.name = "MoveIt_SortOrderButton";

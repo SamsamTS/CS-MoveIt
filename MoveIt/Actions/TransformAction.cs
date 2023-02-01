@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
@@ -118,7 +119,7 @@ namespace MoveIt
                 }
             }
 
-            bool full = !(MoveItTool.fastMove != Event.current.shift);
+            bool full = !(Settings.fastMove != Event.current.shift);
             if (!full)
             {
                 full = selection.Count > MoveItTool.Fastmove_Max;
@@ -224,7 +225,7 @@ namespace MoveIt
             {
                 if (state.instance.isValid)
                 {
-                    InstanceState newState = new InstanceState();
+                    InstanceState newState = (InstanceState)Activator.CreateInstance(state.GetType()); // Maintain exact class type
                     newState.instance = state.instance;
                     newState.Info = state.Info;
 

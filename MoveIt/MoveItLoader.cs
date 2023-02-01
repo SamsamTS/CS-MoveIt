@@ -167,23 +167,6 @@ namespace MoveIt
             //}
             //Debug.Log(msg);
 
-            //foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            //{
-            //    try
-            //    {
-            //        foreach (Type type in assembly.GetExportedTypes())
-            //        {
-            //            if (type.IsClass && typeof(IMoveItIntegrationFactory).IsAssignableFrom(type))
-            //            {
-            //                var factory = (IMoveItIntegrationFactory)Activator.CreateInstance(type);
-            //                var instance = factory.GetInstance();
-            //                integrations.Add(instance);
-            //            }
-            //        }
-            //    }
-            //    catch { }
-            //}
-
             return integrations;
         }
     }

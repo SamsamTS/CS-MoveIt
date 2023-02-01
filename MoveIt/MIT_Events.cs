@@ -449,7 +449,7 @@ namespace MoveIt
             }
             else if (ToolState == ToolStates.Cloning)
             {
-                if (rmbCancelsCloning.value)
+                if (Settings.rmbCancelsCloning.value)
                 {
                     StopCloning();
                 }
