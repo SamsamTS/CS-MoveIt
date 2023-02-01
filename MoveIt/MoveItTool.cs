@@ -85,7 +85,7 @@ namespace MoveIt
         internal static Color m_hoverColor = new Color32(0, 181, 255, 250);
         internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
         internal static Color m_nodeMergeColor = new Color32(20, 80, 180, 220);
-        internal static Color m_nodeSnapColor = new Color32(220, 100, 200, 250);
+        internal static Color m_nodeSnapColor = new Color32(30, 90, 190, 250);
         internal static Color m_moveColor = new Color32(125, 196, 30, 244);
         internal static Color m_removeColor = new Color32(255, 160, 47, 191);
         internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
@@ -219,7 +219,6 @@ namespace MoveIt
             {
                 if (_nodeMerge != value)
                 {
-                    Log.Debug($"ZZZ NodeMerge: {_nodeMerge}=>{value}");
                     _nodeMerge = value;
                     Settings.autoMergeNodes.value = value;
                 }
@@ -669,7 +668,7 @@ namespace MoveIt
                         {
                             color = m_nodeSnapColor;
                         }
-                        else if (NodeMergeData.CanMerge(action.m_nodeMergeData, ns))
+                        else if (NodeMergeClone.CanMerge(action.m_nodeMergeData, ns))
                         {
                             color = m_nodeMergeColor;
                         }

@@ -149,8 +149,8 @@ namespace MoveIt
         public float angleDelta;
         public bool followTerrain;
 
-        internal NodeMergeData m_snapNode = null;
-        internal List<NodeMergeData> m_nodeMergeData = new List<NodeMergeData>();
+        internal NodeMergeClone m_snapNode = null;
+        internal List<NodeMergeClone> m_nodeMergeData = new List<NodeMergeClone>();
 
         public HashSet<InstanceState> m_states = new HashSet<InstanceState>(); // the InstanceStates to be cloned
         internal HashSet<Instance> m_clones; // the resulting Instances
@@ -411,8 +411,6 @@ namespace MoveIt
             {
                 if (state is BuildingState)
                 {
-                    string msg2 = "";
-                    int c2 = 0;
                     Instance clone = state.instance.Clone(state, ref matrix4x, moveDelta.y, angleDelta, center, followTerrain, m_nodeOrigToClone, this);
 
                     if (clone == null)
@@ -432,8 +430,6 @@ namespace MoveIt
                         {
                             attachedNodes.Add(mn.id.NetNode);
                             NetInfo node = (NetInfo)mn.Info.Prefab; 
-                            msg2 += $"\n  {mn.id.NetNode}:{mn.Info.Name} [{mn.position}] ({node.m_class.m_service}/{node.m_class.m_subService})";
-                            c2++;
                         }
                     }
                 }
@@ -477,43 +473,21 @@ namespace MoveIt
                 }
             }
 
-            // Look for overlapping nodes
-            //int c = 0;
-            //HashSet<Instance> tmpClones = new HashSet<Instance>(m_clones);
-            //foreach (Instance inst in tmpClones)
-            //{
-            //    if (inst is MoveableNode mn)
-            //    {
-            //        NetNode node = (NetNode)mn.data;
-            //        NetInfo nodeInfo = (NetInfo)mn.Info.Prefab;
-            //        c++;
-
-            //        foreach (ushort attachedId in attachedNodes)
-            //        {
-            //            NetNode attached = nodeBuffer[attachedId];
-
-            //            if ((node.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable && (attached.m_flags & NetNode.Flags.Untouchable) == NetNode.Flags.Untouchable)
-            //            {
-            //                if (Utils.MergeNodes(attachedId, mn.id.NetNode))
-            //                {
-            //                    m_clones.Remove(inst);
-            //                }
-            //            }
-            //            //&&
-            //            //    node.Info.m_class.m_service == attached.Info.m_class.m_service && node.Info.m_class.m_subService == attached.Info.m_class.m_subService)
-            //            //{
-            //            //    if ((mn.position - attached.m_position).magnitude < 0.01f)
-            //            //    {
-            //            //        if (Utils.DoMergeNodes(attachedId, mn.id.NetNode)) // Matching nodes overlap, combine them
-            //            //        {
-            //            //            m_clones.Remove(inst);
-            //            //        }
-            //            //    }
-            //            //}
-            //        }
-            //    }
-            //}
-            //Log.Debug($"Independent nodes:{c}, attached nodes:{attachedNodes.Count}, objects:{m_clones.Count} (was:{tmpClones.Count})");
+            if (MoveItTool.instance.NodeMerge)
+            {
+                foreach (NodeMergeClone mergeClone in m_nodeMergeData)
+                {
+                    if (NodeMerging.MergeNodes(mergeClone.ConvertToExisting(m_stateToClone[mergeClone.nodeState].id.NetNode)))
+                    {
+                        MoveableNode.UpdateSegments(mergeClone.ParentId, mergeClone.ParentNetNode.m_position);
+                        m_origToCloneUpdate.Remove(mergeClone.nodeState.instance);
+                    }
+                    else
+                    {
+                        Log.Debug($"Failed node merge - virtual:{mergeClone.ChildId}, placed:{m_stateToClone[mergeClone.nodeState].id.NetNode} (parent:{mergeClone.ParentId})");
+                    }
+                }
+            }
 
             // Clone PO
             MoveItTool.PO.MapGroupClones(m_states, this);

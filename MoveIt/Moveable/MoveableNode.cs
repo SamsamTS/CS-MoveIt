@@ -45,51 +45,43 @@ namespace MoveIt
         /// Find the nearest existing node that can be merged into
         /// </summary>
         /// <param name="original">The original state, rather than this temporary one</param>
-        /// <returns>The NodeMergeData, or null if none found</returns>
-        internal NodeMergeData FindNearestNode(NodeState original)
+        /// <returns>The NodeMergeClone, or null if none found</returns>
+        internal NodeMergeClone FindNearestNode(NodeState original)
         {
             NetNode[] nodeBuffer = Singleton<NetManager>.instance.m_nodes.m_buffer;
             int c = 0;
-            float dist = NodeMerging.MAX_SNAP_DISTANCE;
+            float dist = NodeMerging.MAX_MERGE_DISTANCE;
 
             int num = Mathf.Clamp((int)(position.x / 64f + 135f), 0, 269);
             int num2 = Mathf.Clamp((int)(position.z / 64f + 135f), 0, 269);
             int num3 = num2 * 270 + num;
             ushort node = NetManager.instance.m_nodeGrid[num3];
-            ushort result = 0;
+            NodeMergeClone result = null;
 
-            //string msg = "";
-            //string msg2 = "";
             do
             {
-                //if (node > 0) msg += $"{node}:{NodeMerging.GetNodeDistance(nodeBuffer[node], position)}, ";
-                if (NodeMerging.CanMergeNodes(node, this))
+                NodeMergeClone cloneData = new NodeMergeClone()
                 {
-                    float d = NodeMerging.GetNodeDistance(nodeBuffer[node], position);
-                    if (d < dist)
+                    nodeState = original,
+                    adjustedState = this,
+                    ParentId = node,
+                    status = NodeMergeStatuses.Merge
+                };
+
+                if (cloneData.CanMerge())
+                {
+                    if (cloneData.Distance < dist)
                     {
-                        result = node;
-                        dist = d;
+                        result = cloneData;
+                        dist = cloneData.Distance;
                     }
-                    //if (d < NodeMerging.MAX_SNAP_DISTANCE) msg2 += $"{node}:{d}, ";
                 }
 
                 node = nodeBuffer[node].m_nextGridNode;
             }
             while (node != 0 && c++ < 99);
-            //if (result == 0)
-            //    Log.Debug($"AAA03.1 [{c}] NodeState #{instance.id.NetNode} no node found");
-            //else
-            //    Log.Debug($"AAA03.2 [{c}] NodeState #{instance.id.NetNode} nearest node found: #{result} @ {dist}m" + (msg == "" ? "" : $"\n  All: {msg}") + (msg2 == "" ? "" : $"\n  Valid: {msg2}"));
 
-            if (result == 0) return null;
-            return new NodeMergeData()
-            {
-                nodeState = original,
-                adjustedState = this,
-                parentNode = result,
-                status = NodeMergeStatuses.Merge
-            };
+            return result;
         }
     }
 
@@ -315,6 +307,58 @@ namespace MoveIt
             Singleton<SimulationManager>.instance.AddAction(() => MoveProcess(location, angle));
         }
 
+        internal static void UpdateSegments(ushort node, Vector3 oldPosition)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                ushort segment = nodeBuffer[node].GetSegment(i);
+                if (segment != 0 && !Action.IsSegmentSelected(segment))
+                {
+                    ushort startNode = segmentBuffer[segment].m_startNode;
+                    ushort endNode = segmentBuffer[segment].m_endNode;
+
+                    Vector3 oldVector;
+                    if (node == endNode)
+                    {
+                        oldVector = oldPosition - nodeBuffer[startNode].m_position;
+                    }
+                    else
+                    {
+                        oldVector = nodeBuffer[endNode].m_position - oldPosition;
+                    }
+                    oldVector.Normalize();
+
+                    Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
+                    Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
+
+                    Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
+                    Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
+
+                    Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                    newVector.Normalize();
+
+                    segmentBuffer[segment].m_startDirection = startRotation * newVector;
+                    segmentBuffer[segment].m_endDirection = endRotation * -newVector;
+
+                    CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+
+                    netManager.UpdateSegmentRenderer(segment, true);
+                    UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+
+                    if (node != startNode)
+                    {
+                        netManager.UpdateNode(startNode);
+                    }
+                    else
+                    {
+                        netManager.UpdateNode(endNode);
+                    }
+                }
+            }
+
+            netManager.UpdateNode(node);
+        }
+
         internal void MoveProcess(Vector3 location, float angle)
         { 
             if (!isValid) return;
@@ -329,54 +373,56 @@ namespace MoveIt
 
                 netManager.MoveNode(node, location);
 
-                for (int i = 0; i < 8; i++)
-                {
-                    ushort segment = nodeBuffer[node].GetSegment(i);
-                    if (segment != 0 && !Action.IsSegmentSelected(segment))
-                    {
-                        ushort startNode = segmentBuffer[segment].m_startNode;
-                        ushort endNode = segmentBuffer[segment].m_endNode;
+                UpdateSegments(node, oldPosition);
 
-                        Vector3 oldVector;
-                        if (node == endNode)
-                        {
-                            oldVector = oldPosition - nodeBuffer[startNode].m_position;
-                        }
-                        else
-                        {
-                            oldVector = nodeBuffer[endNode].m_position - oldPosition;
-                        }
-                        oldVector.Normalize();
+                //for (int i = 0; i < 8; i++)
+                //{
+                //    ushort segment = nodeBuffer[node].GetSegment(i);
+                //    if (segment != 0 && !Action.IsSegmentSelected(segment))
+                //    {
+                //        ushort startNode = segmentBuffer[segment].m_startNode;
+                //        ushort endNode = segmentBuffer[segment].m_endNode;
 
-                        Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
-                        Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
+                //        Vector3 oldVector;
+                //        if (node == endNode)
+                //        {
+                //            oldVector = oldPosition - nodeBuffer[startNode].m_position;
+                //        }
+                //        else
+                //        {
+                //            oldVector = nodeBuffer[endNode].m_position - oldPosition;
+                //        }
+                //        oldVector.Normalize();
 
-                        Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
-                        Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
+                //        Vector3 startDirection = new Vector3(segmentBuffer[segment].m_startDirection.x, 0, segmentBuffer[segment].m_startDirection.z);
+                //        Vector3 endDirection = new Vector3(segmentBuffer[segment].m_endDirection.x, 0, segmentBuffer[segment].m_endDirection.z);
 
-                        Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
-                        newVector.Normalize();
+                //        Quaternion startRotation = Quaternion.FromToRotation(oldVector, startDirection.normalized);
+                //        Quaternion endRotation = Quaternion.FromToRotation(-oldVector, endDirection.normalized);
 
-                        segmentBuffer[segment].m_startDirection = startRotation * newVector;
-                        segmentBuffer[segment].m_endDirection = endRotation * -newVector;
+                //        Vector3 newVector = nodeBuffer[endNode].m_position - nodeBuffer[startNode].m_position;
+                //        newVector.Normalize();
 
-                        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
+                //        segmentBuffer[segment].m_startDirection = startRotation * newVector;
+                //        segmentBuffer[segment].m_endDirection = endRotation * -newVector;
 
-                        netManager.UpdateSegmentRenderer(segment, true);
-                        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
+                //        CalculateSegmentDirections(ref segmentBuffer[segment], segment);
 
-                        if (node != startNode)
-                        {
-                            netManager.UpdateNode(startNode);
-                        }
-                        else
-                        {
-                            netManager.UpdateNode(endNode);
-                        }
-                    }
-                }
+                //        netManager.UpdateSegmentRenderer(segment, true);
+                //        UpdateSegmentBlocks(segment, ref segmentBuffer[segment]);
 
-                netManager.UpdateNode(node);
+                //        if (node != startNode)
+                //        {
+                //            netManager.UpdateNode(startNode);
+                //        }
+                //        else
+                //        {
+                //            netManager.UpdateNode(endNode);
+                //        }
+                //    }
+                //}
+
+                //netManager.UpdateNode(node);
             }
         }
 
@@ -515,27 +561,6 @@ namespace MoveIt
                 {
                     buildingBuffer[((NetNode)(cloneInstance.data)).m_building].m_flags = buildingBuffer[((NetNode)data).m_building].m_flags;
                 }
-
-                //ushort nodeId = clone;
-                //string msg = $"";
-                //float dist = 999f;
-                //int c = 0;
-                //do
-                //{
-                //    if (Utils.CanMergeNodes(nodeId, cloneID, 5f))
-                //    {
-                //        msg += $"{nodeId}:{Utils.GetNodeDistance(nodeBuffer[nodeId], nodeBuffer[clone])}m, ";
-                //        float d = Utils.GetNodeDistance(nodeBuffer[nodeId], nodeBuffer[clone]);
-                //        if (d < dist)
-                //        {
-                //            m_snapNode = nodeId;
-                //            dist = d;
-                //        }
-                //    }
-                //    nodeId = nodeBuffer[nodeId].m_nextGridNode;
-                //}
-                //while (nodeId > 0 && c++ < 50);
-                //Log.Debug($"AAA04 {clone}:{m_snapNode}" + (msg == "" ? "" : $"\n  {msg}"));
             }
 
             return cloneInstance;
@@ -649,7 +674,7 @@ namespace MoveIt
         {
             if (ActionQueue.instance.current is CloneActionBase action)
             {
-                NodeMergeData data = NodeMergeData.Get(action.m_nodeMergeData, (NodeState)state);
+                NodeMergeClone data = NodeMergeBase.Get(action.m_nodeMergeData, (NodeState)state);
                 if (data != null)
                 {
                     Vector3 newPosition = matrix4x.MultiplyPoint(state.position - center);
@@ -660,12 +685,15 @@ namespace MoveIt
                         newPosition.y = newPosition.y - state.terrainHeight + TerrainManager.instance.SampleOriginalRawHeightSmooth(newPosition);
                     }
 
-                    NetNode parent = nodeBuffer[data.parentNode];
+                    NetNode parent = data.ParentNetNode;
 
                     if (!MoveItTool.m_isLowSensitivity)
                     {
-                        NetInfo netInfo = (NetInfo)state.Info.Prefab;
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, newPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
+                        if (data == action.m_snapNode)
+                        {
+                            NetInfo netInfo = (NetInfo)state.Info.Prefab;
+                            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, newPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
+                        }
 
                         RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, parent.m_position, Mathf.Max(6f, parent.Info.m_halfWidth * 2f), -1f, 1280f, false, true);
                     }

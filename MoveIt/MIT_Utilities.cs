@@ -158,7 +158,7 @@ namespace MoveIt
                 }
             }
             watch.Stop();
-            Log.Debug($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
+            //Log.Debug($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
         }
 
         public static bool IsExportSelectionValid()
@@ -177,14 +177,6 @@ namespace MoveIt
                 if (selection.Count == 0) return false;
 
                 bool includesPO = false;
-                //foreach (Instance ins in selection)
-                //{
-                //    if (ins is MoveableProc)
-                //    {
-                //        includesPO = true;
-                //        break;
-                //    }
-                //}
 
                 Selection selectionState = new Selection
                 {
@@ -200,8 +192,6 @@ namespace MoveIt
                 {
                     selectionState.states[i++] = instance.SaveToState();
                 }
-
-                //Log.Debug($"selectionState:{selectionState.states.Length}\n" + ObjectDumper.Dump(selectionState));
 
                 using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
                 {
@@ -400,6 +390,7 @@ namespace MoveIt
 
                     if (restore)
                     {
+                        if (NodeMerge) action.m_snapNode = GetMergingNodes(action, Vector3.zero, action.angleDelta, action.center);
                         SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
                     }
                     else

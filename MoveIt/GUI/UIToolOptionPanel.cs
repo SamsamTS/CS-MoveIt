@@ -618,10 +618,10 @@ namespace MoveIt
             btn.backgroundSprites[1].normal = "OptionBaseFocused";
             btn.backgroundSprites[1].pressed = "OptionBasePressed";
 
-            mergeNodes.foregroundSprites[0].normal = sprite;
+            btn.foregroundSprites[0].normal = sprite;
 
-            mergeNodes.foregroundSprites.AddState();
-            mergeNodes.foregroundSprites[1].normal = sprite + "Focused";
+            btn.foregroundSprites.AddState();
+            btn.foregroundSprites[1].normal = sprite + "Focused";
         }
 
         protected override void OnVisibilityChanged()

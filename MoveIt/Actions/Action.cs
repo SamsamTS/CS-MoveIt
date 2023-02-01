@@ -277,7 +277,6 @@ namespace MoveIt
                     ((buildingBuffer[((NetNode)(ns.instance.data)).m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden))
                 {
                     nodesWithAttachments.Add(ns.instance.id.NetNode);
-                    //Log.Debug($"Node {ns.instance.id.NetNode} found");
                 }
             }
             HashSet<InstanceState> newStates = new HashSet<InstanceState>(states);
@@ -289,7 +288,6 @@ namespace MoveIt
                     ushort nodeId = MoveItTool.m_pillarMap[buildingId];
                     if (nodesWithAttachments.Contains(nodeId)) // The node is also selected
                     {
-                        //Log.Debug($"Pillar {buildingId} for selected node {nodeId}");
                         continue;
                     }
                     MoveableBuilding original = (MoveableBuilding)instanceState.instance;

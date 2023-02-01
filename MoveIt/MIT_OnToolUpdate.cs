@@ -290,9 +290,8 @@ namespace MoveIt
                                     action.m_snapNode = GetMergingNodes(action, newMove, action.angleDelta, action.center);
                                     if (snapping && action.m_snapNode != null)
                                     {
-                                        newMove += action.m_snapNode.GetParentNode().m_position - action.m_snapNode.adjustedState.position;
+                                        newMove += action.m_snapNode.ParentNetNode.m_position - action.m_snapNode.adjustedState.position;
                                         GetMergingNodes(action, newMove, action.angleDelta, action.center); // Recalculate node merges after snapping
-                                        //Log.Debug($"AAA01 {newMove} {action.m_snapNode.GetParentNode().m_position}, {action.m_snapNode.adjustedState.position} = {action.m_snapNode.GetParentNode().m_position - action.m_snapNode.adjustedState.position}");
                                     }
                                 }
                                 else if (snapping)
@@ -504,7 +503,7 @@ namespace MoveIt
         /// <param name="angleDelta"></param>
         /// <param name="center"></param>
         /// <returns></returns>
-        private NodeMergeData GetMergingNodes(CloneActionBase action, Vector3 moveDelta, float angleDelta, Vector3 center)
+        private NodeMergeClone GetMergingNodes(CloneActionBase action, Vector3 moveDelta, float angleDelta, Vector3 center)
         {
             action.m_snapNode = null;
             action.m_nodeMergeData.Clear();
@@ -524,13 +523,13 @@ namespace MoveIt
             HashSet<InstanceState> states = new HashSet<InstanceState>();
             Dictionary<InstanceState, InstanceState> statesMap = action.CalculateStates(moveDelta, angleDelta, center, followTerrain, ref states);
 
-            NodeMergeData snapCandidate = null;
-            float distance = NodeMerging.MAX_SNAP_DISTANCE;
+            NodeMergeClone snapCandidate = null;
+            float distance = NodeMerging.MAX_MERGE_DISTANCE;
             foreach (InstanceState state in states)
             {
                 if (state is NodeState ns)
                 {
-                    NodeMergeData mergeData = ns.FindNearestNode((NodeState)statesMap[ns]);
+                    NodeMergeClone mergeData = ns.FindNearestNode((NodeState)statesMap[ns]);
                     if (mergeData == null) continue;
                     action.m_nodeMergeData.Add(mergeData);
 
@@ -566,9 +565,6 @@ namespace MoveIt
             NetSegment[] segmentBuffer = netManager.m_segments.m_buffer;
             NetNode[] nodeBuffer = netManager.m_nodes.m_buffer;
             Building[] buildingBuffer = BuildingManager.instance.m_buildings.m_buffer;
-
-            //Matrix4x4 matrix4x = default;
-            //matrix4x.SetTRS(center, Quaternion.AngleAxis(angleDelta * Mathf.Rad2Deg, Vector3.down), Vector3.one);
 
             bool snap = false;
 

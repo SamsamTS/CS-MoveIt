@@ -50,6 +50,7 @@
     <Compile Include="Actions\SelectAction.cs" />
     <Compile Include="Actions\TransformAction.cs" />
     <Compile Include="EncodeUtil.cs" />
+    <Compile Include="GUI\ModOptions.cs" />
     <Compile Include="GUI\XMLUtils.cs" />
     <Compile Include="GUI\UIDebugPanel.cs" />
     <Compile Include="Filters.cs" />
