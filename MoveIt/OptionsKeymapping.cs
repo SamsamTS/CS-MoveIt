@@ -1,5 +1,4 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using MoveIt.Localization;
 using System.Reflection;
@@ -29,6 +28,7 @@ namespace MoveIt
             AddKeymapping(Str.key_Bulldoze, bulldoze);
             AddKeymapping(Str.key_ToggleGridView, viewGrid);
             AddKeymapping(Str.key_ToggleUndergroundView, viewUnderground);
+            AddKeymapping(Str.key_ToggleNodeMerging, mergeNodes);
             AddKeymapping(Str.key_ToggleDebugPanel, viewDebug);
             AddKeymapping(Str.key_StepOver, stepOverKey);
             AddKeymapping(Str.key_ShowSelectors, viewSelectors);
@@ -103,6 +103,7 @@ namespace MoveIt
         
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        public static readonly SavedInputKey mergeNodes = new SavedInputKey("mergeNodes", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewSelectors = new SavedInputKey("viewSelectors", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey quickUnderground = new SavedInputKey("quickUnderground", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.U, false, false, false), true);
@@ -142,12 +143,10 @@ namespace MoveIt
         public static SavedInputKey[] InToolKeysAlways => new SavedInputKey[] {
             deselectAll, // after de-selecting, then there is no selection and that can cause confusion. therefore we put de-select all here.
             undo, redo,
-            viewGrid, viewUnderground, viewDebug, viewSelectors,
+            viewGrid, viewUnderground, mergeNodes, viewDebug, viewSelectors, quickUnderground,
             activatePO, 
             stepOverKey,
         };
-
-        //public static readonly SavedInputKey testKey = new SavedInputKey("testKey", MoveItTool.settingsFileName, SavedInputKey.Encode(KeyCode.C, false, false, true), true);
 
         protected int count = 0;
 
@@ -166,21 +165,6 @@ namespace MoveIt
             uIButton.objectUserData = savedInputKey;
             uIButton.eventVisibilityChanged += ButtonVisibilityChanged;
         }
-
-        //protected void OnEnable()
-        //{
-        //    LocaleManager.eventLocaleChanged += new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
-        //}
-
-        //protected void OnDisable()
-        //{
-        //    LocaleManager.eventLocaleChanged -= new LocaleManager.LocaleChangedHandler(this.OnLocaleChanged);
-        //}
-
-        //protected void OnLocaleChanged()
-        //{
-        //    this.RefreshBindableInputs();
-        //}
 
         protected bool IsModifierKey(KeyCode code)
         {
@@ -293,27 +277,6 @@ namespace MoveIt
                 this.m_EditingBindingCategory = string.Empty;
             }
         }
-
-        //protected void RefreshBindableInputs()
-        //{
-        //    foreach (UIComponent current in component.GetComponentsInChildren<UIComponent>())
-        //    {
-        //        UITextComponent uITextComponent = current.Find<UITextComponent>("Binding");
-        //        if (uITextComponent != null)
-        //        {
-        //            SavedInputKey savedInputKey = uITextComponent.objectUserData as SavedInputKey;
-        //            if (savedInputKey != null)
-        //            {
-        //                uITextComponent.text = savedInputKey.ToLocalizedString("KEYNAME");
-        //            }
-        //        }
-        //        UILabel uILabel = current.Find<UILabel>("Name");
-        //        if (uILabel != null)
-        //        {
-        //            uILabel.text = Locale.Get("KEYMAPPING", uILabel.stringUserData);
-        //        }
-        //    }
-        //}
 
         protected InputKey GetDefaultEntry(string entryName)
         {

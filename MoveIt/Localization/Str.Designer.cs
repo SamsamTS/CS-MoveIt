@@ -538,6 +538,15 @@ namespace MoveIt.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle Autoconnect Cloned Nodes.
+        /// </summary>
+        internal static string key_ToggleNodeMerging {
+            get {
+                return ResourceManager.GetString("key_ToggleNodeMerging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toggle PO Active/Inactive.
         /// </summary>
         internal static string key_TogglePO {

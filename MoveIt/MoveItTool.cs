@@ -211,16 +211,21 @@ namespace MoveIt
             }
         }
 
-        private bool _nodeMerge = Settings.autoMergeNodes;
-        internal bool NodeMerge
+        private bool _mergeNodes = Settings.autoMergeNodes;
+        internal bool MergeNodes
         {
-            get => _nodeMerge;
-            set // => _nodeMerge = value;
+            get => _mergeNodes;
+            set
             {
-                if (_nodeMerge != value)
+                if (_mergeNodes != value)
                 {
-                    _nodeMerge = value;
+                    _mergeNodes = value;
                     Settings.autoMergeNodes.value = value;
+                    if (ActionQueue.instance.current is CloneActionBase a)
+                    {
+                        a.m_nodeMergeData = new List<NodeMergeClone>();
+                        a.m_snapNode = null;
+                    }
                 }
             }
         }

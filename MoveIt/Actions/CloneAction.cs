@@ -156,10 +156,22 @@ namespace MoveIt
         internal HashSet<Instance> m_clones; // the resulting Instances
         internal HashSet<Instance> m_oldSelection; // The selection before cloning
 
-        internal Dictionary<Instance, Instance> m_origToClone; // Original -> Clone mapping for updating action queue on undo/redo 
-        internal Dictionary<Instance, Instance> m_origToCloneUpdate; // Updated map while processing clone job
-        internal Dictionary<ushort, ushort> m_nodeOrigToClone; // Map of node clones, to connect cloned segments
-        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>(); // Map of original state to clone's instance
+        /// <summary>
+        /// Original -> Clone mapping for updating action queue on undo/redo 
+        /// </summary>
+        internal Dictionary<Instance, Instance> m_origToClone;
+        /// <summary>
+        /// Buffer of m_origToClone, the Original -> Clone mapping mapping for undo/redo
+        /// </summary>
+        internal Dictionary<Instance, Instance> m_origToCloneUpdate;
+        /// <summary>
+        /// Map of node clones, Original -> Clone to connect cloned segments
+        /// </summary>
+        internal Dictionary<ushort, ushort> m_nodeOrigToClone;
+        /// <summary>
+        /// Map of unplaced clone state to placed clone instance
+        /// </summary>
+        protected Dictionary<InstanceState, Instance> m_stateToClone = new Dictionary<InstanceState, Instance>();
         protected Dictionary<InstanceID, InstanceID> m_InstanceID_origToClone = new Dictionary<InstanceID, InstanceID>();
         internal Dictionary<PO_Group, PO_Group> m_POGroupMap = new Dictionary<PO_Group, PO_Group>();
 
@@ -473,7 +485,7 @@ namespace MoveIt
                 }
             }
 
-            if (MoveItTool.instance.NodeMerge)
+            if (MoveItTool.instance.MergeNodes)
             {
                 foreach (NodeMergeClone mergeClone in m_nodeMergeData)
                 {
@@ -481,6 +493,8 @@ namespace MoveIt
                     {
                         MoveableNode.UpdateSegments(mergeClone.ParentId, mergeClone.ParentNetNode.m_position);
                         m_origToCloneUpdate.Remove(mergeClone.nodeState.instance);
+                        m_InstanceID_origToClone[mergeClone.nodeState.instance.id] = mergeClone.ParentInstanceId;
+                        m_nodeOrigToClone[mergeClone.nodeState.instance.id.NetNode] = mergeClone.ParentId;
                     }
                     else
                     {

@@ -116,7 +116,7 @@ namespace MoveIt
                 long fraction = ticks % Stopwatch.Frequency;
                 msg += string.Format($"{secs:n0}.{fraction:D7} | ");
 
-                msg += message + nl;
+                msg += message;// + nl;
 
                 //if (level == LogLevel.Error)
                 //{

@@ -109,11 +109,23 @@ namespace MoveIt
         internal abstract float Distance { get; }
         internal abstract bool CanMerge();
 
+        /// <summary>
+        /// The new node that is merging, may or may not exist (ushort)
+        /// </summary>
         internal abstract ushort ChildId { get; set; }
+        /// <summary>
+        /// The new node that is merging, may or may not exist (InstanceID)
+        /// </summary>
         internal abstract InstanceID ChildInstanceId { get; }
 
         private ushort _parentId;
+        /// <summary>
+        /// The existing node that is being merged into (ushort)
+        /// </summary>
         internal ushort ParentId { get => _parentId; set => _parentId = value; }
+        /// <summary>
+        /// The existing node that is being merged into (InstanceID)
+        /// </summary>
         internal InstanceID ParentInstanceId
         {
             get
@@ -124,7 +136,13 @@ namespace MoveIt
             }
         }
 
+        /// <summary>
+        /// The new node that is merging, may or may not exist (NetNode)
+        /// </summary>
         internal ref NetNode ChildNetNode => ref Singleton<NetManager>.instance.m_nodes.m_buffer[ChildId];
+        /// <summary>
+        /// The existing node that is being merged into (NetNode)
+        /// </summary>
         internal ref NetNode ParentNetNode => ref Singleton<NetManager>.instance.m_nodes.m_buffer[ParentId];
 
         public override string ToString()

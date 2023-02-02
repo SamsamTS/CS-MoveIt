@@ -390,7 +390,7 @@ namespace MoveIt
 
                     if (restore)
                     {
-                        if (NodeMerge) action.m_snapNode = GetMergingNodes(action, Vector3.zero, action.angleDelta, action.center);
+                        if (MergeNodes) action.m_snapNode = GetMergingNodes(action, Vector3.zero, action.angleDelta, action.center);
                         SimulationManager.instance.AddAction(() => { ActionQueue.instance.Do(); });
                     }
                     else

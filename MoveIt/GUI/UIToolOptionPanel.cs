@@ -572,7 +572,7 @@ namespace MoveIt
 
             mergeNodes.eventClicked += (c, p) =>
             {
-                MoveItTool.instance.NodeMerge = (mergeNodes.activeStateIndex == 1);
+                MoveItTool.instance.MergeNodes = (mergeNodes.activeStateIndex == 1);
             };
 
 

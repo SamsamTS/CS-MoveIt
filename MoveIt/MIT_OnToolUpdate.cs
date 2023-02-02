@@ -285,7 +285,7 @@ namespace MoveIt
                                 }
                                 newMove.y = y;
 
-                                if (NodeMerge)
+                                if (MergeNodes)
                                 {
                                     action.m_snapNode = GetMergingNodes(action, newMove, action.angleDelta, action.center);
                                     if (snapping && action.m_snapNode != null)
