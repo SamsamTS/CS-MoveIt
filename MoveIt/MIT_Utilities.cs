@@ -100,15 +100,6 @@ namespace MoveIt
             UUIButton = null;
         }
 
-        internal static Color GetSelectorColor(Color c)
-        {
-            if (!m_showSelectors)
-            {
-                c.a = 0f;
-            }
-            return c;
-        }
-
         internal static void UpdatePillarMap()
         {
             if (!Settings.advancedPillarControl) return;

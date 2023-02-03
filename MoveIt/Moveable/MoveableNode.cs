@@ -661,6 +661,7 @@ namespace MoveIt
         {
             if (!isValid) return;
             if (!isVirtual() && MoveItTool.m_isLowSensitivity) return;
+            toolColor = toolColor.Adjusted();
 
             ushort node = id.NetNode;
             NetInfo netInfo = nodeBuffer[node].Info;
@@ -692,10 +693,10 @@ namespace MoveIt
                         if (data == action.m_snapNode)
                         {
                             NetInfo netInfo = (NetInfo)state.Info.Prefab;
-                            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, newPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
+                            RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor.Adjusted(), newPosition, Mathf.Max(6f, netInfo.m_halfWidth * 2f), -1f, 1280f, false, true);
                         }
 
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor, parent.m_position, Mathf.Max(6f, parent.Info.m_halfWidth * 2f), -1f, 1280f, false, true);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, toolColor.Adjusted(), parent.m_position, Mathf.Max(6f, parent.Info.m_halfWidth * 2f), -1f, 1280f, false, true);
                     }
 
                     Bezier3 bezier;

@@ -102,7 +102,7 @@ namespace MoveIt
                 }
                 else if (OptionsKeymapping.viewSelectors.IsPressed(e))
                 {
-                    m_showSelectors = !m_showSelectors;
+                    OverlayColors.ShowSelectors = !OverlayColors.ShowSelectors;
                 }
                 else if (OptionsKeymapping.activatePO.IsPressed(e))
                 {

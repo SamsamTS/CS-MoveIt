@@ -82,19 +82,7 @@ namespace MoveIt
         public HashSet<Bounds> areasToUpdate = new HashSet<Bounds>();
         public HashSet<Bounds> areasToQuickUpdate = new HashSet<Bounds>();
 
-        internal static Color m_hoverColor = new Color32(0, 181, 255, 250);
-        internal static Color m_selectedColor = new Color32(95, 166, 0, 244);
-        internal static Color m_nodeMergeColor = new Color32(20, 80, 180, 220);
-        internal static Color m_nodeSnapColor = new Color32(30, 90, 190, 250);
-        internal static Color m_moveColor = new Color32(125, 196, 30, 244);
-        internal static Color m_removeColor = new Color32(255, 160, 47, 191);
-        internal static Color m_despawnColor = new Color32(255, 160, 47, 191);
-        internal static Color m_alignColor = new Color32(255, 255, 255, 244);
-        internal static Color m_POhoverColor = new Color32(240, 140, 255, 230);
-        internal static Color m_POselectedColor = new Color32(225, 130, 240, 125);
-        internal static Color m_POhoverGroup = new Color32(255, 45, 45, 230);
-        internal static Color m_POselectedGroup = new Color32(240, 30, 30, 150);
-        internal static bool m_showSelectors = true;
+        internal static OverlayColors Colors = OverlayColorsFactory.Create();
 
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
@@ -478,7 +466,7 @@ namespace MoveIt
                     Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, new Color32(255, 255, 255, 63), v, 8, 0, 1000, false, false);
                 }
 
-                ActionQueue.instance.current?.Overlays(cameraInfo, GetSelectorColor(m_alignColor), GetSelectorColor(m_despawnColor));
+                ActionQueue.instance.current?.Overlays(cameraInfo, Colors.Align, Colors.Despawn);
 
                 if (Action.HasSelection())
                 {
@@ -491,30 +479,30 @@ namespace MoveIt
                             {
                                 if (m_hoverInstance == null || (m_hoverInstance.isValid && (mpo.id != m_hoverInstance.id)))
                                 {
-                                    mpo.RenderOverlay(cameraInfo, GetSelectorColor(m_POselectedColor), GetSelectorColor(m_despawnColor));
+                                    mpo.RenderOverlay(cameraInfo, Colors.POSelected, Colors.Despawn);
                                     mpo.m_procObj.Selected = true;
                                 }
                             }
                             else
                             {
-                                instance.RenderOverlay(cameraInfo, GetSelectorColor(m_selectedColor), GetSelectorColor(m_despawnColor));
+                                instance.RenderOverlay(cameraInfo, Colors.Selected, Colors.Despawn);
                             }
                         }
                     }
                     if (ToolState == ToolStates.Aligning && MT_Tool == MT_Tools.Slope && AlignToolPhase == 2)
                     {
                         AlignSlopeAction action = ActionQueue.instance.current as AlignSlopeAction;
-                        action.PointA.RenderOverlay(cameraInfo, GetSelectorColor(m_alignColor), GetSelectorColor(m_despawnColor));
+                        action.PointA.RenderOverlay(cameraInfo, Colors.Align, Colors.Despawn);
                     }
 
                     Vector3 center = Action.GetCenter();
                     center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-                    RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, GetSelectorColor(m_selectedColor), center, 1f, -1f, 1280f, false, true);
+                    RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, Colors.Selected.Adjusted(), center, 1f, -1f, 1280f, false, true);
                 }
 
                 if (m_hoverInstance != null && m_hoverInstance.isValid)
                 {
-                    Color color = m_hoverColor;
+                    Color color = Colors.Hover;
                     if (m_hoverInstance is MoveableProc mpo)
                     {
                         if (!mpo.m_procObj.isGroupRoot() && mpo.m_procObj.Group != null)
@@ -523,23 +511,23 @@ namespace MoveIt
                             rootInstance.NetLane = mpo.m_procObj.Group.root.Id;
                             m_hoverInstance = new MoveableProc(rootInstance);
                         }
-                        color = m_POhoverColor;
+                        color = Colors.POHover;
                         mpo.m_procObj.Selected = true;
                     }
 
                     if (ToolState == ToolStates.Aligning || ToolState == ToolStates.Picking)
                     {
-                        color = m_alignColor;
+                        color = Colors.Align;
                     }
                     else if (Action.selection.Contains(m_hoverInstance))
                     {
                         if (Event.current.shift)
                         {
-                            color = m_removeColor;
+                            color = Colors.Remove;
                         }
                     }
 
-                    m_hoverInstance.RenderOverlay(cameraInfo, GetSelectorColor(color), GetSelectorColor(m_despawnColor));
+                    m_hoverInstance.RenderOverlay(cameraInfo, OverlayColors.GetAdjusted(color), Colors.Despawn);
                 }
             }
             else if (ToolState == ToolStates.MouseDragging)
@@ -550,7 +538,7 @@ namespace MoveIt
                     {
                         if (instance.isValid && instance != m_hoverInstance)
                         {
-                            instance.RenderOverlay(cameraInfo, GetSelectorColor(m_moveColor), GetSelectorColor(m_despawnColor));
+                            instance.RenderOverlay(cameraInfo, Colors.Move, Colors.Despawn);
                         }
                     }
 
@@ -558,7 +546,7 @@ namespace MoveIt
                     {
                         Vector3 center = Action.GetCenter();
                         center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
-                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, GetSelectorColor(m_selectedColor), center, 1f, -1f, 1280f, false, true);
+                        RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, Colors.Selected, center, 1f, -1f, 1280f, false, true);
 
                         if (snapping)
                         {
@@ -579,23 +567,7 @@ namespace MoveIt
                                     bezier.d, m_segmentGuide.m_endDirection,
                                     smoothStart, smoothEnd, out bezier.b, out bezier.c);
 
-                                RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, GetSelectorColor(m_selectedColor), bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
-
-                                //if (m_segmentGuide2.m_startNode != 0 && m_segmentGuide2.m_endNode != 0)
-                                //{
-                                //    bezier.a = nodeBuffer[m_segmentGuide2.m_startNode].m_position;
-                                //    bezier.d = nodeBuffer[m_segmentGuide2.m_endNode].m_position;
-
-                                //    smoothStart = ((nodeBuffer[m_segmentGuide2.m_startNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-                                //    smoothEnd = ((nodeBuffer[m_segmentGuide2.m_endNode].m_flags & NetNode.Flags.Middle) != NetNode.Flags.None);
-
-                                //    NetSegment.CalculateMiddlePoints(
-                                //        bezier.a, m_segmentGuide2.m_startDirection,
-                                //        bezier.d, m_segmentGuide2.m_endDirection,
-                                //        smoothStart, smoothEnd, out bezier.b, out bezier.c);
-
-                                //    RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, GetSelectorColor(m_selectedColor * 0.75f), bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
-                                //}
+                                RenderManager.instance.OverlayEffect.DrawBezier(cameraInfo, Colors.Selected, bezier, 0f, 100000f, -100000f, -1f, 1280f, false, true);
                             }
                         }
                     }
@@ -614,7 +586,7 @@ namespace MoveIt
                         {
                             if (adding || (removing && !m_marqueeInstances.Contains(instance)))
                             {
-                                instance.RenderOverlay(cameraInfo, GetSelectorColor(m_selectedColor), GetSelectorColor(m_despawnColor));
+                                instance.RenderOverlay(cameraInfo, Colors.Selected, Colors.Despawn);
                             }
                         }
                     }
@@ -622,18 +594,18 @@ namespace MoveIt
                     Vector3 center = Action.GetCenter();
                     center.y = TerrainManager.instance.SampleRawHeightSmooth(center);
 
-                    RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, GetSelectorColor(m_selectedColor), center, 1f, -1f, 1280f, false, true);
+                    RenderManager.instance.OverlayEffect.DrawCircle(cameraInfo, Colors.Selected, center, 1f, -1f, 1280f, false, true);
                 }
 
-                Color color = m_hoverColor;
+                Color color = Colors.Hover;
                 if (removing)
                 {
-                    color = m_removeColor;
+                    color = Colors.Remove;
                 }
 
                 if (m_selection.a != m_selection.c)
                 {
-                    RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, GetSelectorColor(color), m_selection, -1f, 1280f, false, true);
+                    RenderManager.instance.OverlayEffect.DrawQuad(cameraInfo, color, m_selection, -1f, 1280f, false, true);
                 }
 
                 if (m_marqueeInstances != null)
@@ -651,7 +623,7 @@ namespace MoveIt
                             bool contains = Action.selection.Contains(instance);
                             if ((adding && !contains) || (removing && contains) || (!adding && !removing))
                             {
-                                instance.RenderOverlay(cameraInfo, GetSelectorColor(color), GetSelectorColor(m_despawnColor));
+                                instance.RenderOverlay(cameraInfo, color, Colors.Despawn);
                             }
                         }
                     }
@@ -666,24 +638,24 @@ namespace MoveIt
 
                 foreach (InstanceState state in action.m_states)
                 {
-                    Color color = m_hoverColor;
+                    Color color = Colors.Hover;
                     if (state is NodeState ns)
                     {
                         if (action.m_snapNode != null && state == action.m_snapNode.nodeState)
                         {
-                            color = m_nodeSnapColor;
+                            color = Colors.NodeSnap;
                         }
                         else if (NodeMergeClone.CanMerge(action.m_nodeMergeData, ns))
                         {
-                            color = m_nodeMergeColor;
+                            color = Colors.NodeMerge;
                         }
                     }
                     else if (state is ProcState)
                     {
-                        color = m_POhoverColor;
+                        color = Colors.POHover;
                     }
 
-                    state.instance.RenderCloneOverlay(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, GetSelectorColor(color));
+                    state.instance.RenderCloneOverlay(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, color);
                 }
             }
         }
@@ -701,7 +673,7 @@ namespace MoveIt
                 {
                     try
                     {
-                        state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, GetSelectorColor(m_hoverColor));
+                        state.instance.RenderCloneGeometry(state, ref matrix4x, action.moveDelta, action.angleDelta, action.center, followTerrain, cameraInfo, Colors.Hover);
                     }
                     catch (Exception e)
                     {
@@ -715,7 +687,7 @@ namespace MoveIt
 
                 foreach (InstanceState state in action.m_states)
                 {
-                    state.instance?.RenderGeometry(cameraInfo, GetSelectorColor(m_hoverColor));
+                    state.instance?.RenderGeometry(cameraInfo, Colors.Hover);
                 }
             }
         }

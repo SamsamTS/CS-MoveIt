@@ -61,6 +61,7 @@
     <Compile Include="GUI\XMLWindow.cs" />
     <Compile Include="Moveable\AssetEditorSubBuilding.cs" />
     <Compile Include="NodeMerging.cs" />
+    <Compile Include="OverlayColors.cs" />
     <Compile Include="PropInstance.cs" />
     <Compile Include="PropLayer.cs" />
     <Compile Include="Integration\PO_Group.cs" />

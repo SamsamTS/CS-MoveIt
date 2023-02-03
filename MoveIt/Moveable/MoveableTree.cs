@@ -274,6 +274,7 @@ namespace MoveIt
         {
             if (!isValid) return;
             if (MoveItTool.m_isLowSensitivity) return;
+            toolColor = toolColor.Adjusted();
 
             uint tree = id.Tree;
             TreeManager treeManager = TreeManager.instance;
@@ -290,6 +291,7 @@ namespace MoveIt
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
             if (MoveItTool.m_isLowSensitivity) return;
+            toolColor = toolColor.Adjusted();
 
             TreeState state = instanceState as TreeState;
 

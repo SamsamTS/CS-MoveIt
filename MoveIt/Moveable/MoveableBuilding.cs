@@ -593,7 +593,7 @@ namespace MoveIt
             ushort building = id.Building;
             BuildingInfo buildingInfo = buildingBuffer[building].Info;
 
-            if (toolColor != MoveItTool.m_alignColor && WillBuildingDespawn(building))
+            if (toolColor != MoveItTool.Colors.Align && WillBuildingDespawn(building))
             {
                 toolColor = despawnColor;
             }
@@ -601,6 +601,7 @@ namespace MoveIt
             float alpha = 1f;
             BuildingTool.CheckOverlayAlpha(buildingInfo, ref alpha);
             toolColor.a *= alpha;
+            toolColor = toolColor.Adjusted();
 
             int length = buildingBuffer[building].Length;
             BuildingTool.RenderOverlay(cameraInfo, buildingInfo, length, OverlayPosition, OverlayAngle, toolColor, false);

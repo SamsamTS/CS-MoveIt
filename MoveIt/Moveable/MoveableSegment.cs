@@ -427,6 +427,7 @@ namespace MoveIt
         {
             if (!isValid) return;
             if (MoveItTool.m_isLowSensitivity) return;
+            toolColor = toolColor.Adjusted();
 
             ushort segment = id.NetSegment;
             NetInfo netInfo = segmentBuffer[segment].Info;
@@ -474,6 +475,8 @@ namespace MoveIt
         public override void RenderCloneOverlay(InstanceState instanceState, ref Matrix4x4 matrix4x, Vector3 deltaPosition, float deltaAngle, Vector3 center, bool followTerrain, RenderManager.CameraInfo cameraInfo, Color toolColor)
         {
             if (MoveItTool.m_isLowSensitivity) return;
+
+            toolColor = toolColor.Adjusted();
 
             SegmentState state = instanceState as SegmentState;
 
