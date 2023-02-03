@@ -82,7 +82,7 @@ namespace MoveIt
         public HashSet<Bounds> areasToUpdate = new HashSet<Bounds>();
         public HashSet<Bounds> areasToQuickUpdate = new HashSet<Bounds>();
 
-        internal static OverlayColors Colors = OverlayColorsFactory.Create();
+        internal static OverlayColors Colors { get; set; }
 
         internal static PO_Manager PO = null;
         internal static NS_Manager NS = null;
@@ -345,6 +345,8 @@ namespace MoveIt
             //{
             //    m_whatsNewPanel = UIChangesWindow.Open(typeof(UIChangesWindow));
             //}
+
+            Colors = OverlayColorsFactory.Create();
 
             m_pauseMenu = UIView.library.Get("PauseMenu");
 

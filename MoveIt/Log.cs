@@ -123,11 +123,6 @@ namespace MoveIt
                 //    msg += new StackTrace(true).ToString() + nl + nl;
                 //}
 
-                using (StreamWriter w = File.AppendText(LogFile))
-                {
-                    w.Write(msg);
-                }
-
                 if (copyToGameLog)
                 {
                     msg = assemblyName + " | " + msg;
@@ -140,6 +135,11 @@ namespace MoveIt
                             UnityEngine.Debug.Log(msg);
                             break;
                     }
+                }
+
+                using (StreamWriter w = File.AppendText(LogFile))
+                {
+                    w.Write(msg + nl);
                 }
             }
             catch
