@@ -24,7 +24,6 @@ namespace MoveIt
                 {
                     result = (OverlayColors)serializer.Deserialize(reader);
                 }
-                Log.Debug($"AAA01 Hover:{result.Hover} Selected:{result.Selected}");
             }
             catch
             {
@@ -63,10 +62,10 @@ namespace MoveIt
         public string Description = "Move It overlay colours. Missing overlays will use default colour. Missing sub-elements (r/g/b/a) will be zero. Modify at your own risk, delete file to reset.";
 
         [XmlElement]
-        public Color Hover { get => _hover; set { Log.Debug($"AAA02 Hover:{_hover}->{value}"); _hover = value; } } // => _hover = value; }
+        public Color Hover { get => _hover; set => _hover = value; }
         private Color _hover = new Color32(0, 181, 255, 250);
         [XmlElement]
-        public Color Selected { get => _selected; set { Log.Debug($"AAA03 Selected:{_selected}->{value}"); _selected = value; } } // => _selected = value; }
+        public Color Selected { get => _selected; set => _selected = value; }
         private Color _selected = new Color32(95, 166, 0, 244);
         [XmlElement]
         public Color NodeMerge { get => _nodeMerge; set => _nodeMerge = value; }
