@@ -8,6 +8,8 @@ using System;
 using System.Globalization;
 using System.IO;
 
+// Error code M76
+
 namespace MoveIt
 {
     public class ModInfo : IUserMod
@@ -62,4 +64,5 @@ namespace MoveIt
         }
     }
 
+    public class Log : QLoggerStatic { }
 }

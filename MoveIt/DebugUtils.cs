@@ -4,18 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace MoveIt
 {
     public class DebugUtils
     {
-        public static string modPrefix = "[MoveIt " + ModInfo.version + "] ";
-
         public static SavedBool hideDebugMessages = new SavedBool("hideDebugMessages", Settings.settingsFileName, true, true);
 
-        public static void Log(string message)
+        public static void Log(string message, string code = "")
         {
             if (hideDebugMessages.value) return;
 
@@ -25,29 +21,29 @@ namespace MoveIt
             }
             else if (m_duplicates > 0)
             {
-                MoveIt.Log.Debug(modPrefix + m_lastLog + "(x" + (m_duplicates + 1) + ")");
-                MoveIt.Log.Debug(modPrefix + message);
+                MoveIt.Log.Debug(m_lastLog + "(x" + (m_duplicates + 1) + ")");
+                MoveIt.Log.Debug(message, code);
                 m_duplicates = 0;
             }
             else
             {
-                MoveIt.Log.Debug(modPrefix + message);
+                MoveIt.Log.Debug(message, code);
             }
             m_lastLog = message;
         }
 
-        public static void Warning(string message)
+        public static void Warning(string message, string code = "")
         {
             if (message != m_lastWarning)
             {
-                MoveIt.Log.Error(modPrefix + "Warning: " + message);
+                MoveIt.Log.Error("Warning: " + message, code);
             }
             m_lastWarning = message;
         }
 
-        public static void LogException(Exception e)
+        public static void LogException(Exception e, string code = "")
         {
-            MoveIt.Log.Error(modPrefix + "Intercepted exception (not game breaking):" + Environment.NewLine + $"{e.GetType()} - {e.Message}" + Environment.NewLine + e.StackTrace);
+            MoveIt.Log.Error("Intercepted exception (not game breaking):" + Environment.NewLine + $"{e.GetType()} - {e.Message}" + Environment.NewLine + e.StackTrace, code);
             //Debug.LogException(e);
         }
 
@@ -58,7 +54,7 @@ namespace MoveIt
 #if DEBUG
                 throw new AssertionException($"expected {lhs} == {rhs}", m);
 #else
-                MoveIt.Log.Error($"Error - Assertion failed: expected {lhs} == {rhs}\n" + m);
+                MoveIt.Log.Error($"Error - Assertion failed: expected {lhs} == {rhs}\n" + m, "[M75]");
 #endif
             }
 
@@ -71,7 +67,7 @@ namespace MoveIt
 #if DEBUG
                 throw new AssertionException($"expected {lhs} != {rhs}", m);
 #else
-                MoveIt.Log.Error($"Error - Assertion failed: expected {lhs} != {rhs}\n" + m);
+                MoveIt.Log.Error($"Error - Assertion failed: expected {lhs} != {rhs}\n" + m, "[M76]");
 #endif
             }
         }

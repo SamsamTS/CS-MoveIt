@@ -360,7 +360,7 @@ namespace MoveIt
                         InstanceID sourceInstanceID = item.Key.instance.id;
                         InstanceID targetInstanceID = item.Value.id;
                         Log.Error($"integration {data.Key} Failed to paste from " +
-                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}", "[M21]");
                         DebugUtils.LogException(e);
                     }
                 }
@@ -373,7 +373,7 @@ namespace MoveIt
                 foreach (Instance key in m_origToClone.Keys)
                 {
                     toReplace.Add(m_origToClone[key], m_origToCloneUpdate[key]);
-                    DebugUtils.Log("To replace: " + m_origToClone[key].id.RawData + " -> " + m_origToCloneUpdate[key].id.RawData);
+                    Log.Debug("To replace: " + m_origToClone[key].id.RawData + " -> " + m_origToCloneUpdate[key].id.RawData, "[M22]");
                 }
 
                 ActionQueue.instance.ReplaceInstancesForward(toReplace);
@@ -405,7 +405,7 @@ namespace MoveIt
 
                     if (clone == null)
                     {
-                        Log.Debug($"Failed to clone node {state}");
+                        Log.Info($"Failed to clone node {state}", "[M23]");
                         continue;
                     }
 
@@ -427,7 +427,7 @@ namespace MoveIt
 
                     if (clone == null)
                     {
-                        Log.Debug($"Failed to clone building {state}");
+                        Log.Info($"Failed to clone building {state}", "[M24]");
                         continue;
                     }
 
@@ -456,7 +456,7 @@ namespace MoveIt
 
                     if (clone == null)
                     {
-                        Log.Debug($"Failed to clone {state}");
+                        Log.Info($"Failed to clone {state}", "[M25]");
                         continue;
                     }
 
@@ -477,7 +477,6 @@ namespace MoveIt
                             {
                                 var lane0 = new InstanceID { NetLane = segmentState.LaneIDs[i] };
                                 var lane = new InstanceID { NetLane = clonedLaneIds[i] };
-                                // Log.Debug($"Mapping lane:{lane0.NetLane} to {lane.NetLane}");
                                 m_InstanceID_origToClone.Add(lane0, lane);
                             }
                         }
@@ -498,7 +497,7 @@ namespace MoveIt
                     }
                     else
                     {
-                        Log.Debug($"Failed node merge - virtual:{mergeClone.ChildId}, placed:{m_stateToClone[mergeClone.nodeState].id.NetNode} (parent:{mergeClone.ParentId})");
+                        Log.Info($"Failed node merge - virtual:{mergeClone.ChildId}, placed:{m_stateToClone[mergeClone.nodeState].id.NetNode} (parent:{mergeClone.ParentId})", "[M26]");
                     }
                 }
             }

@@ -17,7 +17,6 @@ namespace MoveIt
         {
             if (data == null)
                 return null;
-            //Log.Debug($"SerializationUtil.Deserialize(data): data.Length={data?.Length}");
 
             var memoryStream = new MemoryStream();
             memoryStream.Write(data, 0, data.Length);

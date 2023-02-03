@@ -316,7 +316,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Log.Error($"PO Failed:\n{e}");
+                Log.Error($"PO Failed:\n{e}", "[M56]");
             }
 
             try
@@ -328,7 +328,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Log.Error($"NetworkSkins Failed:\n{e}");
+                Log.Error($"NetworkSkins Failed:\n{e}", "[M57]");
             }
 
             if (UIToolOptionPanel.instance == null)
@@ -386,7 +386,7 @@ namespace MoveIt
                 PO.ToolEnabled();
                 if (POProcessing > 0 && Time.time > POProcessingStart + 300)
                 { // If it's been more than 5 mins since PO last started copying, give up and reset
-                    Log.Info($"Timing out PO Processing");
+                    Log.Info($"Timing out PO Processing", "[M58]");
                     POProcessing = 0;
                 }
                 ActionQueue.instance.Push(new TransformAction());
@@ -679,7 +679,7 @@ namespace MoveIt
                     }
                     catch (Exception e)
                     {
-                        Log.Debug(e.Message);
+                        Log.Debug(e.Message, "[M59]");
                     }
                 }
             }
@@ -767,7 +767,7 @@ namespace MoveIt
             merged.UnionWith(areasToQuickUpdate);
             merged = MergeBounds(merged);
             bool full = areasToUpdate.Count() != 0;
-            //Log.Debug($"UpdateAreas:\nFull:{areasToUpdate.Count}\nMerged:{merged}\nFast:{areasToQuickUpdate.Count}");
+            //Log.Debug($"UpdateAreas:\nFull:{areasToUpdate.Count}\nMerged:{merged}\nFast:{areasToQuickUpdate.Count}", "[M60]");
             //foreach (Bounds b in merged)
             //{
             //    b.Expand(4f);
@@ -797,7 +797,7 @@ namespace MoveIt
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Log.Error($"Failed to update bounds {bounds}");
+                    Log.Error($"Failed to update bounds {bounds}", "[M61]");
                 }
             }
 

@@ -150,7 +150,7 @@ namespace MoveIt
         {
             if (segmentBuffer[segmentId].Info == null)
             {
-                Log.Error("null info: potentially cuased by missing assets");
+                Log.Error("null info: potentially cuased by missing assets", "[M51]");
                 return null;
             }
 
@@ -350,7 +350,7 @@ namespace MoveIt
             }
             catch (KeyNotFoundException)
             {
-                //Log.Debug($"{startNodeId}->{state.startNodeId}, {endNodeId}->{state.endNodeId}");
+                Log.Debug($"{startNodeId}->{state.startNodeId}, {endNodeId}->{state.endNodeId}", "[M52]");
             }
 
             Vector3 startDirection = newPosition - nodeBuffer[startNodeId].m_position;

@@ -83,65 +83,6 @@ namespace MoveIt
             return SegmentSkinsArray[id];
         }
 
-        //internal static Assembly GetNSAssembly()
-        //{
-        //    Log.Debug($"AAB01 GetNSAssembly");
-        //    try
-        //    {
-        //        foreach (PluginManager.PluginInfo pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
-        //        {
-        //            try
-        //            {
-        //                Log.Debug($"AAB02 GetNSAssembly");
-        //                Log.Debug($"AAB02.1 {pluginInfo}");
-        //                Log.Debug($"AAB02.2 {pluginInfo.userModInstance ?? "<null>"}");
-        //                Log.Debug($"AAB02.3 {pluginInfo.userModInstance?.GetType()}");
-        //                Log.Debug($"AAB02.4 {pluginInfo.userModInstance?.GetType().Name}");
-        //                if (pluginInfo.userModInstance?.GetType().Name.ToLower() == "networkskinsmod" && pluginInfo.isEnabled)
-        //                {
-        //                    Log.Debug($"AAB03 GetNSAssembly");
-        //                    // Network Skins 1 - unsupported - uses CimTools
-        //                    if (pluginInfo.GetAssemblies().Any(mod => mod.GetName().Name.ToLower() == "cimtools"))
-        //                    {
-        //                        Log.Debug($"AAB04 GetNSAssembly");
-        //                        break;
-        //                    }
-
-        //                    Log.Debug($"AAB05 GetNSAssembly");
-        //                    foreach (Assembly assembly in pluginInfo.GetAssemblies())
-        //                    {
-        //                        Log.Debug($"AAB06 GetNSAssembly");
-        //                        if (assembly.GetName().Name.ToLower() == "networkskins")
-        //                        {
-        //                            Log.Debug($"AAB07 GetNSAssembly");
-        //                            return assembly;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            catch (ReflectionTypeLoadException)
-        //            {
-        //                Log.Debug($"AAB09 ReflectionTypeLoadException");
-        //            } // If the plugin parsing fails, go to next plugin
-        //            catch (NullReferenceException)
-        //            {
-        //                Log.Debug($"AAB10 NullReferenceException");
-        //            } // If the plugin parsing fails, go to next plugin
-        //        }
-        //        Log.Debug($"AAB08 GetNSAssembly");
-        //    }
-        //    catch (ReflectionTypeLoadException)
-        //    {
-        //        Log.Debug($"AAB11 ReflectionTypeLoadException");
-        //    } // If the plugin parsing fails, go to next plugin
-        //    catch (NullReferenceException)
-        //    {
-        //        Log.Debug($"AAB12 NullReferenceException");
-        //    } // If the plugin parsing fails, go to next plugin
-
-        //    return null;
-        //}
-
         internal static string getVersionText()
         {
             if (QCommon.CheckAssembly("networkskinsmod", "networkskins", "cimtools"))

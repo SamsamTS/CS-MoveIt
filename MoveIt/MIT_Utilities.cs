@@ -40,12 +40,12 @@ namespace MoveIt
             q.d = new Vector3(b.max.x, b.min.y, b.min.z);
             DebugOverlay d = new DebugOverlay(q, (Color32)c);
             DebugBoxes.Add(d);
-            //Log.Debug($"\nBounds:{b}");
+            //Log.Debug($"\nBounds:{b}", "[M06]");
         }
         internal static void AddDebugPoint(Vector3 v)
         {
             DebugPoints.Add(v);
-            Log.Debug($"\nPoint:{v}");
+            Log.Debug($"\nPoint:{v}", "[M07]");
         }
         internal void ClearDebugOverlays()
         {
@@ -88,7 +88,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Log.Error(e);
+                Log.Error(e, "[M08]");
                 UIView.ForwardException(e);
             }
         }
@@ -104,12 +104,10 @@ namespace MoveIt
         {
             if (!Settings.advancedPillarControl) return;
 
-            //Log.Debug("UPM Start");
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             m_pillarMap = new Dictionary<ushort, ushort>();
-            //string msg = "UPM Nodes: ";
-            //int c = 0;
+
             for (ushort i = 0; i < nodeBuffer.Length; i++)
             {
                 NetNode n = nodeBuffer[i];
@@ -117,14 +115,6 @@ namespace MoveIt
                 {
                     if (n.m_building > 0)
                     {
-                        //msg += $"{i} ({(((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden) ? "Visible" : "Hidden")}), ";
-                        //c++;
-                        //if (c % 20 == 0)
-                        //{
-                        //    Log.Debug(msg);
-                        //    msg = "";
-                        //}
-
                         if ((buildingBuffer[n.m_building].m_flags & Building.Flags.Hidden) != Building.Flags.Hidden)
                         {
                             if (!m_pillarMap.ContainsKey(n.m_building))
@@ -140,8 +130,7 @@ namespace MoveIt
                                     {
                                         msg2 += $"{kvp.Key}->{kvp.Value}, ";
                                     }
-                                    Log.Error(msg2 + e, true);
-                                    //DebugUtils.LogException(e);
+                                    Log.Error(msg2 + e, "[M01]");
                                 }
                             }
                         }
@@ -149,7 +138,7 @@ namespace MoveIt
                 }
             }
             watch.Stop();
-            //Log.Debug($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.");
+            //Log.Debug($"Move It found {m_pillarMap.Count} attached pillar/pylons in {watch.ElapsedMilliseconds} ms.", "[M02]");
         }
 
         public static bool IsExportSelectionValid()
@@ -339,7 +328,7 @@ namespace MoveIt
                     }
                 }
                 selectionState.states = newStates.ToArray();
-                Log.Info($"Cleaned import (state count:{startCount}->{newStates.Count})");
+                Log.Info($"Cleaned import (state count:{startCount}->{newStates.Count})", "[M03]");
 
                 if (missingPrefabs.Count > 0)
                 {
@@ -482,7 +471,7 @@ namespace MoveIt
 
                 if (c > 1000)
                 {
-                    Log.Error($"Looped bounds-merge a thousand times");
+                    Log.Error($"Looped bounds-merge a thousand times", "[M04]");
                     break;
                 }
 
@@ -495,7 +484,7 @@ namespace MoveIt
             //    b.Expand(4f);
             //    AddDebugBox(b, new Color32(255, 0, 0, 200));
             //}
-            //Log.Debug($"\nStart:{originalList.Count}\nInner:{innerList.Count}");
+            //Log.Debug($"\nStart:{originalList.Count}\nInner:{innerList.Count}", "[M05]");
             return innerList;
         }
 

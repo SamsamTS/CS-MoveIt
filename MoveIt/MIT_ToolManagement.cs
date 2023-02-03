@@ -175,7 +175,7 @@ namespace MoveIt
         {
             if (prefab == null)
             {
-                Log.Debug($"PasteFromExternal prefab is null!");
+                Log.Info($"PasteFromExternal prefab is null!", "[M09]");
             }
 
             if (prefab is NetInfo)

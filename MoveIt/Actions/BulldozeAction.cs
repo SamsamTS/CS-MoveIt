@@ -293,7 +293,7 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Log.Debug($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
+                    Log.Info($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}", "[M16]");
                 }
             }
 
@@ -362,7 +362,7 @@ namespace MoveIt
 
                                 if (clonedNodes.ContainsKey(origNodeId))
                                 {
-                                    Log.Debug($"Node #{origNodeId} is already in clone list!");
+                                    Log.Debug($"Node #{origNodeId} is already in clone list!", "[M17]");
                                 }
 
                                 clonedNodes.Add(origNodeId, cloneNodeId);
@@ -380,7 +380,7 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Log.Debug($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
+                    Log.Warning($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}", "[M18]");
                 }
             }
 
@@ -422,7 +422,7 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Log.Debug($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}");
+                    Log.Warning($"Undo Bulldoze failed on {(state is InstanceState ? state.prefabName : "unknown")}\n{e}", "[M19]");
                 }
             }
 
@@ -440,7 +440,7 @@ namespace MoveIt
                         InstanceID sourceInstanceID = item.Key.instance.id;
                         InstanceID targetInstanceID = item.Value.id;
                         Log.Error($"integration {data.Key} Failed to paste from " +
-                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}");
+                            $"{sourceInstanceID.Type}:{sourceInstanceID.Index} to {targetInstanceID.Type}:{targetInstanceID.Index}", "[M20]");
                         DebugUtils.LogException(e);
                     }
                 }
@@ -484,12 +484,10 @@ namespace MoveIt
                     if (segState.startNodeId == oldId)
                     {
                         segState.startNodeId = newId;
-                        //Log.Debug($"SWITCHED (start)\nSegment #{state.instance.id.NetSegment} ({segState.startNode}-{segState.endNode})\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                     if (segState.endNodeId == oldId)
                     {
                         segState.endNodeId = newId;
-                        //Log.Debug($"SWITCHED (end)\nSegment #{state.instance.id.NetSegment} ({segState.startNode}-{segState.endNode})\nOld node Id:{oldId}, new node Id:{newId}");
                     }
                 }
             }

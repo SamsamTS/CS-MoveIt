@@ -49,9 +49,7 @@ namespace MoveIt
                 if (parent.GetSegment(i) > 0) segments.Add(parent.GetSegment(i));
                 if (child.GetSegment(i) > 0) segments.Add(child.GetSegment(i));
             }
-            //string msg = "";
-            //foreach (ushort x in segments) msg += $"{x}, ";
-            //Log.Debug($"BBB03 {data.ParentId},{data.ChildId} {segments.Count}: {msg}");
+
             if (segments.Count < 2 || segments.Count > 8) return false;
 
             parent.m_segment0 = segments[0];
@@ -81,7 +79,7 @@ namespace MoveIt
             MoveableNode childNode = new MoveableNode(data.ChildInstanceId);
             childNode.Delete();
 
-            Log.Info($"Merged node {data.ChildId} into {data.ParentId} ({segments.Count} segments)");
+            Log.Info($"Merged node {data.ChildId} into {data.ParentId} ({segments.Count} segments)", "[M61]");
 
             return true;
         }
@@ -96,8 +94,8 @@ namespace MoveIt
             else if (segment.m_endNode == fromId.NetNode)
                 segment.m_endNode = toId.NetNode;
             else
-                Log.Info($"Node not found for segment #{segmentId} (switching {fromId} to {toId})");
-            //Log.Debug($"BBB06 Node switch segment #{segmentId} (switching {fromId.NetNode} to {toId.NetNode}) - {segmentBuffer[segmentId].m_startNode},{segmentBuffer[segmentId].m_endNode}");
+                Log.Info($"Node not found for segment #{segmentId} (switching {fromId} to {toId})", "[M62]");
+            //Log.Debug($"BBB06 Node switch segment #{segmentId} (switching {fromId.NetNode} to {toId.NetNode}) - {segmentBuffer[segmentId].m_startNode},{segmentBuffer[segmentId].m_endNode}", "[M63]");
         }
     }
 

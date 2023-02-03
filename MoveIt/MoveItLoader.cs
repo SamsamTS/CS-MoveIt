@@ -38,7 +38,7 @@ namespace MoveIt
             }
             else
             {
-                Log.Error($"InstallMod with existing instance!");
+                Log.Error($"InstallMod with existing instance!", "[M53]");
             }
 
             Directory.CreateDirectory(MoveItTool.saveFolder);
@@ -76,7 +76,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Log.Error(e);
+                Log.Error(e, "[M54]");
             }
         }
 
@@ -120,7 +120,7 @@ namespace MoveIt
 
         internal static void LocaleChanged()
         {
-            Log.Debug($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name} ({SingletonLite<LocaleManager>.instance.language})");
+            Log.Debug($"Move It Locale changed {Str.Culture?.Name}->{ModInfo.Culture.Name} ({SingletonLite<LocaleManager>.instance.language})", "[M55]");
             Str.Culture = ModInfo.Culture;
         }
     }

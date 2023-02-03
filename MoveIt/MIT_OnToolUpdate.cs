@@ -60,7 +60,7 @@ namespace MoveIt
                             }
                             catch (MissingMethodException e)
                             {
-                                Log.Debug("Prop Painter [OnLeftClick] error: " + e.ToString());
+                                Log.Debug("Prop Painter [OnLeftClick] error: " + e.ToString(), "[M46]");
                             }
                         }
                         else
@@ -74,7 +74,7 @@ namespace MoveIt
                         }
                         catch (MissingMethodException e)
                         {
-                            Log.Debug("Prop Painter [OnLeftMouseUp] error: " + e.ToString());
+                            Log.Debug("Prop Painter [OnLeftMouseUp] error: " + e.ToString(), "[M47]");
                         }
                     }
                     else if (elapsed >= 250)
@@ -545,7 +545,7 @@ namespace MoveIt
             //string msg = "";
             //foreach (var x in action.m_nodeMergeData) msg += $"{x}, ";
             //if (msg != "") msg = $"\n  {action.m_nodeMergeData.Count}: " + msg;
-            //Log.Debug($"AAA02 candidate found:{(snapCandidate == null ? "<null>" : snapCandidate.nodeState.Info.Prefab.name + " (#" + snapCandidate.StateId + ")")}{msg}");
+            //Log.Debug($"AAA02 candidate found:{(snapCandidate == null ? "<null>" : snapCandidate.nodeState.Info.Prefab.name + " (#" + snapCandidate.StateId + ")")}{msg}", "[M48]");
 
             return snapCandidate;
         }

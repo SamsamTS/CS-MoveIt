@@ -143,7 +143,7 @@ namespace MoveIt
                     }
                     catch (Exception e)
                     {
-                        Log.Error("Failed to export integration: " + item.Key);
+                        Log.Error("Failed to export integration: " + item.Key, "[M27]");
                         DebugUtils.LogException(e);
                     }
                 }
@@ -163,7 +163,7 @@ namespace MoveIt
                     }
                     catch (Exception e)
                     {
-                        Log.Error("Failed to import integration: " + entry.ID);
+                        Log.Error("Failed to import integration: " + entry.ID, "[M28]");
                         DebugUtils.LogException(e);
                     }
 
@@ -183,7 +183,7 @@ namespace MoveIt
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"integration {integration} Failed to copy {instance?.id}" + integration);
+                    Log.Error($"integration {integration} Failed to copy {instance?.id}" + integration, "[M29]");
                     DebugUtils.LogException(e);
                 }
             }

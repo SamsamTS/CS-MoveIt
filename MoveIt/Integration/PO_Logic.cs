@@ -58,7 +58,7 @@ namespace MoveIt
                 throw new Exception("PO Logic not found!");
             }
 
-            //Log.Debug($"POHasFilters:{POHasFilters}");
+            //Log.Debug($"POHasFilters:{POHasFilters}", "[M75]");
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace MoveIt
 
                     if (activeIds.Contains(o.ProcId))
                     {
-                        Log.Info($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate with index {i}.");
+                        Log.Info($"PO Object #{o.Id} (PO:{o.ProcId}) has duplicate with index {i}.", "[M64]");
                     }
                     else
                     {
@@ -96,7 +96,7 @@ namespace MoveIt
                 //{
                 //    msg += $"{a},";
                 //}
-                //Log.Debug(msg);
+                //Log.Debug(msg, "[M65]");
 
                 return objects;
             }
@@ -152,12 +152,12 @@ namespace MoveIt
             }
             else
             {
-                Log.Debug($"Current action is {ActionQueue.instance.current.GetType()}, not CloneActionBase");
+                Log.Debug($"Current action is {ActionQueue.instance.current.GetType()}, not CloneActionBase", "[M66]");
             }
 
             MoveItTool.SetToolState();
             MoveItTool.instance.ProcessSensitivityMode(false);
-            Log.Info($"Cloned PO {original.NetLane} to #{cloneInstance.id.NetLane} (new method)");
+            Log.Info($"Cloned PO {original.NetLane} to #{cloneInstance.id.NetLane} (new method)", "[M67]");
         }
 
         //public uint Clone(ProcState original, Vector3 position, float angle)
@@ -192,7 +192,7 @@ namespace MoveIt
 
             if (!(original.m_procObj is PO_Object))
             {
-                Log.Info($"PO Cloning failed: object not found");
+                Log.Info($"PO Cloning failed: object not found", "[M68]");
                 MoveItTool.POProcessing--;
                 yield break;
             }
@@ -203,7 +203,7 @@ namespace MoveIt
             MethodInfo retrieve = tPOMoveIt.GetMethod("TryRetrieveClone", BindingFlags.Public | BindingFlags.Static, null, types, null);
             if (retrieve == null)
             {
-                Log.Info($"PO Cloning failed: retrieve not found");
+                Log.Info($"PO Cloning failed: retrieve not found", "[M69]");
                 MoveItTool.POProcessing--;
                 yield break;
             }
@@ -239,7 +239,7 @@ namespace MoveIt
                 {
                     if (!cloneAction.m_POGroupMap.ContainsKey(original.m_procObj.Group))
                     {
-                        Log.Debug($"Clone Error: {original.m_procObj.Id}'s group isn't in group map");
+                        Log.Debug($"Clone Error: {original.m_procObj.Id}'s group isn't in group map", "[M70]");
                     }
                     else
                     {
@@ -268,11 +268,11 @@ namespace MoveIt
 
                 MoveItTool.SetToolState();
                 MoveItTool.instance.ProcessSensitivityMode(false);
-                Log.Info($"Cloned PO {original.m_procObj.Id} to #{clone.Id}");
+                Log.Info($"Cloned PO {original.m_procObj.Id} to #{clone.Id}", "[M71]");
             }
             catch (Exception e)
             {
-                Log.Error($"Exception when cloning PO:\n{e}");
+                Log.Error($"Exception when cloning PO:\n{e}", "[M72]");
             }
 
             yield return new WaitForSeconds(0.25f);
@@ -395,7 +395,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Log.Error(e);
+                Log.Error(e, "[M73]");
             }
 
             return procInfo;
@@ -464,7 +464,7 @@ namespace MoveIt
             }
             catch (Exception e)
             {
-                Log.Error($"PO INTERATION FAILED\n" + e);
+                Log.Error($"PO INTERATION FAILED\n" + e, "[M74]");
             }
 
             return "(Failed [PO-F2])";

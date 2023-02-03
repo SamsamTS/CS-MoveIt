@@ -84,16 +84,6 @@ namespace MoveIt
             Vector3 interval = (PointB.position - PointA.position) / (sorted.Count() + 1);
             float totalDistance = (PointB.position - PointA.position).magnitude;
 
-            //string msg = $"{totalDistance}, {mode}";
-            //foreach (KeyValuePair<InstanceState, float> pair in distances)
-            //{
-            //    Instance inst = pair.Key.instance;
-            //    float d = pair.Value;
-
-            //    msg += $"\n{inst}:{d}";
-            //}
-            //Log.Debug(msg);
-
             Vector3 cumulative = Vector3.zero;
             foreach (KeyValuePair<InstanceState, float> pair in sorted)
             {

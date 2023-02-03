@@ -222,7 +222,7 @@ namespace MoveIt
             }
             catch (IndexOutOfRangeException e)
             {
-                Log.Error($"EXCEPTION\n{bounds}\n{e}" + Environment.NewLine + e.StackTrace);
+                Log.Error($"EXCEPTION\n{bounds}\n{e}" + Environment.NewLine + e.StackTrace, "[M10]");
             }
         }
 
@@ -301,11 +301,11 @@ namespace MoveIt
                         selection.Add(clone);
                         cloneState = (BuildingState)clone.SaveToState();
                         newStates.Add(cloneState);
-                        Log.Debug($"Pillar {buildingId} for node {nodeId} duplicated to {clone.id.Building}");
+                        Log.Debug($"Pillar {buildingId} for node {nodeId} duplicated to {clone.id.Building}", "[M11]");
                     }
                     else
                     {
-                        Log.Debug($"Pillar {buildingId} for node {nodeId} hidden");
+                        Log.Debug($"Pillar {buildingId} for node {nodeId} hidden", "[M12]");
                     }
                     pillarsOriginalToClone.Add(originalState, cloneState);
                     original.isHidden = true;
@@ -317,7 +317,7 @@ namespace MoveIt
             }
             states = newStates;
             watch.Stop();
-            Log.Debug($"Pillars handled in {watch.ElapsedMilliseconds} ms\nSelected nodes:{nodesWithAttachments.Count}, total selection:{states.Count}, dups mapped:{pillarsOriginalToClone.Count}");
+            Log.Debug($"Pillars handled in {watch.ElapsedMilliseconds} ms\nSelected nodes:{nodesWithAttachments.Count}, total selection:{states.Count}, dups mapped:{pillarsOriginalToClone.Count}", "[M13]");
             PillarsProcessed = true;
 
             return states;

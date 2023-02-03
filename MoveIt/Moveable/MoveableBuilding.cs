@@ -767,13 +767,6 @@ namespace MoveIt
         {
             RemoveFromGrid(building, ref data);
 
-            //BuildingInfo info = data.Info;
-            //if (info.m_hasParkingSpaces != VehicleInfo.VehicleType.None)
-            //{
-            //    Log.Debug($"PARKING (RB)\n#{building}:{info.name}");
-            //    BuildingManager.instance.UpdateParkingSpaces(building, ref data);
-            //}
-
             data.m_position = position;
             data.m_angle = (angle + Mathf.PI * 2) % (Mathf.PI * 2);
 
@@ -796,7 +789,7 @@ namespace MoveIt
                 BuildingManager.instance.m_buildingGrid[num3] = building;
                 if (buildingBuffer[building].m_nextGridBuilding == building)
                 {
-                    Log.Error($"Building #{building} has self as nextGirdBuilding");
+                    Log.Error($"Building #{building} has self as nextGirdBuilding", "[M49]");
                     buildingBuffer[building].m_nextGridBuilding = 0;
                 }
             }
