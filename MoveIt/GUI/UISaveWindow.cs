@@ -1,7 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
 using MoveIt.GUI;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using System;
 using System.IO;
 using UnityEngine;

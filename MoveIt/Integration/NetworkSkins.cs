@@ -1,6 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Plugins;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using QCommonLib;
 using System;
 using System.Collections.Generic;

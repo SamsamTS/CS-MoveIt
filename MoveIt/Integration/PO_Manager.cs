@@ -1,5 +1,5 @@
 ﻿using ColossalFramework.Plugins;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using System;
 using System.Collections.Generic;
 using System.Linq;

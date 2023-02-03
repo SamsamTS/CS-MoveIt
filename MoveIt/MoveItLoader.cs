@@ -2,7 +2,7 @@
 using ColossalFramework.Globalization;
 using ColossalFramework.Plugins;
 using ICities;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using System;
 using System.Collections.Generic;
 using System.IO;

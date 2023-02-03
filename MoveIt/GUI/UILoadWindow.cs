@@ -1,6 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using System.IO;
 using UIUtils = SamsamTS.UIUtils;
 using UnityEngine;

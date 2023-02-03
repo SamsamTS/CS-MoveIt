@@ -1,5 +1,5 @@
 ﻿using ColossalFramework.UI;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using System.Collections.Generic;
 using UnityEngine;
 using UIUtils = SamsamTS.UIUtils;

@@ -1,6 +1,6 @@
 ﻿using ColossalFramework.UI;
 using ICities;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using System;
 using System.Diagnostics;
 using UnityEngine;

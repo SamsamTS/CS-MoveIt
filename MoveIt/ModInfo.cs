@@ -2,8 +2,9 @@
 using ColossalFramework.IO;
 using ICities;
 using MoveIt.GUI;
-using MoveIt.Localization;
+using MoveIt.Lang;
 using QCommonLib;
+using QCommonLib.Lang;
 using System;
 using System.Globalization;
 using System.IO;
@@ -24,6 +25,8 @@ namespace MoveIt
         public string Description => Str.mod_description;
 
         internal static CultureInfo Culture => QCommon.GetCultureInfo();
+        protected LocalizeManager LocalizeManager => Str.LocaleManager;
+        protected LocalizeManager QLocalizeManager => QStr.LocaleManager;
 
         public static readonly string debugPath = Path.Combine(DataLocation.localApplicationData, "MoveIt.log");
 
