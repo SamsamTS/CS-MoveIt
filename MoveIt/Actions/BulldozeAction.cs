@@ -332,6 +332,11 @@ namespace MoveIt
                             buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Collapsed;
                             buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags & ~Building.Flags.Abandoned;
                             buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Active;
+
+                            if ((((Building)state.instance.data).m_flags & Building.Flags.Historical) != Building.Flags.None)
+                            {
+                                buildingBuffer[cloneId].m_flags = buildingBuffer[cloneId].m_flags | Building.Flags.Historical;
+                            }
                             Thread.Sleep(50);
                         }
 
