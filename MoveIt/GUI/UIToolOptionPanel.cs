@@ -26,7 +26,7 @@ namespace MoveIt
         public UIMultiStateButton PO_button;
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;
-        public UIMultiStateButton mergeNodes;
+        //public UIMultiStateButton mergeNodes;
 
         public UIPanel m_filtersPanel, m_filtersPanelList;
         public UIPanel m_moreToolsPanel;
@@ -523,7 +523,7 @@ namespace MoveIt
             m_viewOptions = AddUIComponent<UIPanel>();
             m_viewOptions.atlas = UIUtils.GetAtlas("Ingame");
             m_viewOptions.backgroundSprite = "InfoPanelBack";
-            m_viewOptions.size = new Vector2(44f, 116f);
+            m_viewOptions.size = new Vector2(44f, 80f);// 116f);
 
             m_viewOptions.absolutePosition = new Vector3(GetUIView().GetScreenResolution().x - m_viewOptions.width, absolutePosition.y - m_viewOptions.height - 8f);
 
@@ -560,20 +560,20 @@ namespace MoveIt
             };
 
 
-            mergeNodes = m_viewOptions.AddUIComponent<UIMultiStateButton>();
-            mergeNodes.atlas = GetIconsAtlas();
-            mergeNodes.name = "MoveIt_MergeNodesView";
-            mergeNodes.tooltip = Str.baseUI_MergeNodesTooltip;
+            //mergeNodes = m_viewOptions.AddUIComponent<UIMultiStateButton>();
+            //mergeNodes.atlas = GetIconsAtlas();
+            //mergeNodes.name = "MoveIt_MergeNodesView";
+            //mergeNodes.tooltip = Str.baseUI_MergeNodesTooltip;
 
-            SetViewOptionsProperties(mergeNodes, "NodeMerge");
+            //SetViewOptionsProperties(mergeNodes, "NodeMerge");
 
-            mergeNodes.relativePosition = new Vector3(4f, 76f);
-            mergeNodes.activeStateIndex = Settings.autoMergeNodes ? 1 : 0;
+            //mergeNodes.relativePosition = new Vector3(4f, 76f);
+            //mergeNodes.activeStateIndex = Settings.autoMergeNodes ? 1 : 0;
 
-            mergeNodes.eventClicked += (c, p) =>
-            {
-                MoveItTool.instance.MergeNodes = (mergeNodes.activeStateIndex == 1);
-            };
+            //mergeNodes.eventClicked += (c, p) =>
+            //{
+            //    MoveItTool.instance.MergeNodes = (mergeNodes.activeStateIndex == 1);
+            //};
 
 
             if (MoveItTool.PO.Enabled)
@@ -585,7 +585,7 @@ namespace MoveIt
 
                 SetViewOptionsProperties(PO_button, "PO");
 
-                PO_button.relativePosition = new Vector3(4f, 112f);
+                PO_button.relativePosition = new Vector3(4f, 76f);// 112f);
                 PO_button.activeStateIndex = 0;
 
                 PO_button.eventClicked += (c, p) =>

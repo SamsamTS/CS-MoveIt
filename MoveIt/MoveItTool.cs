@@ -199,23 +199,23 @@ namespace MoveIt
             }
         }
 
-        private bool _mergeNodes = Settings.autoMergeNodes;
+        private bool _mergeNodes = false;// Settings.autoMergeNodes;
         internal bool MergeNodes
         {
             get => _mergeNodes;
-            set
-            {
-                if (_mergeNodes != value)
-                {
-                    _mergeNodes = value;
-                    Settings.autoMergeNodes.value = value;
-                    if (ActionQueue.instance.current is CloneActionBase a)
-                    {
-                        a.m_nodeMergeData = new List<NodeMergeClone>();
-                        a.m_snapNode = null;
-                    }
-                }
-            }
+            //set
+            //{
+            //    if (_mergeNodes != value)
+            //    {
+            //        _mergeNodes = value;
+            //        Settings.autoMergeNodes.value = value;
+            //        if (ActionQueue.instance.current is CloneActionBase a)
+            //        {
+            //            a.m_nodeMergeData = new List<NodeMergeClone>();
+            //            a.m_snapNode = null;
+            //        }
+            //    }
+            //}
         }
 
         internal UIMoveItButton m_button;

@@ -86,19 +86,19 @@ namespace MoveIt.GUI
             openFolder.size = new Vector2(150f, 30f);
             openFolder.relativePosition = new Vector3(8, 8);
 
-            if (!IsExport)
-            {
-                mergeNodes = UIUtils.CreateCheckBox(sortPanel);
-                mergeNodes.name = "MoveIt_MergeNodesCheckBox";
-                mergeNodes.text = "Autoconnect Nodes";
-                mergeNodes.relativePosition = new Vector3(openFolder.relativePosition.x + openFolder.size.x + 12, 15);
-                mergeNodes.isChecked = MoveItTool.instance.MergeNodes;
+            //if (!IsExport)
+            //{
+            //    mergeNodes = UIUtils.CreateCheckBox(sortPanel);
+            //    mergeNodes.name = "MoveIt_MergeNodesCheckBox";
+            //    mergeNodes.text = "Autoconnect Nodes";
+            //    mergeNodes.relativePosition = new Vector3(openFolder.relativePosition.x + openFolder.size.x + 12, 15);
+            //    mergeNodes.isChecked = MoveItTool.instance.MergeNodes;
 
-                mergeNodes.eventCheckChanged += (s, e) => {
-                    UIToolOptionPanel.instance.mergeNodes.activeStateIndex = (e ? 1 : 0);
-                    MoveItTool.instance.MergeNodes = e;
-                };
-            }
+            //    mergeNodes.eventCheckChanged += (s, e) => {
+            //        UIToolOptionPanel.instance.mergeNodes.activeStateIndex = (e ? 1 : 0);
+            //        MoveItTool.instance.MergeNodes = e;
+            //    };
+            //}
 
             sortOrderBtn = UIUtils.CreateButton(sortPanel);
             sortOrderBtn.name = "MoveIt_SortOrderButton";

@@ -70,19 +70,19 @@ namespace MoveIt
                         UIToolOptionPanel.instance.underground.activeStateIndex = 1;
                     }
                 }
-                else if (OptionsKeymapping.mergeNodes.IsPressed(e))
-                {
-                    if (MergeNodes)
-                    {
-                        MergeNodes = false;
-                        UIToolOptionPanel.instance.mergeNodes.activeStateIndex = 0;
-                    }
-                    else
-                    {
-                        MergeNodes = true;
-                        UIToolOptionPanel.instance.mergeNodes.activeStateIndex = 1;
-                    }
-                }
+                //else if (OptionsKeymapping.mergeNodes.IsPressed(e))
+                //{
+                //    if (MergeNodes)
+                //    {
+                //        MergeNodes = false;
+                //        UIToolOptionPanel.instance.mergeNodes.activeStateIndex = 0;
+                //    }
+                //    else
+                //    {
+                //        MergeNodes = true;
+                //        UIToolOptionPanel.instance.mergeNodes.activeStateIndex = 1;
+                //    }
+                //}
                 else if (OptionsKeymapping.viewDebug.IsPressed(e))
                 {
                     Settings.showDebugPanel.value = !Settings.showDebugPanel;

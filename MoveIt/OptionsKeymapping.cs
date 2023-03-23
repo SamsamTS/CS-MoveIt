@@ -28,7 +28,7 @@ namespace MoveIt
             AddKeymapping(Str.key_Bulldoze, bulldoze);
             AddKeymapping(Str.key_ToggleGridView, viewGrid);
             AddKeymapping(Str.key_ToggleUndergroundView, viewUnderground);
-            AddKeymapping(Str.key_ToggleNodeMerging, mergeNodes);
+            //AddKeymapping(Str.key_ToggleNodeMerging, mergeNodes);
             AddKeymapping(Str.key_ToggleDebugPanel, viewDebug);
             AddKeymapping(Str.key_StepOver, stepOverKey);
             AddKeymapping(Str.key_ShowSelectors, viewSelectors);
@@ -103,7 +103,7 @@ namespace MoveIt
         
         public static readonly SavedInputKey viewGrid = new SavedInputKey("viewGrid", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true); 
         public static readonly SavedInputKey viewUnderground = new SavedInputKey("viewUnderground", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
-        public static readonly SavedInputKey mergeNodes = new SavedInputKey("mergeNodes", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
+        //public static readonly SavedInputKey mergeNodes = new SavedInputKey("mergeNodes", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewDebug = new SavedInputKey("viewDebug", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey viewSelectors = new SavedInputKey("viewSelectors", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.None, false, false, false), true);
         public static readonly SavedInputKey quickUnderground = new SavedInputKey("quickUnderground", Settings.settingsFileName, SavedInputKey.Encode(KeyCode.U, false, false, false), true);
@@ -143,7 +143,7 @@ namespace MoveIt
         public static SavedInputKey[] InToolKeysAlways => new SavedInputKey[] {
             deselectAll, // after de-selecting, then there is no selection and that can cause confusion. therefore we put de-select all here.
             undo, redo,
-            viewGrid, viewUnderground, mergeNodes, viewDebug, viewSelectors, quickUnderground,
+            viewGrid, viewUnderground, /*mergeNodes, */viewDebug, viewSelectors, quickUnderground,
             activatePO, 
             stepOverKey,
         };
