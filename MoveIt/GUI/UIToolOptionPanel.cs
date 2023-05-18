@@ -26,7 +26,7 @@ namespace MoveIt
         public UIMultiStateButton PO_button;
         public UIMultiStateButton grid;
         public UIMultiStateButton underground;
-        //public UIMultiStateButton mergeNodes;
+        public UIMultiStateButton mergeNodes;
 
         public UIPanel m_filtersPanel, m_filtersPanelList;
         public UIPanel m_moreToolsPanel;
@@ -560,20 +560,20 @@ namespace MoveIt
             };
 
 
-            //mergeNodes = m_viewOptions.AddUIComponent<UIMultiStateButton>();
-            //mergeNodes.atlas = GetIconsAtlas();
-            //mergeNodes.name = "MoveIt_MergeNodesView";
-            //mergeNodes.tooltip = Str.baseUI_MergeNodesTooltip;
+            mergeNodes = m_viewOptions.AddUIComponent<UIMultiStateButton>();
+            mergeNodes.atlas = GetIconsAtlas();
+            mergeNodes.name = "MoveIt_MergeNodesView";
+            mergeNodes.tooltip = Str.baseUI_MergeNodesTooltip;
 
-            //SetViewOptionsProperties(mergeNodes, "NodeMerge");
+            SetViewOptionsProperties(mergeNodes, "NodeMerge");
 
-            //mergeNodes.relativePosition = new Vector3(4f, 76f);
-            //mergeNodes.activeStateIndex = Settings.autoMergeNodes ? 1 : 0;
+            mergeNodes.relativePosition = new Vector3(4f, 76f);
+            mergeNodes.activeStateIndex = Settings.autoMergeNodes ? 1 : 0;
 
-            //mergeNodes.eventClicked += (c, p) =>
-            //{
-            //    MoveItTool.instance.MergeNodes = (mergeNodes.activeStateIndex == 1);
-            //};
+            mergeNodes.eventClicked += (c, p) =>
+            {
+                MoveItTool.instance.MergeNodes = (mergeNodes.activeStateIndex == 1);
+            };
 
 
             if (MoveItTool.PO.Enabled)
